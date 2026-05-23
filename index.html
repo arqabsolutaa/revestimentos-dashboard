@@ -895,9 +895,7 @@ async function api(action, data = {}) {
 
 async function apiPost(action, data) {
   if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
-  const params = new URLSearchParams({ action, ...Object.fromEntries(Object.entries(data).map(([k,v]) => [k, typeof v === 'object' ? JSON.stringify(v) : v])) });
-  params.append('method', 'POST');
-  params.append('payload', JSON.stringify(data));
+  const params = new URLSearchParams({ action, dados: JSON.stringify(data) });
   const result = await jsonp(SCRIPT_URL + '?' + params);
   if (result.error) throw new Error(result.error);
   return result.data;
