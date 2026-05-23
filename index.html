@@ -885,10 +885,8 @@ async function api(action, data = {}) {
 
 async function apiPost(action, data) {
   if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
-  const r = await fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify({ action, ...data })
-  });
+  const params = new URLSearchParams({ action, dados: JSON.stringify(data) });
+  const r = await fetch(SCRIPT_URL + '?' + params);
   const json = await r.json();
   if (json.error) throw new Error(json.error);
   return json.data;
