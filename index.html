@@ -3,78 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestão de Revestimentos</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Absoluta — Gestão de Revestimentos</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 :root {
-  --bg: #F5F3EE;
+  --bg: #F8F7F5;
   --surface: #FFFFFF;
-  --surface2: #F0EDE6;
-  --border: #E2DDD4;
-  --border2: #CCC8BD;
-  --text: #1C1A16;
-  --text2: #6B6660;
-  --text3: #9E9990;
-  --accent: #2D5A3D;
-  --accent2: #3D7A54;
-  --accent-bg: #E8F0EB;
-  --danger: #C0392B;
-  --danger-bg: #FDEEEC;
+  --surface2: #F2F0ED;
+  --border: #E8E4DE;
+  --border2: #D4CFC8;
+  --text: #0E0E0E;
+  --text2: #5C5955;
+  --text3: #9C9890;
+  --accent: #C9A84C;
+  --accent2: #B8953F;
+  --accent-bg: #FBF6EB;
+  --accent-dark: #1A1814;
+  --danger: #B03A2E;
+  --danger-bg: #FCECEA;
   --warn: #B5651D;
   --warn-bg: #FDF3E7;
-  --info: #1A5276;
-  --info-bg: #EAF2F8;
+  --info: #1A3A5C;
+  --info-bg: #EAF0F8;
   --radius: 10px;
   --radius-sm: 6px;
-  --sidebar: 220px;
+  --sidebar: 240px;
   --transition: 0.18s ease;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden}
-button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;outline:none}
-input,select,textarea{font-family:'DM Sans',sans-serif;outline:none}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden}
+button{font-family:'Inter',sans-serif;cursor:pointer;border:none;outline:none}
+input,select,textarea{font-family:'Inter',sans-serif;outline:none}
 
 /* SIDEBAR */
 #sidebar{
   width:var(--sidebar);min-width:var(--sidebar);
-  background:var(--surface);
-  border-right:1px solid var(--border);
+  background:#1C1A17;
+  border-right:1px solid rgba(255,255,255,0.06);
   display:flex;flex-direction:column;
   padding:0;
   position:sticky;top:0;height:100vh;
   z-index:10;
 }
 .sidebar-logo{
-  padding:24px 20px 20px;
-  border-bottom:1px solid var(--border);
+  padding:28px 24px 24px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
 }
 .logo-mark{
-  width:36px;height:36px;
+  width:40px;height:40px;
   background:var(--accent);
-  border-radius:8px;
+  border-radius:4px;
   display:flex;align-items:center;justify-content:center;
-  margin-bottom:10px;
+  margin-bottom:12px;
 }
-.logo-mark svg{width:20px;height:20px;fill:white}
-.logo-name{font-size:14px;font-weight:600;color:var(--text);letter-spacing:-0.2px}
-.logo-sub{font-size:11px;color:var(--text3);font-weight:400}
+.logo-mark svg{width:22px;height:22px;fill:white}
+.logo-name{font-size:13px;font-weight:600;color:#FFFFFF;letter-spacing:1.5px;text-transform:uppercase;font-family:'Inter',sans-serif}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.35);font-weight:400;letter-spacing:0.5px;margin-top:2px}
 
-.sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px}
-.nav-label{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:0.6px;text-transform:uppercase;padding:8px 10px 4px}
+.sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:2px}
+.nav-label{font-size:9px;font-weight:600;color:rgba(255,255,255,0.25);letter-spacing:1.2px;text-transform:uppercase;padding:12px 12px 4px}
 .nav-btn{
   display:flex;align-items:center;gap:10px;
   padding:9px 12px;
-  border-radius:var(--radius-sm);
+  border-radius:6px;
   background:transparent;
-  color:var(--text2);
-  font-size:13px;font-weight:400;
+  color:rgba(255,255,255,0.5);
+  font-size:12px;font-weight:400;letter-spacing:0.2px;
   transition:all var(--transition);
   text-align:left;width:100%;
 }
-.nav-btn svg{width:16px;height:16px;flex-shrink:0;opacity:0.7;pointer-events:none}
-.nav-btn:hover{background:var(--surface2);color:var(--text)}
-.nav-btn.active{background:var(--accent-bg);color:var(--accent);font-weight:500}
+.nav-btn svg{width:15px;height:15px;flex-shrink:0;opacity:1;pointer-events:none}
+.nav-btn:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85)}
+.nav-btn.active{background:rgba(201,168,76,0.15);color:var(--accent);font-weight:500}
 .nav-btn.active svg{opacity:1}
 
 /* MAIN */
@@ -90,23 +92,33 @@ input,select,textarea{font-family:'DM Sans',sans-serif;outline:none}
 .home-center{text-align:center;max-width:480px;padding:40px 24px}
 .home-badge{
   display:inline-flex;align-items:center;gap:6px;
-  background:var(--accent-bg);color:var(--accent);
-  font-size:11px;font-weight:500;letter-spacing:0.4px;
-  padding:5px 12px;border-radius:20px;margin-bottom:24px;
+  background:var(--accent-bg);color:var(--accent2);
+  font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;
+  padding:5px 14px;border-radius:20px;margin-bottom:20px;
+  border:1px solid rgba(201,168,76,0.3);
 }
-.home-title{font-size:36px;font-weight:300;letter-spacing:-1px;line-height:1.15;color:var(--text);margin-bottom:8px}
+.home-eyebrow{font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
+.home-title{font-size:64px;font-weight:300;letter-spacing:-1.5px;line-height:1.0;color:var(--text);margin-bottom:16px;font-family:'Cormorant Garamond',serif}
 .home-title strong{font-weight:600}
-.home-sub{font-size:15px;color:var(--text2);line-height:1.6;margin-bottom:36px;font-weight:300}
+.home-sub{font-size:13px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:48px;font-weight:400;font-family:'Inter',sans-serif}
 .home-btn{
-  display:inline-flex;align-items:center;gap:10px;
-  background:var(--accent);color:white;
-  font-size:15px;font-weight:500;
-  padding:14px 28px;border-radius:var(--radius);
+  display:inline-flex;align-items:center;justify-content:space-between;gap:32px;
+  background:var(--accent-dark);color:white;
+  font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;
+  padding:0;border-radius:4px;overflow:hidden;
   transition:all var(--transition);
-  box-shadow:0 2px 8px rgba(45,90,61,0.25);
+  border:1px solid #2a2820;
 }
-.home-btn:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(45,90,61,0.3)}
-.home-btn svg{width:18px;height:18px}
+.home-btn:hover{background:#111;transform:translateY(-2px)}
+.home-btn:hover .home-btn-arrow{background:var(--accent);color:var(--accent-dark)}
+.home-btn-inner{display:flex;align-items:center;gap:10px;padding:16px 24px}
+.home-btn-arrow{
+  padding:16px 20px;
+  background:rgba(255,255,255,0.06);
+  font-size:18px;
+  transition:all var(--transition);
+  border-left:1px solid rgba(255,255,255,0.08);
+}
 
 /* PAGE HEADER */
 .page-header{
@@ -115,8 +127,8 @@ input,select,textarea{font-family:'DM Sans',sans-serif;outline:none}
   display:flex;align-items:flex-start;justify-content:space-between;
   background:var(--surface);
 }
-.page-header-left h1{font-size:20px;font-weight:500;letter-spacing:-0.3px}
-.page-header-left p{font-size:13px;color:var(--text2);margin-top:2px}
+.page-header-left h1{font-size:22px;font-weight:400;letter-spacing:-0.3px;font-family:'Cormorant Garamond',serif}
+.page-header-left p{font-size:12px;color:var(--text3);margin-top:2px;letter-spacing:0.3px}
 .header-actions{display:flex;gap:8px;align-items:center}
 
 /* BUTTONS */
@@ -126,8 +138,8 @@ input,select,textarea{font-family:'DM Sans',sans-serif;outline:none}
   font-size:13px;font-weight:500;
   transition:all var(--transition);
 }
-.btn-primary{background:var(--accent);color:white}
-.btn-primary:hover{background:var(--accent2)}
+.btn-primary{background:var(--accent-dark);color:white;border:1px solid var(--accent-dark)}
+.btn-primary:hover{background:#000}
 .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
 .btn-secondary:hover{background:var(--surface2);border-color:var(--border2)}
 .btn-danger{background:var(--danger-bg);color:var(--danger);border:1px solid #f0c0bb}
@@ -155,7 +167,7 @@ input,select,textarea{font-family:'DM Sans',sans-serif;outline:none}
 .table-wrap{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
 table{width:100%;border-collapse:collapse}
 th{
-  font-size:11px;font-weight:500;letter-spacing:0.5px;text-transform:uppercase;
+  font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
   color:var(--text3);padding:11px 16px;
   background:var(--surface2);
   border-bottom:1px solid var(--border);
@@ -365,11 +377,7 @@ label{font-size:12px;font-weight:500;color:var(--text2)}
 <!-- SIDEBAR -->
 <nav id="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-mark">
-      <svg viewBox="0 0 24 24"><path d="M4 5h16v2H4zm2 4h12v2H6zm-2 4h16v2H4zm2 4h12v2H6z"/></svg>
-    </div>
-    <div class="logo-name" id="empresa-nome">Gestão de Obras</div>
-    <div class="logo-sub">Controle de Revestimentos</div>
+    <img src="data:image/png;base64,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" style="width:150px;display:block;margin-bottom:2px">
   </div>
   <div class="sidebar-nav">
     <div class="nav-label">Principal</div>
@@ -377,8 +385,12 @@ label{font-size:12px;font-weight:500;color:var(--text2)}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       Início
     </button>
+    <button class="nav-btn" onclick="showScreen('visaogeral')" id="nav-visaogeral">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="9" height="9" rx="1.5"/><rect x="13" y="2" width="9" height="9" rx="1.5"/><rect x="2" y="13" width="9" height="9" rx="1.5"/><rect x="13" y="13" width="9" height="9" rx="1.5"/></svg>
+      Visão Geral
+    </button>
     <button class="nav-btn" onclick="showScreen('personalizar')" id="nav-personalizar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/></svg>
       Personalizar
     </button>
     <div class="nav-label">Dados</div>
@@ -413,14 +425,17 @@ label{font-size:12px;font-weight:500;color:var(--text2)}
   <div id="home-screen" class="screen active">
     <div class="home-center">
       <div class="home-badge">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
         Sistema Online
       </div>
-      <h1 class="home-title">Calcule o revestimento<br><strong>do seu cliente</strong></h1>
-      <p class="home-sub">Selecione o apartamento, escolha os ambientes e paredes.<br>O sistema calcula automaticamente os m² necessários.</p>
+      <h1 class="home-title">Personalize<br><strong>Essence Residence</strong></h1>
+      <p class="home-sub">Seu espaço · Sua essência</p>
       <button class="home-btn" onclick="abrirCalculo()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
-        Inserir seus dados
+        <span class="home-btn-inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M12 5v14M5 12h14"/></svg>
+          Novo Apartamento
+        </span>
+        <span class="home-btn-arrow">→</span>
       </button>
     </div>
   </div>
@@ -569,8 +584,66 @@ label{font-size:12px;font-weight:500;color:var(--text2)}
     </div>
   </div>
 
-  <!-- CONFIG -->
-  <div id="config-screen" class="screen">
+  <!-- VISÃO GERAL -->
+  <div id="visaogeral-screen" class="screen">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Visão Geral</h1>
+        <p>Indicadores do empreendimento Essence Residence</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="loadVisaoGeral()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Atualizar
+        </button>
+      </div>
+    </div>
+    <div class="page-content">
+      <!-- CARDS TOPO -->
+      <div id="vg-cards" class="stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px"></div>
+      <!-- GRÁFICOS -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <!-- Donut conclusão -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+          <p style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Progresso Geral</p>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:20px">% de personalizações concluídas</p>
+          <div style="position:relative;height:220px;display:flex;align-items:center;justify-content:center">
+            <canvas id="chart-conclusao"></canvas>
+            <div id="vg-pct-center" style="position:absolute;text-align:center">
+              <p style="font-size:32px;font-weight:300;font-family:'Cormorant Garamond',serif;color:var(--text)">0%</p>
+              <p style="font-size:11px;color:var(--text3);letter-spacing:0.5px">concluído</p>
+            </div>
+          </div>
+          <div id="vg-conclusao-legend" style="display:flex;gap:16px;justify-content:center;margin-top:16px;font-size:12px"></div>
+        </div>
+        <!-- Barras por ambiente -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+          <p style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Por Ambiente</p>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:20px">m² de revestimento por tipo de local</p>
+          <div style="height:220px"><canvas id="chart-ambientes"></canvas></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <!-- Top 5 revestimentos -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+          <p style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Top Revestimentos</p>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Mais escolhidos nas personalizações</p>
+          <div id="vg-top5" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+        <!-- Status dos apartamentos -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+          <p style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Status dos Apartamentos</p>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Situação por unidade</p>
+          <div style="position:relative;height:200px;display:flex;align-items:center;justify-content:center">
+            <canvas id="chart-status"></canvas>
+          </div>
+          <div id="vg-status-legend" style="display:flex;gap:16px;justify-content:center;margin-top:16px;font-size:12px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
     <div class="page-header">
       <div class="page-header-left">
         <h1>Configurações</h1>
@@ -871,6 +944,7 @@ function showScreen(name) {
   if (name === 'paredes') loadParedes();
   if (name === 'revestimentos') loadRevestimentos();
   if (name === 'personalizar') loadPersonalizar();
+  if (name === 'visaogeral') loadVisaoGeral();
 }
 
 // ===================== API =====================
@@ -935,7 +1009,140 @@ async function testarConexao() {
   }
 }
 
-// ===================== ESTOQUE =====================
+// ===================== VISÃO GERAL =====================
+let chartConclusao = null, chartAmbientes = null, chartStatus = null;
+
+async function loadVisaoGeral() {
+  try {
+    const dados = await lerDados();
+    const personalizacoes = dados.personalizar || [];
+    const paredes = dados.paredes || [];
+    const revestimentos = dados.revestimentos || [];
+
+    // --- MÉTRICAS ---
+    const aps = [...new Set(personalizacoes.map(p => p.ap).filter(Boolean))];
+    const totalAps = aps.length;
+    let totalM2 = 0, concluidos = 0, emAndamento = 0, naoIniciados = 0;
+    const contagemRevs = {}, m2PorAmbiente = {};
+
+    // Calcular % por ap
+    aps.forEach(ap => {
+      const paredesAp = paredes.filter(p => p.apartamento === ap);
+      const totalParedes = paredesAp.length;
+      if (!totalParedes) return;
+      const personAp = personalizacoes.filter(p => p.ap === ap);
+      let selecionadas = 0;
+      personAp.forEach(p => {
+        const sel = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+        Object.entries(sel).forEach(([k, v]) => {
+          if (v.piso && v.m2 > 0) {
+            selecionadas++;
+            totalM2 += parseFloat(v.m2)||0;
+            // contar revestimento
+            const rev = revestimentos.find(r => r.id === v.piso || r.codigo === v.piso);
+            const nomeRev = rev ? rev.nome : v.piso;
+            contagemRevs[nomeRev] = (contagemRevs[nomeRev]||0) + (parseFloat(v.m2)||0);
+            // ambiente da parede
+            const parede = paredesAp.find(pw => pw.id === k || (pw.apartamento+'-'+pw.local+'-'+pw.parede) === k);
+            const amb = parede ? parede.local : 'Outros';
+            m2PorAmbiente[amb] = (m2PorAmbiente[amb]||0) + (parseFloat(v.m2)||0);
+          }
+        });
+      });
+      const pct = totalParedes > 0 ? selecionadas / totalParedes : 0;
+      if (pct >= 1) concluidos++;
+      else if (pct > 0) emAndamento++;
+      else naoIniciados++;
+    });
+
+    const pctGeral = totalAps > 0 ? Math.round((concluidos / totalAps) * 100) : 0;
+
+    // --- CARDS ---
+    document.getElementById('vg-cards').innerHTML = `
+      <div class="stat-card"><div class="stat-label">Apartamentos</div><div class="stat-value">${totalAps}</div><div class="stat-sub">personalizados</div></div>
+      <div class="stat-card"><div class="stat-label">m² Total</div><div class="stat-value">${totalM2.toFixed(0)}</div><div class="stat-sub">calculados</div></div>
+      <div class="stat-card"><div class="stat-label">Concluídos</div><div class="stat-value">${pctGeral}%</div><div class="stat-sub">${concluidos} de ${totalAps} aps</div></div>
+      <div class="stat-card"><div class="stat-label">Pendentes</div><div class="stat-value">${naoIniciados + emAndamento}</div><div class="stat-sub">sem personalização completa</div></div>
+    `;
+
+    // --- DONUT CONCLUSÃO ---
+    document.getElementById('vg-pct-center').querySelector('p').textContent = pctGeral + '%';
+    if (chartConclusao) chartConclusao.destroy();
+    chartConclusao = new Chart(document.getElementById('chart-conclusao'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Concluídos', 'Em andamento', 'Não iniciados'],
+        datasets: [{ data: [concluidos, emAndamento, naoIniciados||1],
+          backgroundColor: ['#1A1814', '#C9A84C', '#E8E4DE'],
+          borderWidth: 0, hoverOffset: 4 }]
+      },
+      options: { cutout: '72%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} apt` } } }, animation: { animateRotate: true, duration: 800 } }
+    });
+    document.getElementById('vg-conclusao-legend').innerHTML = [
+      ['#1A1814','Concluídos',concluidos],
+      ['#C9A84C','Em andamento',emAndamento],
+      ['#E8E4DE','Não iniciados',naoIniciados]
+    ].map(([c,l,v]) => `<span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:${c};border:1px solid var(--border);flex-shrink:0"></span><span style="color:var(--text2)">${l} <strong style="color:var(--text)">${v}</strong></span></span>`).join('');
+
+    // --- BARRAS AMBIENTES ---
+    const ambLabels = Object.keys(m2PorAmbiente).slice(0,8);
+    const ambValues = ambLabels.map(a => parseFloat(m2PorAmbiente[a].toFixed(2)));
+    if (chartAmbientes) chartAmbientes.destroy();
+    chartAmbientes = new Chart(document.getElementById('chart-ambientes'), {
+      type: 'bar',
+      data: {
+        labels: ambLabels.length ? ambLabels : ['Sem dados'],
+        datasets: [{ data: ambValues.length ? ambValues : [0], backgroundColor: '#C9A84C', borderRadius: 4, borderSkipped: false }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#9C9890' } },
+          y: { grid: { color: '#F2F0ED' }, ticks: { font: { size: 11 }, color: '#9C9890', callback: v => v + ' m²' }, border: { display: false } }
+        }
+      }
+    });
+
+    // --- TOP 5 REVESTIMENTOS ---
+    const top5 = Object.entries(contagemRevs).sort((a,b) => b[1]-a[1]).slice(0,5);
+    const maxVal = top5[0]?.[1] || 1;
+    document.getElementById('vg-top5').innerHTML = top5.length ? top5.map(([nome, val], i) => `
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:12px;color:var(--text);font-weight:500">${nome}</span>
+          <span style="font-size:12px;color:var(--text3)">${val.toFixed(1)} m²</span>
+        </div>
+        <div style="height:4px;background:var(--surface2);border-radius:2px;overflow:hidden">
+          <div style="height:100%;width:${Math.round(val/maxVal*100)}%;background:${i===0?'#C9A84C':'#1A1814'};border-radius:2px;transition:width 0.6s ease"></div>
+        </div>
+      </div>
+    `).join('') : '<p style="font-size:13px;color:var(--text3);text-align:center;padding:20px 0">Nenhuma personalização ainda</p>';
+
+    // --- DONUT STATUS ---
+    if (chartStatus) chartStatus.destroy();
+    chartStatus = new Chart(document.getElementById('chart-status'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Concluídos', 'Em andamento', 'Não iniciados'],
+        datasets: [{ data: [concluidos, emAndamento, naoIniciados||1],
+          backgroundColor: ['#1A1814','#C9A84C','#E8E4DE'],
+          borderWidth: 0, hoverOffset: 4 }]
+      },
+      options: { cutout: '65%', plugins: { legend: { display: false } }, animation: { duration: 800 } }
+    });
+    document.getElementById('vg-status-legend').innerHTML = [
+      ['#1A1814','Concluídos',concluidos,'('+Math.round(concluidos/Math.max(totalAps,1)*100)+'%)'],
+      ['#C9A84C','Em andamento',emAndamento,'('+Math.round(emAndamento/Math.max(totalAps,1)*100)+'%)'],
+      ['#E8E4DE','Não iniciados',naoIniciados,'('+Math.round(naoIniciados/Math.max(totalAps,1)*100)+'%)']
+    ].map(([c,l,v,p]) => `<span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:${c};border:1px solid var(--border);flex-shrink:0"></span><span style="color:var(--text2);font-size:11px">${l} <strong style="color:var(--text)">${v}</strong> ${p}</span></span>`).join('');
+
+  } catch(e) {
+    showToast('Erro ao carregar visão geral: ' + e.message, 'error');
+  }
+}
+
+
 async function loadEstoque() {
   document.getElementById('estoque-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
   try {
