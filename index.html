@@ -874,22 +874,33 @@ function showScreen(name) {
 }
 
 // ===================== API =====================
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const cb = 'cb_' + Date.now();
+    const script = document.createElement('script');
+    window[cb] = (data) => { delete window[cb]; script.remove(); resolve(data); };
+    script.onerror = () => { delete window[cb]; script.remove(); reject(new Error('Erro de rede')); };
+    script.src = url + '&callback=' + cb;
+    document.head.appendChild(script);
+  });
+}
+
 async function api(action, data = {}) {
   if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
   const params = new URLSearchParams({ action, ...Object.fromEntries(Object.entries(data).map(([k,v]) => [k, typeof v === 'object' ? JSON.stringify(v) : v])) });
-  const resp = await fetch(SCRIPT_URL + '?' + params);
-  if (!resp.ok) throw new Error('Erro HTTP ' + resp.status);
-  const json = await resp.json();
-  if (json.error) throw new Error(json.error);
-  return json.data;
+  const result = await jsonp(SCRIPT_URL + '?' + params);
+  if (result.error) throw new Error(result.error);
+  return result.data;
 }
 
 async function apiPost(action, data) {
   if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
-  const resp = await fetch(SCRIPT_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action, ...data }) });
-  const json = await resp.json();
-  if (json.error) throw new Error(json.error);
-  return json.data;
+  const params = new URLSearchParams({ action, ...Object.fromEntries(Object.entries(data).map(([k,v]) => [k, typeof v === 'object' ? JSON.stringify(v) : v])) });
+  params.append('method', 'POST');
+  params.append('payload', JSON.stringify(data));
+  const result = await jsonp(SCRIPT_URL + '?' + params);
+  if (result.error) throw new Error(result.error);
+  return result.data;
 }
 
 // ===================== TOAST =====================
