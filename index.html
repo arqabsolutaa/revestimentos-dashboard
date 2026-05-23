@@ -875,19 +875,28 @@ function showScreen(name) {
 
 // ===================== API =====================
 async function api(action, data = {}) {
+  if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
   const params = new URLSearchParams({ action, ...Object.fromEntries(Object.entries(data).map(([k,v]) => [k, typeof v === 'object' ? JSON.stringify(v) : v])) });
-  const resp = await fetch('/api?' + params);
-  const json = await resp.json();
+  const r = await fetch(SCRIPT_URL + '?' + params);
+  const json = await r.json();
   if (json.error) throw new Error(json.error);
   return json.data;
 }
 
 async function apiPost(action, data) {
-  const params = new URLSearchParams({ action, dados: JSON.stringify(data) });
-  const resp = await fetch('/api?' + params);
-  const json = await resp.json();
+  if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
+  const r = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action, ...data })
+  });
+  const json = await r.json();
   if (json.error) throw new Error(json.error);
   return json.data;
+}
+
+async function lerDados() {
+  const r = await fetch('/data.json?t=' + Date.now());
+  return await r.json();
 }
 
 // ===================== TOAST =====================
@@ -932,7 +941,8 @@ async function testarConexao() {
 async function loadEstoque() {
   document.getElementById('estoque-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
   try {
-    dadosEstoque = await api('getEstoque');
+    const dados = await lerDados();
+    dadosEstoque = dados.revestimentos || [];
     renderEstoque(dadosEstoque);
     renderStatsEstoque(dadosEstoque);
     popularFiltroObra(dadosEstoque, 'filtro-estoque-obra');
@@ -987,7 +997,8 @@ function popularFiltroObra(d, selectId) {
 async function loadSaidas() {
   document.getElementById('saidas-tbody').innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
   try {
-    dadosSaidas = await api('getSaidas');
+    const dados = await lerDados();
+    dadosSaidas = dados.saidas || [];
     renderSaidas(dadosSaidas);
     popularFiltroLocal(dadosSaidas);
   } catch(e) { document.getElementById('saidas-tbody').innerHTML = `<tr><td colspan="7"><div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div></td></tr>`; }
@@ -1081,7 +1092,8 @@ async function excluirSaida(id) {
 async function loadParedes() {
   document.getElementById('paredes-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
   try {
-    dadosParedes = await api('getParedes');
+    const dados = await lerDados();
+    dadosParedes = dados.paredes || [];
     renderParedes(dadosParedes);
     popularFiltrosParedes(dadosParedes);
   } catch(e) { document.getElementById('paredes-tbody').innerHTML = `<tr><td colspan="8"><div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div></td></tr>`; }
@@ -1149,7 +1161,8 @@ async function excluirParede(id) {
 async function loadRevestimentos() {
   document.getElementById('revestimentos-tbody').innerHTML = '<tr><td colspan="10"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
   try {
-    dadosRevestimentos = await api('getRevestimentos');
+    const dados = await lerDados();
+    dadosRevestimentos = dados.revestimentos || [];
     renderRevestimentos(dadosRevestimentos);
   } catch(e) { document.getElementById('revestimentos-tbody').innerHTML = `<tr><td colspan="10"><div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div></td></tr>`; }
 }
@@ -1215,10 +1228,11 @@ async function abrirCalculo() {
   document.getElementById('calc-btn-salvar').style.display = 'none';
   document.getElementById('calc-btn-pdf').style.display = 'none';
   document.getElementById('calc-cliente-info').style.display = 'none';
-  // Carregar paredes e revestimentos se necessário
-  if (!dadosParedes.length) { try { dadosParedes = await api('getParedes'); } catch(e){} }
-  if (!dadosRevestimentos.length) { try { dadosRevestimentos = await api('getRevestimentos'); } catch(e){} }
-  // Popular select de APs
+  try {
+    const dados = await lerDados();
+    dadosParedes = dados.paredes || [];
+    dadosRevestimentos = dados.revestimentos || [];
+  } catch(e) {}
   const aps = [...new Set(dadosParedes.map(p => p.apartamento).filter(Boolean))];
   const sel = document.getElementById('calc-ap-select');
   sel.innerHTML = '<option value="">— Escolha um apartamento —</option>' + aps.map(a => `<option value="${a}">${a}</option>`).join('');
@@ -1317,7 +1331,8 @@ async function salvarSelecao() {
 async function loadPersonalizar() {
   document.getElementById('personalizar-lista').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
   try {
-    dadosPersonalizar = await api('getPersonalizar');
+    const dados = await lerDados();
+    dadosPersonalizar = dados.personalizar || [];
     renderPersonalizar(dadosPersonalizar);
   } catch(e) { document.getElementById('personalizar-lista').innerHTML = `<div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div>`; }
 }
