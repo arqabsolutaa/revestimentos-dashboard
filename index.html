@@ -989,7 +989,7 @@ body.mobile-mode #main{padding-bottom:72px}
 const STORAGE_KEY_URL = 'apps_script_url';
 const STORAGE_KEY_EMPRESA = 'empresa_nome';
 const URL_FIXA = 'https://script.google.com/macros/s/AKfycbw9D4XhHquXu-UKK6876Ymb7ApTlIpnXCoYdeV4_zGQD_Dz5JfY-z-LNKz2303ufnn9Uw/exec';
-let SCRIPT_URL = localStorage.getItem(STORAGE_KEY_URL) || URL_FIXA;
+let SCRIPT_URL = URL_FIXA;
 let dadosEstoque = [], dadosSaidas = [], dadosParedes = [], dadosRevestimentos = [], dadosPersonalizar = [];
 let saidaItens = [];
 let calcSelecoes = {};
