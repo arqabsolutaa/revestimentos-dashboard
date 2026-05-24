@@ -1055,6 +1055,10 @@ body.mobile-mode #main{padding-bottom:72px}
       <div id="calc-step2" style="display:none;margin-top:16px">
         <h3 style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:12px">Selecione os ambientes e paredes</h3>
         <div id="calc-paredes-container"></div>
+        <button onclick="abrirNovaParede()" style="display:flex;align-items:center;gap:8px;margin-top:12px;padding:10px 16px;border:1px dashed var(--border2);border-radius:var(--radius-sm);background:transparent;color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;width:100%;justify-content:center;transition:all 0.2s;font-family:'Inter',sans-serif" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar parede personalizada
+        </button>
       </div>
 
       <!-- STEP 3: resumo -->
@@ -1129,6 +1133,46 @@ body.mobile-mode #main{padding-bottom:72px}
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="fecharModal('modal-pgto-pdf')">Cancelar</button>
       <button class="btn btn-primary" onclick="confirmarPgtoPDF()">Gerar PDF</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL NOVA PAREDE PERSONALIZADA -->
+<div class="modal-overlay" id="modal-nova-parede">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h2>Nova Parede</h2>
+      <button class="modal-close" onclick="fecharModal('modal-nova-parede')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text3);margin-bottom:16px">A parede será adicionada ao apartamento <strong id="nova-parede-ap-label"></strong> e salva na planilha.</p>
+      <div class="form-grid" style="gap:14px">
+        <div>
+          <label class="form-label">Ambiente</label>
+          <input class="form-control" id="np-local" placeholder="Ex: Banho 02, Cozinha...">
+        </div>
+        <div>
+          <label class="form-label">Parede (identificador)</label>
+          <input class="form-control" id="np-parede" placeholder="Ex: A, B, F...">
+        </div>
+        <div>
+          <label class="form-label">Comprimento linear (m)</label>
+          <input class="form-control" id="np-linear" type="number" step="0.01" placeholder="Ex: 2.50">
+        </div>
+        <div>
+          <label class="form-label">Altura (m)</label>
+          <input class="form-control" id="np-altura" type="number" step="0.01" value="2.55">
+        </div>
+        <div>
+          <label class="form-label">Observação (opcional)</label>
+          <input class="form-control" id="np-obs" placeholder="Opcional">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-nova-parede')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarNovaParede()">Adicionar Parede</button>
     </div>
   </div>
 </div>
@@ -1395,6 +1439,67 @@ async function testarConexao() {
 
 
 async 
+
+function abrirNovaParede() {
+  if (!calcApAtual) { showToast('Selecione um apartamento primeiro', 'error'); return; }
+  document.getElementById('nova-parede-ap-label').textContent = 'Apto ' + calcApAtual;
+  document.getElementById('np-local').value = '';
+  document.getElementById('np-parede').value = '';
+  document.getElementById('np-linear').value = '';
+  document.getElementById('np-altura').value = '2.55';
+  document.getElementById('np-obs').value = '';
+  abrirModal('modal-nova-parede');
+}
+
+async function salvarNovaParede() {
+  const local = document.getElementById('np-local').value.trim();
+  const parede = document.getElementById('np-parede').value.trim();
+  const linear = parseFloat(document.getElementById('np-linear').value);
+  const altura = parseFloat(document.getElementById('np-altura').value) || 2.55;
+  const obs = document.getElementById('np-obs').value.trim();
+
+  if (!local) { showToast('Informe o ambiente', 'error'); return; }
+  if (!parede) { showToast('Informe o identificador da parede', 'error'); return; }
+  if (!linear || linear <= 0) { showToast('Informe o comprimento linear', 'error'); return; }
+
+  // Buscar cliente do apartamento atual
+  const paredesAp = dadosParedes.filter(p => p.apartamento === calcApAtual);
+  const cliente = paredesAp.length ? paredesAp[0].cliente : 'A VENDA';
+
+  try {
+    showToast('Salvando parede...', 'info');
+    await api('addParede', {
+      apartamento: calcApAtual,
+      cliente,
+      local,
+      parede,
+      metro_linear: linear,
+      altura,
+      obs
+    });
+
+    // Adicionar localmente também
+    const novaParede = {
+      id: 'temp_' + Date.now(),
+      apartamento: calcApAtual,
+      cliente,
+      local,
+      parede,
+      metro_linear: String(linear),
+      altura: String(altura),
+      obs
+    };
+    dadosParedes.push(novaParede);
+
+    fecharModal('modal-nova-parede');
+    // Recarregar as paredes do apartamento no modal
+    selecionarApartamento(calcApAtual);
+    showToast('Parede adicionada!', 'success');
+  } catch(e) {
+    showToast('Erro ao salvar: ' + e.message, 'error');
+  }
+}
+
 function toggleUltimasSaidas() {
   const painel = document.getElementById('painel-ultimas-saidas');
   const btn = document.getElementById('btn-ultimas-saidas');
