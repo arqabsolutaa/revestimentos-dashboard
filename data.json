@@ -1796,16 +1796,6 @@
   ],
   "personalizar": [
     {
-      "id": "id_1779584019554_n1zsd",
-      "ap": "11",
-      "cliente": "A VENDA",
-      "empresa": "Absoluta",
-      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.81,\"piso\":\"\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"\"},\"11-Banho 01-D-3\":{\"m2\":9.69,\"piso\":\"\"}}",
-      "status": "confirmado",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
-    {
       "id": "id_1779593825294_fi5qu",
       "ap": "51",
       "cliente": "Danilo",
