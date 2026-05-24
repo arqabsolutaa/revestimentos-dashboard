@@ -122,7 +122,7 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "181.62",
+      "estoque_m2": "193.6",
       "popularidade": "1",
       "criado_em": ""
     },
@@ -1779,21 +1779,7 @@
       "criado_em": ""
     }
   ],
-  "saidas": [
-    {
-      "id": "id_1779636039851_7jyxv",
-      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Qatari Desert Nat Ret",
-      "codigo_rev": "7",
-      "obra": "11",
-      "local": "Personalizar",
-      "apto": "11",
-      "quantidade_m2": "11.98",
-      "destino": "uso",
-      "obs": "Via Personalizar - A VENDA",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    }
-  ],
+  "saidas": [],
   "personalizar": [
     {
       "id": "id_1779635980650_zbzz1",
