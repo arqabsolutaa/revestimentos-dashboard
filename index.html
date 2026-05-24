@@ -987,9 +987,6 @@ let calcSelecoes = {};
 let calcApAtual = null;
 
 // ===================== INIT =====================
-window.onload = () => {
-
-
 function setMobileNav(name) {
   document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
   const btn = document.getElementById('mnav-' + name);
@@ -1013,6 +1010,7 @@ function setMode(mode) {
 const savedMode = localStorage.getItem('view_mode');
 if (savedMode) setMode(savedMode);
 
+window.onload = () => {
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA);
   if (empresa) {
     document.getElementById('empresa-nome').textContent = empresa;
