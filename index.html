@@ -1056,19 +1056,29 @@ function showScreen(name) {
 async function api(action, data = {}) {
   if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
   const params = new URLSearchParams({ action, ...Object.fromEntries(Object.entries(data).map(([k,v]) => [k, typeof v === 'object' ? JSON.stringify(v) : v])) });
-  const r = await fetch(SCRIPT_URL + '?' + params);
-  const json = await r.json();
-  if (json.error) throw new Error(json.error);
-  return json.data;
+  const r = await fetch(SCRIPT_URL + '?' + params, { redirect: 'follow' });
+  const text = await r.text();
+  try {
+    const json = JSON.parse(text);
+    if (json.error) throw new Error(json.error);
+    return json.data;
+  } catch(e) {
+    throw new Error('Resposta inválida do servidor');
+  }
 }
 
 async function apiPost(action, data) {
   if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
   const params = new URLSearchParams({ action, dados: JSON.stringify(data) });
-  const r = await fetch(SCRIPT_URL + '?' + params);
-  const json = await r.json();
-  if (json.error) throw new Error(json.error);
-  return json.data;
+  const r = await fetch(SCRIPT_URL + '?' + params, { redirect: 'follow' });
+  const text = await r.text();
+  try {
+    const json = JSON.parse(text);
+    if (json.error) throw new Error(json.error);
+    return json.data;
+  } catch(e) {
+    throw new Error('Resposta inválida do servidor');
+  }
 }
 
 async function lerDados() {
