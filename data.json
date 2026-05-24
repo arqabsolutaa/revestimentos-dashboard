@@ -1800,6 +1800,16 @@
       "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.81,\"piso\":\"11\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"11\"},\"11-Banho 01-C-2\":{\"m2\":7.39,\"piso\":\"11\"},\"11-Banho 01-D-3\":{\"m2\":9.69,\"piso\":\"10\"},\"11-Banho 01-E-4\":{\"m2\":11.98,\"piso\":\"11\"}}",
       "status": "pendente",
       "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779584019554_n1zsd",
+      "ap": "11",
+      "cliente": "A VENDA",
+      "empresa": "Absoluta",
+      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.81,\"piso\":\"\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"\"},\"11-Banho 01-D-3\":{\"m2\":9.69,\"piso\":\"\"}}",
+      "status": "pendente",
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ]
 }
