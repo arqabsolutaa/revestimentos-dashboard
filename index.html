@@ -1052,6 +1052,18 @@ function showScreen(name) {
   if (name === 'visaogeral') loadVisaoGeral();
 }
 
+
+async function apiAction(action, id) {
+  const params = new URLSearchParams({ action, id });
+  const r = await fetch(SCRIPT_URL + '?' + params, { redirect: 'follow' });
+  const text = await r.text();
+  try {
+    const json = JSON.parse(text);
+    if (json.error) throw new Error(json.error);
+    return json.data;
+  } catch(e) { throw new Error('Erro: ' + e.message); }
+}
+
 // ===================== API =====================
 async function api(action, data = {}) {
   if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
@@ -1402,7 +1414,7 @@ async function salvarSaida() {
 async function excluirSaida(id) {
   if (!confirm('Confirma excluir esta saída?')) return;
   try {
-    await apiPost('deleteSaida', { id });
+    await apiAction('deleteSaida', id);
     showToast('Saída excluída!', 'success');
     loadSaidas();
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
@@ -1471,7 +1483,7 @@ async function salvarParede() {
 async function excluirParede(id) {
   if (!confirm('Confirma excluir esta parede?')) return;
   try {
-    await apiPost('deleteParede', { id });
+    await apiAction('deleteParede', id);
     showToast('Parede excluída!', 'success');
     loadParedes();
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
@@ -1534,7 +1546,7 @@ async function salvarRevestimento() {
 async function excluirRevestimento(id) {
   if (!confirm('Confirma excluir este revestimento?')) return;
   try {
-    await apiPost('deleteRevestimento', { id });
+    await apiAction('deleteRevestimento', id);
     showToast('Excluído!', 'success');
     loadRevestimentos();
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
@@ -1703,7 +1715,11 @@ function renderPersonalizar(d) {
 async function confirmarSaidaPersonalizar(id) {
   if (!confirm('Confirma baixar estes materiais do estoque?')) return;
   try {
-    await apiPost('confirmarSaida', { id });
+    const params = new URLSearchParams({ action: 'confirmarSaida', id: id });
+    const r = await fetch(SCRIPT_URL + '?' + params, { redirect: 'follow' });
+    const text = await r.text();
+    const json = JSON.parse(text);
+    if (json.error) throw new Error(json.error);
     showToast('Estoque atualizado!', 'success');
     loadPersonalizar();
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
@@ -1711,7 +1727,7 @@ async function confirmarSaidaPersonalizar(id) {
 async function excluirPersonalizar(id) {
   if (!confirm('Excluir esta personalização?')) return;
   try {
-    await apiPost('deletePersonalizar', { id });
+    await apiAction('deletePersonalizar', id);
     showToast('Excluído!', 'success');
     loadPersonalizar();
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
