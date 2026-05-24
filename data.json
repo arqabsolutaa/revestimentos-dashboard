@@ -176,7 +176,7 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "919.5599999999998",
+      "estoque_m2": "929.2499999999999",
       "popularidade": "4",
       "criado_em": ""
     },
@@ -1780,19 +1780,6 @@
     }
   ],
   "saidas": [
-    {
-      "id": "id_1779585653288_8pfsr",
-      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Dansk Cement White Nat Ret",
-      "codigo_rev": "10",
-      "obra": "11",
-      "local": "Personalizar",
-      "apto": "11",
-      "quantidade_m2": "9.69",
-      "destino": "uso",
-      "obs": "Via Personalizar - A VENDA",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
     {
       "id": "id_1779585654508_cz7oz",
       "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
