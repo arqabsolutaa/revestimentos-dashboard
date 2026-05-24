@@ -1383,7 +1383,7 @@
       "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
-      "id": "1",
+      "id": "2",
       "apartamento": "11",
       "cliente": "A VENDA",
       "local": "Banho 01 ",
@@ -1395,7 +1395,7 @@
       "criado_em": ""
     },
     {
-      "id": "1",
+      "id": "3",
       "apartamento": "11",
       "cliente": "A VENDA",
       "local": "Banho 01 ",
@@ -1407,7 +1407,7 @@
       "criado_em": ""
     },
     {
-      "id": "1",
+      "id": "4",
       "apartamento": "11",
       "cliente": "A VENDA",
       "local": "Banho 01 ",
@@ -1419,7 +1419,7 @@
       "criado_em": ""
     },
     {
-      "id": "1",
+      "id": "5",
       "apartamento": "11",
       "cliente": "A VENDA",
       "local": "Banho 01 ",
@@ -1431,7 +1431,7 @@
       "criado_em": ""
     },
     {
-      "id": "2",
+      "id": "6",
       "apartamento": "12",
       "cliente": "Junior (Filho do Cegonheiro Master)",
       "local": "",
@@ -1443,7 +1443,7 @@
       "criado_em": ""
     },
     {
-      "id": "3",
+      "id": "7",
       "apartamento": "21",
       "cliente": "A VENDA",
       "local": "",
@@ -1455,7 +1455,7 @@
       "criado_em": ""
     },
     {
-      "id": "4",
+      "id": "8",
       "apartamento": "22",
       "cliente": "A VENDA",
       "local": "",
@@ -1467,7 +1467,7 @@
       "criado_em": ""
     },
     {
-      "id": "5",
+      "id": "9",
       "apartamento": "31",
       "cliente": "Therezinha e Daniel",
       "local": "",
@@ -1479,7 +1479,7 @@
       "criado_em": ""
     },
     {
-      "id": "6",
+      "id": "10",
       "apartamento": "32",
       "cliente": "Raissa",
       "local": "",
@@ -1491,7 +1491,7 @@
       "criado_em": ""
     },
     {
-      "id": "7",
+      "id": "11",
       "apartamento": "41",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -1503,7 +1503,7 @@
       "criado_em": ""
     },
     {
-      "id": "8",
+      "id": "12",
       "apartamento": "42",
       "cliente": "Caio e Claudia",
       "local": "",
@@ -1515,7 +1515,7 @@
       "criado_em": ""
     },
     {
-      "id": "9",
+      "id": "13",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "",
@@ -1527,7 +1527,7 @@
       "criado_em": ""
     },
     {
-      "id": "10",
+      "id": "14",
       "apartamento": "52",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -1539,7 +1539,7 @@
       "criado_em": ""
     },
     {
-      "id": "11",
+      "id": "15",
       "apartamento": "61",
       "cliente": "Edson e Patricia (Raridade ADM)",
       "local": "",
@@ -1551,7 +1551,7 @@
       "criado_em": ""
     },
     {
-      "id": "12",
+      "id": "16",
       "apartamento": "62",
       "cliente": "Jadir",
       "local": "",
@@ -1563,7 +1563,7 @@
       "criado_em": ""
     },
     {
-      "id": "13",
+      "id": "17",
       "apartamento": "71",
       "cliente": "Alexandre Morassi",
       "local": "",
@@ -1575,7 +1575,7 @@
       "criado_em": ""
     },
     {
-      "id": "14",
+      "id": "18",
       "apartamento": "72",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -1587,7 +1587,7 @@
       "criado_em": ""
     },
     {
-      "id": "15",
+      "id": "19",
       "apartamento": "81",
       "cliente": "Bruno - Filho do Sr. Vitor",
       "local": "",
@@ -1599,7 +1599,7 @@
       "criado_em": ""
     },
     {
-      "id": "16",
+      "id": "20",
       "apartamento": "82",
       "cliente": "Leonardo - Filho do Sr. Vitor",
       "local": "",
@@ -1611,7 +1611,7 @@
       "criado_em": ""
     },
     {
-      "id": "17",
+      "id": "21",
       "apartamento": "91",
       "cliente": "Alexandre Tarifa e Ana Paula",
       "local": "",
@@ -1623,7 +1623,7 @@
       "criado_em": ""
     },
     {
-      "id": "18",
+      "id": "22",
       "apartamento": "92",
       "cliente": "Anderson Nilo e Fabricia",
       "local": "",
@@ -1635,7 +1635,7 @@
       "criado_em": ""
     },
     {
-      "id": "19",
+      "id": "23",
       "apartamento": "101",
       "cliente": "Leticia e Gerson",
       "local": "",
@@ -1647,7 +1647,7 @@
       "criado_em": ""
     },
     {
-      "id": "20",
+      "id": "24",
       "apartamento": "102",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -1659,7 +1659,7 @@
       "criado_em": ""
     },
     {
-      "id": "21",
+      "id": "25",
       "apartamento": "111",
       "cliente": "Marcos Alves - Cegonheiro",
       "local": "",
@@ -1671,7 +1671,7 @@
       "criado_em": ""
     },
     {
-      "id": "22",
+      "id": "26",
       "apartamento": "112",
       "cliente": "Mauricio Munhoz - Cegonheiro",
       "local": "",
@@ -1683,7 +1683,7 @@
       "criado_em": ""
     },
     {
-      "id": "23",
+      "id": "27",
       "apartamento": "121",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -1695,7 +1695,7 @@
       "criado_em": ""
     },
     {
-      "id": "24",
+      "id": "28",
       "apartamento": "122",
       "cliente": "Michel Padaria",
       "local": "",
@@ -1707,7 +1707,7 @@
       "criado_em": ""
     },
     {
-      "id": "25",
+      "id": "29",
       "apartamento": "131",
       "cliente": "A VENDA",
       "local": "",
@@ -1719,7 +1719,7 @@
       "criado_em": ""
     },
     {
-      "id": "26",
+      "id": "30",
       "apartamento": "132",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -1731,7 +1731,7 @@
       "criado_em": ""
     },
     {
-      "id": "27",
+      "id": "31",
       "apartamento": "141",
       "cliente": "Fabio e Eliana",
       "local": "",
@@ -1743,7 +1743,7 @@
       "criado_em": ""
     },
     {
-      "id": "28",
+      "id": "32",
       "apartamento": "142",
       "cliente": "Alexandre Meira",
       "local": "",
@@ -1755,7 +1755,7 @@
       "criado_em": ""
     },
     {
-      "id": "29",
+      "id": "33",
       "apartamento": "151",
       "cliente": "Luiz Roberto",
       "local": "",
@@ -1767,7 +1767,7 @@
       "criado_em": ""
     },
     {
-      "id": "30",
+      "id": "34",
       "apartamento": "152",
       "cliente": "A VENDA",
       "local": "",
@@ -1788,6 +1788,16 @@
       "empresa": "Absoluta",
       "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"1\":{\"m2\":0,\"piso\":\"11\"}}",
+      "status": "pendente",
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779583693795_wkocp",
+      "ap": "11",
+      "cliente": "A VENDA",
+      "empresa": "Absoluta",
+      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.81,\"piso\":\"11\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"11\"},\"11-Banho 01-C-2\":{\"m2\":7.39,\"piso\":\"11\"},\"11-Banho 01-D-3\":{\"m2\":9.69,\"piso\":\"10\"},\"11-Banho 01-E-4\":{\"m2\":11.98,\"piso\":\"11\"}}",
       "status": "pendente",
       "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
