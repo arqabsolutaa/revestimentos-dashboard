@@ -32,8 +32,8 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "217.8",
-      "popularidade": "",
+      "estoque_m2": "0",
+      "popularidade": "1",
       "criado_em": ""
     },
     {
@@ -1779,7 +1779,21 @@
       "criado_em": ""
     }
   ],
-  "saidas": [],
+  "saidas": [
+    {
+      "id": "id_1779636380885_v6upj",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Lombarda Viva Sabbia Nat Ret",
+      "codigo_rev": "9002",
+      "obra": "Vista Park",
+      "local": "Completo",
+      "apto": "101",
+      "quantidade_m2": "217.8",
+      "destino": "uso",
+      "obs": "Novo Cliente",
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    }
+  ],
   "personalizar": [
     {
       "id": "id_1779635980650_zbzz1",
