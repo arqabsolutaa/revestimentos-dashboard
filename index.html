@@ -1050,23 +1050,20 @@ body.mobile-mode #main{padding-bottom:72px}
             <span style="font-size:16px;font-weight:500;color:var(--text2)" id="calc-total-valor">R$ 0,00</span>
           </div>
         </div>
+        <div id="calc-desconto-box" style="display:none;margin-top:10px;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span style="font-size:12px;font-weight:500;color:var(--text2)">Desconto:</span>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input type="number" id="calc-desconto-pct" min="0" max="100" step="0.5" placeholder="%" style="width:64px;padding:5px 8px;border:1px solid var(--border2);border-radius:4px;font-size:12px;background:var(--surface);color:var(--text)" oninput="atualizarDesconto()">
+              <span style="font-size:12px;color:var(--text3)">%</span>
+              <span style="font-size:13px;font-weight:500;color:var(--danger)" id="calc-desconto-val"></span>
+            </div>
+            <span style="font-size:14px;font-weight:600;color:var(--accent2)" id="calc-total-final"></span>
+          </div>
+        </div>
       </div>
     </div>
-      <!-- Forma de pagamento -->
-      <div id="calc-pagamento-box" style="display:none;padding:12px 24px;border-top:1px solid var(--border);background:var(--surface2)">
-        <p style="font-size:11px;font-weight:500;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">Forma de Pagamento</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap" id="pagamento-opcoes">
-          <button class="pgto-btn active" onclick="selecionarPagamento(this,'avista')" data-tipo="avista">À Vista</button>
-          <button class="pgto-btn" onclick="selecionarPagamento(this,'pix')" data-tipo="pix">PIX</button>
-          <button class="pgto-btn" onclick="selecionarPagamento(this,'debito')" data-tipo="debito">Cartão Débito</button>
-          <button class="pgto-btn" onclick="selecionarPagamento(this,'credito2')" data-tipo="credito2">Crédito 2x (+2%)</button>
-          <button class="pgto-btn" onclick="selecionarPagamento(this,'credito3')" data-tipo="credito3">Crédito 3x (+3%)</button>
-          <button class="pgto-btn" onclick="selecionarPagamento(this,'credito4')" data-tipo="credito4">Crédito 4x (+4%)</button>
-          <button class="pgto-btn" onclick="selecionarPagamento(this,'credito5')" data-tipo="credito5">Crédito 5x (+5%)</button>
-          <button class="pgto-btn" onclick="selecionarPagamento(this,'credito6')" data-tipo="credito6">Crédito 6x (+6%)</button>
-        </div>
-        <p id="calc-valor-parcela" style="font-size:13px;color:var(--accent2);font-weight:500;margin-top:8px"></p>
-      </div>
+
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="fecharModal('modal-calculo')">Fechar</button>
       <button class="btn btn-secondary" id="calc-btn-salvar" onclick="salvarSelecao()" style="display:none">Salvar em Personalizar</button>
@@ -1178,6 +1175,25 @@ function toggleConfig() {
   const aberto = dropdown.style.display !== 'none';
   dropdown.style.display = aberto ? 'none' : 'block';
   arrow.style.transform = aberto ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+
+let calcDesconto = 0;
+
+function atualizarDesconto() {
+  const pct = parseFloat(document.getElementById('calc-desconto-pct')?.value || 0);
+  calcDesconto = pct;
+  let totalValor = 0;
+  for (const v of Object.values(calcSelecoes)) {
+    const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
+    totalValor += getPreco(rev) * (parseFloat(v.m2)||0);
+  }
+  const descVal = totalValor * (pct / 100);
+  const totalFinal = totalValor - descVal;
+  const el = document.getElementById('calc-desconto-val');
+  const elFinal = document.getElementById('calc-total-final');
+  if (el) el.textContent = pct > 0 ? '- R$ ' + descVal.toLocaleString('pt-BR',{minimumFractionDigits:2}) : '';
+  if (elFinal) elFinal.textContent = pct > 0 ? 'Total: R$ ' + totalFinal.toLocaleString('pt-BR',{minimumFractionDigits:2}) : '';
 }
 
 let calcPagamento = 'avista';
@@ -1360,7 +1376,40 @@ async function testarConexao() {
 
 
 
-async function exportarEstoqueExcel() {
+async 
+function toggleUltimasSaidas() {
+  const painel = document.getElementById('painel-ultimas-saidas');
+  const btn = document.getElementById('btn-ultimas-saidas');
+  const aberto = painel.style.display !== 'none';
+  painel.style.display = aberto ? 'none' : 'block';
+  btn.style.background = aberto ? '' : 'var(--accent-dark)';
+  btn.style.color = aberto ? '' : 'white';
+  if (!aberto) renderUltimasSaidas();
+}
+
+function renderUltimasSaidas() {
+  const lista = document.getElementById('ultimas-saidas-lista');
+  if (!lista) return;
+  const ultimas = dadosSaidas.slice(0, 8);
+  if (!ultimas.length) {
+    lista.innerHTML = '<div class="empty-state"><strong>Nenhuma saída registrada</strong></div>';
+    return;
+  }
+  lista.innerHTML = ultimas.map(s => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:3px;height:36px;background:var(--accent);border-radius:2px;flex-shrink:0"></div>
+        <div>
+          <p style="font-weight:500;font-size:13px">${s.revestimento||'—'}</p>
+          <p style="font-size:11px;color:var(--text3)">${s.local||'—'} ${s.apto ? '· Apto '+s.apto : ''} · ${s.data||'—'}</p>
+        </div>
+      </div>
+      <span class="badge badge-warn" style="flex-shrink:0">${parseFloat(s.quantidade_m2||0).toFixed(2)} m²</span>
+    </div>
+  `).join('');
+}
+
+function exportarEstoqueExcel() {
   if (!dadosEstoque.length) {
     try { dadosEstoque = (await lerDados()).revestimentos || []; } catch(e) {}
   }
@@ -1649,6 +1698,7 @@ async function loadEstoque() {
     const dados = await lerDados();
     dadosEstoque = dados.revestimentos || [];
     renderEstoque(dadosEstoque);
+    if (document.getElementById('painel-ultimas-saidas')?.style.display !== 'none') renderUltimasSaidas();
     renderStatsEstoque(dadosEstoque);
     popularFiltroObra(dadosEstoque, 'filtro-estoque-obra');
   } catch(e) { document.getElementById('estoque-tbody').innerHTML = `<tr><td colspan="8"><div class="empty-state"><strong>Erro ao carregar</strong><p>${e.message}</p></div></td></tr>`; }
@@ -2267,7 +2317,7 @@ function gerarPDF() {
   const paredesAp = dadosParedes.filter(p => p.apartamento === calcApAtual);
   const cliente = paredesAp[0]?.cliente || '—';
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA) || 'Empresa';
-  gerarPDFDados({ ap: calcApAtual, cliente, empresa, selecoes: calcSelecoes, pagamento: calcPagamento });
+  gerarPDFDados({ ap: calcApAtual, cliente, empresa, selecoes: calcSelecoes, pagamento: calcPagamento, desconto: calcDesconto });
 }
 function gerarPDFPersonalizar(id) {
   const p = dadosPersonalizar.find(x => x.id === id);
@@ -2276,7 +2326,253 @@ function gerarPDFPersonalizar(id) {
   // Perguntar forma de pagamento
   abrirModalPagamentoPDF({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Empresa', selecoes, data: p.data });
 }
-function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento }) {
+function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, desconto }) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const preto = [14, 14, 14];
+  const dourado = [201, 168, 76];
+  const bege = [245, 243, 238];
+  const cinza = [120, 120, 120];
+  const cinzaClaro = [200, 200, 200];
+
+  // Data formatada
+  let dataStr = new Date().toLocaleDateString('pt-BR');
+  if (data && !data.includes('GMT') && !data.includes('T')) dataStr = data;
+  else if (data && (data.includes('GMT') || data.includes('T'))) {
+    try { dataStr = new Date(data).toLocaleDateString('pt-BR'); } catch(e) {}
+  }
+
+  // ===================== HEADER =====================
+  // Fundo escuro header
+  doc.setFillColor(...preto);
+  doc.rect(0, 0, 210, 58, 'F');
+
+  // Linha dourada diagonal simulada — retangulo inclinado
+  doc.setFillColor(...dourado);
+  doc.rect(0, 56, 210, 0.8, 'F');
+
+  // Logo ABSOLUTA desenhada
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22); doc.setFont('helvetica', 'bold');
+  doc.text('ABSOLUTA', 12, 26);
+  // Triângulo dourado no A
+  doc.setFillColor(...dourado);
+  doc.triangle(12, 28, 17.5, 28, 14.75, 22, 'F');
+  // Subtítulo logo
+  doc.setFontSize(6); doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...cinzaClaro);
+  doc.setCharSpace(1.5);
+  doc.text('CONSTRUTORA E INCORPORADORA', 12, 32);
+  doc.setCharSpace(0);
+
+  // Separador vertical dourado
+  doc.setFillColor(...dourado);
+  doc.rect(95, 10, 0.5, 38, 'F');
+
+  // Centro — PERSONALIZAÇÃO
+  doc.setTextColor(...dourado);
+  doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+  doc.setCharSpace(3);
+  doc.text('PERSONALIZAÇÃO', 110, 20, {align:'left'});
+  doc.setCharSpace(0);
+  doc.setFontSize(13); doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255,255,255);
+  doc.text('DE REVESTIMENTOS', 110, 29);
+  doc.setFontSize(6.5); doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...dourado);
+  doc.setCharSpace(2);
+  doc.text('ESSENCE RESIDENCE', 110, 37);
+  doc.setCharSpace(0);
+
+  // Data
+  doc.setTextColor(150,150,150); doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+  doc.text(dataStr, 198, 12, {align:'right'});
+
+  // ===================== INFO CLIENTE =====================
+  doc.setFillColor(250, 249, 246);
+  doc.rect(0, 58.8, 210, 30, 'F');
+  doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.3);
+
+  // 3 colunas com separadores
+  const cols = [
+    { label: 'CLIENTE', value: cliente||'—', x: 20 },
+    { label: 'UNIDADE', value: 'Apto ' + (ap||'—'), x: 85 },
+    { label: 'EMPREENDIMENTO', value: 'Essence Residence', x: 140 }
+  ];
+  cols.forEach((col, i) => {
+    doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+    doc.setCharSpace(1);
+    doc.text(col.label, col.x, 67);
+    doc.setCharSpace(0);
+    doc.setTextColor(...preto); doc.setFontSize(11); doc.setFont('helvetica','bold');
+    doc.text(col.value, col.x, 77);
+    if (i < 2) {
+      doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.3);
+      doc.line(col.x + 50, 62, col.x + 50, 84);
+    }
+  });
+  doc.setDrawColor(...dourado); doc.setLineWidth(0.5);
+  doc.line(14, 88, 196, 88);
+
+  // ===================== TABELA CABEÇALHO =====================
+  let y = 96;
+  doc.setFillColor(...preto);
+  doc.rect(14, y, 182, 10, 'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(7.5); doc.setFont('helvetica','bold');
+  doc.setCharSpace(1);
+  doc.text('REVESTIMENTO', 20, y + 7);
+  doc.text('TAMANHO', 110, y + 7);
+  doc.text('M²', 152, y + 7);
+  doc.text('VALOR', 195, y + 7, {align:'right'});
+  doc.setCharSpace(0);
+  y += 14;
+
+  // ===================== ITENS =====================
+  let totalM2 = 0, totalValor = 0;
+  let linhaAlterna = false;
+
+  for (const [key, v] of Object.entries(selecoes)) {
+    if (y > 240) {
+      _pdfFooter(doc, preto, dourado, cinzaClaro, empresa, ap);
+      doc.addPage(); y = 20;
+    }
+    const rev = v.piso ? dadosRevestimentos.find(r => r.id === v.piso || r.codigo === v.piso || String(r.id) === String(v.piso)) : null;
+    const pisoNome = rev ? rev.nome : (v.piso && isNaN(v.piso) ? v.piso : 'Não definido');
+    const tamanho = rev?.tamanho || '—';
+    const lote = rev?.lote || '—';
+    const m2total = parseFloat(v.m2)||0;
+    const preco = rev ? (TABELA_PRECOS[rev.codigo]||0) : 0;
+    const valorItem = preco * m2total;
+    const semEstoque = rev && (parseFloat(rev.estoque_m2)||0) <= 0;
+
+    // Linha de fundo
+    doc.setFillColor(linhaAlterna ? 248 : 255, linhaAlterna ? 247 : 255, linhaAlterna ? 244 : 255);
+    doc.rect(14, y-2, 182, 20, 'F');
+    linhaAlterna = !linhaAlterna;
+
+    // Borda esquerda dourada
+    doc.setFillColor(...(semEstoque ? [176,58,46] : dourado));
+    doc.rect(14, y-2, 2.5, 20, 'F');
+
+    // Foto do revestimento (se tiver)
+    if (rev?.imagem) {
+      try {
+        doc.addImage(rev.imagem, 'JPEG', 20, y-1, 14, 14);
+      } catch(e) {}
+    }
+
+    const xNome = rev?.imagem ? 38 : 20;
+    doc.setTextColor(...preto); doc.setFontSize(9.5); doc.setFont('helvetica','bold');
+    doc.text(pisoNome, xNome, y + 5);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...cinza);
+    doc.text('Lote: ' + lote + '  |  R$ ' + preco.toFixed(2) + '/m²' + (semEstoque ? '  ⚠ SEM ESTOQUE' : ''), xNome, y + 11);
+
+    doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica','normal');
+    doc.text(tamanho, 110, y + 7);
+    doc.text(m2total.toFixed(2) + ' m²', 152, y + 7);
+    doc.setFont('helvetica','bold'); doc.setFontSize(10);
+    doc.setTextColor(preco > 0 ? dourado[0] : cinza[0], preco > 0 ? dourado[1] : cinza[1], preco > 0 ? dourado[2] : cinza[2]);
+    doc.text(preco > 0 ? 'R$ ' + valorItem.toLocaleString('pt-BR',{minimumFractionDigits:2}) : '—', 195, y + 7, {align:'right'});
+
+    doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2);
+    doc.line(14, y+18, 196, y+18);
+
+    totalM2 += m2total;
+    totalValor += valorItem;
+    y += 22;
+  }
+
+  // ===================== DESCONTO =====================
+  const descontoPct = parseFloat(desconto)||0;
+  const descontoVal = totalValor * (descontoPct/100);
+  const totalFinal = totalValor - descontoVal;
+
+  if (descontoPct > 0) {
+    y += 4;
+    if (y > 255) { _pdfFooter(doc, preto, dourado, cinzaClaro, empresa, ap); doc.addPage(); y = 20; }
+    doc.setFillColor(252, 249, 240);
+    doc.rect(14, y, 182, 13, 'F');
+    doc.setFillColor(...dourado); doc.rect(14, y, 2.5, 13, 'F');
+    doc.setTextColor(...cinza); doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+    doc.text('DESCONTO APLICADO (' + descontoPct + '%)', 20, y + 5);
+    doc.setTextColor(176,58,46); doc.setFontSize(9); doc.setFont('helvetica','bold');
+    doc.text('- R$ ' + descontoVal.toLocaleString('pt-BR',{minimumFractionDigits:2}), 195, y + 9, {align:'right'});
+    y += 17;
+  }
+
+  // ===================== PAGAMENTO =====================
+  const pgLabels = {avista:'À Vista',pix:'PIX',debito:'Cartão Débito',credito2:'Crédito 2x',credito3:'Crédito 3x',credito4:'Crédito 4x',credito5:'Crédito 5x',credito6:'Crédito 6x'};
+  let totalValorFinalPDF = totalFinal;
+  if (pagamento && pagamento.startsWith('credito')) {
+    totalValorFinalPDF = calcularTotalComPagamento(totalFinal, pagamento).total;
+  }
+  if (pagamento) {
+    y += 2;
+    if (y > 258) { _pdfFooter(doc, preto, dourado, cinzaClaro, empresa, ap); doc.addPage(); y = 20; }
+    const pgInfo = calcularTotalComPagamento(totalFinal, pagamento);
+    const fmtPDF = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2});
+    let pgTexto = pgLabels[pagamento] || pagamento;
+    if (pgInfo.parcelas > 1) {
+      const vp = pgInfo.total / pgInfo.parcelas;
+      pgTexto += ' · ' + pgInfo.parcelas + 'x de ' + fmtPDF(vp) + ' (total ' + fmtPDF(pgInfo.total) + ')';
+      totalValorFinalPDF = pgInfo.total;
+    }
+    doc.setFillColor(248, 246, 238);
+    doc.rect(14, y, 182, 14, 'F');
+    doc.setFillColor(...dourado); doc.rect(14, y, 2.5, 14, 'F');
+    doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+    doc.setCharSpace(1);
+    doc.text('FORMA DE PAGAMENTO', 20, y + 5);
+    doc.setCharSpace(0);
+    doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica','bold');
+    doc.text(pgTexto, 20, y + 11);
+    y += 18;
+  }
+
+  // ===================== TOTAL GERAL =====================
+  y += 4;
+  if (y > 262) { _pdfFooter(doc, preto, dourado, cinzaClaro, empresa, ap); doc.addPage(); y = 20; }
+  doc.setFillColor(...preto);
+  doc.rect(14, y, 182, 22, 'F');
+  doc.setFillColor(...dourado); doc.rect(14, y, 3, 22, 'F');
+  doc.setTextColor(160,160,160); doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+  doc.setCharSpace(1.5);
+  doc.text('TOTAL GERAL', 22, y + 8);
+  doc.setCharSpace(0);
+  doc.setTextColor(180,180,180); doc.setFontSize(7);
+  doc.text('Empreendimento Essence Residence · Apto ' + ap, 22, y + 15);
+  doc.setTextColor(...cinzaClaro); doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.text(totalM2.toFixed(2) + ' m²', 148, y + 14, {align:'right'});
+  doc.setTextColor(...dourado); doc.setFontSize(15); doc.setFont('helvetica','bold');
+  doc.text('R$ ' + totalValorFinalPDF.toLocaleString('pt-BR',{minimumFractionDigits:2}), 194, y + 15, {align:'right'});
+
+  // ===================== FOOTER =====================
+  const pages = doc.getNumberOfPages();
+  for (let i = 1; i <= pages; i++) {
+    doc.setPage(i);
+    _pdfFooter(doc, preto, dourado, cinzaClaro, empresa, ap, i, pages, totalM2);
+  }
+
+  doc.save('Absoluta-Ap' + ap + '-' + (cliente||'').replace(/\s+/g,'-') + '.pdf');
+  salvarOrcamentoHistorico({ ap, cliente, empresa, selecoes, data: dataStr, pagamento, desconto: descontoPct });
+  showToast('PDF gerado!', 'success');
+}
+
+function _pdfFooter(doc, preto, dourado, cinzaClaro, empresa, ap, page, pages, totalM2) {
+  doc.setFillColor(...preto);
+  doc.rect(0, 282, 210, 15, 'F');
+  doc.setFillColor(...dourado); doc.rect(0, 282, 3, 15, 'F');
+  doc.setTextColor(160,160,160); doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+  doc.text('Empreendimento Essence Residence · Apto ' + ap, 8, 291);
+  if (totalM2) {
+    doc.setTextColor(...cinzaClaro);
+    doc.text(totalM2.toFixed(2) + ' m²', 130, 291);
+  }
+  if (page && pages) {
+    doc.setTextColor(120,120,120);
+    doc.text('Pág. ' + page + ' / ' + pages, 198, 291, {align:'right'});
+  }
+}) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   // Cores Absoluta
