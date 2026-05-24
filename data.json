@@ -248,8 +248,8 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "348.48",
-      "popularidade": "",
+      "estoque_m2": "343.38",
+      "popularidade": "1",
       "criado_em": ""
     },
     {
@@ -1779,7 +1779,21 @@
       "criado_em": ""
     }
   ],
-  "saidas": [],
+  "saidas": [
+    {
+      "id": "id_1779594705876_zniji",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Zesty Off White Nat Ret",
+      "codigo_rev": "14",
+      "obra": "51",
+      "local": "Personalizar",
+      "apto": "51",
+      "quantidade_m2": "5.1",
+      "destino": "uso",
+      "obs": "Via Personalizar - Danilo",
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    }
+  ],
   "personalizar": [
     {
       "id": "id_1779584019554_n1zsd",
@@ -1798,7 +1812,7 @@
       "empresa": "Absoluta",
       "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"51-Banho 01-A-0\":{\"m2\":5.1,\"piso\":\"14\"}}",
-      "status": "pendente",
+      "status": "confirmado",
       "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
