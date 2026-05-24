@@ -1500,7 +1500,8 @@ async function salvarNovaParede() {
 
     fecharModal('modal-nova-parede');
     // Recarregar as paredes do apartamento no modal
-    selecionarApartamento(calcApAtual);
+    document.getElementById('calc-ap-select').value = calcApAtual;
+    selecionarAp();
     showToast('Parede adicionada!', 'success');
   } catch(e) {
     showToast('Erro ao salvar: ' + e.message, 'error');
