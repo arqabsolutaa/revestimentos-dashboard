@@ -87,32 +87,34 @@ input,select,textarea{font-family:'Inter',sans-serif;outline:none}
 #home-screen.active{display:flex}
 .home-center{text-align:center;max-width:600px;padding:40px 24px;display:flex;flex-direction:column;align-items:center}
 .home-eyebrow{font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
-.home-title{font-size:52px;font-weight:300;letter-spacing:-1px;line-height:1.05;color:var(--text);margin-bottom:12px;font-family:'Lavish','Cormorant Garamond',serif;text-align:center}
+.home-title{font-size:40px;font-weight:300;letter-spacing:-0.5px;line-height:1.05;color:var(--text);margin-bottom:12px;font-family:'Lavish','Cormorant Garamond',serif;text-align:center;white-space:nowrap}
 .home-title strong{font-weight:600}
 .home-sub{font-size:11px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-bottom:52px;font-weight:400;font-family:'Inter',sans-serif;text-align:center}
 .home-btn{
   display:inline-flex;align-items:stretch;
-  background:transparent;border:1px solid var(--border2);
-  border-radius:2px;overflow:hidden;position:relative;
-  transition:border-color 0.25s;cursor:pointer;
+  background:var(--accent-dark);
+  border:none;border-radius:3px;overflow:hidden;
+  position:relative;cursor:pointer;
+  box-shadow:0 4px 24px rgba(14,14,14,0.18);
+  transition:all 0.3s ease;
 }
-.home-btn:hover{border-color:var(--accent-dark)}
-.home-btn:hover .home-btn-inner{background:var(--accent-dark);color:white}
+.home-btn:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(14,14,14,0.28)}
 .home-btn:hover .home-btn-arrow{background:var(--accent);color:#111}
 .home-btn-inner{
-  display:flex;align-items:center;gap:10px;
-  padding:18px 32px;
-  font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;
-  color:var(--text);background:transparent;
+  display:flex;align-items:center;gap:12px;
+  padding:20px 36px;
+  font-size:11px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;
+  color:white;background:transparent;
   transition:all 0.25s;
 }
 .home-btn-inner svg{width:14px;height:14px;flex-shrink:0}
 .home-btn-arrow{
   display:flex;align-items:center;justify-content:center;
-  padding:18px 22px;
-  background:var(--accent-dark);color:white;
-  font-size:18px;font-weight:300;
-  transition:all 0.25s;
+  padding:20px 24px;
+  background:rgba(255,255,255,0.1);color:white;
+  font-size:20px;
+  transition:all 0.3s ease;
+  border-left:1px solid rgba(255,255,255,0.12);
 }
 
 /* PAGE HEADER */
@@ -479,12 +481,11 @@ body.mobile-mode #main{padding-bottom:72px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       Saídas
     </button>
-    <div class="nav-label">Configurar</div>
-    <button class="nav-btn" onclick="showScreen('paredes')" id="nav-paredes">
+    <button class="nav-btn" onclick="showScreen('paredes')" id="nav-paredes" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
       Config. de Paredes
     </button>
-    <button class="nav-btn" onclick="showScreen('revestimentos')" id="nav-revestimentos">
+    <button class="nav-btn" onclick="showScreen('revestimentos')" id="nav-revestimentos" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       Dados dos Revestimentos
     </button>
@@ -497,9 +498,17 @@ body.mobile-mode #main{padding-bottom:72px}
         <svg id="config-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12" style="pointer-events:none;transition:transform 0.2s"><polyline points="18 15 12 9 6 15"/></svg>
       </button>
       <div id="config-dropdown" style="display:none;margin-top:4px">
-        <button class="nav-btn" onclick="showScreen('config');document.getElementById('nav-config').classList.add('active')" id="nav-config" style="padding-left:20px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="pointer-events:none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          Configurações
+        <button class="nav-btn" onclick="showScreen('paredes')" style="padding-left:20px;font-size:11px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="pointer-events:none"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+          Config. de Paredes
+        </button>
+        <button class="nav-btn" onclick="showScreen('revestimentos')" style="padding-left:20px;font-size:11px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="pointer-events:none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          Dados dos Revestimentos
+        </button>
+        <button class="nav-btn" onclick="showScreen('config');document.getElementById('nav-config').classList.add('active')" id="nav-config" style="padding-left:20px;font-size:11px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Configurações do Sistema
         </button>
       </div>
     </div>
