@@ -176,8 +176,8 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "958.32",
-      "popularidade": "",
+      "estoque_m2": "948.63",
+      "popularidade": "1",
       "criado_em": ""
     },
     {
@@ -194,8 +194,8 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "958.32",
-      "popularidade": "",
+      "estoque_m2": "931.0400000000001",
+      "popularidade": "4",
       "criado_em": ""
     },
     {
@@ -1779,18 +1779,74 @@
       "criado_em": ""
     }
   ],
-  "saidas": [],
-  "personalizar": [
+  "saidas": [
     {
-      "id": "id_1779582452626_9gkkh",
-      "ap": "11",
-      "cliente": "A VENDA",
-      "empresa": "Absoluta",
+      "id": "id_1779585649296_cyrl8",
       "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "selecoes": "{\"1\":{\"m2\":0,\"piso\":\"11\"}}",
-      "status": "pendente",
+      "revestimento": "Oh!Take Mountain Nat Ret",
+      "codigo_rev": "11",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "2.81",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
       "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
+    {
+      "id": "id_1779585650657_xtjax",
+      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Oh!Take Mountain Nat Ret",
+      "codigo_rev": "11",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "5.1",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779585652086_6zniq",
+      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Oh!Take Mountain Nat Ret",
+      "codigo_rev": "11",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "7.39",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779585653288_8pfsr",
+      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Dansk Cement White Nat Ret",
+      "codigo_rev": "10",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "9.69",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779585654508_cz7oz",
+      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Oh!Take Mountain Nat Ret",
+      "codigo_rev": "11",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "11.98",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    }
+  ],
+  "personalizar": [
     {
       "id": "id_1779583693795_wkocp",
       "ap": "11",
@@ -1798,7 +1854,7 @@
       "empresa": "Absoluta",
       "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.81,\"piso\":\"11\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"11\"},\"11-Banho 01-C-2\":{\"m2\":7.39,\"piso\":\"11\"},\"11-Banho 01-D-3\":{\"m2\":9.69,\"piso\":\"10\"},\"11-Banho 01-E-4\":{\"m2\":11.98,\"piso\":\"11\"}}",
-      "status": "pendente",
+      "status": "confirmado",
       "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
