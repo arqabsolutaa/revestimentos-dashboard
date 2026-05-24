@@ -1053,44 +1053,49 @@ function showScreen(name) {
 }
 
 
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
+    const script = document.createElement('script');
+    const timeout = setTimeout(() => {
+      delete window[cb]; script.remove();
+      reject(new Error('Timeout'));
+    }, 15000);
+    window[cb] = (data) => {
+      clearTimeout(timeout); delete window[cb]; script.remove();
+      resolve(data);
+    };
+    script.onerror = () => {
+      clearTimeout(timeout); delete window[cb]; script.remove();
+      reject(new Error('Erro de rede'));
+    };
+    script.src = url + '&callback=' + cb;
+    document.head.appendChild(script);
+  });
+}
+
 async function apiAction(action, id) {
   const params = new URLSearchParams({ action, id });
-  const r = await fetch(SCRIPT_URL + '?' + params, { redirect: 'follow' });
-  const text = await r.text();
-  try {
-    const json = JSON.parse(text);
-    if (json.error) throw new Error(json.error);
-    return json.data;
-  } catch(e) { throw new Error('Erro: ' + e.message); }
+  const result = await jsonp(SCRIPT_URL + '?' + params);
+  if (result.error) throw new Error(result.error);
+  return result.data;
 }
 
 // ===================== API =====================
 async function api(action, data = {}) {
   if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
   const params = new URLSearchParams({ action, ...Object.fromEntries(Object.entries(data).map(([k,v]) => [k, typeof v === 'object' ? JSON.stringify(v) : v])) });
-  const r = await fetch(SCRIPT_URL + '?' + params, { redirect: 'follow' });
-  const text = await r.text();
-  try {
-    const json = JSON.parse(text);
-    if (json.error) throw new Error(json.error);
-    return json.data;
-  } catch(e) {
-    throw new Error('Resposta inválida do servidor');
-  }
+  const result = await jsonp(SCRIPT_URL + '?' + params);
+  if (result.error) throw new Error(result.error);
+  return result.data;
 }
 
 async function apiPost(action, data) {
   if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
   const params = new URLSearchParams({ action, dados: JSON.stringify(data) });
-  const r = await fetch(SCRIPT_URL + '?' + params, { redirect: 'follow' });
-  const text = await r.text();
-  try {
-    const json = JSON.parse(text);
-    if (json.error) throw new Error(json.error);
-    return json.data;
-  } catch(e) {
-    throw new Error('Resposta inválida do servidor');
-  }
+  const result = await jsonp(SCRIPT_URL + '?' + params);
+  if (result.error) throw new Error(result.error);
+  return result.data;
 }
 
 async function lerDados() {
@@ -1715,11 +1720,7 @@ function renderPersonalizar(d) {
 async function confirmarSaidaPersonalizar(id) {
   if (!confirm('Confirma baixar estes materiais do estoque?')) return;
   try {
-    const params = new URLSearchParams({ action: 'confirmarSaida', id: id });
-    const r = await fetch(SCRIPT_URL + '?' + params, { redirect: 'follow' });
-    const text = await r.text();
-    const json = JSON.parse(text);
-    if (json.error) throw new Error(json.error);
+    await apiAction('confirmarSaida', id);
     showToast('Estoque atualizado!', 'success');
     loadPersonalizar();
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
