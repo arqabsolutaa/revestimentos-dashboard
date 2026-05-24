@@ -266,7 +266,7 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "215.79000000000002",
+      "estoque_m2": "220.89000000000001",
       "popularidade": "4",
       "criado_em": ""
     },
@@ -1780,19 +1780,6 @@
     }
   ],
   "saidas": [
-    {
-      "id": "id_1779595126881_xsgwl",
-      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Folk Desert Nat Ret",
-      "codigo_rev": "15",
-      "obra": "11",
-      "local": "Personalizar",
-      "apto": "11",
-      "quantidade_m2": "5.1",
-      "destino": "uso",
-      "obs": "Via Personalizar - A VENDA",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
     {
       "id": "id_1779636033504_133pq",
       "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
