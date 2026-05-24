@@ -1820,9 +1820,17 @@ function popularFiltroLocal(d) {
   const locais = [...new Set(d.map(r => r.local).filter(Boolean))];
   sel.innerHTML = '<option value="">Todos os locais</option>' + locais.map(l => `<option value="${l}">${l}</option>`).join('');
 }
-function abrirModalSaida() {
+async function abrirModalSaida() {
   saidaItens = [];
   document.getElementById('saida-itens-lista').innerHTML = '';
+  // Garantir que os dados estejam carregados
+  if (!dadosRevestimentos.length && !dadosEstoque.length) {
+    try {
+      const dados = await lerDados();
+      dadosRevestimentos = dados.revestimentos || [];
+      dadosEstoque = dados.revestimentos || [];
+    } catch(e) {}
+  }
   abrirModal('modal-saida');
 }
 function adicionarItemSaida() {
