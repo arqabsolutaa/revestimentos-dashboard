@@ -1072,14 +1072,24 @@ body.mobile-mode #main{padding-bottom:72px}
             <span style="font-size:16px;font-weight:500;color:var(--text2)" id="calc-total-valor">R$ 0,00</span>
           </div>
         </div>
-        <div id="calc-desconto-box" style="display:none;margin-top:10px;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
+        <div id="calc-desconto-box" style="display:none;margin-top:10px;padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
+          <p style="font-size:11px;font-weight:500;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">Forma de Pagamento</p>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="pagamento-opcoes">
+            <button class="pgto-btn active" onclick="selecionarPagamento(this,'avista')">A Vista</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'pix')">PIX</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'debito')">Debito</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito2')">2x (+2%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito3')">3x (+3%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito4')">4x (+4%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito5')">5x (+5%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito6')">6x (+6%)</button>
+          </div>
+          <p id="calc-valor-parcela" style="font-size:12px;color:var(--accent2);font-weight:500;margin-bottom:12px"></p>
+          <p style="font-size:11px;font-weight:500;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">Desconto</p>
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            <span style="font-size:12px;font-weight:500;color:var(--text2)">Desconto:</span>
-            <div style="display:flex;align-items:center;gap:6px">
-              <input type="number" id="calc-desconto-pct" min="0" max="100" step="0.5" placeholder="%" style="width:64px;padding:5px 8px;border:1px solid var(--border2);border-radius:4px;font-size:12px;background:var(--surface);color:var(--text)" oninput="atualizarDesconto()">
-              <span style="font-size:12px;color:var(--text3)">%</span>
-              <span style="font-size:13px;font-weight:500;color:var(--danger)" id="calc-desconto-val"></span>
-            </div>
+            <input type="number" id="calc-desconto-pct" min="0" max="100" step="0.5" placeholder="0" style="width:64px;padding:5px 8px;border:1px solid var(--border2);border-radius:4px;font-size:12px;background:var(--surface);color:var(--text)" oninput="atualizarDesconto()">
+            <span style="font-size:12px;color:var(--text3)">%</span>
+            <span style="font-size:13px;font-weight:500;color:var(--danger)" id="calc-desconto-val"></span>
             <span style="font-size:14px;font-weight:600;color:var(--accent2)" id="calc-total-final"></span>
           </div>
         </div>
@@ -2375,9 +2385,9 @@ function atualizarResumo() {
   const temSelecao = Object.keys(calcSelecoes).length > 0;
   document.getElementById('calc-btn-salvar').style.display = temSelecao ? 'inline-flex' : 'none';
   document.getElementById('calc-btn-pdf').style.display = temSelecao ? 'inline-flex' : 'none';
-  const pgtoBox = document.getElementById('calc-pagamento-box');
+  const pgtoBox = document.getElementById('calc-desconto-box');
   if (pgtoBox) pgtoBox.style.display = temSelecao ? 'block' : 'none';
-  if (temSelecao) atualizarParcela();
+  if (temSelecao) { atualizarParcela(); atualizarDesconto(); }
 }
 async function salvarSelecao() {
   if (!calcApAtual) return;
