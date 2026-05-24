@@ -22,7 +22,7 @@
       "id": "2",
       "codigo": "9002",
       "nome": "Lombarda Viva Sabbia Nat Ret",
-      "imagem": "",
+      "imagem": "https://media.portobello.com.br/portobello-shop-209618-e-pietra-lombarda-lombarda-viva-sabbia-nat-90x90-ret-0.png?ims=660x0",
       "site": "",
       "m2_por_caixa": "2.42",
       "pecas_por_caixa": "",
@@ -40,7 +40,7 @@
       "id": "3",
       "codigo": "9003",
       "nome": "MS Barcelona Cristal Nat Ret",
-      "imagem": "",
+      "imagem": "https://media.portobello.com.br/portobello-shop-209540-e-ms-barcelona-ms-barcelona-cristal-ext-90x90-ret-0.png?ims=660x0",
       "site": "",
       "m2_por_caixa": "1.61",
       "pecas_por_caixa": "",
@@ -1380,7 +1380,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "2",
@@ -1786,10 +1786,10 @@
       "ap": "11",
       "cliente": "A VENDA",
       "empresa": "Absoluta",
-      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.81,\"piso\":\"\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"\"},\"11-Banho 01-D-3\":{\"m2\":9.69,\"piso\":\"\"}}",
       "status": "confirmado",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     }
   ]
 }
