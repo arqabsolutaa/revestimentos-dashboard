@@ -1027,12 +1027,15 @@ function setMode(mode) {
 window.onload = () => {
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA);
   if (empresa) {
-    document.getElementById('empresa-nome').textContent = empresa;
-    document.getElementById('empresa-input').value = empresa;
+    const el = document.getElementById('empresa-nome');
+    const inp = document.getElementById('empresa-input');
+    if (el) el.textContent = empresa;
+    if (inp) inp.value = empresa;
   }
-  if (SCRIPT_URL) document.getElementById('script-url-input').value = SCRIPT_URL;
-  // Define data padrão saida
-  document.getElementById('saida-data').valueAsDate = new Date();
+  const urlInput = document.getElementById('script-url-input');
+  if (urlInput) urlInput.value = SCRIPT_URL;
+  const dataInput = document.getElementById('saida-data');
+  if (dataInput) dataInput.valueAsDate = new Date();
 };
 
 // ===================== NAVEGAÇÃO =====================
