@@ -1374,13 +1374,13 @@
       "id": "1",
       "apartamento": "11",
       "cliente": "A VENDA",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
+      "local": "Banho 01 ",
+      "parede": "A",
+      "metro_linear": "1.1",
+      "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": ""
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "2",
@@ -1732,5 +1732,16 @@
     }
   ],
   "saidas": [],
-  "personalizar": []
+  "personalizar": [
+    {
+      "id": "id_1779582452626_9gkkh",
+      "ap": "11",
+      "cliente": "A VENDA",
+      "empresa": "Absoluta",
+      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "selecoes": "{\"1\":{\"m2\":0,\"piso\":\"11\"}}",
+      "status": "pendente",
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    }
+  ]
 }
