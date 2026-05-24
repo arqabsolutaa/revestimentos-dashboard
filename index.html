@@ -1409,7 +1409,7 @@ function renderUltimasSaidas() {
   `).join('');
 }
 
-function exportarEstoqueExcel() {
+async function exportarEstoqueExcel() {
   if (!dadosEstoque.length) {
     try { dadosEstoque = (await lerDados()).revestimentos || []; } catch(e) {}
   }
