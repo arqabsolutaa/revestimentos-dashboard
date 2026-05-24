@@ -1804,6 +1804,16 @@
       "selecoes": "{\"51-Banho 01-A-0\":{\"m2\":5.1,\"piso\":\"14\"}}",
       "status": "confirmado",
       "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779595068046_p8gl1",
+      "ap": "11",
+      "cliente": "A VENDA",
+      "empresa": "Absoluta",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.81,\"piso\":\"15\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"15\"}}",
+      "status": "pendente",
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ]
 }
