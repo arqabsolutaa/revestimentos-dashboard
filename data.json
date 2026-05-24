@@ -122,8 +122,8 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "193.6",
-      "popularidade": "",
+      "estoque_m2": "181.62",
+      "popularidade": "1",
       "criado_em": ""
     },
     {
@@ -158,8 +158,8 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "193.6",
-      "popularidade": "",
+      "estoque_m2": "183.91",
+      "popularidade": "1",
       "criado_em": ""
     },
     {
@@ -212,8 +212,8 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "348.48",
-      "popularidade": "",
+      "estoque_m2": "341.09000000000003",
+      "popularidade": "1",
       "criado_em": ""
     },
     {
@@ -266,8 +266,8 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "220.89000000000001",
-      "popularidade": "2",
+      "estoque_m2": "212.98000000000002",
+      "popularidade": "4",
       "criado_em": ""
     },
     {
@@ -1818,6 +1818,71 @@
       "destino": "uso",
       "obs": "Via Personalizar - A VENDA",
       "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779636033504_133pq",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Folk Desert Nat Ret",
+      "codigo_rev": "15",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "2.81",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779636035432_yg0xn",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Folk Desert Nat Ret",
+      "codigo_rev": "15",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "5.1",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779636036702_sio15",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Pietra Lombarda Off White",
+      "codigo_rev": "12",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "7.39",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779636038566_gqfua",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Pietra Lombarda - Terreno",
+      "codigo_rev": "9",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "9.69",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779636039851_7jyxv",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Qatari Desert Nat Ret",
+      "codigo_rev": "7",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "11.98",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "personalizar": [
@@ -1828,7 +1893,7 @@
       "empresa": "Absoluta",
       "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.81,\"piso\":\"15\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"15\"},\"11-Banho 01-C-2\":{\"m2\":7.39,\"piso\":\"12\"},\"11-Banho 01-D-3\":{\"m2\":9.69,\"piso\":\"9\"},\"11-Banho 01-E-4\":{\"m2\":11.98,\"piso\":\"7\"}}",
-      "status": "pendente",
+      "status": "confirmado",
       "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ]
