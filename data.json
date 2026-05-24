@@ -1376,7 +1376,7 @@
       "cliente": "A VENDA",
       "local": "Banho 01 ",
       "parede": "A",
-      "metro_linear": "1.1",
+      "metro_linear": "1",
       "altura": "2.55",
       "imagem": "",
       "obs": "",
@@ -1820,5 +1820,16 @@
       "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
-  "personalizar": []
+  "personalizar": [
+    {
+      "id": "id_1779635980650_zbzz1",
+      "ap": "11",
+      "cliente": "A VENDA",
+      "empresa": "Absoluta",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.81,\"piso\":\"15\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"15\"},\"11-Banho 01-C-2\":{\"m2\":7.39,\"piso\":\"12\"},\"11-Banho 01-D-3\":{\"m2\":9.69,\"piso\":\"9\"},\"11-Banho 01-E-4\":{\"m2\":11.98,\"piso\":\"7\"}}",
+      "status": "pendente",
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    }
+  ]
 }
