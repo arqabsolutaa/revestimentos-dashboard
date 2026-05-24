@@ -32,7 +32,7 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "0",
+      "estoque_m2": "217.8",
       "popularidade": "1",
       "criado_em": ""
     },
@@ -1380,7 +1380,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "2",
@@ -1779,20 +1779,6 @@
       "criado_em": ""
     }
   ],
-  "saidas": [
-    {
-      "id": "id_1779636380885_v6upj",
-      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "revestimento": "Lombarda Viva Sabbia Nat Ret",
-      "codigo_rev": "9002",
-      "obra": "Vista Park",
-      "local": "Completo",
-      "apto": "101",
-      "quantidade_m2": "217.8",
-      "destino": "uso",
-      "obs": "Novo Cliente",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
-    }
-  ],
+  "saidas": [],
   "personalizar": []
 }
