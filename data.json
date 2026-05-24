@@ -194,7 +194,7 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "857.1100000000001",
+      "estoque_m2": "864.5000000000001",
       "popularidade": "16",
       "criado_em": ""
     },
@@ -1780,19 +1780,6 @@
     }
   ],
   "saidas": [
-    {
-      "id": "id_1779585652086_6zniq",
-      "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Oh!Take Mountain Nat Ret",
-      "codigo_rev": "11",
-      "obra": "11",
-      "local": "Personalizar",
-      "apto": "11",
-      "quantidade_m2": "7.39",
-      "destino": "uso",
-      "obs": "Via Personalizar - A VENDA",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
     {
       "id": "id_1779585653288_8pfsr",
       "data": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
