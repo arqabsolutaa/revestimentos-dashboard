@@ -968,9 +968,12 @@ body.mobile-mode #main{padding-bottom:72px}
       <div id="calc-step3" style="display:none;margin-top:16px">
         <h3 style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:12px">Resumo da seleção</h3>
         <div id="calc-resumo"></div>
-        <div id="calc-total" class="result-summary" style="margin-top:12px">
+        <div id="calc-total" class="result-summary" style="margin-top:12px;flex-wrap:wrap;gap:8px">
           <span style="font-size:13px;color:var(--accent);font-weight:500">Total geral</span>
-          <span style="font-size:20px;font-weight:600;color:var(--accent)" id="calc-total-val">0.00 m²</span>
+          <div style="display:flex;gap:20px;align-items:baseline">
+            <span style="font-size:20px;font-weight:600;color:var(--accent)" id="calc-total-val">0.00 m²</span>
+            <span style="font-size:16px;font-weight:500;color:var(--text2)" id="calc-total-valor">R$ 0,00</span>
+          </div>
         </div>
       </div>
     </div>
@@ -998,6 +1001,38 @@ let dadosEstoque = [], dadosSaidas = [], dadosParedes = [], dadosRevestimentos =
 let saidaItens = [];
 let calcSelecoes = {};
 let calcApAtual = null;
+
+
+const TABELA_PRECOS = {
+  // 90x90 - R$105,30/m²
+  '9001':105.30,'9002':105.30,'9003':105.30,'9004':105.30,'9005':105.30,
+  '9006':105.30,'9007':105.30,'9008':105.30,'9009':105.30,'9010/40':105.30,
+  '9011/40':105.30,'9012/40':105.30,'9013/40':105.30,'9014/40':105.30,
+  // 120x120 - R$156,00/m²
+  '12001':156.00,'12002':156.00,'12003':156.00,'12004':156.00,'12005':156.00,
+  '12006':156.00,'12007':156.00,'12008':156.00,'12009':156.00,'12010':156.00,
+  '12011':156.00,'12011/40':156.00,'12012/40':156.00,'12013/40':156.00,
+  // 160x160 - R$224,00/m²
+  '16001':224.00,'16002':224.00,'16003':224.00,'16004/40':224.00,'16005/40':224.00,
+  '16006/40':224.00,'16007/40':224.00,'16008/40':224.00,
+  // 120x270 - R$340,80/m²
+  '27001':340.80,'27002':340.80,'27003':340.80,'27004/40':340.80,'27005/40':340.80,
+  '27006/40':340.80,'27007/40':340.80,'27008/40':340.80,'27009/40':340.80,
+  // 60x120 - R$160,00/m²
+  '120601':160.00,'120602':160.00,'120603':160.00,'120604':160.00,'120605':160.00,'120606':160.00,
+  // Diversos
+  '810':98.50,'811':98.50,'812':98.50,'823':98.50,'824':98.50, // Gouaches 15,5x15,5
+  '817':98.50, // Milos ESM Acet 21x21
+  '816':166.86, // Materia Prima Verde 20x120
+  '802':162.22, // Avantgarde Clair St 21x180
+  '804':142.00, // Avantgarde Clair St 20x120
+  '801':182.02, '825':182.02, // Aeterna Bianco Cesellato 45x120
+};
+
+function getPreco(rev) {
+  if (!rev) return 0;
+  return TABELA_PRECOS[rev.codigo] || 0;
+}
 
 // ===================== INIT =====================
 
@@ -1660,23 +1695,38 @@ function atualizarResumo() {
   for (const key in calcSelecoes) {
     calcSelecoes[key].piso = document.getElementById('fs-' + key)?.value || '';
   }
-  const total = Object.values(calcSelecoes).reduce((a, v) => a + v.m2, 0);
+  const total = Object.values(calcSelecoes).reduce((a, v) => a + parseFloat(v.m2||0), 0);
+  let totalValor = 0;
+  Object.values(calcSelecoes).forEach(v => {
+    const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
+    const preco = getPreco(rev);
+    totalValor += preco * parseFloat(v.m2||0);
+  });
   document.getElementById('calc-total-val').textContent = total.toFixed(2) + ' m²';
+  const totalValEl = document.getElementById('calc-total-valor');
+  if (totalValEl) totalValEl.textContent = 'R$ ' + totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2});
   const resumo = Object.entries(calcSelecoes).map(([key, v]) => {
     const wi = document.getElementById('wi-' + key);
     const nomePar = wi?.querySelector('.wall-info p')?.textContent || key;
     const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
     const pisoNome = rev ? rev.nome : (v.piso ? v.piso : 'Sem piso selecionado');
     const semEstoque = rev && (parseFloat(rev.estoque_m2)||0) <= 0;
+    const preco = getPreco(rev);
+    const m2v = parseFloat(v.m2)||0;
+    const valorItem = preco * m2v;
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:6px;border-left:3px solid ${semEstoque ? '#B03A2E' : 'transparent'}">
       <div>
         <p style="font-size:13px;font-weight:500">${nomePar}</p>
         <p style="font-size:11px;color:${semEstoque ? '#B03A2E' : 'var(--text3)'}">
           ${pisoNome}${semEstoque ? ' ⚠ Sem estoque' : ''}
           ${rev ? ' · ' + rev.tamanho : ''}
+          ${preco > 0 ? ' · R$ ' + preco.toFixed(2) + '/m²' : ''}
         </p>
       </div>
-      <span class="badge badge-green">${parseFloat(v.m2).toFixed(2)} m²</span>
+      <div style="text-align:right">
+        <span class="badge badge-green">${m2v.toFixed(2)} m²</span>
+        ${preco > 0 ? `<p style="font-size:11px;color:var(--accent2);margin-top:2px;font-weight:500">R$ ${valorItem.toLocaleString('pt-BR',{minimumFractionDigits:2})}</p>` : ''}
+      </div>
     </div>`;
   }).join('');
   document.getElementById('calc-resumo').innerHTML = resumo || '<p style="font-size:13px;color:var(--text3)">Selecione as paredes acima</p>';
@@ -1848,12 +1898,14 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data }) {
   doc.setFontSize(8); doc.setFont('helvetica', 'bold');
   doc.setTextColor(...cinza);
   doc.text('REVESTIMENTO', 14, y - 3);
-  doc.text('TAMANHO', 110, y - 3);
-  doc.text('CAIXAS', 155, y - 3);
-  doc.text('M²', 196, y - 3, { align: 'right' });
+  doc.text('TAMANHO', 95, y - 3);
+  doc.text('CAIXAS', 140, y - 3);
+  doc.text('M²', 170, y - 3, { align: 'right' });
+  doc.text('VALOR', 196, y - 3, { align: 'right' });
   y += 6;
 
   let totalM2 = 0;
+  let totalValor = 0;
   let linhaAlterna = false;
 
   for (const [key, v] of Object.entries(selecoes)) {
@@ -1889,16 +1941,23 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data }) {
     doc.setFillColor(...(semEstoque ? [176,58,46] : dourado));
     doc.rect(14, y - 2, 2, 18, 'F');
 
+    const preco = TABELA_PRECOS[rev?.codigo] || 0;
+    const valorItem = preco * m2total;
+    totalValor += valorItem;
+
     doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
     doc.text(pisoNome, 20, y + 5);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...cinza);
-    doc.text('Lote: ' + lote + (semEstoque ? '  ⚠ SEM ESTOQUE' : ''), 20, y + 11);
+    doc.text('Lote: ' + lote + (semEstoque ? '  ⚠ SEM ESTOQUE' : '') + (preco > 0 ? '  |  R$ ' + preco.toFixed(2) + '/m²' : ''), 20, y + 11);
     doc.setTextColor(...preto); doc.setFontSize(8.5);
-    doc.text(tamanho, 110, y + 7);
-    doc.text(String(caixas) + (m2cx > 0 ? ' cx' : ''), 155, y + 7);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
-    doc.setTextColor(...dourado);
-    doc.text(m2total.toFixed(2) + ' m²', 196, y + 7, { align: 'right' });
+    doc.text(tamanho, 95, y + 7);
+    doc.text(String(caixas) + (m2cx > 0 ? ' cx' : ''), 140, y + 7);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
+    doc.setTextColor(...cinza);
+    doc.text(m2total.toFixed(2) + ' m²', 170, y + 7, { align: 'right' });
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
+    doc.setTextColor(...(preco > 0 ? dourado : cinza));
+    doc.text(preco > 0 ? 'R$ ' + valorItem.toLocaleString('pt-BR',{minimumFractionDigits:2}) : '—', 196, y + 7, { align: 'right' });
 
     totalM2 += m2total;
     y += 20;
@@ -1908,15 +1967,17 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data }) {
   y += 4;
   if (y > 262) { doc.addPage(); y = 20; }
   doc.setFillColor(...preto);
-  doc.rect(14, y, 182, 20, 'F');
+  doc.rect(14, y, 182, 22, 'F');
   doc.setFillColor(...dourado);
-  doc.rect(14, y, 3, 20, 'F');
+  doc.rect(14, y, 3, 22, 'F');
   doc.setTextColor(180,180,180); doc.setFontSize(8); doc.setFont('helvetica','normal');
-  doc.text('TOTAL GERAL DE REVESTIMENTO', 22, y + 8);
-  doc.setTextColor(255,255,255); doc.setFontSize(8);
-  doc.text('Empreendimento Essence Residence', 22, y + 14);
-  doc.setTextColor(...dourado); doc.setFontSize(14); doc.setFont('helvetica','bold');
-  doc.text(totalM2.toFixed(2) + ' m²', 193, y + 13, { align: 'right' });
+  doc.text('TOTAL GERAL', 22, y + 7);
+  doc.setTextColor(255,255,255); doc.setFontSize(7.5);
+  doc.text('Empreendimento Essence Residence · Apto ' + ap, 22, y + 14);
+  doc.setTextColor(...cinza); doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.text(totalM2.toFixed(2) + ' m²', 155, y + 13, { align: 'right' });
+  doc.setTextColor(...dourado); doc.setFontSize(12); doc.setFont('helvetica','bold');
+  doc.text('R$ ' + totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2}), 193, y + 13, { align: 'right' });
 
   // FOOTER em todas as páginas
   const pages = doc.getNumberOfPages();
