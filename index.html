@@ -1404,7 +1404,10 @@ async function apiPost(action, data) {
 }
 
 async function lerDados() {
-  const r = await fetch('/data.json?t=' + Date.now());
+  const baseUrl = window.location.hostname === 'arqabsolutaa.github.io' 
+    ? 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/data.json'
+    : '/data.json';
+  const r = await fetch(baseUrl + '?t=' + Date.now());
   return await r.json();
 }
 
