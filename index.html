@@ -556,6 +556,10 @@ body.mobile-mode #main{padding-bottom:72px}
         <p>Registro de uso e movimentação de materiais</p>
       </div>
       <div class="header-actions">
+        <button class="btn btn-danger" onclick="excluirSaidasSelecionadas()" style="margin-right:4px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+          Excluir Selecionadas
+        </button>
         <button class="btn btn-primary" onclick="abrirModalSaida()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Registrar Saída
@@ -573,7 +577,7 @@ body.mobile-mode #main{padding-bottom:72px}
       <div class="table-wrap">
         <table>
           <thead><tr>
-            <th>Data</th><th>Revestimento</th><th>Obra</th><th>Local / Apto</th><th>Qtd (m²)</th><th>Destino</th><th>Ações</th>
+            <th style="width:36px"><input type="checkbox" id="select-all-saidas" onchange="toggleAllSaidas(this)" style="cursor:pointer"></th><th>Data</th><th>Revestimento</th><th>Obra</th><th>Local / Apto</th><th>Qtd (m²)</th><th>Destino</th><th>Ações</th>
           </tr></thead>
           <tbody id="saidas-tbody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr></tbody>
         </table>
@@ -1341,8 +1345,9 @@ async function loadSaidas() {
   } catch(e) { document.getElementById('saidas-tbody').innerHTML = `<tr><td colspan="7"><div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div></td></tr>`; }
 }
 function renderSaidas(d) {
-  if (!d.length) { document.getElementById('saidas-tbody').innerHTML = '<tr><td colspan="7"><div class="empty-state"><strong>Nenhuma saída registrada</strong></div></td></tr>'; return; }
+  if (!d.length) { document.getElementById('saidas-tbody').innerHTML = '<tr><td colspan="8"><div class="empty-state"><strong>Nenhuma saída registrada</strong></div></td></tr>'; return; }
   document.getElementById('saidas-tbody').innerHTML = d.map(r => `<tr>
+    <td><input type="checkbox" class="saida-cb" data-id="${r.id}" style="cursor:pointer"></td>
     <td>${r.data||'-'}</td>
     <td style="font-weight:500">${r.revestimento||'-'}</td>
     <td>${r.obra||'-'}</td>
@@ -1351,6 +1356,21 @@ function renderSaidas(d) {
     <td>${r.destino||'-'}</td>
     <td><button class="btn btn-danger" onclick="excluirSaida('${r.id}')" style="padding:4px 8px;font-size:11px">Excluir</button></td>
   </tr>`).join('');
+}
+
+function toggleAllSaidas(cb) {
+  document.querySelectorAll('.saida-cb').forEach(c => c.checked = cb.checked);
+}
+
+async function excluirSaidasSelecionadas() {
+  const ids = [...document.querySelectorAll('.saida-cb:checked')].map(c => c.dataset.id);
+  if (!ids.length) { showToast('Selecione ao menos uma saída', 'error'); return; }
+  if (!confirm(`Excluir ${ids.length} saída(s)?`)) return;
+  try {
+    for (const id of ids) await apiAction('deleteSaida', id);
+    showToast(`${ids.length} saída(s) excluída(s)!`, 'success');
+    loadSaidas();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 function filtrarSaidas() {
   const busca = document.getElementById('filtro-saida-busca').value.toLowerCase();
@@ -1688,14 +1708,27 @@ async function loadPersonalizar() {
 }
 function renderPersonalizar(d) {
   if (!d.length) { document.getElementById('personalizar-lista').innerHTML = '<div class="empty-state"><strong>Nenhuma personalização salva</strong><p>Use o botão "Inserir seus dados" na tela inicial</p></div>'; return; }
-  const html = `<div class="ap-card-grid">${d.map(p => {
+  const barra = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer">
+      <input type="checkbox" id="select-all-pers" onchange="toggleAllPersonalizar(this)" style="cursor:pointer">
+      Selecionar todas
+    </label>
+    <button class="btn btn-danger" onclick="excluirPersonalizarSelecionadas()" style="font-size:12px;padding:6px 12px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+      Excluir Selecionadas
+    </button>
+  </div>`;
+  const html = barra + `<div class="ap-card-grid">${d.map(p => {
     const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes) : (p.selecoes || {});
-    const totalM2 = Object.values(selecoes).reduce((a, v) => a + (v.m2||0), 0);
+    const totalM2 = Object.values(selecoes).reduce((a, v) => a + (parseFloat(v.m2)||0), 0);
     return `<div class="ap-card">
       <div class="ap-card-header">
-        <div>
-          <p style="font-weight:500;font-size:14px">${p.cliente||'—'}</p>
-          <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${p.data||'—'}</p>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="checkbox" class="pers-cb" data-id="${p.id}" style="cursor:pointer;flex-shrink:0">
+          <div>
+            <p style="font-weight:500;font-size:14px">${p.cliente||'—'}</p>
+            <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${p.data||'—'}</p>
+          </div>
         </div>
         <span class="badge badge-green">${totalM2.toFixed(2)} m²</span>
       </div>
@@ -1716,6 +1749,21 @@ function renderPersonalizar(d) {
     </div>`;
   }).join('')}</div>`;
   document.getElementById('personalizar-lista').innerHTML = html;
+}
+
+function toggleAllPersonalizar(cb) {
+  document.querySelectorAll('.pers-cb').forEach(c => c.checked = cb.checked);
+}
+
+async function excluirPersonalizarSelecionadas() {
+  const ids = [...document.querySelectorAll('.pers-cb:checked')].map(c => c.dataset.id);
+  if (!ids.length) { showToast('Selecione ao menos um item', 'error'); return; }
+  if (!confirm(`Excluir ${ids.length} personalização(ões)?`)) return;
+  try {
+    for (const id of ids) await apiAction('deletePersonalizar', id);
+    showToast(`${ids.length} item(s) excluído(s)!`, 'success');
+    loadPersonalizar();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 async function confirmarSaidaPersonalizar(id) {
   if (!confirm('Confirma baixar estes materiais do estoque?')) return;
@@ -1751,72 +1799,140 @@ function gerarPDFPersonalizar(id) {
 function gerarPDFDados({ ap, cliente, empresa, selecoes, data }) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  const cor1 = [45, 90, 61];
-  const cor2 = [240, 237, 230];
-  // Header
-  doc.setFillColor(...cor1);
-  doc.rect(0, 0, 210, 38, 'F');
+  // Cores Absoluta
+  const preto = [14, 14, 14];
+  const dourado = [201, 168, 76];
+  const bege = [245, 243, 238];
+  const cinza = [120, 120, 120];
+  const dataStr = data || new Date().toLocaleDateString('pt-BR');
+
+  // HEADER — fundo preto
+  doc.setFillColor(...preto);
+  doc.rect(0, 0, 210, 45, 'F');
+  // Linha dourada
+  doc.setFillColor(...dourado);
+  doc.rect(0, 45, 210, 1.5, 'F');
+  // Nome empresa
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(20); doc.setFont('helvetica', 'bold');
-  doc.text(empresa, 14, 18);
-  doc.setFontSize(10); doc.setFont('helvetica', 'normal');
-  doc.text('Relatório de Revestimentos', 14, 27);
-  doc.text(data || new Date().toLocaleDateString('pt-BR'), 196, 18, { align: 'right' });
-  // Info cliente
-  doc.setFillColor(...cor2);
-  doc.rect(0, 38, 210, 28, 'F');
-  doc.setTextColor(45, 90, 61);
-  doc.setFontSize(12); doc.setFont('helvetica', 'bold');
-  doc.text('Cliente: ' + cliente, 14, 50);
-  doc.setFontSize(10); doc.setFont('helvetica', 'normal');
-  doc.setTextColor(80, 80, 80);
-  doc.text('Apartamento: ' + ap, 14, 60);
-  // Itens
-  let y = 80;
-  doc.setTextColor(...cor1);
-  doc.setFontSize(11); doc.setFont('helvetica', 'bold');
-  doc.text('Seleções de Revestimento', 14, y); y += 8;
-  doc.setDrawColor(...cor1); doc.setLineWidth(0.5); doc.line(14, y, 196, y); y += 6;
+  doc.setFontSize(22); doc.setFont('helvetica', 'bold');
+  doc.text((empresa || 'ABSOLUTA').toUpperCase(), 14, 20);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...dourado);
+  doc.text('CONSTRUTORA E INCORPORADORA', 14, 27);
+  // Data no canto
+  doc.setTextColor(180, 180, 180);
+  doc.setFontSize(8);
+  doc.text(dataStr, 196, 12, { align: 'right' });
+  doc.setFontSize(9);
+  doc.text('PERSONALIZAÇÃO DE REVESTIMENTOS', 196, 20, { align: 'right' });
+
+  // INFO CLIENTE — fundo bege
+  doc.setFillColor(...bege);
+  doc.rect(0, 46.5, 210, 30, 'F');
+  doc.setTextColor(...preto);
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...cinza);
+  doc.text('CLIENTE', 14, 57);
+  doc.text('APARTAMENTO', 110, 57);
+  doc.setFontSize(13); doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...preto);
+  doc.text(cliente || '—', 14, 67);
+  doc.setFontSize(13);
+  doc.text('Apto ' + (ap || '—'), 110, 67);
+
+  // TÍTULO SEÇÃO
+  let y = 90;
+  doc.setFillColor(...dourado);
+  doc.rect(14, y, 182, 0.5, 'F');
+  doc.setTextColor(...preto);
+  doc.setFontSize(8); doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...cinza);
+  doc.text('REVESTIMENTO', 14, y - 3);
+  doc.text('TAMANHO', 110, y - 3);
+  doc.text('CAIXAS', 155, y - 3);
+  doc.text('M²', 196, y - 3, { align: 'right' });
+  y += 6;
+
   let totalM2 = 0;
+  let linhaAlterna = false;
+
   for (const [key, v] of Object.entries(selecoes)) {
-    if (y > 250) { doc.addPage(); y = 20; }
+    if (y > 255) {
+      // Footer na página atual
+      doc.setFillColor(...preto);
+      doc.rect(0, 282, 210, 15, 'F');
+      doc.setFillColor(...dourado);
+      doc.rect(0, 282, 210, 0.8, 'F');
+      doc.setTextColor(180,180,180); doc.setFontSize(7); doc.setFont('helvetica','normal');
+      doc.text((empresa||'ABSOLUTA').toUpperCase() + ' · Personalização de Revestimentos', 14, 290);
+      doc.addPage();
+      y = 20;
+    }
+
     const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
     const pisoNome = rev ? rev.nome : (v.piso ? v.piso : 'Não definido');
     const lote = rev?.lote || '—';
     const tamanho = rev?.tamanho || '—';
     const m2cx = rev?.m2_por_caixa ? parseFloat(rev.m2_por_caixa) : 0;
     const m2total = parseFloat(v.m2) || 0;
-    const caixas = m2cx > 0 ? Math.ceil(m2total / m2cx) : 0;
+    const caixas = m2cx > 0 ? Math.ceil(m2total / m2cx) : '—';
     const semEstoque = rev && (parseFloat(rev.estoque_m2)||0) <= 0;
-    doc.setFillColor(semEstoque ? 252 : 248, semEstoque ? 238 : 246, semEstoque ? 234 : 241);
-    doc.rect(14, y - 4, 182, 22, 'F');
-    if (semEstoque) { doc.setDrawColor(176,58,46); doc.setLineWidth(0.5); doc.rect(14, y-4, 3, 22, 'F'); }
-    doc.setTextColor(30, 30, 30); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-    doc.text(pisoNome, 20, y + 2);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(100, 100, 100);
-    doc.text('Tamanho: ' + tamanho + '  |  Lote: ' + lote + (semEstoque ? '  |  ⚠ SEM ESTOQUE' : ''), 20, y + 9);
-    doc.text('Caixas necessárias: ' + caixas + ' cx (' + m2cx + ' m²/cx)', 20, y + 15);
-    doc.setTextColor(...cor1); doc.setFontSize(11); doc.setFont('helvetica', 'bold');
-    doc.text(m2total.toFixed(2) + ' m²', 190, y + 8, { align: 'right' });
-    totalM2 += m2total; y += 28;
+
+    // Linha alternada
+    if (linhaAlterna) {
+      doc.setFillColor(250, 248, 244);
+      doc.rect(14, y - 2, 182, 18, 'F');
+    }
+    linhaAlterna = !linhaAlterna;
+
+    // Borda esquerda dourada ou vermelha
+    doc.setFillColor(...(semEstoque ? [176,58,46] : dourado));
+    doc.rect(14, y - 2, 2, 18, 'F');
+
+    doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
+    doc.text(pisoNome, 20, y + 5);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...cinza);
+    doc.text('Lote: ' + lote + (semEstoque ? '  ⚠ SEM ESTOQUE' : ''), 20, y + 11);
+    doc.setTextColor(...preto); doc.setFontSize(8.5);
+    doc.text(tamanho, 110, y + 7);
+    doc.text(String(caixas) + (m2cx > 0 ? ' cx' : ''), 155, y + 7);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+    doc.setTextColor(...dourado);
+    doc.text(m2total.toFixed(2) + ' m²', 196, y + 7, { align: 'right' });
+
+    totalM2 += m2total;
+    y += 20;
   }
-  // Total
-  if (y > 260) { doc.addPage(); y = 20; }
-  doc.setFillColor(...cor1); doc.rect(14, y, 182, 18, 'F');
-  doc.setTextColor(255, 255, 255); doc.setFontSize(11); doc.setFont('helvetica', 'bold');
-  doc.text('Total Geral', 18, y + 12);
-  doc.text(totalM2.toFixed(2) + ' m²', 190, y + 12, { align: 'right' });
-  // Footer
+
+  // TOTAL
+  y += 4;
+  if (y > 262) { doc.addPage(); y = 20; }
+  doc.setFillColor(...preto);
+  doc.rect(14, y, 182, 20, 'F');
+  doc.setFillColor(...dourado);
+  doc.rect(14, y, 3, 20, 'F');
+  doc.setTextColor(180,180,180); doc.setFontSize(8); doc.setFont('helvetica','normal');
+  doc.text('TOTAL GERAL DE REVESTIMENTO', 22, y + 8);
+  doc.setTextColor(255,255,255); doc.setFontSize(8);
+  doc.text('Empreendimento Essence Residence', 22, y + 14);
+  doc.setTextColor(...dourado); doc.setFontSize(14); doc.setFont('helvetica','bold');
+  doc.text(totalM2.toFixed(2) + ' m²', 193, y + 13, { align: 'right' });
+
+  // FOOTER em todas as páginas
   const pages = doc.getNumberOfPages();
   for (let i = 1; i <= pages; i++) {
     doc.setPage(i);
-    doc.setFillColor(...cor1);
-    doc.rect(0, 285, 210, 12, 'F');
-    doc.setTextColor(255, 255, 255); doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-    doc.text(empresa + ' · Gestão de Revestimentos', 14, 293);
-    doc.text('Página ' + i + ' de ' + pages, 196, 293, { align: 'right' });
+    doc.setFillColor(...preto);
+    doc.rect(0, 282, 210, 15, 'F');
+    doc.setFillColor(...dourado);
+    doc.rect(0, 282, 210, 0.8, 'F');
+    doc.setTextColor(180,180,180); doc.setFontSize(7); doc.setFont('helvetica','normal');
+    doc.text((empresa||'ABSOLUTA').toUpperCase() + ' · Personalização de Revestimentos', 14, 290);
+    doc.setTextColor(...dourado);
+    doc.text('Pág. ' + i + ' / ' + pages, 196, 290, { align: 'right' });
   }
-  doc.save('revestimento-' + cliente.replace(/\s+/g, '-') + '-ap' + ap + '.pdf');
+
+  doc.save('Absoluta-Revestimento-Ap' + ap + '-' + (cliente||'').replace(/\s+/g,'-') + '.pdf');
   showToast('PDF gerado!', 'success');
 }
 </script>
