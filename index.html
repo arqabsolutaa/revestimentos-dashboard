@@ -468,6 +468,10 @@ body.mobile-mode #main{padding-bottom:72px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="9" height="9" rx="1.5"/><rect x="13" y="2" width="9" height="9" rx="1.5"/><rect x="2" y="13" width="9" height="9" rx="1.5"/><rect x="13" y="13" width="9" height="9" rx="1.5"/></svg>
       Visão Geral
     </button>
+    <button class="nav-btn" onclick="showScreen('orcamentos')" id="nav-orcamentos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Orçamentos
+    </button>
     <button class="nav-btn" onclick="showScreen('personalizar')" id="nav-personalizar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/></svg>
       Personalizar
@@ -678,6 +682,44 @@ body.mobile-mode #main{padding-bottom:72px}
     </div>
     <div class="page-content">
       <div id="personalizar-lista"></div>
+    </div>
+  </div>
+
+
+  <!-- ORÇAMENTOS -->
+  <div id="orcamentos-screen" class="screen">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Orçamentos</h1>
+        <p>Histórico de orçamentos gerados</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-danger" onclick="excluirOrcamentosSelecionados()" style="margin-right:4px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+          Excluir Selecionados
+        </button>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="filter-bar">
+        <input class="filter-input" placeholder="Buscar cliente ou apartamento..." id="filtro-orc" oninput="filtrarOrcamentos()" style="width:280px">
+        <input class="filter-input" type="date" id="filtro-orc-data" onchange="filtrarOrcamentos()">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th style="width:36px"><input type="checkbox" id="select-all-orc" onchange="toggleAllOrcamentos(this)" style="cursor:pointer"></th>
+            <th>Data</th>
+            <th>Cliente</th>
+            <th>Apartamento</th>
+            <th>Revestimentos</th>
+            <th>Total m²</th>
+            <th>Valor Total</th>
+            <th>Ações</th>
+          </tr></thead>
+          <tbody id="orcamentos-tbody"><tr><td colspan="8"><div class="empty-state"><strong>Nenhum orçamento gerado ainda</strong></div></td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -1116,6 +1158,7 @@ function showScreen(name) {
   if (name === 'revestimentos') loadRevestimentos();
   if (name === 'personalizar') loadPersonalizar();
   if (name === 'visaogeral') loadVisaoGeral();
+  if (name === 'orcamentos') loadOrcamentos();
 }
 
 
@@ -1206,6 +1249,148 @@ async function testarConexao() {
     el.textContent = '✗ Erro: ' + e.message; el.style.color = 'var(--danger)';
   }
 }
+
+
+
+async function exportarEstoqueExcel() {
+  if (!dadosEstoque.length) {
+    try { dadosEstoque = (await lerDados()).revestimentos || []; } catch(e) {}
+  }
+  if (!dadosEstoque.length) { showToast('Nenhum dado para exportar', 'error'); return; }
+
+  // Carregar SheetJS dinamicamente
+  if (!window.XLSX) {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+
+  const data = dadosEstoque.map(r => ({
+    'Código': r.codigo || '',
+    'Nome': r.nome || '',
+    'Tamanho': r.tamanho || '',
+    'Obra / Local': r.obra || '',
+    'Estoque (m²)': parseFloat(r.estoque_m2) || 0,
+    'M² por Caixa': parseFloat(r.m2_por_caixa) || 0,
+    'Peças por Caixa': parseInt(r.pecas_por_caixa) || 0,
+    'Lote': r.lote || '',
+    'Fabricação': r.data_fabricacao || '',
+    'Popularidade': parseInt(r.popularidade) || 0
+  }));
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(data);
+
+  // Largura das colunas
+  ws['!cols'] = [
+    {wch:12},{wch:36},{wch:12},{wch:20},{wch:14},{wch:14},{wch:14},{wch:16},{wch:14},{wch:12}
+  ];
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Estoque');
+
+  const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
+  XLSX.writeFile(wb, 'Absoluta-Estoque-' + dataHoje + '.xlsx');
+  showToast('Excel exportado!', 'success');
+}
+
+// ===================== ORÇAMENTOS =====================
+const STORAGE_KEY_ORC = 'historico_orcamentos';
+
+function salvarOrcamentoHistorico({ ap, cliente, empresa, selecoes, data }) {
+  const historico = JSON.parse(localStorage.getItem(STORAGE_KEY_ORC) || '[]');
+  let totalM2 = 0, totalValor = 0;
+  const itens = [];
+  for (const [key, v] of Object.entries(selecoes)) {
+    const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
+    const m2 = parseFloat(v.m2)||0;
+    const preco = getPreco(rev);
+    totalM2 += m2;
+    totalValor += preco * m2;
+    itens.push({ nome: rev ? rev.nome : (v.piso||'—'), tamanho: rev?.tamanho||'', m2, preco });
+  }
+  historico.unshift({
+    id: 'orc_' + Date.now(),
+    data: data || new Date().toLocaleDateString('pt-BR'),
+    dataISO: new Date().toISOString().split('T')[0],
+    cliente: cliente||'—',
+    ap: ap||'—',
+    empresa: empresa||'Absoluta',
+    totalM2: totalM2.toFixed(2),
+    totalValor: totalValor.toFixed(2),
+    itens,
+    selecoes
+  });
+  localStorage.setItem(STORAGE_KEY_ORC, JSON.stringify(historico));
+}
+
+let dadosOrcamentos = [];
+
+function loadOrcamentos() {
+  dadosOrcamentos = JSON.parse(localStorage.getItem(STORAGE_KEY_ORC) || '[]');
+  renderOrcamentos(dadosOrcamentos);
+}
+
+function renderOrcamentos(d) {
+  if (!d.length) {
+    document.getElementById('orcamentos-tbody').innerHTML = '<tr><td colspan="8"><div class="empty-state"><strong>Nenhum orçamento gerado ainda</strong><p>Gere um PDF na aba Personalizar ou na tela Início</p></div></td></tr>';
+    return;
+  }
+  document.getElementById('orcamentos-tbody').innerHTML = d.map(o => `<tr>
+    <td><input type="checkbox" class="orc-cb" data-id="${o.id}" style="cursor:pointer"></td>
+    <td style="white-space:nowrap">${o.data||'—'}</td>
+    <td style="font-weight:500">${o.cliente||'—'}</td>
+    <td><span class="badge badge-info">Apto ${o.ap||'—'}</span></td>
+    <td style="font-size:12px;color:var(--text2)">${(o.itens||[]).map(i => i.nome).join(', ').substring(0,60)}${(o.itens||[]).length > 2 ? '...' : ''}</td>
+    <td><span class="badge badge-green">${o.totalM2} m²</span></td>
+    <td style="font-weight:500;color:var(--accent2)">R$ ${parseFloat(o.totalValor).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
+    <td style="display:flex;gap:6px">
+      <button class="btn btn-secondary" onclick="regeararOrcamentoPDF('${o.id}')" style="padding:4px 8px;font-size:11px">PDF</button>
+      <button class="btn btn-danger" onclick="excluirOrcamento('${o.id}')" style="padding:4px 8px;font-size:11px">Excluir</button>
+    </td>
+  </tr>`).join('');
+}
+
+function filtrarOrcamentos() {
+  const busca = document.getElementById('filtro-orc').value.toLowerCase();
+  const data = document.getElementById('filtro-orc-data').value;
+  const f = dadosOrcamentos.filter(o =>
+    (!busca || (o.cliente||'').toLowerCase().includes(busca) || (o.ap||'').includes(busca)) &&
+    (!data || o.dataISO === data)
+  );
+  renderOrcamentos(f);
+}
+
+function toggleAllOrcamentos(cb) {
+  document.querySelectorAll('.orc-cb').forEach(c => c.checked = cb.checked);
+}
+
+function excluirOrcamento(id) {
+  if (!confirm('Excluir este orçamento do histórico?')) return;
+  const historico = JSON.parse(localStorage.getItem(STORAGE_KEY_ORC) || '[]');
+  localStorage.setItem(STORAGE_KEY_ORC, JSON.stringify(historico.filter(o => o.id !== id)));
+  loadOrcamentos();
+  showToast('Orçamento excluído!', 'success');
+}
+
+function excluirOrcamentosSelecionados() {
+  const ids = [...document.querySelectorAll('.orc-cb:checked')].map(c => c.dataset.id);
+  if (!ids.length) { showToast('Selecione ao menos um', 'error'); return; }
+  if (!confirm(`Excluir ${ids.length} orçamento(s)?`)) return;
+  const historico = JSON.parse(localStorage.getItem(STORAGE_KEY_ORC) || '[]');
+  localStorage.setItem(STORAGE_KEY_ORC, JSON.stringify(historico.filter(o => !ids.includes(o.id))));
+  loadOrcamentos();
+  showToast(`${ids.length} orçamento(s) excluído(s)!`, 'success');
+}
+
+function regeararOrcamentoPDF(id) {
+  const o = dadosOrcamentos.find(x => x.id === id);
+  if (!o) return;
+  gerarPDFDados({ ap: o.ap, cliente: o.cliente, empresa: o.empresa, selecoes: o.selecoes, data: o.data });
+}
+
 
 // ===================== VISÃO GERAL =====================
 let chartConclusao = null, chartAmbientes = null, chartStatus = null;
@@ -2018,6 +2203,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data }) {
   }
 
   doc.save('Absoluta-Revestimento-Ap' + ap + '-' + (cliente||'').replace(/\s+/g,'-') + '.pdf');
+  salvarOrcamentoHistorico({ ap, cliente, empresa, selecoes, data });
   showToast('PDF gerado!', 'success');
 }
 </script>
