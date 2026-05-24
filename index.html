@@ -1440,6 +1440,16 @@ async function testarConexao() {
 
 async 
 
+
+function toggleAmbiente(id) {
+  const el = document.getElementById(id);
+  const arrow = document.getElementById(id + '-arrow');
+  if (!el) return;
+  const aberto = el.style.display !== 'none';
+  el.style.display = aberto ? 'none' : 'block';
+  if (arrow) arrow.style.transform = aberto ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
 function abrirNovaParede() {
   if (!calcApAtual) { showToast('Selecione um apartamento primeiro', 'error'); return; }
   document.getElementById('nova-parede-ap-label').textContent = 'Apto ' + calcApAtual;
@@ -2261,17 +2271,29 @@ function selecionarAp() {
   document.getElementById('calc-cliente-nome').textContent = '👤 ' + cliente;
   document.getElementById('calc-ap-info').textContent = 'Apartamento ' + ap + ' · ' + paredesAp.length + ' paredes configuradas';
   document.getElementById('calc-cliente-info').style.display = 'block';
-  // Agrupar por local
+  // Agrupar por local — filtrar paredes sem medidas
   const locais = {};
-  paredesAp.forEach(p => { if (!locais[p.local]) locais[p.local] = []; locais[p.local].push(p); });
+  paredesAp.forEach(p => {
+    if (!p.local || !p.parede || !parseFloat(p.metro_linear)) return;
+    if (!locais[p.local.trim()]) locais[p.local.trim()] = [];
+    locais[p.local.trim()].push(p);
+  });
   let html = '';
-  for (const [local, paredes] of Object.entries(locais)) {
-    html += `<div style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        ${paredes[0]?.imagem ? `<img src="${paredes[0].imagem}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid var(--border)">` : ''}
-        <h4 style="font-size:13px;font-weight:500;color:var(--text)">${local}</h4>
-      </div>
-      <div class="wall-grid">`;
+  const localKeys = Object.keys(locais);
+  for (let lidx = 0; lidx < localKeys.length; lidx++) {
+    const local = localKeys[lidx];
+    const paredes = locais[local];
+    const ambId = 'amb-' + lidx;
+    html += '<div style="margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">' +
+      '<div onclick="toggleAmbiente(\'' + ambId + '\')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;background:var(--surface2);user-select:none">' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          '<svg id="' + ambId + '-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="transition:transform 0.2s;transform:rotate(180deg)"><polyline points="6 9 12 15 18 9"/></svg>' +
+          '<span style="font-size:13px;font-weight:600;color:var(--text)">' + local + '</span>' +
+        '</div>' +
+        '<span style="font-size:11px;color:var(--text3)">' + paredes.length + ' parede(s)</span>' +
+      '</div>' +
+      '<div id="' + ambId + '" style="padding:12px;background:var(--surface)">' +
+      '<div class="wall-grid">';
     paredes.forEach((p, idx) => {
       const m2 = (parseFloat(p.metro_linear||0) * parseFloat(p.altura||0)).toFixed(2);
       const key = p.apartamento + '-' + p.local.trim() + '-' + p.parede + '-' + idx;
@@ -2296,7 +2318,7 @@ function selecionarAp() {
         </div>
       </div>`;
     });
-    html += '</div></div>';
+    html += '</div></div></div>';
   }
   document.getElementById('calc-paredes-container').innerHTML = html;
   document.getElementById('calc-step2').style.display = 'block';
