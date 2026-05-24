@@ -266,8 +266,8 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "228.8",
-      "popularidade": "",
+      "estoque_m2": "220.89000000000001",
+      "popularidade": "2",
       "criado_em": ""
     },
     {
@@ -1792,6 +1792,32 @@
       "destino": "uso",
       "obs": "Via Personalizar - Danilo",
       "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779595126024_xxu66",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Folk Desert Nat Ret",
+      "codigo_rev": "15",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "2.81",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1779595126881_xsgwl",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "revestimento": "Folk Desert Nat Ret",
+      "codigo_rev": "15",
+      "obra": "11",
+      "local": "Personalizar",
+      "apto": "11",
+      "quantidade_m2": "5.1",
+      "destino": "uso",
+      "obs": "Via Personalizar - A VENDA",
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "personalizar": [
@@ -1802,7 +1828,7 @@
       "empresa": "Absoluta",
       "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.81,\"piso\":\"15\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"15\"}}",
-      "status": "pendente",
+      "status": "confirmado",
       "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ]
