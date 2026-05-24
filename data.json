@@ -1087,7 +1087,7 @@
       "imagem": "https://media.portobello.com.br/portobello-shop-12320-e-gouache-gouache-bleu-marine-brilho-15-5x15-5-bold-0.png?ims=660x0",
       "site": "https://www.portobello.com.br/produtos/gouache/acessorios-revestimento/gouache-bleu-marine/15-5x15-5-brilho/12320E?discount=42",
       "m2_por_caixa": "0.87",
-      "pecas_por_caixa": "",
+      "pecas_por_caixa": "36",
       "tamanho": "15,5X15,5",
       "junta": "1,5mm",
       "espessura": "9,0mm",
@@ -1105,7 +1105,7 @@
       "imagem": "https://media.portobello.com.br/portobello-shop-12318-e-gouache-gouache-brume-brilho-15-5x15-5-bold-0.png?ims=660x0",
       "site": "https://www.portobello.com.br/produtos/gouache/acessorios-revestimento/gouache-brume/15-5x15-5-brilho/12318E",
       "m2_por_caixa": "0.87",
-      "pecas_por_caixa": "",
+      "pecas_por_caixa": "36",
       "tamanho": "15,5X15,5",
       "junta": "1,5mm",
       "espessura": "9,0mm",
@@ -1123,7 +1123,7 @@
       "imagem": "https://media.portobello.com.br/portobello-shop-12323-e-gouache-gouache-flamant-brilho-15-5x15-5-bold-0.png?ims=660x0",
       "site": "https://www.portobello.com.br/produtos/gouache/acessorios-revestimento/gouache-flamant/15-5x15-5-brilho/12323E",
       "m2_por_caixa": "0.87",
-      "pecas_por_caixa": "",
+      "pecas_por_caixa": "36",
       "tamanho": "15,5X15,5",
       "junta": "1,5mm",
       "espessura": "9,0mm",
@@ -1321,7 +1321,7 @@
       "imagem": "https://media.portobello.com.br/portobello-shop-12313-e-gouache-gouache-nuage-brilho-15-5x15-5-bold-0.png?ims=660x0",
       "site": "https://www.portobello.com.br/produtos/gouache/acessorios-revestimento/gouache-nuage/15-5x15-5-brilho/12313E",
       "m2_por_caixa": "0.87",
-      "pecas_por_caixa": "",
+      "pecas_por_caixa": "36",
       "tamanho": "15,5X15,5",
       "junta": "1,5mm",
       "espessura": "",
@@ -1339,7 +1339,7 @@
       "imagem": "https://media.portobello.com.br/portobello-shop-12854-e-gouache-gouache-mer-brilho-15-5x15-5-bold-0.png?ims=660x0",
       "site": "https://www.portobello.com.br/produtos/gouache/acessorios-revestimento/gouache-mer/15-5x15-5-brilho/12854E",
       "m2_por_caixa": "0.87",
-      "pecas_por_caixa": "",
+      "pecas_por_caixa": "36",
       "tamanho": "15,5X15,5",
       "junta": "1,5mm",
       "espessura": "",
@@ -1380,7 +1380,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "2",
@@ -1782,7 +1782,7 @@
   "saidas": [
     {
       "id": "id_1779636380885_v6upj",
-      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Lombarda Viva Sabbia Nat Ret",
       "codigo_rev": "9002",
       "obra": "Vista Park",
@@ -1791,19 +1791,8 @@
       "quantidade_m2": "217.8",
       "destino": "uso",
       "obs": "Novo Cliente",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
-  "personalizar": [
-    {
-      "id": "id_1779635980650_zbzz1",
-      "ap": "11",
-      "cliente": "A VENDA",
-      "empresa": "Absoluta",
-      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.81,\"piso\":\"15\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"15\"},\"11-Banho 01-C-2\":{\"m2\":7.39,\"piso\":\"12\"},\"11-Banho 01-D-3\":{\"m2\":9.69,\"piso\":\"9\"},\"11-Banho 01-E-4\":{\"m2\":11.98,\"piso\":\"7\"}}",
-      "status": "confirmado",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
-    }
-  ]
+  "personalizar": []
 }
