@@ -2410,8 +2410,12 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento }) {
   const pgLabels = {avista:'À Vista',pix:'PIX',debito:'Cartão Débito',credito2:'Crédito 2x',credito3:'Crédito 3x',credito4:'Crédito 4x',credito5:'Crédito 5x',credito6:'Crédito 6x'};
   let totalValPDF = 0;
   for (const v of Object.values(selecoes)) {
-    const rv = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
+    const rv = v.piso ? dadosRevestimentos.find(r => r.id === v.piso || r.codigo === v.piso || String(r.id) === String(v.piso)) : null;
     totalValPDF += getPreco(rv) * (parseFloat(v.m2)||0);
+  }
+  let totalValorFinalPDF = totalValPDF;
+  if (pagamento && pagamento.startsWith('credito')) {
+    totalValorFinalPDF = calcularTotalComPagamento(totalValPDF, pagamento).total;
   }
   if (totalValPDF > 0 && pagamento) {
     const pgInfo = calcularTotalComPagamento(totalValPDF, pagamento);
@@ -2420,7 +2424,6 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento }) {
     if (pgInfo.parcelas > 1) {
       const vp = pgInfo.total / pgInfo.parcelas;
       pgTexto += ' · ' + pgInfo.parcelas + 'x de ' + fmtPDF(vp) + ' (total ' + fmtPDF(pgInfo.total) + ')';
-      totalValorFinalPDF = pgInfo.total;
     }
     if (y > 258) { doc.addPage(); y = 20; }
     doc.setFillColor(250, 246, 235);
@@ -2431,10 +2434,6 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento }) {
     doc.setTextColor(...preto); doc.setFontSize(8.5); doc.setFont('helvetica','bold');
     doc.text(pgTexto, 20, y + 11);
     y += 18;
-  }
-  let totalValorFinalPDF = totalValPDF;
-  if (pagamento && pagamento.startsWith('credito')) {
-    totalValorFinalPDF = calcularTotalComPagamento(totalValPDF, pagamento).total;
   }
 
   // TOTAL
