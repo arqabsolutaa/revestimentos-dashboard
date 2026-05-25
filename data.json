@@ -1380,7 +1380,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "2",
@@ -4548,7 +4548,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779643333325_x5rt3",
@@ -4560,7 +4560,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779649094941_vvy8f",
@@ -4572,7 +4572,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779650460234_emfdx",
@@ -4584,7 +4584,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779651238508_pxp42",
@@ -4596,7 +4596,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779709148202_vtm36",
@@ -4608,13 +4608,13 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     }
   ],
   "saidas": [
     {
       "id": "id_1779709215876_46twt",
-      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "revestimento": "Qatari Desert Nat Ret",
       "codigo_rev": "7",
       "obra": "11",
@@ -4623,11 +4623,11 @@
       "quantidade_m2": "2.55",
       "destino": "uso",
       "obs": "Via Personalizar - A VENDA",
-      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779709217144_ru282",
-      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "revestimento": "Dansk Cement White",
       "codigo_rev": "23",
       "obra": "11",
@@ -4636,7 +4636,7 @@
       "quantidade_m2": "5.1",
       "destino": "uso",
       "obs": "Via Personalizar - A VENDA",
-      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     }
   ],
   "personalizar": [
@@ -4645,20 +4645,20 @@
       "ap": "11",
       "cliente": "A VENDA",
       "empresa": "Empresa",
-      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "data": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.55,\"piso\":\"7\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"23\"}}",
       "status": "confirmado",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779709192810_wk2bv",
       "ap": "11",
       "cliente": "A VENDA",
       "empresa": "Empresa",
-      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.55,\"piso\":\"14\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"14\"}}",
       "status": "pendente",
-      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     }
   ]
 }
