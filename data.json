@@ -122,7 +122,7 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "188.49999999999997",
+      "estoque_m2": "191.04999999999998",
       "popularidade": "4",
       "criado_em": ""
     },
@@ -1380,7 +1380,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "2",
@@ -4548,7 +4548,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1779643333325_x5rt3",
@@ -4560,7 +4560,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1779649094941_vvy8f",
@@ -4572,7 +4572,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1779650460234_emfdx",
@@ -4584,7 +4584,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1779651238508_pxp42",
@@ -4596,7 +4596,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1779709148202_vtm36",
@@ -4608,26 +4608,13 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "saidas": [
     {
-      "id": "id_1779709292021_oqncx",
-      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "revestimento": "Qatari Desert Nat Ret",
-      "codigo_rev": "7",
-      "obra": "11",
-      "local": "Personalizar",
-      "apto": "11",
-      "quantidade_m2": "2.55",
-      "destino": "uso",
-      "obs": "Via Personalizar - A VENDA",
-      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
-    },
-    {
       "id": "id_1779709292798_elke3",
-      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Dansk Cement White",
       "codigo_rev": "23",
       "obra": "11",
@@ -4636,11 +4623,11 @@
       "quantidade_m2": "5.1",
       "destino": "uso",
       "obs": "Via Personalizar - A VENDA",
-      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1779738166919_dqxvs",
-      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Qatari Desert Nat Ret",
       "codigo_rev": "7",
       "obra": "11",
@@ -4649,11 +4636,11 @@
       "quantidade_m2": "2.55",
       "destino": "uso",
       "obs": "Via Personalizar - A VENDA",
-      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1779738167715_hegub",
-      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Dansk Cement White",
       "codigo_rev": "23",
       "obra": "11",
@@ -4662,7 +4649,7 @@
       "quantidade_m2": "5.1",
       "destino": "uso",
       "obs": "Via Personalizar - A VENDA",
-      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "personalizar": [],
