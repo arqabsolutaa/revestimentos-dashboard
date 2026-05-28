@@ -2586,11 +2586,11 @@ function atualizarResumo() {
     const preco = getPreco(rev);
     const m2v = parseFloat(v.m2)||0;
     const valorItem = preco * m2v;
-    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:6px;border-left:3px solid ${semEstoque ? '#B03A2E' : 'transparent'}">
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:6px;border-left:3px solid transparent">
       <div>
         <p style="font-size:13px;font-weight:500">${nomePar}</p>
-        <p style="font-size:11px;color:${semEstoque ? '#B03A2E' : 'var(--text3)'}">
-          ${pisoNome}${semEstoque ? ' ⚠ Sem estoque' : ''}
+        <p style="font-size:11px;color:var(--text3)">
+          ${pisoNome}
           ${rev ? ' · ' + rev.tamanho : ''}
           ${preco > 0 ? ' · R$ ' + preco.toFixed(2) + '/m²' : ''}
         </p>
@@ -2718,7 +2718,7 @@ function gerarPDFPersonalizar(id) {
   if (!p) return;
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes) : p.selecoes;
   // Sem valor, sem perguntar pagamento
-  gerarPDFDados({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Absoluta', selecoes, data: p.data, comValor: false, pagamento: p.pagamento||'avista' });
+  gerarPDFDados({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Absoluta', selecoes, data: p.data, comValor: false, pagamento: 'avista' });
 }
 function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, desconto, comValor = true }) {
   const { jsPDF } = window.jspdf;
@@ -2841,7 +2841,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     linhaAlterna = !linhaAlterna;
 
     // Borda esquerda dourada
-    doc.setFillColor(...(semEstoque ? [176,58,46] : dourado));
+    doc.setFillColor(...dourado);
     doc.rect(14, y-2, 2.5, 20, 'F');
 
     // Foto do revestimento (se tiver)
@@ -2855,7 +2855,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.setTextColor(...preto); doc.setFontSize(9.5); doc.setFont('helvetica','bold');
     doc.text(pisoNome, xNome, y + 5);
     doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...cinza);
-    doc.text('Lote: ' + lote + '  |  R$ ' + preco.toFixed(2) + '/m²' + (semEstoque ? '  ⚠ SEM ESTOQUE' : ''), xNome, y + 11);
+    doc.text('Lote: ' + lote + '  |  R$ ' + preco.toFixed(2) + '/m²', xNome, y + 11);
 
     doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica','normal');
     doc.text(tamanho, 110, y + 7);
