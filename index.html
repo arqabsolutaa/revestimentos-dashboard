@@ -2425,10 +2425,24 @@ async function salvarSelecao() {
 async function loadPersonalizar() {
   document.getElementById('personalizar-lista').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
   try {
-    const dados = await lerDados();
-    dadosPersonalizar = dados.personalizar || [];
+    // Buscar direto do Apps Script para ter dados sempre atualizados
+    const result = await jsonp(SCRIPT_URL + '?action=getDados');
+    if (result && result.data && result.data.personalizar) {
+      dadosPersonalizar = result.data.personalizar;
+    } else {
+      const dados = await lerDados();
+      dadosPersonalizar = dados.personalizar || [];
+    }
     renderPersonalizar(dadosPersonalizar);
-  } catch(e) { document.getElementById('personalizar-lista').innerHTML = `<div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div>`; }
+  } catch(e) {
+    try {
+      const dados = await lerDados();
+      dadosPersonalizar = dados.personalizar || [];
+      renderPersonalizar(dadosPersonalizar);
+    } catch(e2) {
+      document.getElementById('personalizar-lista').innerHTML = `<div class="empty-state"><strong>Erro</strong><p>${e2.message}</p></div>`;
+    }
+  }
 }
 function renderPersonalizar(d) {
   if (!d.length) { document.getElementById('personalizar-lista').innerHTML = '<div class="empty-state"><strong>Nenhuma personalização salva</strong><p>Use o botão "Inserir seus dados" na tela inicial</p></div>'; return; }
