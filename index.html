@@ -21,6 +21,17 @@
 }
 .pgto-btn:hover{border-color:var(--accent2);color:var(--accent2)}
 .pgto-btn.active{background:var(--accent-dark);color:white;border-color:var(--accent-dark)}
+
+.status-pgto-badge{
+  display:inline-flex;align-items:center;
+  padding:4px 12px;border-radius:4px;
+  font-size:11px;font-weight:600;letter-spacing:0.5px;
+  border:1px solid;transition:all 0.2s;
+  text-transform:uppercase;
+}
+.status-pendente{background:#FFF8E1;color:#F59E0B;border-color:#F59E0B}
+.status-pago{background:#E8F5E9;color:#22863A;border-color:#22863A}
+.status-parcial{background:#E3F2FD;color:#1976D2;border-color:#1976D2}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -519,6 +530,10 @@ body.mobile-mode #main{padding-bottom:72px}
         <button class="nav-btn" onclick="showScreen('revestimentos')" style="padding-left:20px;font-size:11px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="pointer-events:none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
           Dados dos Revestimentos
+        </button>
+        <button class="nav-btn" onclick="showScreen('pagamentos')" id="nav-pagamentos" style="padding-left:20px;font-size:11px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+          Controle de Pagamentos
         </button>
         <button class="nav-btn" onclick="showScreen('config');document.getElementById('nav-config').classList.add('active')" id="nav-config" style="padding-left:20px;font-size:11px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -1075,14 +1090,19 @@ body.mobile-mode #main{padding-bottom:72px}
         <div id="calc-desconto-box" style="display:none;margin-top:10px;padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
           <p style="font-size:11px;font-weight:500;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">Forma de Pagamento</p>
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="pagamento-opcoes">
-            <button class="pgto-btn active" onclick="selecionarPagamento(this,'avista')">A Vista</button>
+            <button class="pgto-btn active" onclick="selecionarPagamento(this,'avista')">À Vista</button>
             <button class="pgto-btn" onclick="selecionarPagamento(this,'pix')">PIX</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'debito')">Debito</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito2')">2x (+2%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito3')">3x (+3%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito4')">4x (+4%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito5')">5x (+5%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito6')">6x (+6%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'debito')">Débito</button>
+            <button class="pgto-btn" id="btn-pix-parc" onclick="togglePixParcelado(this)">PIX Parcelado ▾</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito2')">Crédito 2x</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito3')">Crédito 3x</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito4')">Crédito 4x</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito5')">Crédito 5x</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito6')">Crédito 6x</button>
+          </div>
+          <div id="pix-parcelado-menu" style="display:none;margin-bottom:12px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)">
+            <p style="font-size:11px;color:var(--text3);margin-bottom:8px">Escolha as parcelas (sem juros):</p>
+            <div style="display:flex;gap:6px;flex-wrap:wrap" id="pix-parc-btns"></div>
           </div>
           <p id="calc-valor-parcela" style="font-size:12px;color:var(--accent2);font-weight:500;margin-bottom:12px"></p>
           <p style="font-size:11px;font-weight:500;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">Desconto</p>
@@ -1187,6 +1207,38 @@ body.mobile-mode #main{padding-bottom:72px}
   </div>
 </div>
 
+
+  <!-- CONTROLE DE PAGAMENTOS -->
+  <div id="pagamentos-screen" class="screen">
+    <div id="pgto-lock" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="color:var(--text3)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <p style="font-size:16px;font-weight:500;color:var(--text2)">Área Restrita</p>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="password" id="pgto-senha-input" placeholder="Digite a senha" class="form-control" style="width:200px" onkeydown="if(event.key==='Enter')verificarSenhaPgto()">
+        <button class="btn btn-primary" onclick="verificarSenhaPgto()">Entrar</button>
+      </div>
+      <p id="pgto-senha-erro" style="font-size:12px;color:var(--danger);display:none">Senha incorreta</p>
+    </div>
+    <div id="pgto-conteudo" style="display:none">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Controle de Pagamentos</h1>
+          <p>Gerencie os pagamentos dos clientes</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary" onclick="loadPagamentos()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            Atualizar
+          </button>
+          <button class="btn btn-secondary" onclick="sairControlePgto()" style="margin-left:4px">Sair</button>
+        </div>
+      </div>
+      <div class="page-content">
+        <div id="pgto-lista"></div>
+      </div>
+    </div>
+  </div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1288,6 +1340,10 @@ function calcularTotalValor() {
 
 function calcularTotalComPagamento(totalValor, tipo) {
   if (!tipo || tipo === 'avista' || tipo === 'pix' || tipo === 'debito') return { total: totalValor, parcelas: 1, juros: 0 };
+  if (tipo.startsWith('pixparc')) {
+    const parcelas = parseInt(tipo.replace('pixparc',''));
+    return { total: totalValor, parcelas, juros: 0, pixParcelado: true };
+  }
   const parcelas = parseInt(tipo.replace('credito',''));
   const juros = parcelas * 0.01;
   return { total: totalValor * (1 + juros), parcelas, juros };
@@ -1302,9 +1358,10 @@ function atualizarParcela() {
   if (calcPagamento === 'avista') { el.textContent = 'À vista: ' + fmt(totalValor); return; }
   if (calcPagamento === 'pix') { el.textContent = 'PIX: ' + fmt(totalValor); return; }
   if (calcPagamento === 'debito') { el.textContent = 'Cartão Débito: ' + fmt(totalValor); return; }
-  const { total, parcelas } = calcularTotalComPagamento(totalValor, calcPagamento);
+  const { total, parcelas, pixParcelado } = calcularTotalComPagamento(totalValor, calcPagamento);
   const vp = total / parcelas;
-  el.textContent = parcelas + 'x de ' + fmt(vp) + ' (total ' + fmt(total) + ')';
+  const label = pixParcelado ? 'PIX ' : 'Crédito ';
+  el.textContent = label + parcelas + 'x de ' + fmt(vp) + ' (total ' + fmt(total) + ')';
 }
 
 function setMobileNav(name) {
@@ -1361,6 +1418,7 @@ function showScreen(name) {
   if (name === 'personalizar') loadPersonalizar();
   if (name === 'visaogeral') loadVisaoGeral();
   if (name === 'orcamentos') loadOrcamentos();
+  if (name === 'pagamentos') { if (!pgtoDesbloqueado) { document.getElementById('pgto-lock').style.display = 'flex'; document.getElementById('pgto-conteudo').style.display = 'none'; } else loadPagamentos(); }
 }
 
 
@@ -1462,6 +1520,123 @@ async function testarConexao() {
 }
 
 
+
+
+
+const SENHA_PGTO = 'absoluta2026';
+let pgtoDesbloqueado = false;
+
+function verificarSenhaPgto() {
+  const senha = document.getElementById('pgto-senha-input').value;
+  if (senha === SENHA_PGTO) {
+    pgtoDesbloqueado = true;
+    document.getElementById('pgto-lock').style.display = 'none';
+    document.getElementById('pgto-conteudo').style.display = 'block';
+    loadPagamentos();
+  } else {
+    document.getElementById('pgto-senha-erro').style.display = 'block';
+  }
+}
+
+function sairControlePgto() {
+  pgtoDesbloqueado = false;
+  document.getElementById('pgto-lock').style.display = 'flex';
+  document.getElementById('pgto-conteudo').style.display = 'none';
+  document.getElementById('pgto-senha-input').value = '';
+  document.getElementById('pgto-senha-erro').style.display = 'none';
+}
+
+async function loadPagamentos() {
+  if (!pgtoDesbloqueado) return;
+  document.getElementById('pgto-lista').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  try {
+    const dados = await lerDados();
+    const pers = dados.personalizar || [];
+    renderPagamentos(pers);
+  } catch(e) {
+    document.getElementById('pgto-lista').innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
+  }
+}
+
+function renderPagamentos(lista) {
+  if (!lista.length) {
+    document.getElementById('pgto-lista').innerHTML = '<div class="empty-state"><strong>Nenhum orçamento encontrado</strong></div>';
+    return;
+  }
+  document.getElementById('pgto-lista').innerHTML = lista.map(p => {
+    const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+    let totalM2 = 0, totalValor = 0;
+    for (const v of Object.values(selecoes)) {
+      const rev = dadosRevestimentos.find(r => r.id === v.piso || r.codigo === v.piso || String(r.id) === String(v.piso));
+      const m2 = parseFloat(v.m2)||0;
+      totalM2 += m2;
+      totalValor += getPreco(rev) * m2;
+    }
+    const status = p.status_pgto || 'pendente';
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+      <div>
+        <p style="font-weight:600;font-size:14px">${p.cliente||'—'}</p>
+        <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${p.data||'—'}</p>
+        <p style="font-size:13px;font-weight:500;color:var(--accent2);margin-top:4px">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})} · ${totalM2.toFixed(2)} m²</p>
+        ${p.obs_pgto ? `<p style="font-size:12px;color:var(--text2);margin-top:4px">Obs: ${p.obs_pgto}</p>` : ''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <div style="display:flex;gap:6px">
+          <button class="status-pgto-badge ${status === 'pendente' ? 'status-pendente' : ''}" onclick="alterarStatusPgto('${p.id}','pendente')" style="${status === 'pendente' ? '' : 'opacity:0.4'}">Pendente</button>
+          <button class="status-pgto-badge ${status === 'parcial' ? 'status-parcial' : 'status-parcial'}" onclick="alterarStatusPgto('${p.id}','parcial')" style="${status === 'parcial' ? '' : 'opacity:0.4'}">Parcial</button>
+          <button class="status-pgto-badge ${status === 'pago' ? 'status-pago' : 'status-pago'}" onclick="alterarStatusPgto('${p.id}','pago')" style="${status === 'pago' ? '' : 'opacity:0.4'}">Pago</button>
+        </div>
+        <input class="form-control" placeholder="Observação (parcelas, etc)" style="font-size:11px;padding:4px 8px;width:220px" value="${p.obs_pgto||''}" onblur="salvarObsPgto('${p.id}', this.value)">
+        <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF c/ Valor</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function alterarStatusPgto(id, status) {
+  try {
+    await api('updateStatusPgto', { id, status });
+    showToast('Status atualizado!', 'success');
+    loadPagamentos();
+    loadPersonalizar();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function salvarObsPgto(id, obs) {
+  try { await api('updateObsPgto', { id, obs }); } catch(e) {}
+}
+
+function gerarPDFComValorPgto(id) {
+  const p = dadosPersonalizar.find(x => x.id === id);
+  if (!p) { showToast('Carregue o Personalizar primeiro', 'error'); return; }
+  const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+  abrirModalPagamentoPDF({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||'Absoluta', selecoes, data: p.data, comValor: true });
+}
+
+function togglePixParcelado(btn) {
+  const menu = document.getElementById('pix-parcelado-menu');
+  const btnsDiv = document.getElementById('pix-parc-btns');
+  const aberto = menu.style.display !== 'none';
+  if (!aberto) {
+    // Popular botões de parcelas
+    btnsDiv.innerHTML = [2,3,4,5,6,7,8,9,10,11,12].map(n =>
+      `<button class="pgto-btn" onclick="selecionarPixParcelado(this,${n})">${n}x</button>`
+    ).join('');
+  }
+  menu.style.display = aberto ? 'none' : 'block';
+  if (!aberto) {
+    document.querySelectorAll('#pagamento-opcoes .pgto-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+
+function selecionarPixParcelado(btn, parcelas) {
+  document.querySelectorAll('#pix-parc-btns .pgto-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  calcPagamento = 'pixparc' + parcelas;
+  atualizarParcela();
+  atualizarDesconto();
+}
 
 function toggleAmbiente(id) {
   const el = document.getElementById(id);
@@ -2332,7 +2507,7 @@ function selecionarAp() {
       const opcoesRev = dadosRevestimentos.map(r => {
         const estoque = parseFloat(r.estoque_m2) || 0;
         const semEstoque = estoque <= 0;
-        return `<option value="${r.id||r.codigo}" style="${semEstoque ? 'font-weight:bold' : ''}">${r.nome} [${r.tamanho||''}]</option>`;
+        return `<option value="${r.id||r.codigo}" style="${semEstoque ? 'font-weight:700' : ''}">${r.nome} [${r.tamanho||''}]</option>`;
       }).join('');
       html += `<div class="wall-item" id="wi-${key}" onclick="toggleWall('${key}', ${parseFloat(m2)}, this)">
         <div class="wall-check" id="wc-${key}">
@@ -2465,16 +2640,11 @@ function renderPersonalizar(d) {
       </div>
       <div class="ap-card-body">
         <p style="font-size:12px;color:var(--text3);margin-bottom:10px">${Object.keys(selecoes).length} parede(s) selecionada(s)</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="confirmarSaidaPersonalizar('${p.id}')" style="font-size:12px;padding:6px 12px">
-            Confirmar Saída do Estoque
-          </button>
-          <button class="btn btn-secondary" onclick="gerarPDFPersonalizar('${p.id}')" style="font-size:12px;padding:6px 12px">
-            Gerar PDF
-          </button>
-          <button class="btn btn-danger" onclick="excluirPersonalizar('${p.id}')" style="font-size:12px;padding:6px 12px">
-            Excluir
-          </button>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="status-pgto-badge status-${p.status_pgto||'pendente'}" onclick="abrirControlePgtoRapido(event,'${p.id}')" style="cursor:pointer">${p.status_pgto === 'pago' ? 'Pago' : p.status_pgto === 'parcial' ? 'Parcial' : 'Pendente'}</span>
+          ${p.status_pgto === 'pago' ? `<button class="btn btn-primary" onclick="confirmarSaidaPersonalizar('${p.id}')" style="font-size:12px;padding:6px 12px">Confirmar Saída</button>` : `<button class="btn btn-secondary" disabled style="font-size:12px;padding:6px 12px;opacity:0.4;cursor:not-allowed" title="Aguardando pagamento">Confirmar Saída</button>`}
+          <button class="btn btn-secondary" onclick="gerarPDFPersonalizar('${p.id}')" style="font-size:12px;padding:6px 12px">Gerar PDF</button>
+          <button class="btn btn-danger" onclick="excluirPersonalizar('${p.id}')" style="font-size:12px;padding:6px 12px">Excluir</button>
         </div>
       </div>
     </div>`;
@@ -2526,9 +2696,9 @@ function gerarPDFPersonalizar(id) {
   if (!p) return;
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes) : p.selecoes;
   // Perguntar forma de pagamento
-  abrirModalPagamentoPDF({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Empresa', selecoes, data: p.data });
+  abrirModalPagamentoPDF({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Empresa', selecoes, data: p.data, comValor: false });
 }
-function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, desconto }) {
+function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, desconto, comValor = true }) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   const preto = [14, 14, 14];
@@ -2700,6 +2870,11 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
 
   // ===================== PAGAMENTO =====================
   const pgLabels = {avista:'À Vista',pix:'PIX',debito:'Cartão Débito',credito2:'Crédito 2x',credito3:'Crédito 3x',credito4:'Crédito 4x',credito5:'Crédito 5x',credito6:'Crédito 6x'};
+  // PIX parcelado labels dinâmicos
+  if (pagamento && pagamento.startsWith('pixparc')) {
+    const n = pagamento.replace('pixparc','');
+    pgLabels[pagamento] = 'PIX ' + n + 'x (sem juros)';
+  }
   let totalValorFinalPDF = totalFinal;
   if (pagamento && pagamento.startsWith('credito')) {
     totalValorFinalPDF = calcularTotalComPagamento(totalFinal, pagamento).total;
@@ -2741,8 +2916,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
   doc.text('Empreendimento Essence Residence · Apto ' + ap, 22, y + 15);
   doc.setTextColor(...cinzaClaro); doc.setFontSize(9); doc.setFont('helvetica','normal');
   doc.text(totalM2.toFixed(2) + ' m²', 148, y + 14, {align:'right'});
-  doc.setTextColor(...dourado); doc.setFontSize(15); doc.setFont('helvetica','bold');
-  doc.text('R$ ' + totalValorFinalPDF.toLocaleString('pt-BR',{minimumFractionDigits:2}), 194, y + 15, {align:'right'});
+  if (comValor) { doc.setTextColor(...dourado); doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.text('R$ ' + totalValorFinalPDF.toLocaleString('pt-BR',{minimumFractionDigits:2}), 194, y + 15, {align:'right'}); }
 
   // ===================== FOOTER =====================
   const pages = doc.getNumberOfPages();
