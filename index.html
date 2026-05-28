@@ -2705,12 +2705,13 @@ async function excluirPersonalizar(id) {
 }
 
 // ===================== PDF =====================
-function gerarPDF() {
+async function gerarPDF() {
   if (!calcApAtual || !Object.keys(calcSelecoes).length) { showToast('Selecione paredes primeiro', 'error'); return; }
   const paredesAp = dadosParedes.filter(p => p.apartamento === calcApAtual);
   const cliente = paredesAp[0]?.cliente || '—';
-  const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA) || 'Empresa';
-  gerarPDFDados({ ap: calcApAtual, cliente, empresa, selecoes: calcSelecoes, pagamento: calcPagamento, desconto: calcDesconto });
+  const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA) || 'Absoluta';
+  gerarPDFDados({ ap: calcApAtual, cliente, empresa, selecoes: calcSelecoes, pagamento: calcPagamento, desconto: calcDesconto, comValor: true });
+  await salvarOrcamentoHistorico({ ap: calcApAtual, cliente, empresa, selecoes: calcSelecoes, pagamento: calcPagamento, desconto: calcDesconto });
 }
 function gerarPDFPersonalizar(id) {
   const p = dadosPersonalizar.find(x => x.id === id);
