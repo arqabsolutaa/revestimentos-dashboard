@@ -1789,34 +1789,36 @@ async function exportarEstoqueExcel() {
 // ===================== ORÇAMENTOS =====================
 const STORAGE_KEY_ORC = 'historico_orcamentos';
 
-function salvarOrcamentoHistorico({ ap, cliente, empresa, selecoes, data }) {
-  const historico = JSON.parse(localStorage.getItem(STORAGE_KEY_ORC) || '[]');
+async function salvarOrcamentoHistorico({ ap, cliente, empresa, selecoes, data, pagamento, desconto }) {
   let totalM2 = 0, totalValor = 0;
   const itens = [];
   for (const [key, v] of Object.entries(selecoes)) {
-    const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
+    const rev = v.piso ? dadosRevestimentos.find(r => r.id === v.piso || r.codigo === v.piso || String(r.id) === String(v.piso)) : null;
     const m2 = parseFloat(v.m2)||0;
     const preco = getPreco(rev);
     totalM2 += m2;
     totalValor += preco * m2;
     if (rev) itens.push({ nome: rev.nome, tamanho: rev.tamanho||'', m2, preco });
   }
-  // Data sempre no formato dd/mm/aaaa
   let dataFormatada = new Date().toLocaleDateString('pt-BR');
-  if (data && !data.includes('GMT') && !data.includes('2026-')) dataFormatada = data;
-  historico.unshift({
-    id: 'orc_' + Date.now(),
-    data: dataFormatada,
-    dataISO: new Date().toISOString().split('T')[0],
-    cliente: cliente||'—',
-    ap: ap||'—',
-    empresa: empresa||'Absoluta',
-    totalM2: totalM2.toFixed(2),
-    totalValor: totalValor.toFixed(2),
-    itens,
-    selecoes
-  });
-  localStorage.setItem(STORAGE_KEY_ORC, JSON.stringify(historico));
+  if (data && !data.includes('GMT') && !data.includes('T')) dataFormatada = data;
+  const descontoPct = parseFloat(desconto)||0;
+  const totalComDesconto = totalValor * (1 - descontoPct/100);
+  const pgInfo = calcularTotalComPagamento(totalComDesconto, pagamento||'avista');
+  try {
+    await api('addOrcamento', {
+      ap, cliente, empresa,
+      data: dataFormatada,
+      totalM2: totalM2.toFixed(2),
+      totalValor: pgInfo.total.toFixed(2),
+      pagamento: pagamento||'avista',
+      desconto: descontoPct,
+      itens,
+      selecoes
+    });
+  } catch(e) {
+    console.error('Erro ao salvar orçamento na planilha:', e);
+  }
 }
 
 let dadosOrcamentos = [];
