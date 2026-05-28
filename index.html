@@ -1346,9 +1346,12 @@ function calcularTotalComPagamento(totalValor, tipo) {
     const parcelas = parseInt(tipo.replace('pixparc',''));
     return { total: totalValor, parcelas, juros: 0, pixParcelado: true };
   }
-  const parcelas = parseInt(tipo.replace('credito',''));
-  const juros = parcelas * 0.01;
-  return { total: totalValor * (1 + juros), parcelas, juros };
+  if (tipo.startsWith('credito')) {
+    const parcelas = parseInt(tipo.replace('credito',''));
+    const juros = parcelas * 0.01; // 1% por parcela
+    return { total: totalValor * (1 + juros), parcelas, juros };
+  }
+  return { total: totalValor, parcelas: 1, juros: 0 };
 }
 
 function atualizarParcela() {
@@ -1612,7 +1615,8 @@ function gerarPDFComValorPgto(id) {
   const p = dadosPersonalizar.find(x => x.id === id);
   if (!p) { showToast('Carregue o Personalizar primeiro', 'error'); return; }
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
-  abrirModalPagamentoPDF({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||'Absoluta', selecoes, data: p.data, comValor: true });
+  // Com valor, usa pagamento já salvo no orçamento
+  gerarPDFDados({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||'Absoluta', selecoes, data: p.data, comValor: true, pagamento: p.pagamento||'avista' });
 }
 
 function togglePixParcelado(btn) {
@@ -1898,7 +1902,9 @@ async function excluirOrcamentosSelecionados() {
 function regeararOrcamentoPDF(id) {
   const o = dadosOrcamentos.find(x => x.id === id);
   if (!o) return;
-  abrirModalPagamentoPDF({ ap: o.ap, cliente: o.cliente, empresa: o.empresa, selecoes: o.selecoes, data: o.data });
+  const selecoes = typeof o.selecoes === 'string' ? JSON.parse(o.selecoes||'{}') : (o.selecoes||{});
+  // Sem valor (histórico de orçamentos)
+  gerarPDFDados({ ap: o.ap, cliente: o.cliente, empresa: o.empresa||'Absoluta', selecoes, data: o.data, comValor: false, pagamento: o.pagamento||'avista' });
 }
 
 
@@ -2710,8 +2716,8 @@ function gerarPDFPersonalizar(id) {
   const p = dadosPersonalizar.find(x => x.id === id);
   if (!p) return;
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes) : p.selecoes;
-  // Perguntar forma de pagamento
-  abrirModalPagamentoPDF({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Empresa', selecoes, data: p.data, comValor: false });
+  // Sem valor, sem perguntar pagamento
+  gerarPDFDados({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Absoluta', selecoes, data: p.data, comValor: false, pagamento: p.pagamento||'avista' });
 }
 function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, desconto, comValor = true }) {
   const { jsPDF } = window.jspdf;
@@ -2941,7 +2947,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
   }
 
   doc.save('Absoluta-Ap' + ap + '-' + (cliente||'').replace(/\s+/g,'-') + '.pdf');
-  salvarOrcamentoHistorico({ ap, cliente, empresa, selecoes, data: dataStr, pagamento, desconto: descontoPct });
+  // Orçamento já salvo pelo chamador
   showToast('PDF gerado!', 'success');
 }
 
