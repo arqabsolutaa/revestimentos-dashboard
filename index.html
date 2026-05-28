@@ -1408,7 +1408,8 @@ async function lerDados() {
     ? 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/data.json'
     : '/data.json';
   const r = await fetch(baseUrl + '?t=' + Date.now());
-  return await r.json();
+  const data = await r.json();
+  return data;
 }
 
 // ===================== TOAST =====================
@@ -1632,9 +1633,16 @@ function salvarOrcamentoHistorico({ ap, cliente, empresa, selecoes, data }) {
 
 let dadosOrcamentos = [];
 
-function loadOrcamentos() {
-  dadosOrcamentos = JSON.parse(localStorage.getItem(STORAGE_KEY_ORC) || '[]');
-  renderOrcamentos(dadosOrcamentos);
+async function loadOrcamentos() {
+  document.getElementById('orcamentos-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
+  try {
+    const dados = await lerDados();
+    dadosOrcamentos = (dados.orcamentos || []).reverse();
+    renderOrcamentos(dadosOrcamentos);
+  } catch(e) {
+    dadosOrcamentos = [];
+    renderOrcamentos([]);
+  }
 }
 
 function renderOrcamentos(d) {
@@ -1677,22 +1685,24 @@ function toggleAllOrcamentos(cb) {
   document.querySelectorAll('.orc-cb').forEach(c => c.checked = cb.checked);
 }
 
-function excluirOrcamento(id) {
+async function excluirOrcamento(id) {
   if (!confirm('Excluir este orçamento do histórico?')) return;
-  const historico = JSON.parse(localStorage.getItem(STORAGE_KEY_ORC) || '[]');
-  localStorage.setItem(STORAGE_KEY_ORC, JSON.stringify(historico.filter(o => o.id !== id)));
-  loadOrcamentos();
-  showToast('Orçamento excluído!', 'success');
+  try {
+    await apiAction('deleteOrcamento', id);
+    showToast('Orçamento excluído!', 'success');
+    loadOrcamentos();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
-function excluirOrcamentosSelecionados() {
+async function excluirOrcamentosSelecionados() {
   const ids = [...document.querySelectorAll('.orc-cb:checked')].map(c => c.dataset.id);
   if (!ids.length) { showToast('Selecione ao menos um', 'error'); return; }
   if (!confirm(`Excluir ${ids.length} orçamento(s)?`)) return;
-  const historico = JSON.parse(localStorage.getItem(STORAGE_KEY_ORC) || '[]');
-  localStorage.setItem(STORAGE_KEY_ORC, JSON.stringify(historico.filter(o => !ids.includes(o.id))));
-  loadOrcamentos();
-  showToast(`${ids.length} orçamento(s) excluído(s)!`, 'success');
+  try {
+    for (const id of ids) await apiAction('deleteOrcamento', id);
+    showToast(`${ids.length} orçamento(s) excluído(s)!`, 'success');
+    loadOrcamentos();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
 function regeararOrcamentoPDF(id) {
