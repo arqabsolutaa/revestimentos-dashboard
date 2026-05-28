@@ -1329,6 +1329,11 @@ function setMode(mode) {
 }
 
 window.onload = () => {
+  // Restaurar última tela
+  const lastScreen = localStorage.getItem('last_screen');
+  if (lastScreen) {
+    try { showScreen(lastScreen); } catch(e) { showScreen('home'); }
+  }
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA);
   if (empresa) {
     const el = document.getElementById('empresa-nome');
@@ -1347,7 +1352,8 @@ function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(name + '-screen').classList.add('active');
-  document.getElementById('nav-' + name).classList.add('active');
+  try { document.getElementById('nav-' + name).classList.add('active'); } catch(e) {}
+  localStorage.setItem('last_screen', name);
   if (name === 'estoque') loadEstoque();
   if (name === 'saidas') loadSaidas();
   if (name === 'paredes') loadParedes();
