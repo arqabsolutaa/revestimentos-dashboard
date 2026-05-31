@@ -1241,7 +1241,7 @@ body.mobile-mode #main{padding-bottom:72px}
 </div>
 
 
-<!-- v2.1 -->
+<!-- v1780270262 -->
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -2497,7 +2497,7 @@ function selecionarAp() {
   calcApAtual = ap;
   const paredesAp = dadosParedes.filter(p => p.apartamento === ap);
   const cliente = paredesAp[0]?.cliente || '—';
-  document.getElementById('calc-cliente-nome').textContent = '👤 ' + cliente;
+  document.getElementById('calc-cliente-nome').textContent = cliente; document.getElementById('calc-cliente-nome').dataset.cliente = cliente;
   document.getElementById('calc-ap-info').textContent = 'Apartamento ' + ap + ' · ' + paredesAp.length + ' paredes configuradas';
   document.getElementById('calc-cliente-info').style.display = 'block';
   // Agrupar por local — filtrar paredes sem medidas
@@ -2708,21 +2708,24 @@ async function excluirPersonalizar(id) {
 // ===================== PDF =====================
 async function gerarPDF() {
   if (!calcApAtual || !Object.keys(calcSelecoes).length) { showToast('Selecione paredes primeiro', 'error'); return; }
+  // Buscar cliente do elemento na tela (sempre atualizado)
+  const clienteEl = document.getElementById('calc-cliente-nome');
+  const clienteTela = clienteEl ? (clienteEl.dataset.cliente || clienteEl.textContent.replace('👤','').trim()) : '';
   const paredesAp = dadosParedes.filter(p => p.apartamento === calcApAtual);
-  const cliente = paredesAp[0]?.cliente || '—';
+  const cliente = clienteTela || paredesAp[0]?.cliente || calcApAtual;
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA) || 'Absoluta';
-  // Capturar valores ANTES de qualquer operação
   const apAtual = calcApAtual;
   const selecoesAtual = JSON.parse(JSON.stringify(calcSelecoes));
   const pagamentoAtual = calcPagamento || 'avista';
   const descontoAtual = calcDesconto || 0;
-  gerarPDFDados({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual, comValor: true });
   try {
     await salvarOrcamentoHistorico({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual });
     showToast('Orçamento salvo!', 'success');
+    if (typeof loadOrcamentos === 'function') loadOrcamentos();
   } catch(e) {
     console.error('Erro ao salvar orçamento:', e);
   }
+  gerarPDFDados({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual, comValor: true });
 }
 function gerarPDFPersonalizar(id) {
   const p = dadosPersonalizar.find(x => x.id === id);
