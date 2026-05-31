@@ -1380,7 +1380,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "2",
@@ -4548,7 +4548,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779643333325_x5rt3",
@@ -4560,7 +4560,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779649094941_vvy8f",
@@ -4572,7 +4572,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779650460234_emfdx",
@@ -4584,7 +4584,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779651238508_pxp42",
@@ -4596,7 +4596,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Sun May 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
       "id": "id_1779709148202_vtm36",
@@ -4608,7 +4608,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+      "criado_em": "Mon May 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     }
   ],
   "saidas": [],
@@ -4618,10 +4618,10 @@
       "ap": "11",
       "cliente": "A VENDA",
       "empresa": "Empresa",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.55,\"piso\":\"10\"}}",
       "status": "pendente",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": ""
     },
     {
@@ -4629,10 +4629,10 @@
       "ap": "11",
       "cliente": "A VENDA",
       "empresa": "Empresa",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "selecoes": "{\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"7\"}}",
       "status": "pendente",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": ""
     },
     {
@@ -4640,10 +4640,10 @@
       "ap": "11",
       "cliente": "A VENDA",
       "empresa": "Empresa",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.55,\"piso\":\"13\"}}",
       "status": "pendente",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": ""
     }
   ],
