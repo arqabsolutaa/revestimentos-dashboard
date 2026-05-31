@@ -4614,17 +4614,6 @@
   "saidas": [],
   "personalizar": [
     {
-      "id": "id_1779934139210_qvknq",
-      "ap": "11",
-      "cliente": "A VENDA",
-      "empresa": "Empresa",
-      "data": "Wed May 27 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":2.55,\"piso\":\"3\"}}",
-      "status": "pendente",
-      "criado_em": "Wed May 27 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "status_pgto": "pago"
-    },
-    {
       "id": "id_1780000133305_2ypip",
       "ap": "11",
       "cliente": "A VENDA",
