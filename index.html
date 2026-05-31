@@ -180,7 +180,7 @@ input,select,textarea{font-family:'Inter',sans-serif;outline:none}
 }
 .filter-input:focus{border-color:var(--accent)}
 .filter-input::placeholder{color:var(--text3)}
- 
+
 /* TABLE */
 .table-wrap{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
 table{width:100%;border-collapse:collapse}
@@ -1241,6 +1241,7 @@ body.mobile-mode #main{padding-bottom:72px}
 </div>
 
 
+<!-- v2.1 -->
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -2710,23 +2711,24 @@ async function gerarPDF() {
   const paredesAp = dadosParedes.filter(p => p.apartamento === calcApAtual);
   const cliente = paredesAp[0]?.cliente || '—';
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA) || 'Absoluta';
-  gerarPDFDados({ ap: calcApAtual, cliente, empresa, selecoes: calcSelecoes, pagamento: calcPagamento, desconto: calcDesconto, comValor: true });
+  // Capturar valores ANTES de qualquer operação
+  const apAtual = calcApAtual;
+  const selecoesAtual = JSON.parse(JSON.stringify(calcSelecoes));
+  const pagamentoAtual = calcPagamento || 'avista';
+  const descontoAtual = calcDesconto || 0;
+  gerarPDFDados({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual, comValor: true });
   try {
-    console.log('Salvando orçamento...', calcApAtual, cliente);
-    await salvarOrcamentoHistorico({ ap: calcApAtual, cliente, empresa, selecoes: calcSelecoes, pagamento: calcPagamento, desconto: calcDesconto });
-    console.log('Orçamento salvo!');
+    await salvarOrcamentoHistorico({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual });
     showToast('Orçamento salvo!', 'success');
   } catch(e) {
     console.error('Erro ao salvar orçamento:', e);
-    showToast('Erro ao salvar orçamento: ' + e.message, 'error');
   }
 }
 function gerarPDFPersonalizar(id) {
   const p = dadosPersonalizar.find(x => x.id === id);
-  if (!p) return;
-  const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes) : p.selecoes;
-  // Sem valor, sem perguntar pagamento
-  gerarPDFDados({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Absoluta', selecoes, data: p.data, comValor: false, pagamento: 'avista' });
+  if (!p) { showToast('Item não encontrado', 'error'); return; }
+  const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+  gerarPDFDados({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Absoluta', selecoes, data: p.data, comValor: false, pagamento: 'avista', desconto: 0 });
 }
 function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, desconto, comValor = true }) {
   const { jsPDF } = window.jspdf;
