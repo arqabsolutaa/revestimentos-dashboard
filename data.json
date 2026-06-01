@@ -1373,7 +1373,7 @@
     {
       "id": "1",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "Banho 01 ",
       "parede": "A",
       "metro_linear": "3.83",
@@ -1387,7 +1387,7 @@
     {
       "id": "2",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "Banho 01 ",
       "parede": "B",
       "metro_linear": "2",
@@ -1401,7 +1401,7 @@
     {
       "id": "3",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "Banho 01 ",
       "parede": "C",
       "metro_linear": "2.9",
@@ -1415,7 +1415,7 @@
     {
       "id": "4",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "Banho 01 ",
       "parede": "D",
       "metro_linear": "3.8",
@@ -1429,7 +1429,7 @@
     {
       "id": "5",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "Banho 01 ",
       "parede": "Piso",
       "metro_linear": "7.19",
@@ -1443,9 +1443,9 @@
     {
       "id": "6",
       "apartamento": "11",
-      "cliente": "A VENDA",
-      "local": "Banho 02",
-      "parede": "",
+      "cliente": "Disponível",
+      "local": "Banho 02 (Master)",
+      "parede": "A",
       "metro_linear": "",
       "altura": "",
       "imagem": "",
@@ -1457,9 +1457,9 @@
     {
       "id": "7",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "Banho 02",
-      "parede": "",
+      "parede": "B",
       "metro_linear": "",
       "altura": "",
       "imagem": "",
@@ -1471,9 +1471,9 @@
     {
       "id": "8",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "Banho 02",
-      "parede": "",
+      "parede": "C",
       "metro_linear": "",
       "altura": "",
       "imagem": "",
@@ -1485,9 +1485,9 @@
     {
       "id": "9",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "Banho 02",
-      "parede": "",
+      "parede": "D",
       "metro_linear": "",
       "altura": "",
       "imagem": "",
@@ -1499,9 +1499,9 @@
     {
       "id": "10",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "Banho 02",
-      "parede": "",
+      "parede": "Piso",
       "metro_linear": "",
       "altura": "",
       "imagem": "",
@@ -1513,7 +1513,7 @@
     {
       "id": "11",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -1527,7 +1527,7 @@
     {
       "id": "12",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -1541,7 +1541,7 @@
     {
       "id": "13",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -1555,7 +1555,7 @@
     {
       "id": "14",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -1569,7 +1569,7 @@
     {
       "id": "15",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -1583,7 +1583,7 @@
     {
       "id": "16",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -1597,7 +1597,7 @@
     {
       "id": "17",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -1611,7 +1611,7 @@
     {
       "id": "18",
       "apartamento": "11",
-      "cliente": "A VENDA",
+      "cliente": "Disponível",
       "local": "",
       "parede": "",
       "metro_linear": "",
