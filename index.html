@@ -1462,13 +1462,6 @@ async function forcarAtualizarDados() {
 }
 
 window.onload = () => {
-  // Restaurar última tela
-  const lastScreen = localStorage.getItem('last_screen');
-  if (lastScreen && lastScreen !== 'home') {
-    try { 
-      setTimeout(() => showScreen(lastScreen), 50);
-    } catch(e) { showScreen('home'); }
-  }
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA);
   if (empresa) {
     const el = document.getElementById('empresa-nome');
@@ -2589,7 +2582,7 @@ function selecionarAp() {
   // Agrupar por local — filtrar paredes sem medidas
   const locais = {};
   paredesAp.forEach(p => {
-    if (!p.local || !p.parede || !parseFloat(p.metro_linear)) return;
+    if (!p.local || !p.parede) return;
     if (!locais[p.local.trim()]) locais[p.local.trim()] = [];
     locais[p.local.trim()].push(p);
   });
