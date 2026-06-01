@@ -2552,24 +2552,15 @@ async function abrirCalculo() {
   document.getElementById('calc-btn-pdf').style.display = 'none';
   document.getElementById('calc-cliente-info').style.display = 'none';
 
-  // Abre imediatamente com dados em memória
-  function preencherAps() {
-    const aps = [...new Set(dadosParedes.map(p => p.apartamento).filter(Boolean))];
-    const sel = document.getElementById('calc-ap-select');
-    sel.innerHTML = '<option value="">— Escolha um apartamento —</option>' + aps.map(a => `<option value="${a}">${a}</option>`).join('');
-  }
-  preencherAps();
-  abrirModal('modal-calculo');
-  // Restaurar estado anterior se existir
-  restaurarEstadoCalc();
-
-  // Atualiza dados em background sem bloquear
   try {
     const dados = await lerDados();
     dadosParedes = dados.paredes || [];
     dadosRevestimentos = dados.revestimentos || [];
-    preencherAps(); // Atualiza select se vieram dados novos
   } catch(e) {}
+  const aps = [...new Set(dadosParedes.map(p => p.apartamento).filter(Boolean))];
+  const sel = document.getElementById('calc-ap-select');
+  sel.innerHTML = '<option value="">— Escolha um apartamento —</option>' + aps.map(a => `<option value="${a}">${a}</option>`).join('');
+  abrirModal('modal-calculo');
 }
 function selecionarAp() {
   const ap = document.getElementById('calc-ap-select').value;
