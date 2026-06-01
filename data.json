@@ -1877,11 +1877,11 @@
     {
       "id": "37",
       "apartamento": "12",
-      "cliente": "",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
+      "cliente": "Disponível",
+      "local": "Living",
+      "parede": "A",
+      "metro_linear": "1.35",
+      "altura": "2.55",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -1899,8 +1899,8 @@
       "imagem": "",
       "obs": "",
       "criado_em": "",
-      "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/Banho%20Master.png",
-      "nome_arquivo": "Banho Master.png"
+      "planta_img": "",
+      "nome_arquivo": ""
     },
     {
       "id": "39",
