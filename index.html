@@ -1394,8 +1394,10 @@ function setMode(mode) {
 window.onload = () => {
   // Restaurar última tela
   const lastScreen = localStorage.getItem('last_screen');
-  if (lastScreen) {
-    try { showScreen(lastScreen); } catch(e) { showScreen('home'); }
+  if (lastScreen && lastScreen !== 'home') {
+    try { 
+      setTimeout(() => showScreen(lastScreen), 50);
+    } catch(e) { showScreen('home'); }
   }
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA);
   if (empresa) {
