@@ -2513,6 +2513,11 @@ function selecionarAp() {
     const local = localKeys[lidx];
     const paredes = locais[local];
     const ambId = 'amb-' + lidx;
+    // Pegar planta_img da primeira parede do local que tiver
+    const plantaImg = paredes.find(p => p.planta_img)?.planta_img || '';
+    const plantaHtml = plantaImg
+      ? '<div style="padding:10px 14px 0"><img src="' + plantaImg + '" alt="Planta ' + local + '" style="width:100%;max-height:220px;object-fit:contain;border-radius:6px;border:1px solid var(--border);background:#f5f5f5" onerror="this.style.display=\'none\'"></div>'
+      : '';
     html += '<div style="margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">' +
       '<div onclick="toggleAmbiente(\'' + ambId + '\')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;background:var(--surface2);user-select:none">' +
         '<div style="display:flex;align-items:center;gap:8px">' +
@@ -2521,8 +2526,9 @@ function selecionarAp() {
         '</div>' +
         '<span style="font-size:11px;color:var(--text3)">' + paredes.length + ' parede(s)</span>' +
       '</div>' +
-      '<div id="' + ambId + '" style="padding:12px;background:var(--surface)">' +
-      '<div class="wall-grid">';
+      '<div id="' + ambId + '" style="background:var(--surface)">' +
+      plantaHtml +
+      '<div style="padding:12px"><div class="wall-grid">';
     paredes.forEach((p, idx) => {
       const m2 = (parseFloat(p.metro_linear||0) * parseFloat(p.altura||0)).toFixed(2);
       const key = p.apartamento + '-' + p.local.trim() + '-' + p.parede + '-' + idx;
@@ -2547,7 +2553,7 @@ function selecionarAp() {
         </div>
       </div>`;
     });
-    html += '</div></div></div>';
+    html += '</div></div></div></div>';
   }
   document.getElementById('calc-paredes-container').innerHTML = html;
   document.getElementById('calc-step2').style.display = 'block';
@@ -2765,20 +2771,20 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
 
   // ===== INFO CLIENTE + DATA =====
   doc.setFillColor(...bege);
-  doc.rect(0, 57.2, 210, 32, 'F');
+  doc.rect(0, 57.2, 210, 34, 'F');
 
   // Data na seção cliente (canto direito)
   doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
   doc.setCharSpace(1);
-  doc.text('DATA', 170, 65);
+  doc.text('DATA', 174, 65);
   doc.setCharSpace(0);
   doc.setTextColor(...preto); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-  doc.text(dataStr, 170, 75);
+  doc.text(dataStr, 174, 75);
 
   const cols = [
-    { label: 'CLIENTE', value: cliente || '—', x: 14 },
-    { label: 'UNIDADE', value: 'Apto ' + (ap || '—'), x: 75 },
-    { label: 'EMPREENDIMENTO', value: 'Essence Residence', x: 125 }
+    { label: 'CLIENTE', value: cliente || '—', x: 8 },
+    { label: 'UNIDADE', value: 'Apto ' + (ap || '—'), x: 68 },
+    { label: 'EMPREENDIMENTO', value: 'Essence Residence', x: 118 }
   ];
   cols.forEach((col, i) => {
     doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
@@ -2789,27 +2795,27 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.text(col.value, col.x, 75);
     if (i < 2) {
       doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.3);
-      doc.line(col.x + 52, 60, col.x + 52, 86);
+      doc.line(col.x + 54, 60, col.x + 54, 86);
     }
   });
 
   // Separador entre empreendimento e data
   doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.3);
-  doc.line(162, 60, 162, 86);
+  doc.line(166, 60, 166, 86);
 
   doc.setDrawColor(...dourado); doc.setLineWidth(0.6);
-  doc.line(14, 89, 196, 89);
+  doc.line(0, 89, 210, 89);
 
   // ===== TABELA CABEÇALHO =====
   let y = 97;
   doc.setFillColor(...verdeEscuro);
-  doc.rect(14, y, 182, 10, 'F');
+  doc.rect(0, y, 210, 10, 'F');
   doc.setTextColor(255, 255, 255); doc.setFontSize(7.5); doc.setFont('helvetica', 'bold');
   doc.setCharSpace(1.5);
-  doc.text('REVESTIMENTO', 20, y + 7);
-  doc.text('TAMANHO', 105, y + 7);
-  doc.text('M²', 148, y + 7);
-  doc.text('VALOR', 192, y + 7, { align: 'right' });
+  doc.text('REVESTIMENTO', 8, y + 7);
+  doc.text('TAMANHO', 108, y + 7);
+  doc.text('M²', 152, y + 7);
+  doc.text('VALOR', 204, y + 7, { align: 'right' });
   doc.setCharSpace(0);
   y += 14;
 
@@ -2832,16 +2838,16 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     const semEstoque = rev && (parseFloat(rev.estoque_m2)||0) <= 0;
 
     doc.setFillColor(linhaAlterna ? 248 : 255, linhaAlterna ? 247 : 255, linhaAlterna ? 244 : 255);
-    doc.rect(14, y - 2, 182, 20, 'F');
+    doc.rect(0, y - 2, 210, 20, 'F');
     linhaAlterna = !linhaAlterna;
 
     doc.setFillColor(...dourado);
-    doc.rect(14, y - 2, 2.5, 20, 'F');
+    doc.rect(0, y - 2, 3, 20, 'F');
 
     if (rev?.imagem) {
-      try { doc.addImage(rev.imagem, 'JPEG', 20, y - 1, 14, 14); } catch(e) {}
+      try { doc.addImage(rev.imagem, 'JPEG', 6, y - 1, 14, 14); } catch(e) {}
     }
-    const xNome = rev?.imagem ? 38 : 20;
+    const xNome = rev?.imagem ? 22 : 8;
 
     // Nome em cinza opaco se sem estoque, normal se com estoque
     if (semEstoque) {
@@ -2854,14 +2860,14 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.text('Lote: ' + lote + '  |  R$ ' + preco.toFixed(2) + '/m²', xNome, y + 11);
 
     doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
-    doc.text(tamanho, 105, y + 7);
-    doc.text(m2total.toFixed(2) + ' m²', 148, y + 7);
+    doc.text(tamanho, 108, y + 7);
+    doc.text(m2total.toFixed(2) + ' m²', 152, y + 7);
     doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
     doc.setTextColor(preco > 0 ? dourado[0] : cinza[0], preco > 0 ? dourado[1] : cinza[1], preco > 0 ? dourado[2] : cinza[2]);
-    doc.text(preco > 0 ? 'R$ ' + valorItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '—', 192, y + 7, { align: 'right' });
+    doc.text(preco > 0 ? 'R$ ' + valorItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '—', 204, y + 7, { align: 'right' });
 
     doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2);
-    doc.line(14, y + 18, 196, y + 18);
+    doc.line(0, y + 18, 210, y + 18);
 
     totalM2 += m2total;
     totalValor += valorItem;
@@ -2877,12 +2883,12 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     y += 4;
     if (y > 255) { _pdfFooter(doc, verdeEscuro, dourado, empresa, ap); doc.addPage(); y = 20; }
     doc.setFillColor(252, 249, 240);
-    doc.rect(14, y, 182, 13, 'F');
-    doc.setFillColor(...dourado); doc.rect(14, y, 2.5, 13, 'F');
+    doc.rect(0, y, 210, 13, 'F');
+    doc.setFillColor(...dourado); doc.rect(0, y, 3, 13, 'F');
     doc.setTextColor(...cinza); doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
-    doc.text('DESCONTO APLICADO (' + descontoPct + '%)', 20, y + 5);
+    doc.text('DESCONTO APLICADO (' + descontoPct + '%)', 8, y + 5);
     doc.setTextColor(176, 58, 46); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-    doc.text('- R$ ' + descontoVal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), 192, y + 9, { align: 'right' });
+    doc.text('- R$ ' + descontoVal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), 204, y + 9, { align: 'right' });
     y += 17;
   }
 
@@ -2908,14 +2914,14 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
       totalValorFinalPDF = pgInfo.total;
     }
     doc.setFillColor(248, 246, 238);
-    doc.rect(14, y, 182, 14, 'F');
-    doc.setFillColor(...dourado); doc.rect(14, y, 2.5, 14, 'F');
+    doc.rect(0, y, 210, 14, 'F');
+    doc.setFillColor(...dourado); doc.rect(0, y, 3, 14, 'F');
     doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
     doc.setCharSpace(1);
-    doc.text('FORMA DE PAGAMENTO', 20, y + 5);
+    doc.text('FORMA DE PAGAMENTO', 8, y + 5);
     doc.setCharSpace(0);
     doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-    doc.text(pgTexto, 20, y + 11);
+    doc.text(pgTexto, 8, y + 11);
     y += 18;
   }
 
@@ -2923,19 +2929,19 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
   y += 4;
   if (y > 262) { _pdfFooter(doc, verdeEscuro, dourado, empresa, ap); doc.addPage(); y = 20; }
   doc.setFillColor(...verdeEscuro);
-  doc.rect(14, y, 182, 22, 'F');
-  doc.setFillColor(...dourado); doc.rect(14, y, 3, 22, 'F');
+  doc.rect(0, y, 210, 22, 'F');
+  doc.setFillColor(...dourado); doc.rect(0, y, 3, 22, 'F');
   doc.setTextColor(180, 210, 190); doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
   doc.setCharSpace(1.5);
-  doc.text('TOTAL GERAL', 22, y + 8);
+  doc.text('TOTAL GERAL', 8, y + 8);
   doc.setCharSpace(0);
   doc.setTextColor(160, 195, 175); doc.setFontSize(7);
-  doc.text('Empreendimento Essence Residence · Apto ' + ap, 22, y + 15);
+  doc.text('Empreendimento Essence Residence · Apto ' + ap, 8, y + 15);
   doc.setTextColor(180, 210, 190); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
-  doc.text(totalM2.toFixed(2) + ' m²', 148, y + 14, { align: 'right' });
+  doc.text(totalM2.toFixed(2) + ' m²', 152, y + 14, { align: 'right' });
   if (comValor) {
     doc.setTextColor(...dourado); doc.setFontSize(15); doc.setFont('helvetica', 'bold');
-    doc.text('R$ ' + totalValorFinalPDF.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), 192, y + 15, { align: 'right' });
+    doc.text('R$ ' + totalValorFinalPDF.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), 204, y + 15, { align: 'right' });
   }
 
   // ===== FOOTER =====
