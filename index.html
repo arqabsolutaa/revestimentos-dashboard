@@ -1474,17 +1474,20 @@ async function apiPost(action, data) {
 }
 
 async function lerDados() {
-  // Sempre buscar direto do Apps Script para dados sempre atualizados
+  // Buscar do data.json (rápido) como fonte principal
+  try {
+    const baseUrl = window.location.hostname === 'arqabsolutaa.github.io'
+      ? 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/data.json'
+      : '/data.json';
+    const r = await fetch(baseUrl + '?t=' + Date.now());
+    if (r.ok) return await r.json();
+  } catch(e) {}
+  // Fallback para Apps Script se data.json falhar
   try {
     const result = await jsonp(SCRIPT_URL + '?action=getDados');
     if (result && result.data) return result.data;
   } catch(e) {}
-  // Fallback para data.json se Apps Script falhar
-  const baseUrl = window.location.hostname === 'arqabsolutaa.github.io'
-    ? 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/data.json'
-    : '/data.json';
-  const r = await fetch(baseUrl + '?t=' + Date.now());
-  return await r.json();
+  return {};
 }
 
 // ===================== TOAST =====================
