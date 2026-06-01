@@ -480,6 +480,12 @@ body.mobile-mode #main{padding-bottom:72px}
         Celular
       </button>
     </div>
+    <div style="padding:8px 12px">
+      <button class="mode-btn" id="btn-atualizar" onclick="forcarAtualizarDados()" style="width:100%;justify-content:center;gap:6px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Atualizar dados
+      </button>
+    </div>
     <div class="nav-label">Principal</div>
     <button class="nav-btn active" onclick="showScreen('home')" id="nav-home">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -1391,6 +1397,70 @@ function setMode(mode) {
   }
 }
 
+
+// ===================== PERSISTÊNCIA DO MODAL DE CÁLCULO =====================
+function salvarEstadoCalc() {
+  if (!calcApAtual) return;
+  localStorage.setItem('calc_estado', JSON.stringify({
+    ap: calcApAtual,
+    selecoes: calcSelecoes
+  }));
+}
+
+function restaurarEstadoCalc() {
+  try {
+    const raw = localStorage.getItem('calc_estado');
+    if (!raw) return;
+    const estado = JSON.parse(raw);
+    if (!estado.ap) return;
+
+    // Selecionar apartamento
+    const sel = document.getElementById('calc-ap-select');
+    if (!sel) return;
+    sel.value = estado.ap;
+    selecionarAp();
+
+    // Restaurar seleções após renderizar paredes
+    setTimeout(() => {
+      for (const [key, v] of Object.entries(estado.selecoes || {})) {
+        const el = document.getElementById('wi-' + key);
+        const fs = document.getElementById('fs-' + key);
+        if (el && !el.classList.contains('checked')) {
+          el.classList.add('checked');
+          calcSelecoes[key] = v;
+        }
+        if (fs && v.piso) fs.value = v.piso;
+      }
+      atualizarResumo();
+    }, 100);
+  } catch(e) {}
+}
+
+function limparEstadoCalc() {
+  localStorage.removeItem('calc_estado');
+}
+
+
+async function forcarAtualizarDados() {
+  const btn = document.getElementById('btn-atualizar');
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
+  try {
+    const dados = await lerDados();
+    if (dados.revestimentos) dadosRevestimentos = dados.revestimentos;
+    if (dados.paredes) dadosParedes = dados.paredes;
+    if (dados.saidas) dadosSaidas = dados.saidas;
+    if (dados.personalizar) dadosPersonalizar = dados.personalizar;
+    if (dados.orcamentos) dadosOrcamentos = dados.orcamentos;
+    // Recarregar tela atual
+    const lastScreen = localStorage.getItem('last_screen');
+    if (lastScreen) showScreen(lastScreen);
+    showToast('Dados atualizados!', 'success');
+  } catch(e) {
+    showToast('Erro ao atualizar', 'error');
+  }
+  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+}
+
 window.onload = () => {
   // Restaurar última tela
   const lastScreen = localStorage.getItem('last_screen');
@@ -1660,6 +1730,7 @@ function toggleAmbiente(id) {
 }
 
 function abrirNovaParede() {
+  limparEstadoCalc();
   if (!calcApAtual) { showToast('Selecione um apartamento primeiro', 'error'); return; }
   document.getElementById('nova-parede-ap-label').textContent = 'Apto ' + calcApAtual;
   document.getElementById('np-local').value = '';
@@ -2495,6 +2566,8 @@ async function abrirCalculo() {
   }
   preencherAps();
   abrirModal('modal-calculo');
+  // Restaurar estado anterior se existir
+  restaurarEstadoCalc();
 
   // Atualiza dados em background sem bloquear
   try {
@@ -2581,12 +2654,14 @@ function toggleWall(key, m2, el) {
     delete calcSelecoes[key];
   }
   atualizarResumo();
+  salvarEstadoCalc();
 }
 function atualizarResumo() {
   // atualiza piso selecionado nos itens marcados
   for (const key in calcSelecoes) {
     calcSelecoes[key].piso = document.getElementById('fs-' + key)?.value || '';
   }
+  salvarEstadoCalc();
   const total = Object.values(calcSelecoes).reduce((a, v) => a + parseFloat(v.m2||0), 0);
   let totalValor = 0;
   Object.values(calcSelecoes).forEach(v => {
