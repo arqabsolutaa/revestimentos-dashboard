@@ -5731,7 +5731,7 @@
       "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":5.1,\"piso\":\"6\"},\"11-Banho 01-B-1\":{\"m2\":5.1,\"piso\":\"7\"},\"11-Banho 01-C-2\":{\"m2\":5.1,\"piso\":\"7\"}}",
       "status": "pendente",
       "criado_em": "Tue Jun 02 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "status_pgto": "parcial",
+      "status_pgto": "pago",
       "obs_pgto": "Faltam 3 parcelas "
     },
     {
