@@ -230,7 +230,7 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "261.36",
+      "estoque_m2": "255.11",
       "": "",
       "criado_em": ""
     },
@@ -5695,6 +5695,19 @@
       "destino": "uso",
       "obs": "Via Personalizar - Disponível",
       "criado_em": "Tue Jun 02 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+    },
+    {
+      "id": "id_1780519212847_gcmox",
+      "data": "Wed Jun 03 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "revestimento": "Sintese Off White Nat Ret",
+      "codigo_rev": "13",
+      "obra": "12",
+      "local": "Personalizar",
+      "apto": "12",
+      "quantidade_m2": "6.25",
+      "destino": "uso",
+      "obs": "Via Personalizar - Disponível",
+      "criado_em": "Wed Jun 03 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     }
   ],
   "personalizar": [
