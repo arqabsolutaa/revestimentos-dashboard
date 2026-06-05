@@ -284,7 +284,7 @@
       "data_fabricacao": "",
       "lote": "",
       "obra": "",
-      "estoque_m2": "3.44",
+      "estoque_m2": "6.88",
       "": "",
       "criado_em": ""
     },
@@ -5670,19 +5670,6 @@
     }
   ],
   "saidas": [
-    {
-      "id": "id_1780449313127_8deq9",
-      "data": "Tue Jun 02 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Folk Ice Nat Ret",
-      "codigo_rev": "16",
-      "obra": "12",
-      "local": "Personalizar",
-      "apto": "12",
-      "quantidade_m2": "3.44",
-      "destino": "uso",
-      "obs": "Via Personalizar - Disponível",
-      "criado_em": "Tue Jun 02 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
     {
       "id": "id_1780519212847_gcmox",
       "data": "Wed Jun 03 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
