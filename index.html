@@ -1444,8 +1444,13 @@ function limparEstadoCalc() {
 
 async function forcarAtualizarDados() {
   const btn = document.getElementById('btn-atualizar');
-  if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; btn.textContent = 'Atualizando...'; }
   try {
+    // Forçar Apps Script sincronizar com GitHub primeiro
+    try { await jsonp(SCRIPT_URL + '?action=forcarAtualizar'); } catch(e) {}
+    // Aguardar 1s para o GitHub processar
+    await new Promise(r => setTimeout(r, 1000));
+    // Buscar dados atualizados
     const dados = await lerDados();
     if (dados.revestimentos) dadosRevestimentos = dados.revestimentos;
     if (dados.paredes) dadosParedes = dados.paredes;
@@ -1459,7 +1464,7 @@ async function forcarAtualizarDados() {
   } catch(e) {
     showToast('Erro ao atualizar', 'error');
   }
-  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+  if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'Atualizar'; }
 }
 
 window.onload = () => {
@@ -1669,12 +1674,17 @@ function renderPagamentos(lista) {
 }
 
 async function alterarStatusPgto(id, status) {
+  // Atualizar imediatamente na memória (sem aguardar API)
+  const item = dadosPersonalizar.find(p => p.id === id);
+  if (item) item.status_pgto = status;
+  renderPagamentos(dadosPersonalizar);
+  renderPersonalizar(dadosPersonalizar);
+  // Salvar no servidor em background
   try {
     await api('updateStatusPgto', { id, status });
-    showToast('Status atualizado!', 'success');
-    loadPagamentos();
-    loadPersonalizar();
-  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+    // Forçar atualização do data.json via Apps Script
+    try { await jsonp(SCRIPT_URL + '?action=forcarAtualizar'); } catch(e) {}
+  } catch(e) { showToast('Erro ao salvar status: ' + e.message, 'error'); }
 }
 
 async function salvarObsPgto(id, obs) {
@@ -2606,7 +2616,7 @@ function selecionarAp() {
       const opcoesRev = dadosRevestimentos.map(r => {
         const estoque = parseFloat(r.estoque_m2) || 0;
         const semEstoque = estoque <= 0;
-        return `<option value="${r.id||r.codigo}" style="${semEstoque ? 'color:#999;font-weight:400' : ''}">${r.nome} [${r.tamanho||''}]</option>`;
+        return `<option value="${r.id||r.codigo}" style="${semEstoque ? 'color:#777;font-weight:400' : ''}">${r.nome} [${r.tamanho||''}]</option>`;
       }).join('');
       html += `<div class="wall-item" id="wi-${key}" onclick="toggleWall('${key}', ${parseFloat(m2)}, this)">
         <div class="wall-check" id="wc-${key}">
@@ -2771,8 +2781,13 @@ async function confirmarSaidaPersonalizar(id) {
   if (!confirm('Confirma baixar estes materiais do estoque?')) return;
   try {
     await apiAction('confirmarSaida', id);
-    showToast('Estoque atualizado!', 'success');
-    loadPersonalizar();
+    showToast('Saída confirmada e estoque atualizado!', 'success');
+    // Atualizar dados locais
+    const dados = await lerDados();
+    if (dados.personalizar) dadosPersonalizar = dados.personalizar;
+    if (dados.saidas) dadosSaidas = dados.saidas;
+    if (dados.revestimentos) dadosRevestimentos = dados.revestimentos;
+    renderPersonalizar(dadosPersonalizar);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 async function excluirPersonalizar(id) {
@@ -2922,12 +2937,8 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     }
     const xNome = rev?.imagem ? 22 : 8;
 
-    // Nome em cinza opaco se sem estoque, normal se com estoque
-    if (semEstoque) {
-      doc.setTextColor(150, 150, 150); doc.setFontSize(9.5); doc.setFont('helvetica', 'normal');
-    } else {
-      doc.setTextColor(...preto); doc.setFontSize(9.5); doc.setFont('helvetica', 'bold');
-    }
+    // Nome sempre normal no PDF independente de estoque
+    doc.setTextColor(...preto); doc.setFontSize(9.5); doc.setFont('helvetica', 'bold');
     doc.text(pisoNome, xNome, y + 5);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...cinza);
     doc.text('Lote: ' + lote + '  |  R$ ' + preco.toFixed(2) + '/m²', xNome, y + 11);
