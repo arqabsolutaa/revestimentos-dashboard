@@ -1559,6 +1559,22 @@ function setMode(mode) {
 // ===================== LOTES POR DATA =====================
 let dadosLotes = [];
 
+
+function formatarDataDisplay(val) {
+  if (!val) return '';
+  if (val.includes('GMT') || val.includes('T')) {
+    try {
+      const d = new Date(val);
+      if (!isNaN(d.getTime())) {
+        return String(d.getDate()).padStart(2,'0') + '/' +
+               String(d.getMonth()+1).padStart(2,'0') + '/' +
+               d.getFullYear();
+      }
+    } catch(e) {}
+  }
+  return val;
+}
+
 function trocarTabEstoque(tab) {
   const tabRev = document.getElementById('tab-revestimentos-content');
   const tabLotes = document.getElementById('tab-lotes-content');
@@ -1612,7 +1628,7 @@ function renderLotes(d) {
         <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px">
           <div style="flex:1">
             <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
-              <span style="font-size:13px;font-weight:600;color:var(--text)">Fab: ${l.data_fab||'—'}</span>
+              <span style="font-size:13px;font-weight:600;color:var(--text)">Fab: ${formatarDataDisplay(l.data_fab)||'—'}</span>
               <span style="font-size:12px;color:var(--text3)">${l.qtd_caixas} cx · ${parseFloat(l.m2_por_caixa).toFixed(2)} m²/cx</span>
               <span style="font-size:13px;font-weight:600;color:var(--accent)">${parseFloat(l.m2_total).toFixed(2)} m²</span>
               ${l.localizacao ? `<span style="font-size:11px;color:var(--text3)">📍 ${l.localizacao}</span>` : ''}
@@ -1967,7 +1983,7 @@ async function forcarAtualizarDados() {
   if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'Atualizar'; }
 }
 
-window.onload = () => {
+window.onload = async () => {
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA);
   if (empresa) {
     const el = document.getElementById('empresa-nome');
@@ -1979,6 +1995,17 @@ window.onload = () => {
   if (urlInput) urlInput.value = SCRIPT_URL;
   const dataInput = document.getElementById('saida-data');
   if (dataInput) dataInput.valueAsDate = new Date();
+  // Carregar todos os dados ao iniciar
+  try {
+    const dados = await lerDados();
+    if (dados.revestimentos) dadosRevestimentos = dados.revestimentos;
+    if (dados.paredes) dadosParedes = dados.paredes;
+    if (dados.saidas) dadosSaidas = dados.saidas;
+    if (dados.personalizar) dadosPersonalizar = dados.personalizar;
+    if (dados.orcamentos) dadosOrcamentos = dados.orcamentos;
+    if (dados.instalacoes) dadosInstalacoes = dados.instalacoes;
+    if (dados.lotes) dadosLotes = dados.lotes;
+  } catch(e) {}
 };
 
 // ===================== NAVEGAÇÃO =====================
