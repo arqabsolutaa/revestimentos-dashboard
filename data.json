@@ -400,7 +400,7 @@
       "id": "25",
       "codigo": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "imagem": "",
+      "imagem": "https://media.portobello.com.br/portobello-shop-210408-e-sintese-sintese-off-white-st-nat-120x120-ret-0.png?ims=660x0",
       "site": "",
       "m2_por_caixa": "2.87",
       "pecas_por_caixa": "2",
@@ -1344,7 +1344,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/Banho%20Master.png",
       "nome_arquivo": "Banho Master.png"
     },
@@ -5642,7 +5642,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     }
@@ -5652,8 +5652,8 @@
   "orcamentos": [
     {
       "id": "id_1780271056506_bz9rh",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5663,12 +5663,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780271193061_qv0m6",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5678,12 +5678,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780271197672_bkbvj",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5693,12 +5693,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780271640253_fygrr",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5708,12 +5708,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780273585751_t6s0c",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5723,12 +5723,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780274483786_oeitl",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5738,12 +5738,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780274972662_2meq3",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5753,12 +5753,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780275077270_znnpc",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5768,12 +5768,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780276095463_mhvfb",
-      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5783,12 +5783,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun May 31 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780286779575_xp21n",
-      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5798,12 +5798,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780288732068_wrxx8",
-      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5813,12 +5813,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780290023060_tfhqs",
-      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5828,12 +5828,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780291790044_d8x1m",
-      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5843,12 +5843,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780292099536_zgzwo",
-      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5858,12 +5858,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780292264222_2w13z",
-      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5873,12 +5873,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780448744686_r4cmp",
-      "data": "Tue Jun 02 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Wed Jun 03 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 02 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Wed Jun 03 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5888,12 +5888,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Tue Jun 02 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Tue Jun 02 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780448921316_6dw9y",
-      "data": "Tue Jun 02 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Wed Jun 03 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 02 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Wed Jun 03 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5903,12 +5903,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Tue Jun 02 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Tue Jun 02 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780519000380_ddpso",
-      "data": "Wed Jun 03 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Wed Jun 03 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed Jun 03 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Wed Jun 03 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5918,12 +5918,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Wed Jun 03 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Wed Jun 03 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780519063394_i1g1s",
-      "data": "Wed Jun 03 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Wed Jun 03 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed Jun 03 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Wed Jun 03 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -5933,7 +5933,7 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Wed Jun 03 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Wed Jun 03 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "instalacoes": []
