@@ -966,7 +966,10 @@ body.mobile-mode #main{padding-bottom:72px}
 <div id="modal-lote" class="modal-overlay">
   <div class="modal-box" style="max-width:480px">
     <div class="modal-header">
-      <h3>Novo Lote</h3>
+      <div>
+        <h3 style="margin:0;font-size:16px;font-weight:600">Novo Lote</h3>
+        <p style="margin:2px 0 0;font-size:12px;color:var(--text3)">Registre um lote por data de fabricação</p>
+      </div>
       <button class="modal-close" onclick="fecharModalLote()">×</button>
     </div>
     <div class="modal-body" style="display:flex;flex-direction:column;gap:14px">
@@ -1014,50 +1017,58 @@ body.mobile-mode #main{padding-bottom:72px}
 
 <!-- MODAL INSTALAÇÃO -->
 <div id="modal-instalacao" class="modal-overlay">
-  <div class="modal-box" style="max-width:480px">
+  <div class="modal-box" style="max-width:500px">
     <div class="modal-header">
-      <h3>Nova Instalação</h3>
+      <div>
+        <h3 style="margin:0;font-size:16px;font-weight:600">Nova Instalação</h3>
+        <p style="margin:2px 0 0;font-size:12px;color:var(--text3)">Registre o revestimento instalado e desconte do lote</p>
+      </div>
       <button class="modal-close" onclick="fecharModalInstalacao()">×</button>
     </div>
-    <div class="modal-body" style="display:flex;flex-direction:column;gap:14px">
-      <div>
-        <label class="form-label">Apartamento</label>
-        <input class="form-control" id="inst-ap" placeholder="Ex: 11">
+    <div class="modal-body">
+      <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label">Apartamento</label>
+          <input class="form-control" id="inst-ap" placeholder="Ex: 11">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data da instalação</label>
+          <input class="form-control" id="inst-data" type="date">
+        </div>
       </div>
-      <div>
+      <div class="form-group" style="margin-top:12px">
         <label class="form-label">Cliente</label>
         <input class="form-control" id="inst-cliente" placeholder="Nome do cliente">
       </div>
-      <div>
+      <div class="form-group" style="margin-top:12px">
         <label class="form-label">Revestimento instalado</label>
         <select class="form-control" id="inst-revestimento" onchange="carregarLotesInstalacao()">
-          <option value="">— Selecione —</option>
+          <option value="">— Selecione o revestimento —</option>
         </select>
       </div>
-      <div>
-        <label class="form-label">Lote (Data de fabricação)</label>
+      <div class="form-group" style="margin-top:12px">
+        <label class="form-label">Lote de fabricação</label>
         <select class="form-control" id="inst-lote" onchange="atualizarInfoLote()">
           <option value="">— Selecione o revestimento primeiro —</option>
         </select>
-        <span id="inst-lote-info" style="font-size:11px;color:var(--accent);margin-top:4px;display:block"></span>
+        <span id="inst-lote-info" style="font-size:11px;color:var(--accent);margin-top:5px;display:block;font-weight:500"></span>
       </div>
-      <div>
-        <label class="form-label">Qtd de caixas usadas</label>
+      <div class="form-group" style="margin-top:12px">
+        <label class="form-label">Qtd de caixas utilizadas</label>
         <input class="form-control" id="inst-qtd-cx" type="number" min="0" step="0.5" placeholder="0" oninput="verificarSaldoLote()">
-        <span id="inst-saldo-info" style="font-size:11px;margin-top:4px;display:block"></span>
+        <span id="inst-saldo-info" style="font-size:11px;margin-top:5px;display:block;font-weight:500"></span>
       </div>
-      <div>
-        <label class="form-label">Data da instalação</label>
-        <input class="form-control" id="inst-data" type="date">
-      </div>
-      <div>
-        <label class="form-label">Observações</label>
-        <input class="form-control" id="inst-obs" placeholder="Opcional">
+      <div class="form-group" style="margin-top:12px">
+        <label class="form-label">Observações <span style="color:var(--text3);font-weight:400">(opcional)</span></label>
+        <input class="form-control" id="inst-obs" placeholder="Ex: Parede A e B do Banho 01">
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="fecharModalInstalacao()">Cancelar</button>
-      <button class="btn btn-primary" onclick="salvarInstalacao()">Salvar</button>
+      <button class="btn btn-primary" onclick="salvarInstalacao()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Salvar Instalação
+      </button>
     </div>
   </div>
 </div>
