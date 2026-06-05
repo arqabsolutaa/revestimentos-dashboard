@@ -1810,7 +1810,7 @@ function carregarLotesInstalacao() {
   }
   sel.innerHTML = '<option value="">— Selecione o lote —</option>' +
     lotesFiltrados.map(l => `<option value="${l.id}" data-qtd="${l.qtd_caixas}" data-datafab="${l.data_fab}" data-m2cx="${l.m2_por_caixa}">
-      Fab: ${l.data_fab} · ${parseFloat(l.qtd_caixas).toFixed(1)} cx disponíveis
+      Fab: ${formatarDataDisplay(l.data_fab)} · ${parseFloat(l.qtd_caixas).toFixed(1)} cx disponíveis
     </option>`).join('');
 }
 
