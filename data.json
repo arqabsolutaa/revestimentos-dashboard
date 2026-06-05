@@ -574,8 +574,8 @@
       "id": "43",
       "codigo": "27001",
       "nome": "Bianco Covelano Pol. Ret",
-      "imagem": "",
-      "site": "",
+      "imagem": "https://media.portobello.com.br/portobello-shop-24483-e-timeless-bianco-covelano-pol-60x120-ret-0.png?ims=660x0",
+      "site": "https://www.portobello.com.br/produtos/timeless/field-tile/bianco-covelano/60x120-polido/24483E?channel=exportacao",
       "m2_por_caixa": "3.23",
       "pecas_por_caixa": "1",
       "qtd_caixas": "450",
@@ -584,7 +584,7 @@
       "espessura": "7,0mm",
       "data_fabricacao": "",
       "lote": "",
-      "obra": "",
+      "obra": "Vista Park",
       "estoque_m2": "1453.5",
       "": "",
       "criado_em": ""
@@ -603,7 +603,7 @@
       "espessura": "7,0mm",
       "data_fabricacao": "",
       "lote": "",
-      "obra": "",
+      "obra": "Vista Park",
       "estoque_m2": "22.61",
       "": "",
       "criado_em": ""
