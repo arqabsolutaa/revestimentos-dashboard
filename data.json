@@ -5684,20 +5684,7 @@
     }
   ],
   "saidas": [],
-  "personalizar": [
-    {
-      "id": "id_1780449006844_7n1vv",
-      "ap": "12",
-      "cliente": "Disponível",
-      "empresa": "Empresa",
-      "data": "Tue Jun 02 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "selecoes": "{\"12-Living-A-0\":{\"m2\":3.44,\"piso\":\"7\"}}",
-      "status": "pendente",
-      "criado_em": "Tue Jun 02 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "status_pgto": "pago",
-      "obs_pgto": ""
-    }
-  ],
+  "personalizar": [],
   "orcamentos": [
     {
       "id": "id_1780271056506_bz9rh",
