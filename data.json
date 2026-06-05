@@ -343,24 +343,6 @@
       "criado_em": ""
     },
     {
-      "id": "20",
-      "codigo": "12006",
-      "nome": "Posto 7 Nat Ret",
-      "imagem": "",
-      "site": "",
-      "m2_por_caixa": "2.87",
-      "pecas_por_caixa": "2",
-      "tamanho": "120x120",
-      "junta": "1,5mm",
-      "espessura": "7,0mm",
-      "data_fabricacao": "",
-      "lote": "",
-      "obra": "",
-      "estoque_m2": "0",
-      "": "",
-      "criado_em": ""
-    },
-    {
       "id": "21",
       "codigo": "12007",
       "nome": "Qatari Desert Nat Ret",
