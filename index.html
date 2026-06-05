@@ -1013,7 +1013,7 @@ body.mobile-mode #main{padding-bottom:72px}
 </div>
 
 <!-- MODAL INSTALAÇÃO -->
-<div id="modal-instalacao" class="modal-overlay" style="display:none" >
+<div id="modal-instalacao" class="modal-overlay" style="display:none">
   <div class="modal-box" style="max-width:480px">
     <div class="modal-header">
       <h3>Nova Instalação</h3>
@@ -1030,13 +1030,21 @@ body.mobile-mode #main{padding-bottom:72px}
       </div>
       <div>
         <label class="form-label">Revestimento instalado</label>
-        <select class="form-control" id="inst-revestimento">
+        <select class="form-control" id="inst-revestimento" onchange="carregarLotesInstalacao()">
           <option value="">— Selecione —</option>
         </select>
       </div>
       <div>
-        <label class="form-label">Data de fabricação do lote</label>
-        <input class="form-control" id="inst-data-fab" type="text" placeholder="Ex: 03/2024">
+        <label class="form-label">Lote (Data de fabricação)</label>
+        <select class="form-control" id="inst-lote" onchange="atualizarInfoLote()">
+          <option value="">— Selecione o revestimento primeiro —</option>
+        </select>
+        <span id="inst-lote-info" style="font-size:11px;color:var(--accent);margin-top:4px;display:block"></span>
+      </div>
+      <div>
+        <label class="form-label">Qtd de caixas usadas</label>
+        <input class="form-control" id="inst-qtd-cx" type="number" min="0" step="0.5" placeholder="0" oninput="verificarSaldoLote()">
+        <span id="inst-saldo-info" style="font-size:11px;margin-top:4px;display:block"></span>
       </div>
       <div>
         <label class="form-label">Data da instalação</label>
@@ -1733,7 +1741,8 @@ function renderInstalacoes(d) {
         </div>
         <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px">${i.revestimento||'—'}</div>
         <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:6px">
-          <span style="font-size:11px;color:var(--text3)">Fabricação: <strong style="color:var(--text2)">${i.data_fab||'—'}</strong></span>
+          <span style="font-size:11px;color:var(--text3)">Lote Fab: <strong style="color:var(--accent)">${i.data_fab||'—'}</strong></span>
+          ${i.qtd_caixas_usadas ? `<span style="font-size:11px;color:var(--text3)">Caixas: <strong style="color:var(--text2)">${i.qtd_caixas_usadas}</strong></span>` : ''}
           <span style="font-size:11px;color:var(--text3)">Instalação: <strong style="color:var(--text2)">${i.data_inst||'—'}</strong></span>
           ${i.obs ? `<span style="font-size:11px;color:var(--text3)">Obs: ${i.obs}</span>` : ''}
         </div>
@@ -1756,21 +1765,70 @@ function filtrarInstalacoes() {
 }
 
 function abrirModalInstalacao() {
-  // Preencher select de revestimentos
   const sel = document.getElementById('inst-revestimento');
   if (sel) {
+    // Mostrar só revestimentos que têm lotes cadastrados
+    const revComLote = [...new Set(dadosLotes.filter(l => parseFloat(l.qtd_caixas) > 0).map(l => l.nome))];
     sel.innerHTML = '<option value="">— Selecione —</option>' +
-      dadosRevestimentos.map(r => `<option value="${r.nome}">${r.nome}</option>`).join('');
+      revComLote.map(n => `<option value="${n}">${n}</option>`).join('');
   }
-  // Data de hoje
-  const hoje = new Date().toISOString().split('T')[0];
-  const instData = document.getElementById('inst-data');
-  if (instData) instData.value = hoje;
+  document.getElementById('inst-lote').innerHTML = '<option value="">— Selecione o revestimento primeiro —</option>';
+  document.getElementById('inst-lote-info').textContent = '';
+  document.getElementById('inst-saldo-info').textContent = '';
   document.getElementById('inst-ap').value = '';
   document.getElementById('inst-cliente').value = '';
-  document.getElementById('inst-data-fab').value = '';
+  document.getElementById('inst-qtd-cx').value = '';
   document.getElementById('inst-obs').value = '';
+  document.getElementById('inst-data').value = new Date().toISOString().split('T')[0];
   abrirModal('modal-instalacao');
+}
+
+function carregarLotesInstalacao() {
+  const nomeRev = document.getElementById('inst-revestimento').value;
+  const sel = document.getElementById('inst-lote');
+  const lotesFiltrados = dadosLotes.filter(l => l.nome === nomeRev && parseFloat(l.qtd_caixas) > 0);
+  if (!lotesFiltrados.length) {
+    sel.innerHTML = '<option value="">Nenhum lote disponível</option>';
+    document.getElementById('inst-lote-info').textContent = '';
+    return;
+  }
+  sel.innerHTML = '<option value="">— Selecione o lote —</option>' +
+    lotesFiltrados.map(l => `<option value="${l.id}" data-qtd="${l.qtd_caixas}" data-datafab="${l.data_fab}" data-m2cx="${l.m2_por_caixa}">
+      Fab: ${l.data_fab} · ${parseFloat(l.qtd_caixas).toFixed(1)} cx disponíveis
+    </option>`).join('');
+}
+
+function atualizarInfoLote() {
+  const sel = document.getElementById('inst-lote');
+  const opt = sel.options[sel.selectedIndex];
+  const info = document.getElementById('inst-lote-info');
+  if (opt && opt.dataset.qtd) {
+    const qtd = parseFloat(opt.dataset.qtd);
+    const m2cx = parseFloat(opt.dataset.m2cx)||0;
+    info.textContent = `Saldo: ${qtd.toFixed(1)} caixas · ${(qtd*m2cx).toFixed(2)} m² disponíveis`;
+    info.style.color = qtd > 5 ? 'var(--accent)' : 'var(--warn)';
+  } else {
+    info.textContent = '';
+  }
+  verificarSaldoLote();
+}
+
+function verificarSaldoLote() {
+  const sel = document.getElementById('inst-lote');
+  const opt = sel.options[sel.selectedIndex];
+  const qtdInput = parseFloat(document.getElementById('inst-qtd-cx').value)||0;
+  const info = document.getElementById('inst-saldo-info');
+  if (!opt || !opt.dataset.qtd || !qtdInput) { info.textContent = ''; return; }
+  const saldo = parseFloat(opt.dataset.qtd)||0;
+  const m2cx = parseFloat(opt.dataset.m2cx)||0;
+  const restante = saldo - qtdInput;
+  if (restante < 0) {
+    info.textContent = `⚠️ Saldo insuficiente! Disponível: ${saldo.toFixed(1)} cx`;
+    info.style.color = 'var(--danger)';
+  } else {
+    info.textContent = `Restará: ${restante.toFixed(1)} cx · ${(qtdInput*m2cx).toFixed(2)} m² instalados`;
+    info.style.color = 'var(--text3)';
+  }
 }
 
 function fecharModalInstalacao() {
@@ -1778,27 +1836,46 @@ function fecharModalInstalacao() {
 }
 
 async function salvarInstalacao() {
+  const sel = document.getElementById('inst-lote');
+  const opt = sel.options[sel.selectedIndex];
+  const revSel = document.getElementById('inst-revestimento');
+  const qtdUsada = parseFloat(document.getElementById('inst-qtd-cx').value)||0;
+
   const dados = {
     ap: document.getElementById('inst-ap').value.trim(),
     cliente: document.getElementById('inst-cliente').value.trim(),
-    revestimento: document.getElementById('inst-revestimento').value,
-    data_fab: document.getElementById('inst-data-fab').value.trim(),
+    revestimento: revSel.value,
+    codigo_rev: dadosLotes.find(l => l.nome === revSel.value)?.codigo_rev || '',
+    lote_id: sel.value,
+    data_fab: opt?.dataset?.datafab || '',
+    qtd_caixas_usadas: qtdUsada,
     data_inst: document.getElementById('inst-data').value,
     obs: document.getElementById('inst-obs').value.trim()
   };
-  if (!dados.ap || !dados.revestimento) {
-    showToast('Preencha apartamento e revestimento', 'error'); return;
+
+  if (!dados.ap || !dados.revestimento || !dados.lote_id) {
+    showToast('Preencha apartamento, revestimento e lote', 'error'); return;
   }
-  // Adicionar imediatamente na memória
+  if (qtdUsada <= 0) {
+    showToast('Informe a quantidade de caixas usadas', 'error'); return;
+  }
+
+  // Atualizar lote na memória imediatamente
+  const lote = dadosLotes.find(l => l.id === dados.lote_id);
+  const qtdAnterior = lote ? parseFloat(lote.qtd_caixas) : 0;
+  if (lote) lote.qtd_caixas = String(Math.max(0, qtdAnterior - qtdUsada));
+
   const novo = { ...dados, id: 'id_' + Date.now() };
   dadosInstalacoes.unshift(novo);
   renderInstalacoes(dadosInstalacoes);
   fecharModalInstalacao();
-  // Salvar no servidor
+
   try {
     await api('addInstalacao', dados);
     showToast('Instalação registrada!', 'success');
   } catch(e) {
+    // Reverter
+    if (lote) lote.qtd_caixas = String(qtdAnterior);
     dadosInstalacoes = dadosInstalacoes.filter(i => i.id !== novo.id);
     renderInstalacoes(dadosInstalacoes);
     showToast('Erro: ' + e.message, 'error');
