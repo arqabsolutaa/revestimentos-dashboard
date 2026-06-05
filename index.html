@@ -2797,9 +2797,9 @@ async function excluirPersonalizarSelecionadas() {
   const backup = [...dadosPersonalizar];
   dadosPersonalizar = dadosPersonalizar.filter(p => !ids.includes(p.id));
   renderPersonalizar(dadosPersonalizar);
-  // Salvar no servidor em background
+  // Salvar no servidor em background — paralelo
   try {
-    for (const id of ids) await apiAction('deletePersonalizar', id);
+    await Promise.all(ids.map(id => apiAction('deletePersonalizar', id)));
     showToast(`${ids.length} item(s) excluído(s)!`, 'success');
   } catch(e) {
     dadosPersonalizar = backup;
