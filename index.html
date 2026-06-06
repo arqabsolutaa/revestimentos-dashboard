@@ -2739,7 +2739,7 @@ function renderSaidas(d) {
   if (!d.length) { document.getElementById('saidas-tbody').innerHTML = '<tr><td colspan="8"><div class="empty-state"><strong>Nenhuma saída registrada</strong></div></td></tr>'; return; }
   document.getElementById('saidas-tbody').innerHTML = d.map(r => `<tr>
     <td><input type="checkbox" class="saida-cb" data-id="${r.id}" style="cursor:pointer"></td>
-    <td>${r.data||'-'}</td>
+    <td>${formatarDataDisplay(r.data)||'-'}</td>
     <td style="font-weight:500">${r.revestimento||'-'}</td>
     <td>${r.obra||'-'}</td>
     <td>${r.local||'-'} ${r.apto ? '· Apto '+r.apto : ''}</td>
@@ -3373,20 +3373,14 @@ async function confirmarSaidaPersonalizar(id) {
 }
 async function excluirPersonalizar(id) {
   if (!confirm('Excluir esta personalização?')) return;
-  // Remover imediatamente da memória
   const backup = [...dadosPersonalizar];
   dadosPersonalizar = dadosPersonalizar.filter(p => p.id !== id);
   renderPersonalizar(dadosPersonalizar);
-  // Salvar no servidor em background
-  try {
-    await apiAction('deletePersonalizar', id);
-    showToast('Excluído!', 'success');
-  } catch(e) {
-    // Reverter se falhou
+  apiAction('deletePersonalizar', id).catch(e => {
     dadosPersonalizar = backup;
     renderPersonalizar(dadosPersonalizar);
     showToast('Erro: ' + e.message, 'error');
-  }
+  });
 }
 
 // ===================== PDF =====================
