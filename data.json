@@ -5350,47 +5350,7 @@
       "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     }
   ],
-  "instalacoes": [
-    {
-      "id": "id_1780692533027_54zj4",
-      "ap": "",
-      "cliente": "",
-      "revestimento": "",
-      "codigo_rev": "",
-      "lote_id": "",
-      "data_fab": "",
-      "qtd_caixas_usadas": "0",
-      "data_inst": "",
-      "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
-    },
-    {
-      "id": "id_1780692632396_elqaf",
-      "ap": "",
-      "cliente": "",
-      "revestimento": "",
-      "codigo_rev": "",
-      "lote_id": "",
-      "data_fab": "",
-      "qtd_caixas_usadas": "0",
-      "data_inst": "",
-      "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
-    },
-    {
-      "id": "id_1780692662910_eqiw1",
-      "ap": "",
-      "cliente": "",
-      "revestimento": "",
-      "codigo_rev": "",
-      "lote_id": "",
-      "data_fab": "",
-      "qtd_caixas_usadas": "0",
-      "data_inst": "",
-      "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
-    }
-  ],
+  "instalacoes": [],
   "lotes": [
     {
       "id": "id_1780690236469_h8dv7",
