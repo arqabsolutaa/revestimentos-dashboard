@@ -240,7 +240,7 @@
       "tamanho": "120x120",
       "junta": "1,5mm",
       "espessura": "7,0mm",
-      "data_fabricacao": "Thu Nov 27 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fabricacao": "Thu Nov 27 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "137.76",
@@ -259,7 +259,7 @@
       "tamanho": "120x120",
       "junta": "1,5mm",
       "espessura": "7,0mm",
-      "data_fabricacao": "Fri Nov 28 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fabricacao": "Fri Nov 28 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "60.27",
@@ -278,7 +278,7 @@
       "tamanho": "120x120",
       "junta": "1,5mm",
       "espessura": "7,0mm",
-      "data_fabricacao": "Sat Nov 29 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fabricacao": "Sat Nov 29 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "68.88",
@@ -297,7 +297,7 @@
       "tamanho": "120x120",
       "junta": "1,5mm",
       "espessura": "7,0mm",
-      "data_fabricacao": "Mon Dec 01 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fabricacao": "Mon Dec 01 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "264.04",
@@ -316,7 +316,7 @@
       "tamanho": "120x120",
       "junta": "1,5mm",
       "espessura": "7,0mm",
-      "data_fabricacao": "Tue Dec 02 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fabricacao": "Tue Dec 02 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "137.76",
@@ -335,7 +335,7 @@
       "tamanho": "120x120",
       "junta": "1,5mm",
       "espessura": "7,0mm",
-      "data_fabricacao": "Wed Jan 07 2026 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fabricacao": "Wed Jan 07 2026 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "129.15",
@@ -354,7 +354,7 @@
       "tamanho": "120x120",
       "junta": "1,5mm",
       "espessura": "7,0mm",
-      "data_fabricacao": "Tue Jan 20 2026 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fabricacao": "Tue Jan 20 2026 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "129.15",
@@ -1000,7 +1000,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/Banho%20Master.png",
       "nome_arquivo": "Banho Master.png"
     },
@@ -5298,7 +5298,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     }
@@ -5310,10 +5310,10 @@
       "ap": "11",
       "cliente": "Disponível",
       "empresa": "Empresa",
-      "data": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"27\"}}",
       "status": "pendente",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "",
       "obs_pgto": ""
     }
@@ -5321,8 +5321,8 @@
   "orcamentos": [
     {
       "id": "id_1780756160817_gr9ww",
-      "data": "Wed May 27 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed May 27 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "Teste",
       "ap": "11",
       "empresa": "Absoluta",
@@ -5332,12 +5332,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780756162653_6jveq",
-      "data": "Wed May 27 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed May 27 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "Teste",
       "ap": "11",
       "empresa": "Absoluta",
@@ -5347,7 +5347,7 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "instalacoes": [],
@@ -5362,7 +5362,7 @@
       "m2_total": "217.79999999999998",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690236689_7rr4l",
@@ -5374,7 +5374,7 @@
       "m2_total": "145.2",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690236962_wmod8",
@@ -5386,7 +5386,7 @@
       "m2_total": "193.6",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690237245_bexg6",
@@ -5398,7 +5398,7 @@
       "m2_total": "193.6",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690237541_bocmm",
@@ -5410,7 +5410,7 @@
       "m2_total": "193.6",
       "localizacao": "Terreno",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690237869_gxlyu",
@@ -5422,7 +5422,7 @@
       "m2_total": "958.3199999999999",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690238176_kpec3",
@@ -5434,7 +5434,7 @@
       "m2_total": "958.3199999999999",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690238466_5akw4",
@@ -5446,7 +5446,7 @@
       "m2_total": "348.48",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690238751_5r6px",
@@ -5458,7 +5458,7 @@
       "m2_total": "261.36",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690239061_ea91d",
@@ -5470,7 +5470,7 @@
       "m2_total": "348.48",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690239373_7utp0",
@@ -5482,7 +5482,7 @@
       "m2_total": "229.60000000000002",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690239712_4nhnv",
@@ -5494,91 +5494,91 @@
       "m2_total": "258.3",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690240006_x1fvn",
       "codigo_rev": "12003",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Thu Nov 27 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Thu Nov 27 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "48",
       "m2_por_caixa": "2.87",
       "m2_total": "137.76",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690240337_tza4e",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Fri Nov 28 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Fri Nov 28 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "21",
       "m2_por_caixa": "2.87",
       "m2_total": "60.27",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690240670_i9lli",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Sat Nov 29 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Sat Nov 29 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "24",
       "m2_por_caixa": "2.87",
       "m2_total": "68.88",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690241023_ya0dj",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Mon Dec 01 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Mon Dec 01 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "92",
       "m2_por_caixa": "2.87",
       "m2_total": "264.04",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690241674_rze83",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Tue Dec 02 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Tue Dec 02 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "48",
       "m2_por_caixa": "2.87",
       "m2_total": "137.76",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690241958_i8gdp",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Wed Jan 07 2026 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Wed Jan 07 2026 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "45",
       "m2_por_caixa": "2.87",
       "m2_total": "129.15",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690242244_qxtvf",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Tue Jan 20 2026 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Tue Jan 20 2026 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "45",
       "m2_por_caixa": "2.87",
       "m2_total": "129.15",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690242527_bjmdi",
@@ -5590,7 +5590,7 @@
       "m2_total": "275.52",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690242821_5z9bt",
@@ -5602,7 +5602,7 @@
       "m2_total": "68.88",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690243112_twl9h",
@@ -5614,7 +5614,7 @@
       "m2_total": "206.64000000000001",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690243399_8ky1o",
@@ -5626,7 +5626,7 @@
       "m2_total": "38.25",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690243847_sal7f",
@@ -5638,7 +5638,7 @@
       "m2_total": "1019.9999999999999",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690244149_yne62",
@@ -5650,7 +5650,7 @@
       "m2_total": "318.75",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690244491_v2ggy",
@@ -5662,7 +5662,7 @@
       "m2_total": "1231.6499999999999",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690245020_ojx60",
@@ -5674,7 +5674,7 @@
       "m2_total": "453.9",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690245746_shjp2",
@@ -5686,7 +5686,7 @@
       "m2_total": "979.1999999999999",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690246029_8ljhf",
@@ -5698,7 +5698,7 @@
       "m2_total": "443.7",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690246331_f9bgj",
@@ -5710,7 +5710,7 @@
       "m2_total": "1453.5",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690246635_yjnqr",
@@ -5722,7 +5722,7 @@
       "m2_total": "22.61",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690246912_jlzmr",
@@ -5734,7 +5734,7 @@
       "m2_total": "268.09",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690247199_ba891",
@@ -5746,7 +5746,7 @@
       "m2_total": "64.6",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690247496_8uykx",
@@ -5758,7 +5758,7 @@
       "m2_total": "839.8",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690247771_mws8k",
@@ -5770,7 +5770,7 @@
       "m2_total": "516.8",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690248294_qjqmn",
@@ -5782,7 +5782,7 @@
       "m2_total": "516.8",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690248579_a28b4",
@@ -5794,7 +5794,7 @@
       "m2_total": "257.4",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690249199_zmw8c",
@@ -5806,7 +5806,7 @@
       "m2_total": "45.76",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690249488_y9cak",
@@ -5818,7 +5818,7 @@
       "m2_total": "411.84",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690249793_7whul",
@@ -5830,7 +5830,7 @@
       "m2_total": "42.9",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690250092_2e4i1",
@@ -5842,7 +5842,7 @@
       "m2_total": "328.9",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690250402_dnmxj",
@@ -5854,7 +5854,7 @@
       "m2_total": "45.76",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690250702_72ujh",
@@ -5866,7 +5866,7 @@
       "m2_total": "128.8",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690250984_v33yn",
@@ -5878,7 +5878,7 @@
       "m2_total": "173.28",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690251443_g0qu3",
@@ -5890,7 +5890,7 @@
       "m2_total": "952",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690252015_c4035",
@@ -5902,7 +5902,7 @@
       "m2_total": "87",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690252679_020kt",
@@ -5914,7 +5914,7 @@
       "m2_total": "112.23",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690253117_3x44s",
@@ -5926,7 +5926,7 @@
       "m2_total": "95.19999999999999",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690254215_jutt5",
@@ -5938,7 +5938,7 @@
       "m2_total": "270",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690254506_oswkj",
@@ -5950,7 +5950,7 @@
       "m2_total": "239.25",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690254804_lfujq",
@@ -5962,7 +5962,7 @@
       "m2_total": "87",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690255175_k07x3",
@@ -5974,7 +5974,7 @@
       "m2_total": "231.84",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ]
 }
