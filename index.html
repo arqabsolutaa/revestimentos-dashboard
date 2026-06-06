@@ -2372,7 +2372,7 @@ function renderUltimasSaidas() {
         <div style="width:3px;height:36px;background:var(--accent);border-radius:2px;flex-shrink:0"></div>
         <div>
           <p style="font-weight:500;font-size:13px">${s.revestimento||'—'}</p>
-          <p style="font-size:11px;color:var(--text3)">${s.local||'—'} ${s.apto ? '· Apto '+s.apto : ''} · ${s.data||'—'}</p>
+          <p style="font-size:11px;color:var(--text3)">${s.local||'—'} ${s.apto ? '· Apto '+s.apto : ''} · ${formatarDataDisplay(s.data)||'—'}</p>
         </div>
       </div>
       <span class="badge badge-warn" style="flex-shrink:0">${parseFloat(s.quantidade_m2||0).toFixed(2)} m²</span>
