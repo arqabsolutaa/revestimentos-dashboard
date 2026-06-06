@@ -1635,10 +1635,13 @@ function renderLotes(d) {
   });
   el.innerHTML = Object.entries(grupos).map(([nome, lotes]) => {
     const totalM2 = lotes.reduce((s, l) => s + (parseFloat(l.m2_total)||0), 0);
+    const rev = dadosRevestimentos.find(r => r.id === lotes[0].codigo_rev || r.codigo === lotes[0].codigo_rev);
+    const tamanho = rev?.tamanho || '';
+    const tituloLote = tamanho ? nome + ' — ' + tamanho : nome;
     return `
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden">
       <div style="padding:14px 16px;background:var(--surface2);display:flex;justify-content:space-between;align-items:center">
-        <span style="font-weight:600;font-size:14px">${nome}</span>
+        <span style="font-weight:600;font-size:14px">${tituloLote}</span>
         <span style="font-size:12px;color:var(--accent);font-weight:600">${totalM2.toFixed(2)} m² total</span>
       </div>
       ${lotes.map(l => `
@@ -1675,7 +1678,7 @@ function abrirModalLote() {
   const sel = document.getElementById('lote-revestimento');
   if (sel) {
     sel.innerHTML = '<option value="">— Selecione —</option>' +
-      dadosRevestimentos.map(r => `<option value="${r.id}" data-nome="${r.nome}" data-m2="${r.m2_por_caixa}">${r.nome}</option>`).join('');
+      dadosRevestimentos.map(r => `<option value="${r.id}" data-nome="${r.nome}" data-m2="${r.m2_por_caixa}">${r.nome}${r.tamanho ? ' — ' + r.tamanho : ''}</option>`).join('');
   }
   document.getElementById('lote-data-fab').value = '';
   document.getElementById('lote-qtd').value = '';
