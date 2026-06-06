@@ -2386,7 +2386,6 @@ async function exportarEstoqueExcel() {
   }
   if (!dadosEstoque.length) { showToast('Nenhum dado para exportar', 'error'); return; }
 
-  // Carregar SheetJS dinamicamente
   if (!window.XLSX) {
     await new Promise((res, rej) => {
       const s = document.createElement('script');
@@ -2396,33 +2395,84 @@ async function exportarEstoqueExcel() {
     });
   }
 
-  const data = dadosEstoque.map(r => ({
-    'Código': r.codigo || '',
-    'Nome': r.nome || '',
-    'Tamanho': r.tamanho || '',
-    'Obra / Local': r.obra || '',
-    'Estoque (m²)': parseFloat(r.estoque_m2) || 0,
-    'M² por Caixa': parseFloat(r.m2_por_caixa) || 0,
-    'Peças por Caixa': parseInt(r.pecas_por_caixa) || 0,
-    'Lote': r.lote || '',
-    'Fabricação': r.data_fabricacao || '',
-    'Popularidade': parseInt(r.popularidade) || 0
-  }));
-
   const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.json_to_sheet(data);
+  const revMap = {};
+  dadosEstoque.forEach(r => { revMap[String(r.codigo)] = r; });
+  const GRUPOS = [["PRODUTOS 90X90", ["9001", "9002", "9003", "9004", "9005", "9006", "9007", "9008", "9009", "9010/40", "9011/40", "9012/40", "9013/40", "9014/40"]], ["PRODUTOS 120X120", ["12001", "12002", "12003", "12004", "12005", "12006", "12007", "12008", "12009", "12010", "12011", "12011/40", "12012/40", "12013/40"]], ["PRODUTOS 160X160", ["16001", "16002", "16003", "16004/40", "16005/40", "16006/40", "16007/40", "16008/40"]], ["PRODUTOS 120X270", ["27001", "27002", "27003", "27004/40", "27005/40", "27006/40", "27007/40", "27008/40", "27009/40"]], ["PRODUTOS 60X120", ["120601", "120602", "120603", "120604", "120605", "120606"]], ["PRODUTOS DIVERSOS", ["801", "802", "803", "804", "805", "806", "807", "808", "809", "810", "811", "812", "813", "814", "815", "816", "817", "818", "819", "820", "821", "822", "823", "824", "825"]]];
 
-  // Largura das colunas
-  ws['!cols'] = [
-    {wch:12},{wch:36},{wch:12},{wch:20},{wch:14},{wch:14},{wch:14},{wch:16},{wch:14},{wch:12}
-  ];
+  // ===== ABA DADOS =====
+  const wsDados = XLSX.utils.aoa_to_sheet([['Codigo','Produto','Tamanho','m² por cx']]);
+  GRUPOS.forEach(([_g, cods]) => {
+    cods.forEach(cod => {
+      const r = revMap[cod];
+      if (r) XLSX.utils.sheet_add_aoa(wsDados, [[r.codigo, r.nome, r.tamanho, parseFloat(r.m2_por_caixa)||0]], {origin:-1});
+    });
+  });
+  wsDados['!cols'] = [{wch:12},{wch:40},{wch:12},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, wsDados, 'Dados');
 
-  XLSX.utils.book_append_sheet(wb, ws, 'Estoque');
+  // ===== ABA SAÍDA =====
+  const sRows = [['Saída de Revestimentos','','','','','','']];
+  sRows.push(['Codigo','Área (m²)','Produto','Tamanho','m² por Caixa','Caixas Necessárias','Apto - Empren.']);
+  (dadosSaidas||[]).forEach((s,i) => {
+    const r = revMap[String(s.codigo_rev)] || {};
+    const m2cx = parseFloat(r.m2_por_caixa)||0;
+    const m2 = parseFloat(s.quantidade_m2)||0;
+    const row = i + 3;
+    sRows.push([
+      s.codigo_rev||'',
+      m2cx > 0 ? {f:'IF(F'+row+'="","",F'+row+'*E'+row+')'} : m2,
+      r.nome||s.nome||'',
+      r.tamanho||'',
+      m2cx,
+      Math.ceil(m2/(m2cx||1)),
+      (s.apto||'') + (s.obra ? ' - '+s.obra : '')
+    ]);
+  });
+  for (let i = 0; i < 100; i++) sRows.push(['','','','','','','']);
+  const wsSaida = XLSX.utils.aoa_to_sheet(sRows);
+  wsSaida['!cols'] = [{wch:11.4},{wch:11.1},{wch:30.1},{wch:14.4},{wch:11.7},{wch:17.3},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, wsSaida, 'Saída');
+
+  // ===== ABA ESTOQUE =====
+  const eRows = [['Estoque de Revestimentos','','','','','','','','','','','']];
+  eRows.push(['Codigo','Produto','Tamanho','m² por cx','Estoque cxs','Estoque m²','Entrada m²','Entradas cx','Saída m²','Saídas cx','Estoque Atual cxs','Estoque Atual m²']);
+  eRows.push(new Array(12).fill(''));
+
+  GRUPOS.forEach(([grupo, cods]) => {
+    eRows.push([grupo,...new Array(11).fill('')]);
+    cods.forEach(cod => {
+      const r = revMap[cod];
+      if (!r) return;
+      const estM2 = parseFloat(r.estoque_m2)||0;
+      const row = eRows.length + 1;
+      eRows.push([
+        r.codigo,
+        {f:'IFERROR(XLOOKUP(A'+row+',Dados!A:A,Dados!B:B),"")'},
+        {f:'IFERROR(XLOOKUP(A'+row+',Dados!A:A,Dados!C:C),"")'},
+        {f:'IFERROR(XLOOKUP(A'+row+',Dados!A:A,Dados!D:D),"")'},
+        {f:'F'+row+'/D'+row},
+        estM2,
+        {f:'H'+row+'*D'+row},
+        {f:'SUMIFS(Saída!F:F,Saída!A:A,Estoque!A'+row+')'},
+        {f:'J'+row+'*D'+row},
+        {f:'SUMIFS(Saída!F:F,Saída!A:A,Estoque!A'+row+')'},
+        {f:'E'+row+'-J'+row+'+H'+row},
+        {f:'F'+row+'-I'+row+'+G'+row}
+      ]);
+    });
+    eRows.push(new Array(12).fill(''));
+  });
+
+  const wsEstoque = XLSX.utils.aoa_to_sheet(eRows);
+  wsEstoque['!cols'] = [{wch:12},{wch:30.7},{wch:11.1},{wch:9.4},{wch:11.3},{wch:12.9},{wch:10.3},{wch:11},{wch:10.6},{wch:12.3},{wch:16.3},{wch:15.7}];
+  XLSX.utils.book_append_sheet(wb, wsEstoque, 'Estoque');
 
   const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
   XLSX.writeFile(wb, 'Absoluta-Estoque-' + dataHoje + '.xlsx');
   showToast('Excel exportado!', 'success');
 }
+
 
 // ===================== ORÇAMENTOS =====================
 const STORAGE_KEY_ORC = 'historico_orcamentos';
