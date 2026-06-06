@@ -1396,11 +1396,11 @@
     },
     {
       "id": "38",
-      "apartamento": "11",
-      "cliente": "Disponível",
-      "local": "Living",
+      "apartamento": "12",
+      "cliente": "Junior Cegonheiro",
+      "local": "Banho 01 ",
       "parede": "A",
-      "metro_linear": "1.35",
+      "metro_linear": "1.65",
       "altura": "2.55",
       "imagem": "",
       "obs": "",
@@ -1410,11 +1410,11 @@
     },
     {
       "id": "39",
-      "apartamento": "11",
-      "cliente": "Disponível",
-      "local": "Living",
-      "parede": "A",
-      "metro_linear": "1.35",
+      "apartamento": "12",
+      "cliente": "Junior Cegonheiro",
+      "local": "Banho 01 ",
+      "parede": "B",
+      "metro_linear": "1.28",
       "altura": "2.55",
       "imagem": "",
       "obs": "",
@@ -1424,11 +1424,11 @@
     },
     {
       "id": "40",
-      "apartamento": "11",
-      "cliente": "Disponível",
-      "local": "Living",
-      "parede": "A",
-      "metro_linear": "1.35",
+      "apartamento": "12",
+      "cliente": "Junior Cegonheiro",
+      "local": "Banho 01 ",
+      "parede": "C",
+      "metro_linear": "2.58",
       "altura": "2.55",
       "imagem": "",
       "obs": "",
@@ -1438,12 +1438,12 @@
     },
     {
       "id": "41",
-      "apartamento": "",
-      "cliente": "",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
+      "apartamento": "12",
+      "cliente": "Junior Cegonheiro",
+      "local": "Banho 01 ",
+      "parede": "D",
+      "metro_linear": "1.05",
+      "altura": "2.55",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -1452,12 +1452,12 @@
     },
     {
       "id": "42",
-      "apartamento": "",
-      "cliente": "",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
+      "apartamento": "12",
+      "cliente": "Junior Cegonheiro",
+      "local": "Banho 01 ",
+      "parede": "E",
+      "metro_linear": "0.95",
+      "altura": "2.55",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -1466,12 +1466,12 @@
     },
     {
       "id": "43",
-      "apartamento": "",
-      "cliente": "",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
+      "apartamento": "12",
+      "cliente": "Junior Cegonheiro",
+      "local": "Banho 01",
+      "parede": "F",
+      "metro_linear": "0.23",
+      "altura": "2.55",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -1480,12 +1480,12 @@
     },
     {
       "id": "44",
-      "apartamento": "",
-      "cliente": "",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
+      "apartamento": "12",
+      "cliente": "Junior Cegonheiro",
+      "local": "Banho 01",
+      "parede": "Piso",
+      "metro_linear": "3.08",
+      "altura": "2.55",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -1713,7 +1713,7 @@
       "imagem": "",
       "obs": "",
       "criado_em": "",
-      "planta_img": "",
+      "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/",
       "nome_arquivo": ""
     },
     {
@@ -1727,7 +1727,7 @@
       "imagem": "",
       "obs": "",
       "criado_em": "",
-      "planta_img": "",
+      "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/",
       "nome_arquivo": ""
     },
     {
@@ -1741,7 +1741,7 @@
       "imagem": "",
       "obs": "",
       "criado_em": "",
-      "planta_img": "",
+      "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/",
       "nome_arquivo": ""
     },
     {
@@ -1797,7 +1797,7 @@
       "imagem": "",
       "obs": "",
       "criado_em": "",
-      "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/",
+      "planta_img": "",
       "nome_arquivo": ""
     },
     {
@@ -1811,31 +1811,31 @@
       "imagem": "",
       "obs": "",
       "criado_em": "",
-      "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/",
+      "planta_img": "",
       "nome_arquivo": ""
     },
     {
       "id": "68",
-      "apartamento": "12",
-      "cliente": "Junior (Filho do Cegonheiro Master)",
-      "local": "Banho 01 ",
-      "parede": "A",
-      "metro_linear": "1.65",
-      "altura": "2.55",
+      "apartamento": "",
+      "cliente": "",
+      "local": "",
+      "parede": "",
+      "metro_linear": "",
+      "altura": "",
       "imagem": "",
       "obs": "",
       "criado_em": "",
-      "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/",
+      "planta_img": "",
       "nome_arquivo": ""
     },
     {
       "id": "69",
-      "apartamento": "12",
-      "cliente": "Junior (Filho do Cegonheiro Master)",
-      "local": "Banho 01 ",
-      "parede": "B",
-      "metro_linear": "1.28",
-      "altura": "2.55",
+      "apartamento": "",
+      "cliente": "",
+      "local": "",
+      "parede": "",
+      "metro_linear": "",
+      "altura": "",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -1844,12 +1844,12 @@
     },
     {
       "id": "70",
-      "apartamento": "12",
-      "cliente": "Junior (Filho do Cegonheiro Master)",
-      "local": "Banho 01 ",
-      "parede": "C",
-      "metro_linear": "2.58",
-      "altura": "2.55",
+      "apartamento": "",
+      "cliente": "",
+      "local": "",
+      "parede": "",
+      "metro_linear": "",
+      "altura": "",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -1858,12 +1858,12 @@
     },
     {
       "id": "71",
-      "apartamento": "12",
-      "cliente": "Junior (Filho do Cegonheiro Master)",
-      "local": "Banho 01 ",
-      "parede": "D",
-      "metro_linear": "1.05",
-      "altura": "2.55",
+      "apartamento": "",
+      "cliente": "",
+      "local": "",
+      "parede": "",
+      "metro_linear": "",
+      "altura": "",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -1872,12 +1872,12 @@
     },
     {
       "id": "72",
-      "apartamento": "12",
-      "cliente": "Junior (Filho do Cegonheiro Master)",
-      "local": "Banho 01 ",
-      "parede": "E",
-      "metro_linear": "0.95",
-      "altura": "2.55",
+      "apartamento": "",
+      "cliente": "",
+      "local": "",
+      "parede": "",
+      "metro_linear": "",
+      "altura": "",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -1886,12 +1886,12 @@
     },
     {
       "id": "73",
-      "apartamento": "12",
-      "cliente": "Junior (Filho do Cegonheiro Master)",
-      "local": "Banho 01",
-      "parede": "F",
-      "metro_linear": "0.23",
-      "altura": "2.55",
+      "apartamento": "",
+      "cliente": "",
+      "local": "",
+      "parede": "",
+      "metro_linear": "",
+      "altura": "",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -1900,12 +1900,12 @@
     },
     {
       "id": "74",
-      "apartamento": "12",
-      "cliente": "Junior (Filho do Cegonheiro Master)",
-      "local": "Banho 01",
-      "parede": "Piso",
-      "metro_linear": "3.08",
-      "altura": "2.55",
+      "apartamento": "",
+      "cliente": "",
+      "local": "",
+      "parede": "",
+      "metro_linear": "",
+      "altura": "",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -1928,48 +1928,6 @@
     },
     {
       "id": "76",
-      "apartamento": "",
-      "cliente": "",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
-      "imagem": "",
-      "obs": "",
-      "criado_em": "",
-      "planta_img": "",
-      "nome_arquivo": ""
-    },
-    {
-      "id": "77",
-      "apartamento": "",
-      "cliente": "",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
-      "imagem": "",
-      "obs": "",
-      "criado_em": "",
-      "planta_img": "",
-      "nome_arquivo": ""
-    },
-    {
-      "id": "78",
-      "apartamento": "",
-      "cliente": "",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
-      "imagem": "",
-      "obs": "",
-      "criado_em": "",
-      "planta_img": "",
-      "nome_arquivo": ""
-    },
-    {
-      "id": "79",
       "apartamento": "21",
       "cliente": "A VENDA",
       "local": "",
@@ -1983,7 +1941,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "80",
+      "id": "77",
       "apartamento": "22",
       "cliente": "A VENDA",
       "local": "",
@@ -1997,7 +1955,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "81",
+      "id": "78",
       "apartamento": "31",
       "cliente": "Therezinha e Daniel",
       "local": "",
@@ -2011,7 +1969,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "82",
+      "id": "79",
       "apartamento": "32",
       "cliente": "Raissa",
       "local": "",
@@ -2025,7 +1983,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "83",
+      "id": "80",
       "apartamento": "41",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -2039,7 +1997,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "84",
+      "id": "81",
       "apartamento": "42",
       "cliente": "Caio e Claudia",
       "local": "",
@@ -2053,7 +2011,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "85",
+      "id": "82",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho 01",
@@ -2067,7 +2025,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "86",
+      "id": "83",
       "apartamento": "52",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -2081,7 +2039,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "87",
+      "id": "84",
       "apartamento": "61",
       "cliente": "Edson e Patricia (Raridade ADM)",
       "local": "",
@@ -2095,7 +2053,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "88",
+      "id": "85",
       "apartamento": "62",
       "cliente": "Jadir",
       "local": "",
@@ -2109,7 +2067,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "89",
+      "id": "86",
       "apartamento": "71",
       "cliente": "Alexandre Morassi",
       "local": "",
@@ -2123,7 +2081,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "90",
+      "id": "87",
       "apartamento": "72",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -2137,7 +2095,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "91",
+      "id": "88",
       "apartamento": "81",
       "cliente": "Bruno - Filho do Sr. Vitor",
       "local": "",
@@ -2151,7 +2109,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "92",
+      "id": "89",
       "apartamento": "82",
       "cliente": "Leonardo - Filho do Sr. Vitor",
       "local": "",
@@ -2165,7 +2123,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "93",
+      "id": "90",
       "apartamento": "91",
       "cliente": "Alexandre Tarifa e Ana Paula",
       "local": "",
@@ -2179,7 +2137,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "94",
+      "id": "91",
       "apartamento": "92",
       "cliente": "Anderson Nilo e Fabricia",
       "local": "",
@@ -2193,7 +2151,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "95",
+      "id": "92",
       "apartamento": "101",
       "cliente": "Leticia e Gerson",
       "local": "",
@@ -2207,7 +2165,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "96",
+      "id": "93",
       "apartamento": "102",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -2221,7 +2179,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "97",
+      "id": "94",
       "apartamento": "111",
       "cliente": "Marcos Alves - Cegonheiro",
       "local": "",
@@ -2235,7 +2193,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "98",
+      "id": "95",
       "apartamento": "112",
       "cliente": "Mauricio Munhoz - Cegonheiro",
       "local": "",
@@ -2249,7 +2207,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "99",
+      "id": "96",
       "apartamento": "121",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -2263,7 +2221,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "100",
+      "id": "97",
       "apartamento": "122",
       "cliente": "Michel Padaria",
       "local": "",
@@ -2277,7 +2235,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "101",
+      "id": "98",
       "apartamento": "131",
       "cliente": "A VENDA",
       "local": "",
@@ -2291,7 +2249,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "102",
+      "id": "99",
       "apartamento": "132",
       "cliente": "PERMUTANTE",
       "local": "",
@@ -2305,7 +2263,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "103",
+      "id": "100",
       "apartamento": "141",
       "cliente": "Fabio e Eliana",
       "local": "",
@@ -2319,7 +2277,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "104",
+      "id": "101",
       "apartamento": "142",
       "cliente": "Alexandre Meira",
       "local": "",
