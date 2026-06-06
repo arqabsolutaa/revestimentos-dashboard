@@ -3281,12 +3281,12 @@ function selecionarAp() {
     html += '<div style="margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">' +
       '<div onclick="toggleAmbiente(\'' + ambId + '\')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;background:var(--surface2);user-select:none">' +
         '<div style="display:flex;align-items:center;gap:8px">' +
-          '<svg id="' + ambId + '-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="transition:transform 0.2s;transform:rotate(180deg)"><polyline points="6 9 12 15 18 9"/></svg>' +
+          '<svg id="' + ambId + '-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="transition:transform 0.2s;transform:rotate(0deg)"><polyline points="6 9 12 15 18 9"/></svg>' +
           '<span style="font-size:13px;font-weight:600;color:var(--text)">' + local + '</span>' +
         '</div>' +
         '<span style="font-size:11px;color:var(--text3)">' + paredes.length + ' parede(s)</span>' +
       '</div>' +
-      '<div id="' + ambId + '" style="background:var(--surface)">' +
+      '<div id="' + ambId + '" style="background:var(--surface);display:none">' +
       plantaHtml +
       '<div style="padding:12px"><div class="wall-grid">';
     paredes.forEach((p, idx) => {
