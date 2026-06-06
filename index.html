@@ -1801,9 +1801,14 @@ function abrirModalInstalacao() {
   const sel = document.getElementById('inst-revestimento');
   if (sel) {
     // Mostrar só revestimentos que têm lotes cadastrados
-    const revComLote = [...new Set(dadosLotes.filter(l => parseFloat(l.qtd_caixas) > 0).map(l => l.nome))];
+    const lotesDisponiveis = dadosLotes.filter(l => parseFloat(l.qtd_caixas) > 0);
+    const revComLote = [...new Map(lotesDisponiveis.map(l => [l.nome, l])).values()];
     sel.innerHTML = '<option value="">— Selecione —</option>' +
-      revComLote.map(n => `<option value="${n}">${n}</option>`).join('');
+      revComLote.map(l => {
+        const rev = dadosRevestimentos.find(r => r.id === l.codigo_rev || r.codigo === l.codigo_rev);
+        const tamanho = rev?.tamanho || '';
+        return '<option value="' + l.nome + '">' + l.nome + (tamanho ? ' — ' + tamanho : '') + '</option>';
+      }).join('');
   }
   document.getElementById('inst-lote').innerHTML = '<option value="">— Selecione o revestimento primeiro —</option>';
   document.getElementById('inst-lote-info').textContent = '';
