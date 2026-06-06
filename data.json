@@ -1857,6 +1857,20 @@
       "nome_arquivo": ""
     },
     {
+      "id": "79",
+      "apartamento": "21",
+      "cliente": "A VENDA",
+      "local": "",
+      "parede": "",
+      "metro_linear": "",
+      "altura": "",
+      "imagem": "",
+      "obs": "",
+      "criado_em": "",
+      "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/",
+      "nome_arquivo": ""
+    },
+    {
       "id": "77",
       "apartamento": "",
       "cliente": "",
@@ -1874,20 +1888,6 @@
       "id": "78",
       "apartamento": "",
       "cliente": "",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
-      "imagem": "",
-      "obs": "",
-      "criado_em": "",
-      "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/",
-      "nome_arquivo": ""
-    },
-    {
-      "id": "79",
-      "apartamento": "21",
-      "cliente": "A VENDA",
       "local": "",
       "parede": "",
       "metro_linear": "",
