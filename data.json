@@ -6933,20 +6933,7 @@
       "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
-  "personalizar": [
-    {
-      "id": "id_1780690570542_721gt",
-      "ap": "11",
-      "cliente": "Disponível",
-      "empresa": "Empresa",
-      "data": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"27\"}}",
-      "status": "pendente",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "status_pgto": "",
-      "obs_pgto": ""
-    }
-  ],
+  "personalizar": [],
   "orcamentos": [
     {
       "id": "id_1780756160817_gr9ww",
