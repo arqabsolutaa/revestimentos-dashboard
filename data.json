@@ -692,14 +692,14 @@
       "site": "https://www.portobello.com.br/produtos/aeterna/acessorios-revestimento/aeterna-bianco-cesellato/45x120-mate/207563E",
       "m2_por_caixa": "1.61",
       "pecas_por_caixa": "3",
-      "qtd_caixas": "80",
+      "qtd_caixas": "224",
       "tamanho": "45X120",
       "junta": "1,5mm",
       "espessura": "13,3mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Vista Park",
-      "estoque_m2": "128.8",
+      "estoque_m2": "360.64",
       "": "",
       "criado_em": ""
     },
@@ -852,25 +852,6 @@
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "87",
-      "": "",
-      "criado_em": ""
-    },
-    {
-      "id": "82",
-      "codigo": "801",
-      "nome": "Aeterna Bianco Cesellato ",
-      "imagem": "",
-      "site": "",
-      "m2_por_caixa": "1.61",
-      "pecas_por_caixa": "",
-      "qtd_caixas": "144",
-      "tamanho": "45x120",
-      "junta": "1,5mm",
-      "espessura": "13,3mm",
-      "data_fabricacao": "N / D ",
-      "lote": "N / I ",
-      "obra": "Essence",
-      "estoque_m2": "231.84",
       "": "",
       "criado_em": ""
     }
@@ -10167,6 +10148,18 @@
       "localizacao": "Essence",
       "obs": "",
       "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+    },
+    {
+      "id": "id_1781180720175_gxa6m",
+      "codigo_rev": "801",
+      "nome": "Aeterna Bianco Cesellato ",
+      "data_fab": "N / D",
+      "qtd_caixas": "80",
+      "m2_por_caixa": "1.61",
+      "m2_total": "128.8",
+      "localizacao": "Vista Park",
+      "obs": "",
+      "criado_em": "Thu Jun 11 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     }
   ]
 }
