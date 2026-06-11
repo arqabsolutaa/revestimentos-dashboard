@@ -2932,19 +2932,41 @@ function adicionarItemSaida() {
         ${opcoes.map(r => `<option value="${r.codigo||r.id}">${r.nome}${r.tamanho ? ' · '+r.tamanho : ''}</option>`).join('')}
       </select>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:8px">
+      <div>
+        <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Qtd peças</label>
+        <input class="form-control" id="si-pecas-${id}" type="number" step="1" placeholder="0" min="0" oninput="calcularM2PorPecas(${id})">
+      </div>
       <div>
         <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Quantidade (m²)</label>
         <input class="form-control" id="si-m2-${id}" type="number" step="0.01" placeholder="0.00" min="0.01">
       </div>
       <div>
-        <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Apartamento / Unidade</label>
+        <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Apartamento</label>
         <input class="form-control" id="si-apto-${id}" placeholder="Ex: 11">
       </div>
     </div>
   `;
   document.getElementById('saida-itens-lista').appendChild(div);
 }
+
+function calcularM2PorPecas(id) {
+  const pecas = parseFloat(document.getElementById('si-pecas-' + id)?.value) || 0;
+  if (!pecas) return;
+  const codRev = document.getElementById('si-rev-' + id)?.value;
+  if (!codRev) return;
+  const rev = (dadosRevestimentos.length ? dadosRevestimentos : dadosEstoque).find(r => (r.codigo||r.id) === codRev);
+  if (!rev) return;
+  const pecasPorCaixa = parseFloat(rev.pecas_por_caixa) || 0;
+  const m2PorCaixa = parseFloat(rev.m2_por_caixa) || 0;
+  if (pecasPorCaixa > 0 && m2PorCaixa > 0) {
+    const m2PorPeca = m2PorCaixa / pecasPorCaixa;
+    const m2Total = Math.round(pecas * m2PorPeca * 100) / 100;
+    const m2Input = document.getElementById('si-m2-' + id);
+    if (m2Input) m2Input.value = m2Total;
+  }
+}
+
 function removerItemSaida(id) {
   document.getElementById('saida-item-' + id).remove();
   saidaItens = saidaItens.filter(i => i.id !== id);
