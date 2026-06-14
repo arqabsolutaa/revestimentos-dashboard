@@ -502,14 +502,14 @@
       "site": "https://www.portobello.com.br/produtos/unique/field-tile/nero-venato/60x120-polido/27103E",
       "m2_por_caixa": "3.23",
       "pecas_por_caixa": "1",
-      "qtd_caixas": "17.43",
+      "qtd_caixas": "20",
       "tamanho": "120x270",
       "junta": "1,5mm",
       "espessura": "7,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Essence",
-      "estoque_m2": "56.309999999999995",
+      "estoque_m2": "64.6",
       "": "",
       "criado_em": ""
     },
@@ -9558,19 +9558,6 @@
       "destino": "uso",
       "obs": "Migrado - Vista Park",
       "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
-    {
-      "id": "id_1781465657763_grmf5",
-      "data": "Sun Jun 14 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Nero Venato Pol Ret",
-      "codigo_rev": "48",
-      "obra": "11",
-      "local": "Personalizar",
-      "apto": "11",
-      "quantidade_m2": "8.29",
-      "destino": "uso",
-      "obs": "Via Personalizar - Disponível",
-      "criado_em": "Sun Jun 14 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "personalizar": [
