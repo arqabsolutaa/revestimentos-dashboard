@@ -2159,7 +2159,13 @@ function showToast(msg, type = 'default') {
 // ===================== MODALS =====================
 function abrirModal(id) { document.getElementById(id).classList.add('open'); }
 function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) fecharModal(o.id); }));
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  // modal-calculo e modal-nova-parede só fecham pelo X
+  const naoFecharFora = ['modal-calculo', 'modal-nova-parede'];
+  if (!naoFecharFora.includes(o.id)) {
+    o.addEventListener('click', e => { if (e.target === o) fecharModal(o.id); });
+  }
+});
 
 // ===================== CONFIG =====================
 function salvarURL() {
@@ -2922,17 +2928,14 @@ function adicionarItemSaida() {
   div.style.cssText = 'background:var(--surface);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid var(--border);position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.05)';
   div.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <p style="font-size:12px;font-weight:600;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase">Revestimento</p>
+      <span style="font-size:12px;font-weight:600;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase">Revestimento</span>
       <button onclick="removerItemSaida(${id})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;line-height:1;padding:0 4px" title="Remover">×</button>
     </div>
-    <div style="margin-bottom:10px">
-      <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Produto</label>
-      <select class="form-control" id="si-rev-${id}" style="width:100%">
-        <option value="">— Selecione o revestimento —</option>
-        ${opcoes.map(r => `<option value="${r.codigo||r.id}">${r.nome}${r.tamanho ? ' · '+r.tamanho : ''}</option>`).join('')}
-      </select>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+    <select class="form-control" id="si-rev-${id}" style="width:100%;margin-bottom:10px">
+      <option value="">— Selecione o revestimento —</option>
+      ${opcoes.map(r => `<option value="${r.codigo||r.id}">${r.nome}${r.tamanho ? ' · '+r.tamanho : ''}</option>`).join('')}
+    </select>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div>
         <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Qtd peças (opcional)</label>
         <input class="form-control" id="si-pecas-${id}" type="number" step="1" placeholder="0" min="0" oninput="calcularM2PorPecas(${id})">
