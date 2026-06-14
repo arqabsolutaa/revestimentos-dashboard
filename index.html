@@ -3540,12 +3540,25 @@ async function confirmarSaidaPersonalizar(id) {
   const item = dadosPersonalizar.find(p => p.id === id);
   if (item) item.status = 'confirmado';
   renderPersonalizar(dadosPersonalizar);
-  // Salvar no servidor em background
   try {
-    await apiAction('confirmarSaida', id);
+    // Buscar dados atualizados para garantir ID real da planilha
+    const dados = await lerDados();
+    if (dados.personalizar) dadosPersonalizar = dados.personalizar;
+    // Encontrar o ID real — buscar por ap + cliente + status pendente
+    const itemReal = dados.personalizar?.find(p => 
+      p.ap === (item?.ap || '') && 
+      p.cliente === (item?.cliente || '') && 
+      p.status !== 'confirmado'
+    );
+    const idReal = itemReal?.id || id;
+    await apiAction('confirmarSaida', idReal);
+    // Atualizar memória com dados frescos
+    const dadosNovos = await lerDados();
+    if (dadosNovos.personalizar) dadosPersonalizar = dadosNovos.personalizar;
+    if (dadosNovos.revestimentos) dadosRevestimentos = dadosNovos.revestimentos;
+    renderPersonalizar(dadosPersonalizar);
     showToast('Saída confirmada e estoque atualizado!', 'success');
   } catch(e) {
-    // Reverter se falhou
     if (item) item.status = 'pendente';
     renderPersonalizar(dadosPersonalizar);
     showToast('Erro: ' + e.message, 'error');
