@@ -2380,23 +2380,44 @@ async function salvarNovaParede() {
     dadosParedes.push(novaParede);
 
     fecharModal('modal-nova-parede');
-    // Salvar seleções atuais antes de recarregar
-    const selecoesBackup = JSON.parse(JSON.stringify(calcSelecoes));
-    // Recarregar paredes
-    document.getElementById('calc-ap-select').value = calcApAtual;
-    selecionarAp();
-    // Restaurar seleções e selects após renderizar
-    setTimeout(() => {
-      for (const [key, v] of Object.entries(selecoesBackup)) {
-        calcSelecoes[key] = v;
-        const el = document.getElementById('wi-' + key);
-        const fs = document.getElementById('fs-' + key);
-        if (el && !el.classList.contains('checked')) el.classList.add('checked');
-        if (fs && v.piso) fs.value = v.piso;
-      }
-      atualizarResumo();
-    }, 150);
     showToast('Parede adicionada!', 'success');
+    // Renderizar só a nova parede sem recarregar tudo
+    const container = document.getElementById('calc-paredes-container');
+    // Encontrar ou criar o grupo do ambiente
+    const ambKey = 'amb-novo-' + local.replace(/\s/g,'_');
+    let grupoExistente = null;
+    // Verificar se já existe grupo com esse nome
+    container.querySelectorAll('[data-local]').forEach(el => {
+      if (el.dataset.local === local) grupoExistente = el;
+    });
+    if (!grupoExistente) {
+      // Criar novo grupo
+      const novoGrupo = document.createElement('div');
+      novoGrupo.style.cssText = 'margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden';
+      novoGrupo.dataset.local = local;
+      novoGrupo.innerHTML = '<div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'\':this.nextElementSibling.style.display=\'none\'" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;background:var(--surface2)">' +
+        '<span style="font-size:13px;font-weight:600;color:var(--text)">' + local + '</span>' +
+        '</div>' +
+        '<div style="padding:12px;background:var(--surface)"><div class="wall-grid" id="wg-' + ambKey + '"></div></div>';
+      container.appendChild(novoGrupo);
+    }
+    // Adicionar o card da nova parede no grupo correto
+    const m2 = Math.round(linear * altura * 100) / 100;
+    const key = calcApAtual + '-' + local + '-' + parede + '-' + (Date.now());
+    const wgEl = grupoExistente ? grupoExistente.querySelector('.wall-grid') : document.getElementById('wg-' + ambKey);
+    if (wgEl) {
+      const opcoes = dadosRevestimentos.length ? dadosRevestimentos : dadosEstoque;
+      const cardDiv = document.createElement('div');
+      cardDiv.className = 'wall-item';
+      cardDiv.id = 'wi-' + key;
+      cardDiv.onclick = function() { toggleWall(key, m2, this); };
+      cardDiv.innerHTML = '<div class="wall-check"></div><div class="wall-info"><p>' + parede + '</p><span>' + m2.toFixed(2) + ' m² · ' + linear + 'm × ' + altura + 'm</span>' +
+        '<div class="floor-select-row" onclick="event.stopPropagation()"><select class="form-control" id="fs-' + key + '" onchange="atualizarResumo()" style="font-size:12px;padding:4px 8px;width:100%"><option value="">— Piso —</option>' +
+        opcoes.map(r => '<option value="' + (r.id||r.codigo) + '">' + r.nome + ' [' + (r.tamanho||'') + ']</option>').join('') +
+        '</select></div></div>';
+      wgEl.appendChild(cardDiv);
+    }
+    atualizarResumo();
   } catch(e) {
     showToast('Erro ao salvar: ' + e.message, 'error');
   }
