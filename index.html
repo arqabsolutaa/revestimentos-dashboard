@@ -2380,9 +2380,22 @@ async function salvarNovaParede() {
     dadosParedes.push(novaParede);
 
     fecharModal('modal-nova-parede');
-    // Recarregar as paredes do apartamento no modal
+    // Salvar seleções atuais antes de recarregar
+    const selecoesBackup = JSON.parse(JSON.stringify(calcSelecoes));
+    // Recarregar paredes
     document.getElementById('calc-ap-select').value = calcApAtual;
     selecionarAp();
+    // Restaurar seleções e selects após renderizar
+    setTimeout(() => {
+      for (const [key, v] of Object.entries(selecoesBackup)) {
+        calcSelecoes[key] = v;
+        const el = document.getElementById('wi-' + key);
+        const fs = document.getElementById('fs-' + key);
+        if (el && !el.classList.contains('checked')) el.classList.add('checked');
+        if (fs && v.piso) fs.value = v.piso;
+      }
+      atualizarResumo();
+    }, 150);
     showToast('Parede adicionada!', 'success');
   } catch(e) {
     showToast('Erro ao salvar: ' + e.message, 'error');
