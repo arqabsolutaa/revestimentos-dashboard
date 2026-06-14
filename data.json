@@ -9560,7 +9560,20 @@
       "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
-  "personalizar": [],
+  "personalizar": [
+    {
+      "id": "id_1781461785781_e4wnj",
+      "ap": "11",
+      "cliente": "Disponível",
+      "empresa": "Empresa",
+      "data": "Sun Jun 14 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "selecoes": "{\"11-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"23\"},\"11-Living-Painel TV-1781461711030\":{\"m2\":8.29,\"piso\":\"48\"}}",
+      "status": "pendente",
+      "criado_em": "Sun Jun 14 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "status_pgto": "",
+      "obs_pgto": ""
+    }
+  ],
   "orcamentos": [],
   "instalacoes": [],
   "lotes": [
