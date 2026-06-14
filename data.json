@@ -217,14 +217,14 @@
       "site": "https://www.portobello.com.br/produtos/dansk/field-tile/dansk-cement-white/120x120-natural/205768E",
       "m2_por_caixa": "2.87",
       "pecas_por_caixa": "2",
-      "qtd_caixas": "76.8",
+      "qtd_caixas": "78.26",
       "tamanho": "120x120",
       "junta": "1,5mm",
       "espessura": "7,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Vista Park",
-      "estoque_m2": "220.40999999999994",
+      "estoque_m2": "224.61999999999995",
       "": "",
       "criado_em": ""
     },
@@ -9558,19 +9558,6 @@
       "destino": "uso",
       "obs": "Migrado - Vista Park",
       "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
-    {
-      "id": "id_1781463920866_v74ld",
-      "data": "Sun Jun 14 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Dansk Cement White",
-      "codigo_rev": "23",
-      "obra": "11",
-      "local": "Personalizar",
-      "apto": "11",
-      "quantidade_m2": "4.21",
-      "destino": "uso",
-      "obs": "Via Personalizar - Disponível",
-      "criado_em": "Sun Jun 14 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1781463951435_1hqcj",
