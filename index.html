@@ -3445,16 +3445,16 @@ async function salvarSelecao() {
   const cliente = paredesAp[0]?.cliente || '—';
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA) || 'Empresa';
   const dados = { ap: calcApAtual, cliente, empresa, data: new Date().toLocaleDateString('pt-BR'), selecoes: calcSelecoes };
-  // Feedback imediato — não trava a tela
   showToast('Salvando...', 'success');
-  // Adicionar na memória imediatamente
-  const novoItem = { ...dados, id: 'id_' + Date.now(), status: 'pendente', status_pgto: 'pendente', selecoes: JSON.stringify(calcSelecoes) };
-  dadosPersonalizar.unshift(novoItem);
-  // Salvar no servidor em background
-  apiPost('addPersonalizar', dados).then(() => {
+  try {
+    const result = await apiPost('addPersonalizar', dados);
     showToast('Salvo em Personalizar!', 'success');
-    if (typeof loadPersonalizar === 'function') loadPersonalizar();
-  }).catch(e => showToast('Erro ao salvar: ' + e.message, 'error'));
+    // Recarregar para pegar o ID real da planilha
+    const novos = await lerDados();
+    if (novos.personalizar) dadosPersonalizar = novos.personalizar;
+  } catch(e) {
+    showToast('Erro ao salvar: ' + e.message, 'error');
+  }
 }
 
 // ===================== PERSONALIZAR =====================
