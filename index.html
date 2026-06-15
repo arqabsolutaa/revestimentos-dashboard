@@ -3396,12 +3396,16 @@ function atualizarResumo() {
     calcSelecoes[key].piso = document.getElementById('fs-' + key)?.value || '';
   }
   salvarEstadoCalc();
-  const total = Object.values(calcSelecoes).reduce((a, v) => a + parseFloat(v.m2||0), 0);
+  // Calcular totais com perda aplicada
+  let total = 0;
   let totalValor = 0;
   Object.values(calcSelecoes).forEach(v => {
     const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
+    const perda = rev ? (parseFloat(rev.perda_pct)||10) / 100 : 0.10;
+    const m2comPerda = parseFloat(v.m2||0) * (1 + perda);
+    total += m2comPerda;
     const preco = getPreco(rev);
-    totalValor += preco * parseFloat(v.m2||0);
+    totalValor += preco * m2comPerda;
   });
   document.getElementById('calc-total-val').textContent = total.toFixed(2) + ' m²';
   const totalValEl = document.getElementById('calc-total-valor');
@@ -3414,7 +3418,9 @@ function atualizarResumo() {
     const semEstoque = rev && (parseFloat(rev.estoque_m2)||0) <= 0;
     const preco = getPreco(rev);
     const m2v = parseFloat(v.m2)||0;
-    const valorItem = preco * m2v;
+    const perda = rev ? (parseFloat(rev.perda_pct)||10) / 100 : 0.10;
+    const m2comPerda = m2v * (1 + perda);
+    const valorItem = preco * m2comPerda;
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:6px;border-left:3px solid transparent">
       <div>
         <p style="font-size:13px;font-weight:500">${nomePar}</p>
@@ -3423,9 +3429,10 @@ function atualizarResumo() {
           ${rev ? ' · ' + rev.tamanho : ''}
           ${preco > 0 ? ' · R$ ' + preco.toFixed(2) + '/m²' : ''}
         </p>
+        <p style="font-size:10px;color:var(--text3)">${m2v.toFixed(2)} m² + ${perda*100}% perda</p>
       </div>
       <div style="text-align:right">
-        <span class="badge badge-green">${m2v.toFixed(2)} m²</span>
+        <span class="badge badge-green">${m2comPerda.toFixed(2)} m²</span>
         ${preco > 0 ? `<p style="font-size:11px;color:var(--accent2);margin-top:2px;font-weight:500">R$ ${valorItem.toLocaleString('pt-BR',{minimumFractionDigits:2})}</p>` : ''}
       </div>
     </div>`;
