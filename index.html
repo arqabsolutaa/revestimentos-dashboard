@@ -3730,7 +3730,12 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.setTextColor(...preto); doc.setFontSize(9.5); doc.setFont('helvetica', 'bold');
     doc.text(pisoNome, xNome, y + 5);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...cinza);
-    doc.text('Lote: ' + lote + '  |  R$ ' + preco.toFixed(2) + '/m²', xNome, y + 11);
+    // key formato: "11-Banho 01-A-0" → extrair ambiente e parede
+    const keyPartes = key ? key.split('-') : [];
+    const parede = keyPartes.length >= 3 ? keyPartes[keyPartes.length - 2] : '';
+    const ambiente = keyPartes.length >= 3 ? keyPartes.slice(1, keyPartes.length - 2).join('-') : '';
+    const localInfo = ambiente ? ambiente + (parede ? ' · ' + parede : '') : '';
+    doc.text('Lote: ' + lote + '  |  R$ ' + preco.toFixed(2) + '/m²' + (localInfo ? '  |  ' + localInfo : ''), xNome, y + 11);
 
     doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
     doc.text(tamanho, 108, y + 7);
