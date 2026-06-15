@@ -1520,7 +1520,9 @@ function calcularTotalValor() {
   let total = 0;
   for (const v of Object.values(calcSelecoes)) {
     const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
-    total += getPreco(rev) * (parseFloat(v.m2)||0);
+    const perda = rev ? (parseFloat(rev.perda_pct)||10) / 100 : 0.10;
+    const m2comPerda = (parseFloat(v.m2)||0) * (1 + perda);
+    total += getPreco(rev) * m2comPerda;
   }
   return total;
 }
