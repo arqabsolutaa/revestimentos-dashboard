@@ -4596,6 +4596,20 @@
       "nome_arquivo": ""
     },
     {
+      "id": "283",
+      "apartamento": "42",
+      "cliente": "Claudia e Caio",
+      "local": "A.S",
+      "parede": "Piso",
+      "metro_linear": "8.67",
+      "altura": "1",
+      "imagem": "",
+      "obs": "",
+      "criado_em": "",
+      "planta_img": "",
+      "nome_arquivo": ""
+    },
+    {
       "id": "274",
       "apartamento": "42",
       "cliente": "Claudia e Caio",
@@ -4714,20 +4728,6 @@
       "local": "Cozinha",
       "parede": "Piso",
       "metro_linear": "20.28",
-      "altura": "1",
-      "imagem": "",
-      "obs": "",
-      "criado_em": "",
-      "planta_img": "",
-      "nome_arquivo": ""
-    },
-    {
-      "id": "283",
-      "apartamento": "42",
-      "cliente": "Claudia e Caio",
-      "local": "A.S",
-      "parede": "Piso",
-      "metro_linear": "8.67",
       "altura": "1",
       "imagem": "",
       "obs": "",
