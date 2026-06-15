@@ -3707,7 +3707,9 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     const pisoNome = rev ? rev.nome : (v.piso && isNaN(v.piso) ? v.piso : 'Não definido');
     const tamanho = rev?.tamanho || '—';
     const lote = rev?.lote || '—';
-    const m2total = parseFloat(v.m2) || 0;
+    const m2base = parseFloat(v.m2) || 0;
+    const perdaPct = rev ? (parseFloat(rev.perda_pct)||10) / 100 : 0.10;
+    const m2total = m2base * (1 + perdaPct);
     const preco = rev ? (TABELA_PRECOS[rev.codigo] || 0) : 0;
     const valorItem = preco * m2total;
     const semEstoque = rev && (parseFloat(rev.estoque_m2)||0) <= 0;
@@ -3732,7 +3734,10 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
 
     doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
     doc.text(tamanho, 108, y + 7);
-    doc.text(m2total.toFixed(2) + ' m²', 152, y + 7);
+    doc.text(m2total.toFixed(2) + ' m²', 152, y + 5);
+    doc.setFontSize(6.5); doc.setTextColor(...cinza);
+    doc.text('(' + m2base.toFixed(2) + ' + ' + (perdaPct*100).toFixed(0) + '%)', 152, y + 11);
+    doc.setFontSize(9); doc.setTextColor(...preto);
     doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
     doc.setTextColor(preco > 0 ? dourado[0] : cinza[0], preco > 0 ? dourado[1] : cinza[1], preco > 0 ? dourado[2] : cinza[2]);
     doc.text(preco > 0 ? 'R$ ' + valorItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '—', 200, y + 7, { align: 'right' });
