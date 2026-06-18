@@ -2229,6 +2229,42 @@ async function loadPagamentos() {
   }
 }
 
+
+async function uploadComprovante(id, inputEl) {
+  const file = inputEl.files[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('Arquivo muito grande (máx 10MB)', 'error');
+    return;
+  }
+  showToast('Enviando comprovante...', 'success');
+  try {
+    const base64data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'uploadComprovante',
+        dados: { id, filename: file.name, mimeType: file.type, base64data }
+      })
+    });
+    const result = await response.json();
+    if (result.error) throw new Error(result.error);
+    // Atualizar memória local
+    const item = dadosPersonalizar.find(p => p.id === id);
+    if (item) item.comprovante_url = result.data.url;
+    renderPagamentos(dadosPersonalizar);
+    showToast('Comprovante anexado!', 'success');
+  } catch(e) {
+    showToast('Erro ao enviar: ' + e.message, 'error');
+  }
+}
+
 function renderPagamentos(lista) {
   if (!lista.length) {
     document.getElementById('pgto-lista').innerHTML = '<div class="empty-state"><strong>Nenhum orçamento encontrado</strong></div>';
@@ -2258,7 +2294,14 @@ function renderPagamentos(lista) {
           <button class="status-pgto-badge ${status === 'pago' ? 'status-pago' : 'status-pago'}" onclick="alterarStatusPgto('${p.id}','pago')" style="${status === 'pago' ? '' : 'opacity:0.4'}">Pago</button>
         </div>
         <input class="form-control" placeholder="Observação (parcelas, etc)" style="font-size:11px;padding:4px 8px;width:220px" value="${p.obs_pgto||''}" onblur="salvarObsPgto('${p.id}', this.value)">
-        <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF c/ Valor</button>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF c/ Valor</button>
+          ${p.comprovante_url 
+            ? `<a href="${p.comprovante_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px;text-decoration:none">📎 Ver comprovante</a>`
+            : `<button class="btn btn-secondary" onclick="document.getElementById('file-comprovante-${p.id}').click()" style="font-size:11px;padding:4px 10px">📎 Anexar comprovante</button>`
+          }
+          <input type="file" id="file-comprovante-${p.id}" accept="image/*,.pdf" style="display:none" onchange="uploadComprovante('${p.id}', this)">
+        </div>
       </div>
     </div>`;
   }).join('');
