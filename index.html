@@ -2275,7 +2275,8 @@ function renderPagamentos(lista) {
     let totalM2 = 0, totalValor = 0;
     for (const v of Object.values(selecoes)) {
       const rev = dadosRevestimentos.find(r => r.id === v.piso || r.codigo === v.piso || String(r.id) === String(v.piso));
-      const m2 = parseFloat(v.m2)||0;
+      const perda = rev ? (parseFloat(rev.perda_pct)||10) / 100 : 0.10;
+      const m2 = (parseFloat(v.m2)||0) * (1 + perda);
       totalM2 += m2;
       totalValor += getPreco(rev) * m2;
     }
@@ -2283,7 +2284,7 @@ function renderPagamentos(lista) {
     return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
       <div>
         <p style="font-weight:600;font-size:14px">${p.cliente||'—'}</p>
-        <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${p.data||'—'}</p>
+        <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
         <p style="font-size:13px;font-weight:500;color:var(--accent2);margin-top:4px">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})} · ${totalM2.toFixed(2)} m²</p>
         ${p.obs_pgto ? `<p style="font-size:12px;color:var(--text2);margin-top:4px">Obs: ${p.obs_pgto}</p>` : ''}
       </div>
