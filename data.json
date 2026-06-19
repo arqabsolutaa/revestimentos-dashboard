@@ -5145,25 +5145,11 @@
       "nome_arquivo": "Apto 11 - Banho 03.png"
     },
     {
-      "id": "309",
-      "apartamento": "51",
-      "cliente": "Danilo",
-      "local": "Banho 04",
-      "parede": "B",
-      "metro_linear": "1.68",
-      "altura": "2.55",
-      "imagem": "",
-      "obs": "",
-      "criado_em": "",
-      "planta_img": "",
-      "nome_arquivo": ""
-    },
-    {
       "id": "310",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho 04",
-      "parede": "C",
+      "parede": "B",
       "metro_linear": "1.68",
       "altura": "2.55",
       "imagem": "",
@@ -5177,6 +5163,20 @@
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho 04",
+      "parede": "C",
+      "metro_linear": "1.68",
+      "altura": "2.55",
+      "imagem": "",
+      "obs": "",
+      "criado_em": "",
+      "planta_img": "",
+      "nome_arquivo": ""
+    },
+    {
+      "id": "312",
+      "apartamento": "51",
+      "cliente": "Danilo",
+      "local": "Banho 04",
       "parede": "D",
       "metro_linear": "0.8",
       "altura": "2.55",
@@ -5187,7 +5187,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "312",
+      "id": "313",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho 04",
@@ -5201,7 +5201,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "313",
+      "id": "314",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho 04",
@@ -5215,7 +5215,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "314",
+      "id": "315",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho 04",
@@ -5229,7 +5229,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "315",
+      "id": "316",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Lavabo",
@@ -5243,7 +5243,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "316",
+      "id": "317",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Cozinha",
@@ -5257,7 +5257,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "317",
+      "id": "318",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Cozinha",
@@ -5271,7 +5271,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "318",
+      "id": "319",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Cozinha",
@@ -5285,7 +5285,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "319",
+      "id": "320",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Cozinha",
@@ -5299,7 +5299,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "320",
+      "id": "321",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "A.S",
@@ -5313,7 +5313,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "321",
+      "id": "322",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "A.S",
@@ -5327,7 +5327,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "322",
+      "id": "323",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho A.S",
@@ -5341,7 +5341,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "323",
+      "id": "324",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho A.S",
@@ -5355,7 +5355,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "324",
+      "id": "325",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho A.S",
@@ -5369,7 +5369,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "325",
+      "id": "326",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho A.S",
@@ -5383,7 +5383,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "326",
+      "id": "327",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho A.S",
@@ -5397,7 +5397,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "327",
+      "id": "328",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Banho A.S",
@@ -5411,7 +5411,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "328",
+      "id": "329",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Gourmet",
@@ -5425,27 +5425,13 @@
       "nome_arquivo": ""
     },
     {
-      "id": "329",
+      "id": "330",
       "apartamento": "51",
       "cliente": "Danilo",
       "local": "Living",
       "parede": "Piso geral ",
       "metro_linear": "130.2",
       "altura": "1",
-      "imagem": "",
-      "obs": "",
-      "criado_em": "",
-      "planta_img": "",
-      "nome_arquivo": ""
-    },
-    {
-      "id": "330",
-      "apartamento": "52",
-      "cliente": "Permutante ",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -6014,8 +6000,8 @@
     },
     {
       "id": "371",
-      "apartamento": "61",
-      "cliente": "Patricia e Edson ",
+      "apartamento": "52",
+      "cliente": "Permutante ",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -6588,8 +6574,8 @@
     },
     {
       "id": "412",
-      "apartamento": "62",
-      "cliente": "Jadir ",
+      "apartamento": "61",
+      "cliente": "Patricia e Edson ",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -6737,7 +6723,7 @@
       "imagem": "",
       "obs": "",
       "criado_em": "",
-      "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/",
+      "planta_img": "",
       "nome_arquivo": ""
     },
     {
@@ -6800,10 +6786,10 @@
       "id": "427",
       "apartamento": "62",
       "cliente": "Jadir ",
-      "local": "Banho 01",
-      "parede": "A",
-      "metro_linear": "2",
-      "altura": "2.55",
+      "local": "",
+      "parede": "",
+      "metro_linear": "",
+      "altura": "",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -6814,10 +6800,10 @@
       "id": "428",
       "apartamento": "62",
       "cliente": "Jadir ",
-      "local": "",
-      "parede": "",
-      "metro_linear": "",
-      "altura": "",
+      "local": "Banho 01",
+      "parede": "A",
+      "metro_linear": "2",
+      "altura": "2.55",
       "imagem": "",
       "obs": "",
       "criado_em": "",
@@ -7162,8 +7148,8 @@
     },
     {
       "id": "453",
-      "apartamento": "71",
-      "cliente": "Alexandre Morassi",
+      "apartamento": "62",
+      "cliente": "Jadir ",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -7675,7 +7661,7 @@
       "imagem": "",
       "obs": "",
       "criado_em": "",
-      "planta_img": "",
+      "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/",
       "nome_arquivo": ""
     },
     {
@@ -7736,8 +7722,8 @@
     },
     {
       "id": "494",
-      "apartamento": "72",
-      "cliente": "Permutante",
+      "apartamento": "71",
+      "cliente": "Alexandre Morassi",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -8310,8 +8296,8 @@
     },
     {
       "id": "535",
-      "apartamento": "81",
-      "cliente": "Fernanda e Bruno",
+      "apartamento": "72",
+      "cliente": "Permutante",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -8884,8 +8870,8 @@
     },
     {
       "id": "576",
-      "apartamento": "82",
-      "cliente": "Leonardo",
+      "apartamento": "81",
+      "cliente": "Fernanda e Bruno",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -9458,8 +9444,8 @@
     },
     {
       "id": "617",
-      "apartamento": "91",
-      "cliente": "Ana Paula e Alexandre Tarifa",
+      "apartamento": "82",
+      "cliente": "Leonardo",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -10032,8 +10018,8 @@
     },
     {
       "id": "658",
-      "apartamento": "92",
-      "cliente": "Fabricia e Anderson",
+      "apartamento": "91",
+      "cliente": "Ana Paula e Alexandre Tarifa",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -10078,11 +10064,11 @@
       "cliente": "Fabricia e Anderson",
       "local": "",
       "parede": "",
-      "metro_linear": "0",
-      "altura": "0",
+      "metro_linear": "",
+      "altura": "",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -10092,11 +10078,11 @@
       "cliente": "Fabricia e Anderson",
       "local": "",
       "parede": "",
-      "metro_linear": "",
-      "altura": "",
+      "metro_linear": "0",
+      "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "",
+      "criado_em": "Mon Jun 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -10606,8 +10592,8 @@
     },
     {
       "id": "699",
-      "apartamento": "101",
-      "cliente": "Leticia e Gerson ",
+      "apartamento": "92",
+      "cliente": "Fabricia e Anderson",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -11180,8 +11166,8 @@
     },
     {
       "id": "740",
-      "apartamento": "102",
-      "cliente": "Permutante",
+      "apartamento": "101",
+      "cliente": "Leticia e Gerson ",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -11754,8 +11740,8 @@
     },
     {
       "id": "781",
-      "apartamento": "111",
-      "cliente": "Marcos Alves",
+      "apartamento": "102",
+      "cliente": "Permutante",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -11786,11 +11772,11 @@
       "cliente": "Marcos Alves",
       "local": "",
       "parede": "",
-      "metro_linear": "0",
-      "altura": "0",
+      "metro_linear": "",
+      "altura": "",
       "imagem": "",
       "obs": "",
-      "criado_em": "Fri Jun 12 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -11846,7 +11832,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sun Jun 14 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Fri Jun 12 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -11940,11 +11926,11 @@
       "cliente": "Marcos Alves",
       "local": "",
       "parede": "",
-      "metro_linear": "",
-      "altura": "",
+      "metro_linear": "0",
+      "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "",
+      "criado_em": "Sun Jun 14 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -12328,8 +12314,8 @@
     },
     {
       "id": "822",
-      "apartamento": "112",
-      "cliente": "Mauricio Munhoz",
+      "apartamento": "111",
+      "cliente": "Marcos Alves",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -12902,8 +12888,8 @@
     },
     {
       "id": "863",
-      "apartamento": "121",
-      "cliente": "Permutante",
+      "apartamento": "112",
+      "cliente": "Mauricio Munhoz",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -13476,8 +13462,8 @@
     },
     {
       "id": "904",
-      "apartamento": "122",
-      "cliente": "Michel",
+      "apartamento": "121",
+      "cliente": "Permutante",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -14050,8 +14036,8 @@
     },
     {
       "id": "945",
-      "apartamento": "131",
-      "cliente": "Disponível",
+      "apartamento": "122",
+      "cliente": "Michel",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -14624,8 +14610,8 @@
     },
     {
       "id": "986",
-      "apartamento": "132",
-      "cliente": "Permutante",
+      "apartamento": "131",
+      "cliente": "Disponível",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -15198,8 +15184,8 @@
     },
     {
       "id": "1027",
-      "apartamento": "141",
-      "cliente": "Eliana e Fabio ",
+      "apartamento": "132",
+      "cliente": "Permutante",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -15772,8 +15758,8 @@
     },
     {
       "id": "1068",
-      "apartamento": "142",
-      "cliente": "Alexandre Meira ",
+      "apartamento": "141",
+      "cliente": "Eliana e Fabio ",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -16346,8 +16332,8 @@
     },
     {
       "id": "1109",
-      "apartamento": "151",
-      "cliente": "Disponível",
+      "apartamento": "142",
+      "cliente": "Alexandre Meira ",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -16920,8 +16906,8 @@
     },
     {
       "id": "1150",
-      "apartamento": "152",
-      "cliente": "Luiz Roberto",
+      "apartamento": "151",
+      "cliente": "Disponível",
       "local": "",
       "parede": "",
       "metro_linear": "",
@@ -17480,6 +17466,20 @@
     },
     {
       "id": "1190",
+      "apartamento": "152",
+      "cliente": "Luiz Roberto",
+      "local": "",
+      "parede": "",
+      "metro_linear": "",
+      "altura": "",
+      "imagem": "",
+      "obs": "",
+      "criado_em": "",
+      "planta_img": "",
+      "nome_arquivo": ""
+    },
+    {
+      "id": "1191",
       "apartamento": "152",
       "cliente": "Luiz Roberto",
       "local": "",
