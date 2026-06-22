@@ -16264,20 +16264,6 @@
       "id": "1104",
       "apartamento": "142",
       "cliente": "Alexandre e Ivana",
-      "local": "A.S",
-      "parede": "Piso",
-      "metro_linear": "8.67",
-      "altura": "1",
-      "imagem": "",
-      "obs": "",
-      "criado_em": "",
-      "planta_img": "",
-      "nome_arquivo": ""
-    },
-    {
-      "id": "1105",
-      "apartamento": "142",
-      "cliente": "Alexandre e Ivana",
       "local": "Banho A.S",
       "parede": "A",
       "metro_linear": "1.91",
@@ -16289,7 +16275,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "1106",
+      "id": "1105",
       "apartamento": "142",
       "cliente": "Alexandre e Ivana",
       "local": "Banho A.S",
@@ -16303,7 +16289,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "1107",
+      "id": "1106",
       "apartamento": "142",
       "cliente": "Alexandre e Ivana",
       "local": "Banho A.S",
@@ -16317,7 +16303,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "1108",
+      "id": "1107",
       "apartamento": "142",
       "cliente": "Alexandre e Ivana",
       "local": "Banho A.S",
@@ -16331,7 +16317,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "1109",
+      "id": "1108",
       "apartamento": "142",
       "cliente": "Alexandre e Ivana",
       "local": "Banho A.S",
@@ -16345,7 +16331,7 @@
       "nome_arquivo": ""
     },
     {
-      "id": "1110",
+      "id": "1109",
       "apartamento": "142",
       "cliente": "Alexandre e Ivana",
       "local": "Gourmet",
@@ -16359,13 +16345,27 @@
       "nome_arquivo": ""
     },
     {
-      "id": "1111",
+      "id": "1110",
       "apartamento": "142",
       "cliente": "Alexandre e Ivana",
       "local": "Living/ Coz. / A.S",
       "parede": "Piso Total",
       "metro_linear": "130.2",
       "altura": "1",
+      "imagem": "",
+      "obs": "",
+      "criado_em": "",
+      "planta_img": "",
+      "nome_arquivo": ""
+    },
+    {
+      "id": "1111",
+      "apartamento": "142",
+      "cliente": "Alexandre e Ivana",
+      "local": "",
+      "parede": "",
+      "metro_linear": "",
+      "altura": "",
       "imagem": "",
       "obs": "",
       "criado_em": "",
