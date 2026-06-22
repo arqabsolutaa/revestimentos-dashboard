@@ -2326,7 +2326,7 @@ function selecionarCondicaoModal(pagamento) {
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
   gerarPDFDados({ 
     ap: p.ap, cliente: p.cliente, empresa: p.empresa||'Absoluta', 
-    selecoes, data: p.data, comValor: true, pagamento 
+    selecoes, data: p.data, comValor: true, pagamento, desconto: 0
   });
 }
 
@@ -3926,7 +3926,10 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
   }
 
   // ===== PAGAMENTO =====
-  const pgLabels = { avista: 'À Vista', pix: 'PIX', debito: 'Cartão Débito', credito2: 'Crédito 2x', credito3: 'Crédito 3x', credito4: 'Crédito 4x', credito5: 'Crédito 5x', credito6: 'Crédito 6x' };
+  const pgLabels = { avista: 'À Vista', pix: 'PIX', debito: 'Cartão Débito',
+    credito2: 'Crédito 2x (+2%)', credito3: 'Crédito 3x (+3%)', credito4: 'Crédito 4x (+4%)',
+    credito5: 'Crédito 5x (+5%)', credito6: 'Crédito 6x (+6%)', credito7: 'Crédito 7x (+7%)',
+    credito8: 'Crédito 8x (+8%)', credito9: 'Crédito 9x (+9%)', credito10: 'Crédito 10x (+10%)' };
   if (pagamento && pagamento.startsWith('pixparc')) {
     const n = pagamento.replace('pixparc', '');
     pgLabels[pagamento] = 'PIX ' + n + 'x (sem juros)';
