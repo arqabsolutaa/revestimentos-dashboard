@@ -1576,12 +1576,16 @@ function calcularTotalComPagamento(totalValor, tipo) {
   if (!tipo || tipo === 'avista' || tipo === 'pix' || tipo === 'debito') return { total: totalValor, parcelas: 1, juros: 0 };
   if (tipo.startsWith('pixparc')) {
     const parcelas = parseInt(tipo.replace('pixparc',''));
-    return { total: totalValor, parcelas, juros: 0, pixParcelado: true };
+    const parcela = totalValor / parcelas;
+    return { total: totalValor, parcelas, juros: 0, parcela, pixParcelado: true };
   }
   if (tipo.startsWith('credito')) {
-    const parcelas = parseInt(tipo.replace('credito',''));
-    const juros = parcelas * 0.01; // 1% por parcela
-    return { total: totalValor * (1 + juros), parcelas, juros };
+    const n = parseInt(tipo.replace('credito',''));
+    const i = 0.01; // 1% ao mês (juros compostos - tabela Price)
+    const parcela = totalValor * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+    const total = parcela * n;
+    const juros = total - totalValor;
+    return { total, parcelas: n, juros, parcela };
   }
   return { total: totalValor, parcelas: 1, juros: 0 };
 }
