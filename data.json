@@ -328,14 +328,14 @@
       "site": "https://www.portobello.com.br/produtos/ms-barcelona/field-tile/ms-barcelona-cristal/160x160-natural/203121E",
       "m2_por_caixa": "2.55",
       "pecas_por_caixa": "1",
-      "qtd_caixas": "0",
+      "qtd_caixas": "51.06",
       "tamanho": "160x160",
       "junta": "1,5mm",
       "espessura": "7,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Vista Park",
-      "estoque_m2": "0",
+      "estoque_m2": "130.2",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -19513,19 +19513,6 @@
       "destino": "uso",
       "obs": "Instalação Nova",
       "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
-    {
-      "id": "id_1782090394322_hqmf5",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "M.S. Barcelona Cristal Nat Ret",
-      "codigo_rev": "35",
-      "obra": "42",
-      "local": "Personalizar",
-      "apto": "42",
-      "quantidade_m2": "130.2",
-      "destino": "uso",
-      "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782090395610_ue74s",
