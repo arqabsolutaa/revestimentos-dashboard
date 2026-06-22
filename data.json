@@ -168,14 +168,14 @@
       "site": "https://www.portobello.com.br/produtos/sintese/field-tile/sintese-off-white/90x90-natural/210427E",
       "m2_por_caixa": "2.42",
       "pecas_por_caixa": "3",
-      "qtd_caixas": "67.31",
+      "qtd_caixas": "59.17",
       "tamanho": "90x90",
       "junta": "1,5mm",
       "espessura": "8,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Essence",
-      "estoque_m2": "162.89000000000004",
+      "estoque_m2": "143.18",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -328,14 +328,14 @@
       "site": "https://www.portobello.com.br/produtos/ms-barcelona/field-tile/ms-barcelona-cristal/160x160-natural/203121E",
       "m2_por_caixa": "2.55",
       "pecas_por_caixa": "1",
-      "qtd_caixas": "480.11",
+      "qtd_caixas": "463.15",
       "tamanho": "160x160",
       "junta": "1,5mm",
       "espessura": "7,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Vista Park",
-      "estoque_m2": "1224.2699999999998",
+      "estoque_m2": "1181.0399999999997",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -708,14 +708,14 @@
       "site": "https://www.portobello.com.br/produtos/aeterna/acessorios-revestimento/aeterna-bianco-cesellato/45x120-mate/207563E",
       "m2_por_caixa": "1.61",
       "pecas_por_caixa": "3",
-      "qtd_caixas": "214.15",
+      "qtd_caixas": "212.17",
       "tamanho": "45X120",
       "junta": "1,5mm",
       "espessura": "13,3mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Vista Park",
-      "estoque_m2": "344.7800000000001",
+      "estoque_m2": "341.6",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -768,14 +768,14 @@
       "site": "https://www.portobello.com.br/produtos/gouache/acessorios-revestimento/gouache-brume/15-5x15-5-brilho/12318E",
       "m2_por_caixa": "0.87",
       "pecas_por_caixa": "36",
-      "qtd_caixas": "86.16",
+      "qtd_caixas": "83.4",
       "tamanho": "15,5X15,5",
       "junta": "1,5mm",
       "espessura": "9,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Vista Park",
-      "estoque_m2": "74.96000000000001",
+      "estoque_m2": "72.56",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -19502,7 +19502,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 01 (Master)",
       "apto": "42",
-      "quantidade_m2": "4.21",
+      "quantidade_m2": "5.05",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19515,7 +19515,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 01 (Master)",
       "apto": "42",
-      "quantidade_m2": "3.26",
+      "quantidade_m2": "3.91",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19528,7 +19528,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 01 (Master)",
       "apto": "42",
-      "quantidade_m2": "6.58",
+      "quantidade_m2": "7.9",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19541,7 +19541,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 01 (Master)",
       "apto": "42",
-      "quantidade_m2": "2.68",
+      "quantidade_m2": "3.22",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19554,7 +19554,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 01 (Master)",
       "apto": "42",
-      "quantidade_m2": "2.42",
+      "quantidade_m2": "2.9",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19567,7 +19567,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 01 (Master)",
       "apto": "42",
-      "quantidade_m2": "0.59",
+      "quantidade_m2": "0.71",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19580,7 +19580,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 01 (Master)",
       "apto": "42",
-      "quantidade_m2": "3.08",
+      "quantidade_m2": "3.7",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19593,7 +19593,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 02 (Master)",
       "apto": "42",
-      "quantidade_m2": "9.77",
+      "quantidade_m2": "11.72",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19606,7 +19606,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 02 (Master)",
       "apto": "42",
-      "quantidade_m2": "4.82",
+      "quantidade_m2": "5.78",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19619,7 +19619,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 02 (Master)",
       "apto": "42",
-      "quantidade_m2": "4.82",
+      "quantidade_m2": "5.78",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19632,7 +19632,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 02 (Master)",
       "apto": "42",
-      "quantidade_m2": "6.02",
+      "quantidade_m2": "7.22",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19645,7 +19645,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 02 (Master)",
       "apto": "42",
-      "quantidade_m2": "7.19",
+      "quantidade_m2": "8.63",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19658,7 +19658,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 03",
       "apto": "42",
-      "quantidade_m2": "3.98",
+      "quantidade_m2": "4.78",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19671,7 +19671,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 03",
       "apto": "42",
-      "quantidade_m2": "2.04",
+      "quantidade_m2": "2.45",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19684,7 +19684,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 03",
       "apto": "42",
-      "quantidade_m2": "4.28",
+      "quantidade_m2": "5.14",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19697,7 +19697,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 03",
       "apto": "42",
-      "quantidade_m2": "4.28",
+      "quantidade_m2": "5.14",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19710,7 +19710,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 03",
       "apto": "42",
-      "quantidade_m2": "0.31",
+      "quantidade_m2": "0.37",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19723,7 +19723,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 03",
       "apto": "42",
-      "quantidade_m2": "2.71",
+      "quantidade_m2": "3.25",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19736,7 +19736,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 04",
       "apto": "42",
-      "quantidade_m2": "3.98",
+      "quantidade_m2": "4.78",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19749,7 +19749,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 04",
       "apto": "42",
-      "quantidade_m2": "4.28",
+      "quantidade_m2": "5.14",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19762,7 +19762,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 04",
       "apto": "42",
-      "quantidade_m2": "2.04",
+      "quantidade_m2": "2.45",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19775,7 +19775,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 04",
       "apto": "42",
-      "quantidade_m2": "4.28",
+      "quantidade_m2": "5.14",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19788,7 +19788,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 04",
       "apto": "42",
-      "quantidade_m2": "0.31",
+      "quantidade_m2": "0.37",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19801,7 +19801,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 04",
       "apto": "42",
-      "quantidade_m2": "2.27",
+      "quantidade_m2": "2.72",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19814,7 +19814,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 03",
       "apto": "42",
-      "quantidade_m2": "2.27",
+      "quantidade_m2": "2.72",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19827,7 +19827,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Lavabo",
       "apto": "42",
-      "quantidade_m2": "2.43",
+      "quantidade_m2": "2.92",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19840,7 +19840,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Living/ Coz. / A.S",
       "apto": "42",
-      "quantidade_m2": "130.2",
+      "quantidade_m2": "156.24",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19853,7 +19853,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho A.S",
       "apto": "42",
-      "quantidade_m2": "1.45",
+      "quantidade_m2": "1.74",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19866,7 +19866,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Suíte Master",
       "apto": "42",
-      "quantidade_m2": "41.57",
+      "quantidade_m2": "49.88",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19879,7 +19879,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Circulação",
       "apto": "42",
-      "quantidade_m2": "5.36",
+      "quantidade_m2": "6.43",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19892,7 +19892,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Escritório",
       "apto": "42",
-      "quantidade_m2": "4.95",
+      "quantidade_m2": "5.94",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19905,7 +19905,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Suíte Filha",
       "apto": "42",
-      "quantidade_m2": "18.38",
+      "quantidade_m2": "22.06",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19918,7 +19918,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Suíte Hóspedes",
       "apto": "42",
-      "quantidade_m2": "13.24",
+      "quantidade_m2": "15.89",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19931,7 +19931,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho 04",
       "apto": "42",
-      "quantidade_m2": "2.71",
+      "quantidade_m2": "3.25",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19944,7 +19944,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho A.S",
       "apto": "42",
-      "quantidade_m2": "4.87",
+      "quantidade_m2": "5.84",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19957,7 +19957,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho A.S",
       "apto": "42",
-      "quantidade_m2": "1.53",
+      "quantidade_m2": "1.84",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19970,7 +19970,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho A.S",
       "apto": "42",
-      "quantidade_m2": "3.09",
+      "quantidade_m2": "3.71",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19983,7 +19983,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Banho A.S",
       "apto": "42",
-      "quantidade_m2": "4.39",
+      "quantidade_m2": "5.27",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -19996,7 +19996,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Lavabo",
       "apto": "42",
-      "quantidade_m2": "4.59",
+      "quantidade_m2": "5.51",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -20009,7 +20009,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Lavabo",
       "apto": "42",
-      "quantidade_m2": "3.34",
+      "quantidade_m2": "4.01",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -20022,7 +20022,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Lavabo",
       "apto": "42",
-      "quantidade_m2": "3.34",
+      "quantidade_m2": "4.01",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
@@ -20035,7 +20035,7 @@
       "obra": "Essence Residence · Apto 42",
       "local": "Lavabo",
       "apto": "42",
-      "quantidade_m2": "4.59",
+      "quantidade_m2": "5.51",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
