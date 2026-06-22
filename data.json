@@ -728,14 +728,14 @@
       "site": "https://www.portobello.com.br/produtos/aeterna/acessorios-revestimento/aeterna-bianco-cesellato/45x120-mate/207563E",
       "m2_por_caixa": "1.61",
       "pecas_por_caixa": "3",
-      "qtd_caixas": "214.15",
+      "qtd_caixas": "217",
       "tamanho": "45X120",
       "junta": "1,5mm",
       "espessura": "13,3mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Vista Park",
-      "estoque_m2": "344.7800000000001",
+      "estoque_m2": "349.37000000000006",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -19513,19 +19513,6 @@
       "destino": "uso",
       "obs": "Instalação Nova",
       "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
-    {
-      "id": "id_1782090409860_1g8cp",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Aeterna Bianco Cesellato ",
-      "codigo_rev": "58",
-      "obra": "42",
-      "local": "Personalizar",
-      "apto": "42",
-      "quantidade_m2": "4.59",
-      "destino": "uso",
-      "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782090411016_oooun",
