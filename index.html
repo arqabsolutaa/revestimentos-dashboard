@@ -3002,33 +3002,36 @@ function adicionarItemSaida() {
   div.className = 'saida-item'; div.id = 'saida-item-' + id;
   div.style.cssText = 'background:var(--surface);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid var(--border);position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.05)';
   div.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <span style="font-size:12px;font-weight:600;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase">Revestimento</span>
       <button onclick="removerItemSaida(${id})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;line-height:1;padding:0 4px" title="Remover">×</button>
     </div>
-    <select class="form-control" id="si-rev-${id}" style="width:100%;margin-bottom:12px" onchange="atualizarCamposSaida(${id})">
-      <option value="">— Selecione o revestimento —</option>
-      ${opcoes.map(r => {
-        const est = parseFloat(r.estoque_m2)||0;
-        const sufixo = est <= 0 ? ' ⚠ Sem estoque' : est <= 100 ? ' ⚠ Estoque baixo (' + est.toFixed(0) + 'm²)' : '';
-        const cor = est <= 0 ? 'color:#aaa' : est <= 100 ? 'color:#b08040' : '';
-        return `<option value="${r.codigo||r.id}" style="${cor}">${r.nome}${r.tamanho ? ' · '+r.tamanho : ''}${sufixo}</option>`;
-      }).join('')}
-    </select>
-    <div style="margin-bottom:10px">
-      <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Apartamento</label>
+    <div class="form-group">
+      <label class="form-label">Produto</label>
+      <select class="form-control" id="si-rev-${id}" onchange="atualizarCamposSaida(${id})">
+        <option value="">— Selecione o revestimento —</option>
+        ${opcoes.map(r => {
+          const est = parseFloat(r.estoque_m2)||0;
+          const sufixo = est <= 0 ? ' ⚠ Sem estoque' : est <= 100 ? ' ⚠ Estoque baixo (' + est.toFixed(0) + 'm²)' : '';
+          const cor = est <= 0 ? 'color:#aaa' : est <= 100 ? 'color:#b08040' : '';
+          return `<option value="${r.codigo||r.id}" style="${cor}">${r.nome}${r.tamanho ? ' · '+r.tamanho : ''}${sufixo}</option>`;
+        }).join('')}
+      </select>
+    </div>
+    <div class="form-group" style="margin-top:12px">
+      <label class="form-label">Apartamento</label>
       <input class="form-control" id="si-apto-${id}" placeholder="Ex: 11">
     </div>
-    <div style="margin-bottom:10px">
-      <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Quantidade (m²)</label>
+    <div class="form-group" style="margin-top:12px">
+      <label class="form-label">Quantidade (m²)</label>
       <input class="form-control" id="si-m2-${id}" type="number" step="0.01" placeholder="0.00" min="0" oninput="calcularCaixasPorM2(${id})">
     </div>
-    <div style="margin-bottom:10px">
-      <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Qtd peças <span style="color:var(--text3)">(opcional)</span></label>
+    <div class="form-group" style="margin-top:12px">
+      <label class="form-label">Qtd peças <span style="font-weight:400;color:var(--text3)">(opcional)</span></label>
       <input class="form-control" id="si-pecas-${id}" type="number" step="1" placeholder="0" min="0" oninput="calcularM2PorPecas(${id})">
     </div>
-    <div>
-      <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Qtd caixas <span style="font-size:10px;color:var(--accent)">(calculado automaticamente)</span></label>
+    <div class="form-group" style="margin-top:12px">
+      <label class="form-label">Qtd caixas <span style="font-weight:400;font-size:10px;color:var(--accent)">(calculado automaticamente)</span></label>
       <input class="form-control" id="si-caixas-${id}" type="number" step="0.5" placeholder="0" readonly style="background:var(--surface2);color:var(--accent);font-weight:600">
     </div>
   `;
