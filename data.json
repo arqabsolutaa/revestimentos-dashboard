@@ -322,20 +322,20 @@
     },
     {
       "id": "35",
-      "codigo": "16001",
+      "codigo": "16005/40",
       "nome": "M.S. Barcelona Cristal Nat Ret",
       "imagem": "https://media.portobello.com.br/portobello-shop-203121-e-ms-barcelona-ms-barcelona-cristal-nat-160x160-ret-0.png?ims=660x0",
       "site": "https://www.portobello.com.br/produtos/ms-barcelona/field-tile/ms-barcelona-cristal/160x160-natural/203121E",
       "m2_por_caixa": "2.55",
       "pecas_por_caixa": "1",
-      "qtd_caixas": "0",
+      "qtd_caixas": "480.11",
       "tamanho": "160x160",
       "junta": "1,5mm",
       "espessura": "7,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Vista Park",
-      "estoque_m2": "0",
+      "estoque_m2": "1224.2699999999998",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -376,26 +376,6 @@
       "lote": "N / I ",
       "obra": "Essence",
       "estoque_m2": "318.75",
-      "": "",
-      "criado_em": "",
-      "perda_pct": "20"
-    },
-    {
-      "id": "39",
-      "codigo": "16005/40",
-      "nome": "MS Barcelona Cristal  Nat Ret",
-      "imagem": "https://media.portobello.com.br/portobello-shop-203121-e-ms-barcelona-ms-barcelona-cristal-nat-160x160-ret-0.png?ims=660x0",
-      "site": "https://www.portobello.com.br/produtos/ms-barcelona/field-tile/ms-barcelona-cristal/160x160-natural/203121E",
-      "m2_por_caixa": "2.55",
-      "pecas_por_caixa": "1",
-      "qtd_caixas": "480.11",
-      "tamanho": "160x160",
-      "junta": "1,5mm",
-      "espessura": "7,0mm",
-      "data_fabricacao": "N / D ",
-      "lote": "N / I ",
-      "obra": "Essence",
-      "estoque_m2": "1224.2699999999998",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -20855,6 +20835,18 @@
       "localizacao": "Vista Park",
       "obs": "",
       "criado_em": "Thu Jun 11 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+    },
+    {
+      "id": "id_1782091824837_o3nco",
+      "codigo_rev": "16005/40",
+      "nome": "MS Barcelona Cristal  Nat Ret",
+      "data_fab": "N / D",
+      "qtd_caixas": "480.11",
+      "m2_por_caixa": "2.55",
+      "m2_total": "1224.2804999999998",
+      "localizacao": "Essence",
+      "obs": "",
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     }
   ]
 }
