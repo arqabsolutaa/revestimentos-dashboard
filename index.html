@@ -3006,26 +3006,66 @@ function adicionarItemSaida() {
       <span style="font-size:12px;font-weight:600;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase">Revestimento</span>
       <button onclick="removerItemSaida(${id})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;line-height:1;padding:0 4px" title="Remover">×</button>
     </div>
-    <select class="form-control" id="si-rev-${id}" style="width:100%;margin-bottom:12px" onchange="calcularM2PorPecas(${id})">
+    <select class="form-control" id="si-rev-${id}" style="width:100%;margin-bottom:12px" onchange="atualizarCamposSaida(${id})">
       <option value="">— Selecione o revestimento —</option>
-      ${opcoes.map(r => `<option value="${r.codigo||r.id}">${r.nome}${r.tamanho ? ' · '+r.tamanho : ''}</option>`).join('')}
+      ${opcoes.map(r => {
+        const est = parseFloat(r.estoque_m2)||0;
+        const sufixo = est <= 0 ? ' ⚠ Sem estoque' : est <= 100 ? ' ⚠ Estoque baixo (' + est.toFixed(0) + 'm²)' : '';
+        const cor = est <= 0 ? 'color:#aaa' : est <= 100 ? 'color:#b08040' : '';
+        return `<option value="${r.codigo||r.id}" style="${cor}">${r.nome}${r.tamanho ? ' · '+r.tamanho : ''}${sufixo}</option>`;
+      }).join('')}
     </select>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div>
-        <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Quantidade (m²)</label>
-        <input class="form-control" id="si-m2-${id}" type="number" step="0.01" placeholder="0.00" min="0.01">
-      </div>
-      <div>
-        <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Apartamento</label>
-        <input class="form-control" id="si-apto-${id}" placeholder="Ex: 11">
-      </div>
+    <div style="margin-bottom:10px">
+      <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Apartamento</label>
+      <input class="form-control" id="si-apto-${id}" placeholder="Ex: 11">
     </div>
-    <div style="margin-top:10px">
+    <div style="margin-bottom:10px">
+      <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Quantidade (m²)</label>
+      <input class="form-control" id="si-m2-${id}" type="number" step="0.01" placeholder="0.00" min="0" oninput="calcularCaixasPorM2(${id})">
+    </div>
+    <div style="margin-bottom:10px">
       <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Qtd peças <span style="color:var(--text3)">(opcional)</span></label>
       <input class="form-control" id="si-pecas-${id}" type="number" step="1" placeholder="0" min="0" oninput="calcularM2PorPecas(${id})">
     </div>
+    <div>
+      <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:5px">Qtd caixas <span style="font-size:10px;color:var(--accent)">(calculado automaticamente)</span></label>
+      <input class="form-control" id="si-caixas-${id}" type="number" step="0.5" placeholder="0" readonly style="background:var(--surface2);color:var(--accent);font-weight:600">
+    </div>
   `;
   document.getElementById('saida-itens-lista').appendChild(div);
+}
+
+function getRev(codRev) {
+  const lista = dadosRevestimentos.length ? dadosRevestimentos : dadosEstoque;
+  return lista.find(r => String(r.codigo||r.id) === String(codRev) || String(r.id) === String(codRev));
+}
+
+function atualizarCamposSaida(id) {
+  // Apenas reseta caixas ao trocar revestimento
+  const caixasInput = document.getElementById('si-caixas-' + id);
+  if (caixasInput) caixasInput.value = '';
+}
+
+function calcularCaixasPorM2(id) {
+  const m2 = parseFloat(document.getElementById('si-m2-' + id)?.value) || 0;
+  if (!m2) return;
+  const codRev = document.getElementById('si-rev-' + id)?.value;
+  if (!codRev) return;
+  const rev = getRev(codRev);
+  if (!rev) return;
+  const m2cx = parseFloat(rev.m2_por_caixa) || 0;
+  if (m2cx > 0) {
+    const caixas = Math.ceil(m2 / m2cx * 100) / 100;
+    const caixasInput = document.getElementById('si-caixas-' + id);
+    if (caixasInput) caixasInput.value = caixas.toFixed(2);
+    // Calcular peças
+    const pecasCx = parseFloat(rev.pecas_por_caixa) || 0;
+    if (pecasCx > 0) {
+      const pecas = Math.ceil(m2 / (m2cx / pecasCx));
+      const pecasInput = document.getElementById('si-pecas-' + id);
+      if (pecasInput && !pecasInput.value) pecasInput.value = pecas;
+    }
+  }
 }
 
 function calcularM2PorPecas(id) {
@@ -3033,21 +3073,19 @@ function calcularM2PorPecas(id) {
   if (!pecas) return;
   const codRev = document.getElementById('si-rev-' + id)?.value;
   if (!codRev) return;
-  const lista = dadosRevestimentos.length ? dadosRevestimentos : dadosEstoque;
-  const rev = lista.find(r => String(r.codigo||r.id) === String(codRev) || String(r.id) === String(codRev));
+  const rev = getRev(codRev);
   if (!rev) return;
   const pecasPorCaixa = parseFloat(rev.pecas_por_caixa) || 0;
   const m2PorCaixa = parseFloat(rev.m2_por_caixa) || 0;
-  if (pecasPorCaixa > 0 && m2PorCaixa > 0) {
-    const m2PorPeca = m2PorCaixa / pecasPorCaixa;
-    const m2Total = Math.round(pecas * m2PorPeca * 100) / 100;
+  if (m2PorCaixa > 0) {
+    let m2Total = 0;
+    if (pecasPorCaixa > 0) {
+      m2Total = Math.round(pecas * (m2PorCaixa / pecasPorCaixa) * 100) / 100;
+    } else {
+      m2Total = Math.round(pecas * m2PorCaixa * 100) / 100;
+    }
     const m2Input = document.getElementById('si-m2-' + id);
-    if (m2Input) m2Input.value = m2Total;
-  } else if (m2PorCaixa > 0 && pecasPorCaixa === 0) {
-    // Se não tem pecas_por_caixa, considerar peça = caixa
-    const m2Total = Math.round(pecas * m2PorCaixa * 100) / 100;
-    const m2Input = document.getElementById('si-m2-' + id);
-    if (m2Input) m2Input.value = m2Total;
+    if (m2Input) { m2Input.value = m2Total; calcularCaixasPorM2(id); }
   }
 }
 
@@ -3401,7 +3439,10 @@ function selecionarAp() {
       const opcoesRev = dadosRevestimentos.map(r => {
         const estoque = parseFloat(r.estoque_m2) || 0;
         const semEstoque = estoque <= 0;
-        return `<option value="${r.id||r.codigo}" style="${semEstoque ? 'color:#777;font-weight:400' : ''}">${r.nome} [${r.tamanho||''}]</option>`;
+        const estoquebaixo = estoque > 0 && estoque <= 100;
+        const styleOpt = semEstoque ? 'color:#aaa;font-weight:400' : estoquebaixo ? 'color:#b08040;font-weight:400' : '';
+        const sufixo = semEstoque ? ' ⚠ Sem estoque' : estoquebaixo ? ' ⚠ Estoque baixo (' + estoque.toFixed(0) + 'm²)' : '';
+        return `<option value="${r.id||r.codigo}" style="${styleOpt}">${r.nome} [${r.tamanho||''}]${sufixo}</option>`;
       }).join('');
       html += `<div class="wall-item" id="wi-${key}" onclick="toggleWall('${key}', ${parseFloat(m2)}, this)">
         <div class="wall-check" id="wc-${key}">
