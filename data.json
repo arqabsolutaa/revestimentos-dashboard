@@ -788,14 +788,14 @@
       "site": "https://www.portobello.com.br/produtos/gouache/acessorios-revestimento/gouache-brume/15-5x15-5-brilho/12318E",
       "m2_por_caixa": "0.87",
       "pecas_por_caixa": "36",
-      "qtd_caixas": "86.16",
+      "qtd_caixas": "89.24",
       "tamanho": "15,5X15,5",
       "junta": "1,5mm",
       "espessura": "9,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Vista Park",
-      "estoque_m2": "74.96000000000001",
+      "estoque_m2": "77.64000000000001",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -19513,19 +19513,6 @@
       "destino": "uso",
       "obs": "Instalação Nova",
       "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
-    {
-      "id": "id_1782090363680_u3cn6",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Gouache Brume - Br Bold",
-      "codigo_rev": "68",
-      "obra": "42",
-      "local": "Personalizar",
-      "apto": "42",
-      "quantidade_m2": "2.68",
-      "destino": "uso",
-      "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782090364801_o14nr",
