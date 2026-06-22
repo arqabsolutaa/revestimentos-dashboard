@@ -1581,11 +1581,9 @@ function calcularTotalComPagamento(totalValor, tipo) {
   }
   if (tipo.startsWith('credito')) {
     const n = parseInt(tipo.replace('credito',''));
-    const i = 0.01; // 1% ao mês (juros compostos - tabela Price)
-    const parcela = totalValor * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
-    const total = parcela * n;
-    const juros = total - totalValor;
-    return { total, parcelas: n, juros, parcela };
+    const total = totalValor * (1 + n * 0.01); // 1% por parcela sobre o total
+    const parcela = total / n;
+    return { total, parcelas: n, juros: total - totalValor, parcela };
   }
   return { total: totalValor, parcelas: 1, juros: 0 };
 }
@@ -3949,7 +3947,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     const fmtPDF = val => 'R$ ' + val.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
     let pgTexto = pgLabels[pagamento] || pagamento;
     if (pgInfo.parcelas > 1) {
-      const vp = pgInfo.total / pgInfo.parcelas;
+      const vp = pgInfo.parcela || (pgInfo.total / pgInfo.parcelas);
       pgTexto += ' · ' + pgInfo.parcelas + 'x de ' + fmtPDF(vp) + ' (total ' + fmtPDF(pgInfo.total) + ')';
       totalValorFinalPDF = pgInfo.total;
     }
