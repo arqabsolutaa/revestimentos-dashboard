@@ -168,14 +168,14 @@
       "site": "https://www.portobello.com.br/produtos/sintese/field-tile/sintese-off-white/90x90-natural/210427E",
       "m2_por_caixa": "2.42",
       "pecas_por_caixa": "3",
-      "qtd_caixas": "93.27",
+      "qtd_caixas": "94.39",
       "tamanho": "90x90",
       "junta": "1,5mm",
       "espessura": "8,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Essence",
-      "estoque_m2": "225.72000000000006",
+      "estoque_m2": "228.43000000000006",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -19513,19 +19513,6 @@
       "destino": "uso",
       "obs": "Instalação Nova",
       "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
-    {
-      "id": "id_1782090383021_eg08c",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Sintese Off White Nat Ret",
-      "codigo_rev": "13",
-      "obra": "42",
-      "local": "Personalizar",
-      "apto": "42",
-      "quantidade_m2": "2.71",
-      "destino": "uso",
-      "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782090384158_qkzzi",
