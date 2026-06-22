@@ -32,6 +32,7 @@
 .status-pendente{background:#FFF8E1;color:#F59E0B;border-color:#F59E0B}
 .status-pago{background:#E8F5E9;color:#22863A;border-color:#22863A}
 .status-parcial{background:#E3F2FD;color:#1976D2;border-color:#1976D2}
+.pgto-btn-modal{width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:left;cursor:pointer;font-size:13px;color:var(--text);transition:all 0.15s}.pgto-btn-modal:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1016,6 +1017,33 @@ body.mobile-mode #main{padding-bottom:72px}
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="fecharModalLote()">Cancelar</button>
       <button class="btn btn-primary" onclick="salvarLote()">Salvar Lote</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL OUTRA CONDIÇÃO DE PAGAMENTO -->
+<div id="modal-outra-condicao" class="modal-overlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h2>Outra condição de pagamento</h2>
+      <button class="modal-close" onclick="fecharModal('modal-outra-condicao')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Escolha a condição para gerar o PDF. Não altera o que está salvo.</p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('avista')">À Vista</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('pix')">PIX</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('debito')">Cartão Débito</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito2')">Crédito 2x (+2%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito3')">Crédito 3x (+3%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito4')">Crédito 4x (+4%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito5')">Crédito 5x (+5%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito6')">Crédito 6x (+6%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('pixparc2')">PIX Parcelado 2x</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('pixparc3')">PIX Parcelado 3x</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('pixparc4')">PIX Parcelado 4x</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('pixparc5')">PIX Parcelado 5x</button>
+      </div>
     </div>
   </div>
 </div>
@@ -2265,6 +2293,26 @@ async function uploadComprovante(id, inputEl) {
   }
 }
 
+
+let _outraCondicaoId = null;
+
+function abrirModalOutraCondicao(id) {
+  _outraCondicaoId = id;
+  abrirModal('modal-outra-condicao');
+}
+
+function selecionarCondicaoModal(pagamento) {
+  fecharModal('modal-outra-condicao');
+  if (!_outraCondicaoId) return;
+  const p = dadosPersonalizar.find(x => x.id === _outraCondicaoId);
+  if (!p) return;
+  const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+  gerarPDFDados({ 
+    ap: p.ap, cliente: p.cliente, empresa: p.empresa||'Absoluta', 
+    selecoes, data: p.data, comValor: true, pagamento 
+  });
+}
+
 function renderPagamentos(lista) {
   if (!lista.length) {
     document.getElementById('pgto-lista').innerHTML = '<div class="empty-state"><strong>Nenhum orçamento encontrado</strong></div>';
@@ -2296,7 +2344,8 @@ function renderPagamentos(lista) {
         </div>
         <input class="form-control" placeholder="Observação (parcelas, etc)" style="font-size:11px;padding:4px 8px;width:220px" value="${p.obs_pgto||''}" onblur="salvarObsPgto('${p.id}', this.value)">
         <div style="display:flex;gap:6px">
-          <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF c/ Valor</button>
+          <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
+          <button class="btn btn-secondary" onclick="abrirModalOutraCondicao('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF outra condição</button>
           ${p.comprovante_url 
             ? `<a href="${p.comprovante_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px;text-decoration:none">📎 Ver comprovante</a>`
             : `<button class="btn btn-secondary" onclick="document.getElementById('file-comprovante-${p.id}').click()" style="font-size:11px;padding:4px 10px">📎 Anexar comprovante</button>`
