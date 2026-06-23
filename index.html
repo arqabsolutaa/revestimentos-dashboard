@@ -3741,29 +3741,33 @@ async function editarPersonalizacao(id) {
   if (!p) return;
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
   
-  // Definir apartamento atual
+  // Guardar ID para atualizar ao salvar
+  window._editandoPersonalizacaoId = id;
+  window._selecoesParaRestaurar = selecoes;
+  
+  // Definir apartamento e abrir modal
   calcApAtual = p.ap;
   document.getElementById('calc-ap-select').value = p.ap;
+  abrirModal('modal-calculo');
   
   // Carregar paredes do apartamento
   await selecionarAp();
   
-  // Restaurar seleções
-  setTimeout(() => {
+  // Restaurar seleções após renderizar
+  const restaurar = () => {
     calcSelecoes = {};
     for (const [key, v] of Object.entries(selecoes)) {
       calcSelecoes[key] = v;
       const el = document.getElementById('wi-' + key);
       const fs = document.getElementById('fs-' + key);
       if (el && !el.classList.contains('checked')) el.classList.add('checked');
-      if (fs && v.piso) fs.value = v.piso;
+      if (fs && v.piso) { fs.value = v.piso; }
     }
     atualizarResumo();
-    // Guardar o ID original para atualizar ao salvar
-    window._editandoPersonalizacaoId = id;
-    // Abrir modal de cálculo
-    abrirModal('modal-calculo');
-  }, 600);
+  };
+  // Tentar restaurar — aguardar DOM renderizar
+  setTimeout(restaurar, 300);
+  setTimeout(restaurar, 800);
 }
 
 async function excluirPersonalizar(id) {
