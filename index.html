@@ -2365,6 +2365,7 @@ function renderPagamentos(lista) {
         <div style="display:flex;gap:6px">
           <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
           <button class="btn btn-secondary" onclick="abrirModalOutraCondicao('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF outra condição</button>
+          <button class="btn btn-secondary" onclick="editarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
           ${p.comprovante_url 
             ? `<a href="${p.comprovante_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px;text-decoration:none">📎 Ver comprovante</a>`
             : `<button class="btn btn-secondary" onclick="document.getElementById('file-comprovante-${p.id}').click()" style="font-size:11px;padding:4px 10px">📎 Anexar comprovante</button>`
@@ -3609,9 +3610,15 @@ async function salvarSelecao() {
   const dados = { ap: calcApAtual, cliente, empresa, data: new Date().toLocaleDateString('pt-BR'), selecoes: calcSelecoes };
   showToast('Salvando...', 'success');
   try {
-    const result = await apiPost('addPersonalizar', dados);
-    showToast('Salvo em Personalizar!', 'success');
-    // Recarregar para pegar o ID real da planilha
+    if (window._editandoPersonalizacaoId) {
+      // Atualizar existente
+      await apiPost('updatePersonalizar', { id: window._editandoPersonalizacaoId, ...dados });
+      window._editandoPersonalizacaoId = null;
+      showToast('Orçamento atualizado!', 'success');
+    } else {
+      await apiPost('addPersonalizar', dados);
+      showToast('Salvo em Personalizar!', 'success');
+    }
     const novos = await lerDados();
     if (novos.personalizar) dadosPersonalizar = novos.personalizar;
   } catch(e) {
@@ -3728,6 +3735,37 @@ async function confirmarSaidaPersonalizar(id) {
     showToast('Erro: ' + e.message, 'error');
   }
 }
+
+async function editarPersonalizacao(id) {
+  const p = dadosPersonalizar.find(x => x.id === id);
+  if (!p) return;
+  const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+  
+  // Definir apartamento atual
+  calcApAtual = p.ap;
+  document.getElementById('calc-ap-select').value = p.ap;
+  
+  // Carregar paredes do apartamento
+  await selecionarAp();
+  
+  // Restaurar seleções
+  setTimeout(() => {
+    calcSelecoes = {};
+    for (const [key, v] of Object.entries(selecoes)) {
+      calcSelecoes[key] = v;
+      const el = document.getElementById('wi-' + key);
+      const fs = document.getElementById('fs-' + key);
+      if (el && !el.classList.contains('checked')) el.classList.add('checked');
+      if (fs && v.piso) fs.value = v.piso;
+    }
+    atualizarResumo();
+    // Guardar o ID original para atualizar ao salvar
+    window._editandoPersonalizacaoId = id;
+    // Abrir modal de cálculo
+    abrirModal('modal-calculo');
+  }, 600);
+}
+
 async function excluirPersonalizar(id) {
   if (!confirm('Excluir esta personalização?')) return;
   const backup = [...dadosPersonalizar];
