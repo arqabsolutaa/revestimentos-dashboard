@@ -20248,7 +20248,7 @@
       "status": "confirmado",
       "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "pago",
-      "obs_pgto": "Pagamento foi efetuado na conta do granito, aqui o valor aparece maior, pois o deles foi considerado 10% de perda, depois aumentamos os demais para 20%. Mas o sistema implementa a ultima atualização de porcentagem. ",
+      "obs_pgto": "Pagamento foi efetuado na conta do granito",
       "comprovante_url": "https://drive.google.com/file/d/1_qXTG9RkFab4zfitjNWxNFV7XU9wcSHt/view?usp=drivesdk"
     },
     {
