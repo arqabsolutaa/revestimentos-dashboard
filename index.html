@@ -3747,10 +3747,11 @@ async function editarPersonalizacao(id) {
   
   // Definir apartamento e abrir modal
   calcApAtual = p.ap;
-  document.getElementById('calc-ap-select').value = p.ap;
   abrirModal('modal-calculo');
   
-  // Carregar paredes do apartamento
+  // Aguardar modal abrir antes de carregar paredes
+  await new Promise(r => setTimeout(r, 100));
+  document.getElementById('calc-ap-select').value = p.ap;
   await selecionarAp();
   
   // Restaurar seleções após renderizar
