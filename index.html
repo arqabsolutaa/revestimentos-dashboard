@@ -3757,17 +3757,38 @@ async function editarPersonalizacao(id) {
   const restaurar = () => {
     calcSelecoes = {};
     for (const [key, v] of Object.entries(selecoes)) {
-      calcSelecoes[key] = v;
-      const el = document.getElementById('wi-' + key);
-      const fs = document.getElementById('fs-' + key);
+      let el = document.getElementById('wi-' + key);
+      let fs = document.getElementById('fs-' + key);
+      // Se não encontrou pelo ID exato, buscar por ambiente+parede
+      if (!el) {
+        const partes = key.split('-');
+        const paredeNome = partes[partes.length - 2] || '';
+        const ambNome = partes.slice(1, partes.length - 2).join('-');
+        document.querySelectorAll('.wall-item').forEach(item => {
+          if (el) return;
+          const infoP = item.querySelector('.wall-info p');
+          if (!infoP || infoP.textContent.trim() !== paredeNome) return;
+          const grupo = item.closest('[data-local]');
+          if (!grupo || grupo.dataset.local !== ambNome) return;
+          el = item;
+          fs = item.querySelector('select');
+          // Usar o ID real do DOM como chave
+          const realKey = item.id.replace('wi-', '');
+          if (realKey && realKey !== key) {
+            calcSelecoes[realKey] = v;
+            delete calcSelecoes[key];
+          }
+        });
+      } else {
+        calcSelecoes[key] = v;
+      }
       if (el && !el.classList.contains('checked')) el.classList.add('checked');
-      if (fs && v.piso) { fs.value = v.piso; }
+      if (fs && v.piso) fs.value = v.piso;
     }
     atualizarResumo();
   };
-  // Tentar restaurar — aguardar DOM renderizar
-  setTimeout(restaurar, 300);
-  setTimeout(restaurar, 800);
+  setTimeout(restaurar, 400);
+  setTimeout(restaurar, 1000);
 }
 
 async function excluirPersonalizar(id) {
