@@ -20203,6 +20203,19 @@
       "status_pgto": "",
       "obs_pgto": "",
       "comprovante_url": ""
+    },
+    {
+      "id": "id_1782321305054_ekaae",
+      "ap": "151B",
+      "cliente": "—",
+      "empresa": "Empresa",
+      "data": "Wed Jun 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "selecoes": "{\"151B-Banho Master-Paredes Gerais-1782320055156\":{\"m2\":2.55,\"piso\":\"12\"},\"151B-Piso Geral-Living-1782320073445\":{\"m2\":2.55,\"piso\":\"51\"},\"151B-Banho Nenem-Paredes gerais (exceto decorativa)-1782320106351\":{\"m2\":2.55,\"piso\":\"14\"},\"151B-Piso Externo-Geral (Kit Rio de Janeiro)-1782320278024\":{\"m2\":2.55,\"piso\":\"\"},\"151B-Lavabo-Piso-1782320177286\":{\"m2\":2.55,\"piso\":\"\"},\"151B-Área de Serviço-Sintese Platina 120x270-1782320929610\":{\"m2\":2.55,\"piso\":\"\"},\"151B-Piso Externo-À definir-1782321196637\":{\"m2\":2.55,\"piso\":\"\"}}",
+      "status": "pendente",
+      "criado_em": "Wed Jun 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "status_pgto": "",
+      "obs_pgto": "",
+      "comprovante_url": ""
     }
   ],
   "orcamentos": [
