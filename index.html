@@ -1021,6 +1021,39 @@ body.mobile-mode #main{padding-bottom:72px}
   </div>
 </div>
 
+<!-- MODAL REVESTIMENTO EXTERNO -->
+<div id="modal-rev-externo" class="modal-overlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h2>+ Revestimento externo</h2>
+      <button class="modal-close" onclick="fecharModal('modal-rev-externo')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text3);margin-bottom:16px">Revestimento de fornecedor externo — será cadastrado com estoque zerado. Adicione um lote quando chegar a mercadoria.</p>
+      <div class="form-group">
+        <label class="form-label">Nome do revestimento</label>
+        <input class="form-control" id="rev-ext-nome" placeholder="Ex: Onyx Unique Nat Ret">
+      </div>
+      <div class="form-group" style="margin-top:12px">
+        <label class="form-label">Tamanho</label>
+        <input class="form-control" id="rev-ext-tamanho" placeholder="Ex: 120x120">
+      </div>
+      <div class="form-group" style="margin-top:12px">
+        <label class="form-label">Preço por m²</label>
+        <input class="form-control" id="rev-ext-preco" type="number" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-group" style="margin-top:12px">
+        <label class="form-label">Código (opcional)</label>
+        <input class="form-control" id="rev-ext-codigo" placeholder="Ex: EXT001">
+      </div>
+      <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-secondary" onclick="fecharModal('modal-rev-externo')">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarRevExterno()">Cadastrar e usar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL OUTRA CONDIÇÃO DE PAGAMENTO -->
 <div id="modal-outra-condicao" class="modal-overlay">
   <div class="modal" style="max-width:420px">
@@ -1365,6 +1398,7 @@ body.mobile-mode #main{padding-bottom:72px}
 
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="fecharModal('modal-calculo')">Fechar</button>
+      <button class="btn btn-secondary" onclick="abrirModalRevExterno()" style="font-size:12px">+ Revestimento externo</button>
       <button class="btn btn-secondary" id="calc-btn-salvar" onclick="salvarSelecao()" style="display:none">Salvar em Personalizar</button>
       <button class="btn btn-primary" id="calc-btn-pdf" onclick="gerarPDF()" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -3507,14 +3541,37 @@ function selecionarAp() {
     paredes.forEach((p, idx) => {
       const m2 = (parseFloat(p.metro_linear||0) * parseFloat(p.altura||0)).toFixed(2);
       const key = p.apartamento + '-' + p.local.trim() + '-' + p.parede + '-' + idx;
+      // Verificar se há seleção pré-carregada para esta parede (edição)
+      const selPre = window._selecoesParaRestaurar;
+      let selPreKey = null, selPreVal = null;
+      if (selPre) {
+        // Tentar pelo key exato primeiro
+        if (selPre[key]) { selPreKey = key; selPreVal = selPre[key]; }
+        else {
+          // Buscar por ambiente+parede (para paredes com timestamp)
+          for (const [k, v] of Object.entries(selPre)) {
+            const kPartes = k.split('-');
+            const kAmb = kPartes.slice(1, kPartes.length - 2).join('-');
+            const kPar = kPartes[kPartes.length - 2];
+            if (kAmb === p.local.trim() && kPar === p.parede && kPartes[0] === p.apartamento) {
+              selPreKey = k; selPreVal = v; break;
+            }
+          }
+        }
+      }
+      const isChecked = selPreVal ? true : false;
+      const pisoPre = selPreVal?.piso || '';
+      // Registrar na calcSelecoes se já tem seleção
+      if (selPreVal) { calcSelecoes[key] = { m2: parseFloat(m2), piso: pisoPre }; }
       const opcoesRev = dadosRevestimentos.map(r => {
         const estoque = parseFloat(r.estoque_m2) || 0;
         const semEstoque = estoque <= 0;
         const estoqueBaixo = estoque > 0 && estoque <= 100;
         const styleOpt = semEstoque ? 'color:#bbb' : estoqueBaixo ? 'color:#c4a35a' : '';
-        return `<option value="${r.id||r.codigo}" style="${styleOpt}">${r.nome} [${r.tamanho||''}]</option>`;
+        const selected = (String(r.id||r.codigo) === String(pisoPre)) ? 'selected' : '';
+        return `<option value="${r.id||r.codigo}" style="${styleOpt}" ${selected}>${r.nome} [${r.tamanho||''}]</option>`;
       }).join('');
-      html += `<div class="wall-item" id="wi-${key}" onclick="toggleWall('${key}', ${parseFloat(m2)}, this)">
+      html += `<div class="wall-item${isChecked ? ' checked' : ''}" id="wi-${key}" onclick="toggleWall('${key}', ${parseFloat(m2)}, this)">
         <div class="wall-check" id="wc-${key}">
           <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
@@ -3535,6 +3592,8 @@ function selecionarAp() {
   document.getElementById('calc-paredes-container').innerHTML = html;
   document.getElementById('calc-step2').style.display = 'block';
   document.getElementById('calc-step3').style.display = 'block';
+  if (!window._editandoPersonalizacaoId) calcSelecoes = {};
+  window._selecoesParaRestaurar = null;
   atualizarResumo();
 }
 function toggleWall(key, m2, el) {
@@ -3757,38 +3816,57 @@ async function editarPersonalizacao(id) {
   const restaurar = () => {
     calcSelecoes = {};
     for (const [key, v] of Object.entries(selecoes)) {
-      let el = document.getElementById('wi-' + key);
-      let fs = document.getElementById('fs-' + key);
-      // Se não encontrou pelo ID exato, buscar por ambiente+parede
-      if (!el) {
-        const partes = key.split('-');
-        const paredeNome = partes[partes.length - 2] || '';
-        const ambNome = partes.slice(1, partes.length - 2).join('-');
-        document.querySelectorAll('.wall-item').forEach(item => {
-          if (el) return;
-          const infoP = item.querySelector('.wall-info p');
-          if (!infoP || infoP.textContent.trim() !== paredeNome) return;
-          const grupo = item.closest('[data-local]');
-          if (!grupo || grupo.dataset.local !== ambNome) return;
-          el = item;
-          fs = item.querySelector('select');
-          // Usar o ID real do DOM como chave
-          const realKey = item.id.replace('wi-', '');
-          if (realKey && realKey !== key) {
-            calcSelecoes[realKey] = v;
-            delete calcSelecoes[key];
-          }
-        });
-      } else {
-        calcSelecoes[key] = v;
-      }
+      calcSelecoes[key] = v;
+      const el = document.getElementById('wi-' + key);
+      const fs = document.getElementById('fs-' + key);
       if (el && !el.classList.contains('checked')) el.classList.add('checked');
-      if (fs && v.piso) fs.value = v.piso;
+      if (fs && v.piso) { fs.value = v.piso; }
     }
     atualizarResumo();
   };
-  setTimeout(restaurar, 400);
-  setTimeout(restaurar, 1000);
+  // Restaurar inline durante renderização — sem setTimeout necessário
+}
+
+
+function abrirModalRevExterno() {
+  document.getElementById('rev-ext-nome').value = '';
+  document.getElementById('rev-ext-tamanho').value = '';
+  document.getElementById('rev-ext-preco').value = '';
+  document.getElementById('rev-ext-codigo').value = '';
+  abrirModal('modal-rev-externo');
+}
+
+async function salvarRevExterno() {
+  const nome = document.getElementById('rev-ext-nome').value.trim();
+  const tamanho = document.getElementById('rev-ext-tamanho').value.trim();
+  const preco = parseFloat(document.getElementById('rev-ext-preco').value) || 0;
+  const codigo = document.getElementById('rev-ext-codigo').value.trim() || 'EXT-' + Date.now();
+  
+  if (!nome) { showToast('Digite o nome do revestimento', 'error'); return; }
+  
+  showToast('Cadastrando...', 'success');
+  try {
+    const novoRev = {
+      nome, tamanho, codigo,
+      preco_m2: preco,
+      estoque_m2: 0,
+      qtd_caixas: 0,
+      m2_por_caixa: 0,
+      perda_pct: 20,
+      obs: 'Revestimento externo',
+      obra: 'Essence'
+    };
+    await apiPost('addRevestimento', novoRev);
+    // Recarregar revestimentos
+    const novos = await lerDados();
+    if (novos.revestimentos) dadosRevestimentos = novos.revestimentos;
+    fecharModal('modal-rev-externo');
+    showToast('Revestimento cadastrado! Já disponível para seleção.', 'success');
+    // Atualizar selects de revestimentos na tela
+    selecionarAp();
+  } catch(e) {
+    showToast('Erro: ' + e.message, 'error');
+  }
 }
 
 async function excluirPersonalizar(id) {
