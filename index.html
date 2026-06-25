@@ -2556,9 +2556,9 @@ async function salvarNovaParede() {
       cardDiv.id = 'wi-' + key;
       cardDiv.onclick = function() { toggleWall(key, m2, this); };
       cardDiv.innerHTML = '<div class="wall-check"></div><div class="wall-info"><p>' + parede + '</p><span>' + m2.toFixed(2) + ' m² · ' + linear + 'm × ' + altura + 'm</span>' +
-        '<div class="floor-select-row" onclick="event.stopPropagation()"><select class="form-control" id="fs-' + key + '" onchange="atualizarResumo()" style="font-size:12px;padding:4px 8px;width:100%"><option value="">— Piso —</option>' +
+        '<div class="floor-select-row" onclick="event.stopPropagation()" style="display:flex;gap:6px;align-items:center"><select class="form-control" id="fs-' + key + '" onchange="atualizarResumo()" style="font-size:12px;padding:4px 8px;flex:1"><option value="">— Piso —</option>' +
         opcoes.map(r => '<option value="' + (r.id||r.codigo) + '">' + r.nome + ' [' + (r.tamanho||'') + ']</option>').join('') +
-        '</select></div></div>';
+        '</select><button onclick="event.stopPropagation();abrirModalRevExterno(\'fs-' + key + '\')" style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:4px 7px;cursor:pointer;font-size:14px;color:var(--accent);flex-shrink:0" title="Adicionar revestimento externo">+</button></div></div>';
       wgEl.appendChild(cardDiv);
     }
     atualizarResumo();
