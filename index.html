@@ -1340,9 +1340,7 @@ body.mobile-mode #main{padding-bottom:72px}
           <p style="font-size:13px;font-weight:500;color:var(--accent)" id="calc-cliente-nome"></p>
           <p style="font-size:12px;color:var(--text2)" id="calc-ap-info"></p>
         </div>
-        <div style="margin-top:10px">
-          <button class="btn btn-secondary" onclick="abrirModalRevExterno()" style="font-size:12px;width:100%">+ Adicionar revestimento externo</button>
-        </div>
+
       </div>
 
       <!-- STEP 2: locais e paredes -->
@@ -3580,11 +3578,12 @@ function selecionarAp() {
         <div class="wall-info">
           <p>${p.parede}</p>
           <span>${m2} m² · ${p.metro_linear}m × ${p.altura}m</span>
-          <div class="floor-select-row" onclick="event.stopPropagation()">
-            <select class="form-control" id="fs-${key}" style="font-size:12px;padding:4px 8px;width:100%" onchange="atualizarResumo()">
+          <div class="floor-select-row" onclick="event.stopPropagation()" style="display:flex;gap:6px;align-items:center">
+            <select class="form-control" id="fs-${key}" style="font-size:12px;padding:4px 8px;flex:1" onchange="atualizarResumo()">
               <option value="">— Piso —</option>
               ${opcoesRev}
             </select>
+            <button onclick="event.stopPropagation();abrirModalRevExterno('fs-${key}')" style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:4px 7px;cursor:pointer;font-size:14px;color:var(--accent);flex-shrink:0" title="Adicionar revestimento externo">+</button>
           </div>
         </div>
       </div>`;
@@ -3830,7 +3829,9 @@ async function editarPersonalizacao(id) {
 }
 
 
-function abrirModalRevExterno() {
+let _revExternoSelectId = null;
+function abrirModalRevExterno(selectId) {
+  _revExternoSelectId = selectId || null;
   document.getElementById('rev-ext-nome').value = '';
   document.getElementById('rev-ext-tamanho').value = '';
   document.getElementById('rev-ext-preco').value = '';
@@ -3864,13 +3865,19 @@ async function salvarRevExterno() {
     if (novos.revestimentos) dadosRevestimentos = novos.revestimentos;
     fecharModal('modal-rev-externo');
     showToast('Revestimento cadastrado! Já disponível para seleção.', 'success');
-    // Atualizar selects de revestimentos sem recarregar paredes
+    // Adicionar novo revestimento em todos os selects e selecionar no alvo
+    const novoId = String(dadosRevestimentos[dadosRevestimentos.length-1]?.id || codigo);
     document.querySelectorAll('.floor-select-row select').forEach(sel => {
       const novoOpt = document.createElement('option');
-      novoOpt.value = novoRev.codigo || novoRev.id;
-      novoOpt.textContent = nome + ' [' + tamanho + ']';
+      novoOpt.value = novoId;
+      novoOpt.textContent = nome + (tamanho ? ' [' + tamanho + ']' : '');
       sel.appendChild(novoOpt);
     });
+    // Selecionar automaticamente no select da parede que abriu o modal
+    if (_revExternoSelectId) {
+      const sel = document.getElementById(_revExternoSelectId);
+      if (sel) { sel.value = novoId; atualizarResumo(); }
+    }
   } catch(e) {
     showToast('Erro: ' + e.message, 'error');
   }
