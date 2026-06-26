@@ -43,8 +43,12 @@ async function loadVinilico() {
   try {
     const d = await lerDadosExtra('vinilico');
     dadosVinilico = d.personalizar || [];
-    renderVinilico();
-  } catch(e) { console.log('Vinilico:', e.message); }
+    dadosViniProdutos = d.produtos || [];
+  } catch(e) { 
+    console.log('Vinilico:', e.message);
+    dadosVinilico = [];
+  }
+  renderVinilico();
 }
 
 function renderVinilico() {
@@ -198,8 +202,11 @@ async function loadMarmoraria() {
     const d = await lerDadosExtra('marmoraria');
     dadosMarmoraria = d.personalizar || [];
     dadosMarmCatalogo = d.catalogo || [];
-    renderMarmoraria();
-  } catch(e) { console.log('Marmoraria:', e.message); }
+  } catch(e) { 
+    console.log('Marmoraria:', e.message);
+    dadosMarmoraria = [];
+  }
+  renderMarmoraria();
 }
 
 function renderMarmoraria() {
@@ -353,8 +360,11 @@ async function loadBanheiras() {
     const d = await lerDadosExtra('banheiras');
     dadosBanheiras = d.personalizar || [];
     dadosBanhCatalogo = d.catalogo || [];
-    renderBanheiras();
-  } catch(e) { console.log('Banheiras:', e.message); }
+  } catch(e) { 
+    console.log('Banheiras:', e.message);
+    dadosBanheiras = [];
+  }
+  renderBanheiras();
 }
 
 function renderBanheiras() {
@@ -525,16 +535,9 @@ async function salvarBanheira() {
 
 // Funções auxiliares para carregar dados extras
 async function lerDadosExtra(tipo) {
-  const url = SCRIPT_URL + '?action=getDadosExtra&tipo=' + tipo;
-  return new Promise((resolve, reject) => {
-    const cb = 'cb_' + Date.now();
-    window[cb] = (data) => { delete window[cb]; if (data.error) reject(new Error(data.error)); else resolve(data.data || data); };
-    const s = document.createElement('script');
-    s.src = url + '&callback=' + cb;
-    s.onerror = () => reject(new Error('Erro de rede'));
-    document.head.appendChild(s);
-    setTimeout(() => reject(new Error('Timeout')), 30000);
-  });
+  const result = await jsonp(SCRIPT_URL + '?action=getDadosExtra&tipo=' + tipo);
+  if (result.error) throw new Error(result.error);
+  return result.data || result;
 }
 
 // Placeholder PDF funções (implementar depois)
@@ -2682,9 +2685,9 @@ window.onload = async () => {
 // ===================== NAVEGAÇÃO =====================
 function showScreen(name) {
   if (name === 'instalacoes') loadInstalacoes();
-  document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display='none'; });
+  document.querySelectorAll('.screen:not(.modal-overlay)').forEach(s => { s.classList.remove('active'); s.style.display='none'; });
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  const screenEl = document.getElementById(name + '-screen') || document.getElementById('screen-' + name);
+  const screenEl = document.getElementById(name + '-screen');
   if (screenEl) { screenEl.style.display='block'; screenEl.classList.add('active'); }
   try { document.getElementById('nav-' + name).classList.add('active'); } catch(e) {}
   localStorage.setItem('last_screen', name);
@@ -4755,7 +4758,7 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
 
 
 <!-- ==================== TELA VINÍLICO ==================== -->
-<div id="screen-vinilico" class="screen" style="display:none">
+<div id="vinilico-screen" class="screen" style="display:none">
   <div style="padding:20px 24px;max-width:1200px;margin:0 auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
       <div>
@@ -4771,7 +4774,7 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
 </div>
 
 <!-- ==================== TELA MARMORARIA ==================== -->
-<div id="screen-marmoraria" class="screen" style="display:none">
+<div id="marmoraria-screen" class="screen" style="display:none">
   <div style="padding:20px 24px;max-width:1200px;margin:0 auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
       <div>
@@ -4787,7 +4790,7 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
 </div>
 
 <!-- ==================== TELA BANHEIRAS ==================== -->
-<div id="screen-banheiras" class="screen" style="display:none">
+<div id="banheiras-screen" class="screen" style="display:none">
   <div style="padding:20px 24px;max-width:1200px;margin:0 auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
       <div>
