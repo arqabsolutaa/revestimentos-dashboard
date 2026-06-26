@@ -35,7 +35,8 @@
 .pgto-btn-modal{width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:left;cursor:pointer;font-size:13px;color:var(--text);transition:all 0.15s}.pgto-btn-modal:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
 // ===================== VINÍLICO =====================
 let dadosVinilico = [], dadosPisosVin = [], vinSelecoes = {}, vinApAtual = '';
 
@@ -2685,10 +2686,13 @@ window.onload = async () => {
 // ===================== NAVEGAÇÃO =====================
 function showScreen(name) {
   if (name === 'instalacoes') loadInstalacoes();
-  document.querySelectorAll('.screen:not(.modal-overlay)').forEach(s => { s.classList.remove('active'); s.style.display='none'; });
+  document.querySelectorAll('.screen:not(.modal-overlay)').forEach(s => { s.classList.remove('active'); if (!s.id.includes('home')) s.style.display='none'; });
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   const screenEl = document.getElementById(name + '-screen');
-  if (screenEl) { screenEl.style.display='block'; screenEl.classList.add('active'); }
+  if (screenEl) { 
+    screenEl.style.display = name === 'home' ? 'flex' : 'block';
+    screenEl.classList.add('active'); 
+  }
   try { document.getElementById('nav-' + name).classList.add('active'); } catch(e) {}
   localStorage.setItem('last_screen', name);
   if (name === 'estoque') loadEstoque();
@@ -3094,7 +3098,7 @@ async function salvarNovaParede() {
         '<div class="floor-select-row" onclick="event.stopPropagation()"><select class="form-control" id="fs-' + key + '" onchange="atualizarResumo()" style="font-size:12px;padding:4px 8px;width:100%"><option value="">— Piso —</option>' +
         opcoes.map(r => '<option value="' + (r.id||r.codigo) + '">' + r.nome + ' [' + (r.tamanho||'') + ']</option>').join('') +
         '</select></div>' +
-        '<button onclick="event.stopPropagation();abrirModalRevExterno(\'fs-' + key + '\'" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:2px 0;text-align:left;width:100%">+ revestimento externo</button>' +
+        '<button onclick="event.stopPropagation();abrirModalRevExterno(\"fs-' + key + '\")" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:2px 0;text-align:left;width:100%">+ revestimento externo</button>' +
         '</div>';
       wgEl.appendChild(cardDiv);
     }
