@@ -3088,10 +3088,11 @@ async function salvarNovaParede() {
       cardDiv.id = 'wi-' + key;
       cardDiv.onclick = function() { toggleWall(key, m2, this); };
       cardDiv.innerHTML = '<div class="wall-check"></div><div class="wall-info"><p>' + parede + '</p><span>' + m2.toFixed(2) + ' m² · ' + linear + 'm × ' + altura + 'm</span>' +
-        '<div class="floor-select-row" onclick="event.stopPropagation()"><select class="form-control" id="fs-' + key + '" onchange="if(this.value===\'__externo__\'){this.value=\'\';abrirModalRevExterno(\'fs-' + key + '\')}else{atualizarResumo()}" style="font-size:12px;padding:4px 8px;width:100%"><option value="">— Piso —</option>' +
+        '<div class="floor-select-row" onclick="event.stopPropagation()"><select class="form-control" id="fs-' + key + '" onchange="atualizarResumo()" style="font-size:12px;padding:4px 8px;width:100%"><option value="">— Piso —</option>' +
         opcoes.map(r => '<option value="' + (r.id||r.codigo) + '">' + r.nome + ' [' + (r.tamanho||'') + ']</option>').join('') +
-        '<option value="__externo__">+ Adicionar revestimento externo...</option>' +
-        '</select></div></div>';
+        '</select></div>' +
+        '<button onclick="event.stopPropagation();abrirModalRevExterno(\'fs-' + key + '\'" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:2px 0;text-align:left;width:100%">+ revestimento externo</button>' +
+        '</div>';
       wgEl.appendChild(cardDiv);
     }
     atualizarResumo();
@@ -4112,11 +4113,11 @@ function selecionarAp() {
           <p>${p.parede}</p>
           <span>${m2} m² · ${p.metro_linear}m × ${p.altura}m</span>
           <div class="floor-select-row" onclick="event.stopPropagation()">
-            <select class="form-control" id="fs-${key}" style="font-size:12px;padding:4px 8px;width:100%" onchange="if(this.value==='__externo__'){this.value='';abrirModalRevExterno('fs-${key}')}else{atualizarResumo()}">
+            <select class="form-control" id="fs-${key}" style="font-size:12px;padding:4px 8px;width:100%" onchange="atualizarResumo()">
               <option value="">— Piso —</option>
               ${opcoesRev}
-              <option value="__externo__">+ Adicionar revestimento externo...</option>
             </select>
+            <button onclick="event.stopPropagation();abrirModalRevExterno('fs-${key}')" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:2px 0;text-align:left;width:100%">+ revestimento externo</button>
           </div>
         </div>
       </div>`;
