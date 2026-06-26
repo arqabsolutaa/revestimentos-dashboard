@@ -248,14 +248,14 @@
       "site": "https://www.portobello.com.br/produtos/oh-take/field-tile/oh-take-mountain/120x120-natural/200330E",
       "m2_por_caixa": "2.87",
       "pecas_por_caixa": "2",
-      "qtd_caixas": "271.13",
+      "qtd_caixas": "295.13",
       "tamanho": "120x120",
       "junta": "1,5mm",
       "espessura": "7,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Vista Park",
-      "estoque_m2": "778.13",
+      "estoque_m2": "847.01",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -20559,19 +20559,6 @@
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
       "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
-    {
-      "id": "id_1782493654536_rn78x",
-      "data": "Fri Jun 26 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Oh!Take Moutain Nat Ret",
-      "codigo_rev": "12011",
-      "obra": "111B - Belize",
-      "local": "Living, hall, lavabo e área de serviço",
-      "apto": "Belize - Apto 111 B - Belize ",
-      "quantidade_m2": "68.88",
-      "destino": "uso",
-      "obs": "",
-      "criado_em": "Fri Jun 26 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "personalizar": [
