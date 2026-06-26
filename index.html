@@ -35,7 +35,520 @@
 .pgto-btn-modal{width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:left;cursor:pointer;font-size:13px;color:var(--text);transition:all 0.15s}.pgto-btn-modal:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+// ===================== VINÍLICO =====================
+let dadosVinilico = [], dadosPisosVin = [], vinSelecoes = {}, vinApAtual = '';
+
+async function loadVinilico() {
+  try {
+    const d = await lerDadosExtra('vinilico');
+    dadosVinilico = d.personalizar || [];
+    renderVinilico();
+  } catch(e) { console.log('Vinilico:', e.message); }
+}
+
+function renderVinilico() {
+  const el = document.getElementById('vinilico-lista');
+  if (!dadosVinilico.length) {
+    el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de vinílico encontrado</strong></div>';
+    return;
+  }
+  el.innerHTML = dadosVinilico.map(p => {
+    const sel = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+    let totalM2 = 0, totalValor = 0;
+    for (const v of Object.values(sel)) {
+      const prod = dadosViniProdutos?.find(r => String(r.id||r.codigo) === String(v.produto));
+      totalM2 += parseFloat(v.m2)||0;
+      totalValor += (parseFloat(prod?.preco_m2)||0) * (parseFloat(v.m2)||0);
+    }
+    const statusCor = p.status === 'confirmado' ? '#2d6a4f' : '#b08040';
+    const statusLabel = p.status === 'confirmado' ? '✓ Entregue' : 'PENDENTE';
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <p style="font-size:15px;font-weight:600">${p.cliente||'—'}</p>
+          <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
+          <p style="font-size:12px;color:var(--text3);margin-top:4px">${Object.keys(sel).length} ambiente(s)</p>
+        </div>
+        <div style="text-align:right">
+          <span style="font-size:13px;font-weight:600;color:#8c8467">${totalM2.toFixed(2)} m²</span>
+          ${totalValor > 0 ? `<p style="font-size:12px;color:var(--accent)">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})}</p>` : ''}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;background:${statusCor}22;color:${statusCor}">${statusLabel}</span>
+        <button class="btn btn-secondary" onclick="gerarPDFVinilicoId('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
+        <button class="btn btn-secondary" onclick="editarVinilico('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let dadosViniProdutos = [];
+
+async function abrirModalCalcVinilico() {
+  vinSelecoes = {}; vinApAtual = '';
+  // Carregar produtos vinílico
+  try {
+    const d = await lerDadosExtra('vinilico');
+    dadosViniProdutos = d.produtos || [];
+  } catch(e) {}
+  // Popular select de apartamentos
+  const sel = document.getElementById('vin-ap-select');
+  sel.innerHTML = '<option value="">— Selecione —</option>' +
+    [...new Set(dadosParedes.map(p => p.apartamento))].sort((a,b) => Number(a)-Number(b))
+    .map(ap => {
+      const cli = dadosParedes.find(p => p.apartamento === ap)?.cliente || '';
+      return `<option value="${ap}">Apto ${ap} - ${cli}</option>`;
+    }).join('');
+  document.getElementById('vin-pisos-container').style.display = 'none';
+  document.getElementById('vin-resumo').style.display = 'none';
+  document.getElementById('vin-btn-salvar').style.display = 'none';
+  document.getElementById('vin-btn-pdf').style.display = 'none';
+  abrirModal('modal-calc-vinilico');
+}
+
+async function carregarPisosVinilico() {
+  vinApAtual = document.getElementById('vin-ap-select').value;
+  if (!vinApAtual) return;
+  // Buscar pisos da aba Vinilico_Pisos
+  try {
+    const d = await lerDadosExtra('vinilico');
+    dadosPisosVin = (d.pisos || []).filter(p => String(p.apartamento) === String(vinApAtual));
+  } catch(e) { dadosPisosVin = []; }
+  
+  const container = document.getElementById('vin-pisos-lista');
+  if (!dadosPisosVin.length) {
+    container.innerHTML = '<p style="font-size:12px;color:var(--text3)">Nenhum piso cadastrado para este apartamento. Adicione na aba Vinilico_Pisos da planilha.</p>';
+  } else {
+    const opcoes = dadosViniProdutos.map(r => {
+      const est = parseFloat(r.estoque_m2)||0;
+      const cor = est <= 0 ? 'color:#bbb' : est <= 100 ? 'color:#c4a35a' : '';
+      return `<option value="${r.id||r.codigo}" style="${cor}">${r.nome} [${r.tamanho||''}] - R$ ${parseFloat(r.preco_m2||0).toFixed(2)}/m²</option>`;
+    }).join('');
+    
+    container.innerHTML = dadosPisosVin.map(p => {
+      const key = vinApAtual + '-' + p.local + '-' + (p.id||p.local);
+      return `<div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;border:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <p style="font-size:13px;font-weight:600">${p.local}</p>
+          <span style="font-size:12px;color:var(--accent);font-weight:600">${parseFloat(p.m2||0).toFixed(2)} m²</span>
+        </div>
+        <select class="form-control" id="vfs-${key}" onchange="atualizarResumoVin()" style="font-size:12px">
+          <option value="">— Selecione o vinílico —</option>
+          ${opcoes}
+        </select>
+      </div>`;
+    }).join('');
+  }
+  
+  document.getElementById('vin-pisos-container').style.display = 'block';
+  document.getElementById('vin-btn-salvar').style.display = 'inline-flex';
+  document.getElementById('vin-btn-pdf').style.display = 'inline-flex';
+  atualizarResumoVin();
+}
+
+function atualizarResumoVin() {
+  let totalM2 = 0, totalValor = 0;
+  vinSelecoes = {};
+  dadosPisosVin.forEach(p => {
+    const key = vinApAtual + '-' + p.local + '-' + (p.id||p.local);
+    const sel = document.getElementById('vfs-' + key);
+    if (sel && sel.value) {
+      const m2 = parseFloat(p.m2)||0;
+      const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === sel.value);
+      const preco = parseFloat(prod?.preco_m2)||0;
+      totalM2 += m2;
+      totalValor += preco * m2;
+      vinSelecoes[key] = { m2, produto: sel.value };
+    }
+  });
+  const resumo = document.getElementById('vin-resumo');
+  if (Object.keys(vinSelecoes).length > 0) {
+    resumo.style.display = 'block';
+    resumo.innerHTML = `<div class="result-summary"><span style="font-size:13px;color:var(--accent);font-weight:500">Total</span>
+      <div style="display:flex;gap:20px"><span style="font-size:18px;font-weight:600;color:#8c8467">${totalM2.toFixed(2)} m²</span>
+      ${totalValor > 0 ? `<span style="font-size:16px;font-weight:500;color:var(--text2)">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>` : ''}</div></div>`;
+  } else {
+    resumo.style.display = 'none';
+  }
+}
+
+async function salvarVinilico() {
+  if (!vinApAtual) return;
+  const paredesAp = dadosParedes.filter(p => p.apartamento === vinApAtual);
+  const cliente = paredesAp[0]?.cliente || '—';
+  const dados = { ap: vinApAtual, cliente, data: new Date().toLocaleDateString('pt-BR'), selecoes: vinSelecoes, tipo: 'vinilico' };
+  showToast('Salvando...', 'success');
+  try {
+    await apiPost('addViniPersonalizar', dados);
+    showToast('Salvo!', 'success');
+    const d = await lerDadosExtra('vinilico');
+    dadosVinilico = d.personalizar || [];
+    renderVinilico();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+// ===================== MARMORARIA =====================
+let dadosMarmoraria = [], dadosBancadas = [], marmSelecoes = [], marmApAtual = '';
+let dadosMarmCatalogo = [];
+
+async function loadMarmoraria() {
+  try {
+    const d = await lerDadosExtra('marmoraria');
+    dadosMarmoraria = d.personalizar || [];
+    dadosMarmCatalogo = d.catalogo || [];
+    renderMarmoraria();
+  } catch(e) { console.log('Marmoraria:', e.message); }
+}
+
+function renderMarmoraria() {
+  const el = document.getElementById('marmoraria-lista');
+  if (!dadosMarmoraria.length) {
+    el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de marmoraria encontrado</strong></div>';
+    return;
+  }
+  el.innerHTML = dadosMarmoraria.map(p => {
+    const sel = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
+    const totalM2 = sel.reduce((a, v) => a + (parseFloat(v.m2)||0), 0);
+    const totalValor = sel.reduce((a, v) => {
+      const ped = dadosMarmCatalogo.find(r => String(r.id) === String(v.pedra));
+      return a + (parseFloat(ped?.preco_m2)||0) * (parseFloat(v.m2)||0);
+    }, 0);
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <p style="font-size:15px;font-weight:600">${p.cliente||'—'}</p>
+          <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
+          <p style="font-size:12px;color:var(--text3);margin-top:4px">${sel.length} bancada(s)</p>
+        </div>
+        <div style="text-align:right">
+          <span style="font-size:13px;font-weight:600;color:#8c8467">${totalM2.toFixed(2)} m²</span>
+          ${totalValor > 0 ? `<p style="font-size:12px;color:var(--accent)">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})}</p>` : '<p style="font-size:12px;color:var(--text3)">Valor mediante orçamento</p>'}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-secondary" onclick="gerarPDFMarmorariaId('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
+        <button class="btn btn-secondary" onclick="editarMarmoraria('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function abrirModalCalcMarmoraria() {
+  marmSelecoes = []; marmApAtual = '';
+  try {
+    const d = await lerDadosExtra('marmoraria');
+    dadosMarmCatalogo = d.catalogo || [];
+  } catch(e) {}
+  const sel = document.getElementById('marm-ap-select');
+  sel.innerHTML = '<option value="">— Selecione —</option>' +
+    [...new Set(dadosParedes.map(p => p.apartamento))].sort((a,b) => Number(a)-Number(b))
+    .map(ap => {
+      const cli = dadosParedes.find(p => p.apartamento === ap)?.cliente || '';
+      return `<option value="${ap}">Apto ${ap} - ${cli}</option>`;
+    }).join('');
+  document.getElementById('marm-bancadas-container').style.display = 'none';
+  document.getElementById('marm-resumo').style.display = 'none';
+  document.getElementById('marm-btn-salvar').style.display = 'none';
+  document.getElementById('marm-btn-pdf').style.display = 'none';
+  abrirModal('modal-calc-marmoraria');
+}
+
+async function carregarBancadasMarmoraria() {
+  marmApAtual = document.getElementById('marm-ap-select').value;
+  if (!marmApAtual) return;
+  marmSelecoes = [];
+  document.getElementById('marm-bancadas-lista').innerHTML = '';
+  document.getElementById('marm-bancadas-container').style.display = 'block';
+  document.getElementById('marm-btn-salvar').style.display = 'inline-flex';
+  document.getElementById('marm-btn-pdf').style.display = 'inline-flex';
+  // Carregar bancadas existentes da planilha
+  try {
+    const d = await lerDadosExtra('marmoraria');
+    dadosBancadas = (d.bancadas || []).filter(b => String(b.apartamento) === String(marmApAtual));
+    dadosBancadas.forEach(b => {
+      marmSelecoes.push({ ambiente: b.local || b.ambiente, descricao: b.descricao, m2: b.m2, pedra: '' });
+    });
+  } catch(e) { dadosBancadas = []; }
+  renderBancadasMarmoraria();
+}
+
+function renderBancadasMarmoraria() {
+  const opcoesPedras = dadosMarmCatalogo.map(p =>
+    `<option value="${p.id}">${p.nome} ${p.categoria === 'Construtora' ? '(Incluso)' : ''}</option>`
+  ).join('');
+  
+  const lista = document.getElementById('marm-bancadas-lista');
+  lista.innerHTML = marmSelecoes.map((b, idx) => `
+    <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;border:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <input class="form-control" value="${b.ambiente||''}" placeholder="Ambiente (ex: Banho 01)" style="font-size:12px;flex:1;margin-right:8px" onchange="marmSelecoes[${idx}].ambiente=this.value">
+        <button onclick="marmSelecoes.splice(${idx},1);renderBancadasMarmoraria()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px">×</button>
+      </div>
+      <input class="form-control" value="${b.descricao||''}" placeholder="Descrição (ex: Bancada pia)" style="font-size:12px;margin-bottom:8px" onchange="marmSelecoes[${idx}].descricao=this.value">
+      <div style="display:flex;gap:8px">
+        <div style="flex:1">
+          <label style="font-size:11px;color:var(--text3)">m²</label>
+          <input class="form-control" type="number" step="0.01" value="${b.m2||''}" placeholder="0.00" style="font-size:12px" onchange="marmSelecoes[${idx}].m2=this.value;atualizarResumoMarm()">
+        </div>
+        <div style="flex:2">
+          <label style="font-size:11px;color:var(--text3)">Pedra</label>
+          <select class="form-control" style="font-size:12px" onchange="marmSelecoes[${idx}].pedra=this.value;atualizarResumoMarm()">
+            <option value="">— Selecione —</option>
+            <optgroup label="Construtora (Incluso)">${dadosMarmCatalogo.filter(p=>p.categoria==='Construtora').map(p=>`<option value="${p.id}" ${b.pedra===String(p.id)?'selected':''}>${p.nome}</option>`).join('')}</optgroup>
+            <optgroup label="Sugestões Absoluta">${dadosMarmCatalogo.filter(p=>p.categoria==='Absoluta').map(p=>`<option value="${p.id}" ${b.pedra===String(p.id)?'selected':''}>${p.nome}</option>`).join('')}</optgroup>
+          </select>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  atualizarResumoMarm();
+}
+
+function adicionarBancadaMarmoraria() {
+  marmSelecoes.push({ ambiente: '', descricao: '', m2: '', pedra: '' });
+  renderBancadasMarmoraria();
+}
+
+function atualizarResumoMarm() {
+  let totalM2 = 0, totalValor = 0, temOrcamento = false;
+  marmSelecoes.forEach(b => {
+    const m2 = parseFloat(b.m2)||0;
+    totalM2 += m2;
+    const ped = dadosMarmCatalogo.find(p => String(p.id) === String(b.pedra));
+    if (ped && parseFloat(ped.preco_m2) > 0) totalValor += parseFloat(ped.preco_m2) * m2;
+    else if (ped && ped.categoria === 'Absoluta') temOrcamento = true;
+  });
+  const resumo = document.getElementById('marm-resumo');
+  if (marmSelecoes.length > 0) {
+    resumo.style.display = 'block';
+    resumo.innerHTML = `<div class="result-summary"><span style="font-size:13px;color:var(--accent);font-weight:500">Total</span>
+      <div style="display:flex;gap:20px"><span style="font-size:18px;font-weight:600;color:#8c8467">${totalM2.toFixed(2)} m²</span>
+      ${totalValor > 0 ? `<span style="font-size:16px;color:var(--text2)">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>` : ''}
+      ${temOrcamento ? '<span style="font-size:12px;color:var(--text3)">+ valores mediante orçamento</span>' : ''}</div></div>`;
+  }
+}
+
+async function salvarMarmoraria() {
+  if (!marmApAtual) return;
+  const cliente = dadosParedes.find(p => p.apartamento === marmApAtual)?.cliente || '—';
+  const dados = { ap: marmApAtual, cliente, data: new Date().toLocaleDateString('pt-BR'), selecoes: marmSelecoes, tipo: 'marmoraria' };
+  showToast('Salvando...', 'success');
+  try {
+    await apiPost('addMarmPersonalizar', dados);
+    showToast('Salvo!', 'success');
+    const d = await lerDadosExtra('marmoraria');
+    dadosMarmoraria = d.personalizar || [];
+    renderMarmoraria();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+// ===================== BANHEIRAS =====================
+let dadosBanheiras = [], dadosBanhCatalogo = [], banhItens = [], banhApAtual = '';
+let banhProdutoAtual = null;
+
+async function loadBanheiras() {
+  try {
+    const d = await lerDadosExtra('banheiras');
+    dadosBanheiras = d.personalizar || [];
+    dadosBanhCatalogo = d.catalogo || [];
+    renderBanheiras();
+  } catch(e) { console.log('Banheiras:', e.message); }
+}
+
+function renderBanheiras() {
+  const el = document.getElementById('banheiras-lista');
+  if (!dadosBanheiras.length) {
+    el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de banheira encontrado</strong></div>';
+    return;
+  }
+  el.innerHTML = dadosBanheiras.map(p => {
+    const itens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
+    const total = itens.reduce((a, v) => a + (parseFloat(v.preco_venda)||0), 0);
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <p style="font-size:15px;font-weight:600">${p.cliente||'—'}</p>
+          <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
+          <p style="font-size:12px;color:var(--text3);margin-top:4px">${itens.length} banheira(s)</p>
+        </div>
+        <div style="text-align:right">
+          <span style="font-size:13px;font-weight:600;color:var(--accent)">R$ ${total.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-secondary" onclick="gerarPDFBanheiraId('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
+        <button class="btn btn-secondary" onclick="editarBanheira('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function abrirModalCalcBanheira() {
+  banhItens = []; banhApAtual = ''; banhProdutoAtual = null;
+  try {
+    const d = await lerDadosExtra('banheiras');
+    dadosBanhCatalogo = d.catalogo || [];
+  } catch(e) {}
+  
+  // Popular select apartamentos
+  const sel = document.getElementById('banh-ap-select');
+  sel.innerHTML = '<option value="">— Selecione —</option>' +
+    [...new Set(dadosParedes.map(p => p.apartamento))].sort((a,b) => Number(a)-Number(b))
+    .map(ap => {
+      const cli = dadosParedes.find(p => p.apartamento === ap)?.cliente || '';
+      return `<option value="${ap}">Apto ${ap} - ${cli}</option>`;
+    }).join('');
+  
+  // Popular modelos únicos
+  const modelos = [...new Set(dadosBanhCatalogo.map(b => b.modelo))].sort();
+  document.getElementById('banh-modelo').innerHTML = '<option value="">— Selecione o modelo —</option>' +
+    modelos.map(m => `<option value="${m}">${m}</option>`).join('');
+  
+  document.getElementById('banh-produto-selecionado').style.display = 'none';
+  document.getElementById('banh-itens-lista').innerHTML = '';
+  document.getElementById('banh-btn-salvar').style.display = 'none';
+  document.getElementById('banh-btn-pdf').style.display = 'none';
+  document.getElementById('banh-resumo').style.display = 'none';
+  abrirModal('modal-calc-banheira');
+}
+
+function atualizarClienteBanheira() {
+  banhApAtual = document.getElementById('banh-ap-select').value;
+}
+
+function filtrarBanheiras() {
+  const modelo = document.getElementById('banh-modelo').value;
+  const material = document.getElementById('banh-material').value;
+  const acabamento = document.getElementById('banh-acabamento').value;
+  const sifao = document.getElementById('banh-sifao').value;
+  
+  // Filtrar materiais disponíveis para o modelo selecionado
+  if (modelo) {
+    const materiais = [...new Set(dadosBanhCatalogo.filter(b => b.modelo === modelo).map(b => b.material))].sort();
+    document.getElementById('banh-material').innerHTML = '<option value="">— Selecione o material —</option>' +
+      materiais.map(m => `<option value="${m}" ${m===material?'selected':''}>${m}</option>`).join('');
+  }
+  
+  if (modelo && material) {
+    const acabamentos = [...new Set(dadosBanhCatalogo.filter(b => b.modelo===modelo && b.material===material && b.acabamento).map(b => b.acabamento))].sort();
+    document.getElementById('banh-acabamento').innerHTML = '<option value="">— Selecione o acabamento —</option>' +
+      acabamentos.map(a => `<option value="${a}" ${a===acabamento?'selected':''}>${a}</option>`).join('');
+  }
+  
+  if (modelo && material && acabamento) {
+    const sifoes = [...new Set(dadosBanhCatalogo.filter(b => b.modelo===modelo && b.material===material && b.acabamento===acabamento).map(b => b.tipo_sifao))].sort();
+    document.getElementById('banh-sifao').innerHTML = '<option value="">— Selecione o sifão —</option>' +
+      sifoes.map(s => `<option value="${s}" ${s===sifao?'selected':''}>${s}</option>`).join('');
+  }
+  
+  selecionarBanheira();
+}
+
+function selecionarBanheira() {
+  const modelo = document.getElementById('banh-modelo').value;
+  const material = document.getElementById('banh-material').value;
+  const acabamento = document.getElementById('banh-acabamento').value;
+  const sifao = document.getElementById('banh-sifao').value;
+  const lado = document.getElementById('banh-lado').value;
+  
+  if (!modelo || !material || !acabamento || !sifao) {
+    document.getElementById('banh-produto-selecionado').style.display = 'none';
+    return;
+  }
+  
+  const produto = dadosBanhCatalogo.find(b =>
+    b.modelo === modelo && b.material === material &&
+    b.acabamento === acabamento && b.tipo_sifao === sifao &&
+    (lado === '' || b.lado === lado || (!b.lado && !lado))
+  );
+  
+  banhProdutoAtual = produto || null;
+  
+  if (produto) {
+    document.getElementById('banh-produto-selecionado').style.display = 'block';
+    document.getElementById('banh-produto-nome').textContent = produto.nome;
+    document.getElementById('banh-produto-preco').textContent = 'R$ ' + parseFloat(produto.preco_venda||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
+    document.getElementById('banh-btn-adicionar').style.display = 'block';
+  } else {
+    document.getElementById('banh-produto-selecionado').style.display = 'none';
+  }
+}
+
+function adicionarBanheiraSelecionada() {
+  if (!banhProdutoAtual) return;
+  banhItens.push({ ...banhProdutoAtual });
+  renderItensBanheira();
+  document.getElementById('banh-btn-salvar').style.display = 'inline-flex';
+  document.getElementById('banh-btn-pdf').style.display = 'inline-flex';
+}
+
+function renderItensBanheira() {
+  const lista = document.getElementById('banh-itens-lista');
+  if (!banhItens.length) { lista.innerHTML = ''; return; }
+  const total = banhItens.reduce((a, b) => a + (parseFloat(b.preco_venda)||0), 0);
+  lista.innerHTML = `<div style="margin-top:12px">
+    <p style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">Itens adicionados:</p>
+    ${banhItens.map((b, idx) => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--surface2);border-radius:4px;margin-bottom:6px">
+        <div>
+          <p style="font-size:12px;font-weight:500">${b.modelo} - ${b.material}</p>
+          <p style="font-size:11px;color:var(--text3)">${b.acabamento} · ${b.tipo_sifao}${b.lado?' · '+b.lado:''}</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:12px;font-weight:600;color:var(--accent)">R$ ${parseFloat(b.preco_venda||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
+          <button onclick="banhItens.splice(${idx},1);renderItensBanheira()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px">×</button>
+        </div>
+      </div>
+    `).join('')}
+    <div class="result-summary" style="margin-top:8px">
+      <span style="font-size:13px;color:var(--accent)">Total</span>
+      <span style="font-size:18px;font-weight:600;color:var(--accent)">R$ ${total.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
+    </div>
+  </div>`;
+}
+
+async function salvarBanheira() {
+  if (!banhApAtual || !banhItens.length) { showToast('Selecione o apartamento e adicione pelo menos uma banheira', 'error'); return; }
+  const cliente = dadosParedes.find(p => p.apartamento === banhApAtual)?.cliente || '—';
+  const dados = { ap: banhApAtual, cliente, data: new Date().toLocaleDateString('pt-BR'), selecoes: banhItens, tipo: 'banheiras' };
+  showToast('Salvando...', 'success');
+  try {
+    await apiPost('addBanhPersonalizar', dados);
+    showToast('Salvo!', 'success');
+    const d = await lerDadosExtra('banheiras');
+    dadosBanheiras = d.personalizar || [];
+    renderBanheiras();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+// Funções auxiliares para carregar dados extras
+async function lerDadosExtra(tipo) {
+  const url = SCRIPT_URL + '?action=getDadosExtra&tipo=' + tipo;
+  return new Promise((resolve, reject) => {
+    const cb = 'cb_' + Date.now();
+    window[cb] = (data) => { delete window[cb]; if (data.error) reject(new Error(data.error)); else resolve(data.data || data); };
+    const s = document.createElement('script');
+    s.src = url + '&callback=' + cb;
+    s.onerror = () => reject(new Error('Erro de rede'));
+    document.head.appendChild(s);
+    setTimeout(() => reject(new Error('Timeout')), 30000);
+  });
+}
+
+// Placeholder PDF funções (implementar depois)
+function gerarPDFVinilico() { showToast('Gerando PDF...', 'success'); }
+function gerarPDFVinilicoId(id) { showToast('Gerando PDF...', 'success'); }
+function editarVinilico(id) { showToast('Em desenvolvimento', 'success'); }
+function gerarPDFMarmoraria() { showToast('Gerando PDF...', 'success'); }
+function gerarPDFMarmorariaId(id) { showToast('Gerando PDF...', 'success'); }
+function editarMarmoraria(id) { showToast('Em desenvolvimento', 'success'); }
+function gerarPDFBanheira() { showToast('Gerando PDF...', 'success'); }
+function gerarPDFBanheiraId(id) { showToast('Gerando PDF...', 'success'); }
+function editarBanheira(id) { showToast('Em desenvolvimento', 'success'); }
+
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 :root {
@@ -506,7 +1019,19 @@ body.mobile-mode #main{padding-bottom:72px}
     </button>
     <button class="nav-btn" onclick="showScreen('personalizar')" id="nav-personalizar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/></svg>
-      Personalizar
+      Revestimentos
+    </button>
+    <button class="nav-btn" onclick="showScreen('vinilico')" id="nav-vinilico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+      Vinílico
+    </button>
+    <button class="nav-btn" onclick="showScreen('marmoraria')" id="nav-marmoraria">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 20h20M4 20V8l8-6 8 6v12"/><path d="M9 20v-6h6v6"/></svg>
+      Marmoraria
+    </button>
+    <button class="nav-btn" onclick="showScreen('banheiras')" id="nav-banheiras">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.683 3 4 3.683 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><line x1="10" x2="8" y1="5" y2="7"/><line x1="2" x2="22" y1="12" y2="12"/></svg>
+      Banheiras
     </button>
     <div class="nav-label">Dados</div>
     <button class="nav-btn" onclick="showScreen('estoque')" id="nav-estoque">
@@ -2157,9 +2682,10 @@ window.onload = async () => {
 // ===================== NAVEGAÇÃO =====================
 function showScreen(name) {
   if (name === 'instalacoes') loadInstalacoes();
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display='none'; });
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(name + '-screen').classList.add('active');
+  const screenEl = document.getElementById(name + '-screen') || document.getElementById('screen-' + name);
+  if (screenEl) { screenEl.style.display='block'; screenEl.classList.add('active'); }
   try { document.getElementById('nav-' + name).classList.add('active'); } catch(e) {}
   localStorage.setItem('last_screen', name);
   if (name === 'estoque') loadEstoque();
@@ -2170,6 +2696,9 @@ function showScreen(name) {
   if (name === 'visaogeral') loadVisaoGeral();
   if (name === 'orcamentos') loadOrcamentos();
   if (name === 'pagamentos') { if (!pgtoDesbloqueado) { document.getElementById('pgto-lock').style.display = 'flex'; document.getElementById('pgto-conteudo').style.display = 'none'; } else loadPagamentos(); }
+  if (name === 'vinilico') loadVinilico();
+  if (name === 'marmoraria') loadMarmoraria();
+  if (name === 'banheiras') loadBanheiras();
 }
 
 
@@ -4223,5 +4752,177 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
   </button>
 </div>
 
+
+<!-- ==================== TELA VINÍLICO ==================== -->
+<div id="screen-vinilico" class="screen" style="display:none">
+  <div style="padding:20px 24px;max-width:1200px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <div>
+        <h1 style="font-size:22px;font-weight:700;color:var(--text)">Vinílico</h1>
+        <p style="font-size:13px;color:var(--text3);margin-top:2px">Personalização de piso vinílico por apartamento</p>
+      </div>
+      <button class="btn btn-primary" onclick="abrirModalCalcVinilico()">+ Novo Orçamento</button>
+    </div>
+    <div id="vinilico-lista" style="display:flex;flex-direction:column;gap:12px">
+      <div class="empty-state"><strong>Carregando...</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TELA MARMORARIA ==================== -->
+<div id="screen-marmoraria" class="screen" style="display:none">
+  <div style="padding:20px 24px;max-width:1200px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <div>
+        <h1 style="font-size:22px;font-weight:700;color:var(--text)">Marmoraria</h1>
+        <p style="font-size:13px;color:var(--text3);margin-top:2px">Personalização de bancadas e pedras por apartamento</p>
+      </div>
+      <button class="btn btn-primary" onclick="abrirModalCalcMarmoraria()">+ Novo Orçamento</button>
+    </div>
+    <div id="marmoraria-lista" style="display:flex;flex-direction:column;gap:12px">
+      <div class="empty-state"><strong>Carregando...</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TELA BANHEIRAS ==================== -->
+<div id="screen-banheiras" class="screen" style="display:none">
+  <div style="padding:20px 24px;max-width:1200px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <div>
+        <h1 style="font-size:22px;font-weight:700;color:var(--text)">Banheiras</h1>
+        <p style="font-size:13px;color:var(--text3);margin-top:2px">Personalização de banheiras Sabbia por apartamento</p>
+      </div>
+      <button class="btn btn-primary" onclick="abrirModalCalcBanheira()">+ Novo Orçamento</button>
+    </div>
+    <div id="banheiras-lista" style="display:flex;flex-direction:column;gap:12px">
+      <div class="empty-state"><strong>Carregando...</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VINILICO -->
+<div id="modal-calc-vinilico" class="modal-overlay">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header">
+      <h2>Orçamento Vinílico</h2>
+      <button class="modal-close" onclick="fecharModal('modal-calc-vinilico')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Apartamento</label>
+        <select class="form-control" id="vin-ap-select" onchange="carregarPisosVinilico()">
+          <option value="">— Selecione —</option>
+        </select>
+      </div>
+      <div id="vin-pisos-container" style="margin-top:16px;display:none">
+        <h3 style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px">Selecione o vinílico para cada ambiente</h3>
+        <div id="vin-pisos-lista"></div>
+      </div>
+      <div id="vin-resumo" style="display:none;margin-top:16px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-calc-vinilico')">Fechar</button>
+      <button class="btn btn-secondary" id="vin-btn-salvar" onclick="salvarVinilico()" style="display:none">Salvar em Personalizar</button>
+      <button class="btn btn-primary" id="vin-btn-pdf" onclick="gerarPDFVinilico()" style="display:none">Gerar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MARMORARIA -->
+<div id="modal-calc-marmoraria" class="modal-overlay">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header">
+      <h2>Orçamento Marmoraria</h2>
+      <button class="modal-close" onclick="fecharModal('modal-calc-marmoraria')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Apartamento</label>
+        <select class="form-control" id="marm-ap-select" onchange="carregarBancadasMarmoraria()">
+          <option value="">— Selecione —</option>
+        </select>
+      </div>
+      <div id="marm-bancadas-container" style="margin-top:16px;display:none">
+        <h3 style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px">Bancadas e pedras selecionadas</h3>
+        <div id="marm-bancadas-lista"></div>
+        <button class="btn btn-secondary" onclick="adicionarBancadaMarmoraria()" style="margin-top:12px;width:100%">+ Adicionar bancada</button>
+      </div>
+      <div id="marm-resumo" style="display:none;margin-top:16px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-calc-marmoraria')">Fechar</button>
+      <button class="btn btn-secondary" id="marm-btn-salvar" onclick="salvarMarmoraria()" style="display:none">Salvar em Personalizar</button>
+      <button class="btn btn-primary" id="marm-btn-pdf" onclick="gerarPDFMarmoraria()" style="display:none">Gerar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BANHEIRA -->
+<div id="modal-calc-banheira" class="modal-overlay">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header">
+      <h2>Orçamento Banheiras</h2>
+      <button class="modal-close" onclick="fecharModal('modal-calc-banheira')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Apartamento</label>
+        <select class="form-control" id="banh-ap-select" onchange="atualizarClienteBanheira()">
+          <option value="">— Selecione —</option>
+        </select>
+      </div>
+      <div id="banh-container" style="margin-top:16px">
+        <h3 style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px">Selecionar banheira</h3>
+        <div class="form-group" style="margin-top:10px">
+          <label class="form-label">Modelo</label>
+          <select class="form-control" id="banh-modelo" onchange="filtrarBanheiras()">
+            <option value="">— Selecione o modelo —</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-top:10px">
+          <label class="form-label">Material</label>
+          <select class="form-control" id="banh-material" onchange="filtrarBanheiras()">
+            <option value="">— Selecione o material —</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-top:10px">
+          <label class="form-label">Acabamento</label>
+          <select class="form-control" id="banh-acabamento" onchange="filtrarBanheiras()">
+            <option value="">— Selecione o acabamento —</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-top:10px">
+          <label class="form-label">Tipo de Sifão</label>
+          <select class="form-control" id="banh-sifao" onchange="filtrarBanheiras()">
+            <option value="">— Selecione o sifão —</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-top:10px">
+          <label class="form-label">Lado</label>
+          <select class="form-control" id="banh-lado" onchange="selecionarBanheira()">
+            <option value="">— Selecione o lado —</option>
+            <option value="">Sem especificação</option>
+            <option value="LADO D">Lado D</option>
+            <option value="LADO E">Lado E</option>
+          </select>
+        </div>
+        <div id="banh-produto-selecionado" style="display:none;margin-top:16px;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
+          <p style="font-size:12px;color:var(--text3);margin-bottom:4px">Produto selecionado</p>
+          <p style="font-size:13px;font-weight:600" id="banh-produto-nome"></p>
+          <p style="font-size:13px;color:var(--accent);font-weight:600;margin-top:4px" id="banh-produto-preco"></p>
+        </div>
+        <button class="btn btn-secondary" onclick="adicionarBanheiraSelecionada()" style="margin-top:12px;width:100%" id="banh-btn-adicionar" style="display:none">+ Adicionar ao orçamento</button>
+        <div id="banh-itens-lista" style="margin-top:12px"></div>
+      </div>
+      <div id="banh-resumo" style="display:none;margin-top:16px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-calc-banheira')">Fechar</button>
+      <button class="btn btn-secondary" id="banh-btn-salvar" onclick="salvarBanheira()" style="display:none">Salvar em Personalizar</button>
+      <button class="btn btn-primary" id="banh-btn-pdf" onclick="gerarPDFBanheira()" style="display:none">Gerar PDF</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
