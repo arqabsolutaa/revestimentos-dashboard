@@ -188,6 +188,7 @@ async function salvarVinilico() {
   try {
     await apiPost('addViniPersonalizar', dados);
     showToast('Salvo!', 'success');
+    invalidarCacheExtra('vinilico');
     const d = await lerDadosExtra('vinilico');
     dadosVinilico = d.personalizar || [];
     renderVinilico();
@@ -346,6 +347,7 @@ async function salvarMarmoraria() {
   try {
     await apiPost('addMarmPersonalizar', dados);
     showToast('Salvo!', 'success');
+    invalidarCacheExtra('marmoraria');
     const d = await lerDadosExtra('marmoraria');
     dadosMarmoraria = d.personalizar || [];
     renderMarmoraria();
@@ -400,8 +402,32 @@ async function abrirModalCalcBanheira() {
   banhItens = []; banhApAtual = ''; banhProdutoAtual = null;
   try {
     const d = await lerDadosExtra('banheiras');
-    dadosBanhCatalogo = d.catalogo || [];
-  } catch(e) {}
+    // Normalizar colunas — planilha da Sabbia pode ter nomes diferentes
+    dadosBanhCatalogo = (d.catalogo || []).map(b => {
+      // Encontrar valores independente do case/nome da coluna
+      const chaves = Object.keys(b);
+      const pegar = (...candidatos) => {
+        for (const c of candidatos) {
+          const k = chaves.find(k => k.toLowerCase().replace(/[_\s]/g,'') === c.toLowerCase().replace(/[_\s]/g,''));
+          if (k && b[k] && String(b[k]).trim()) return String(b[k]).trim();
+        }
+        return '';
+      };
+      return {
+        id: b.id || b.codigo || '',
+        codigo: pegar('codigo','code','cod'),
+        nome: pegar('nome','name','produto','descricao','description','item'),
+        modelo: pegar('modelo','model','linha','line','serie','série'),
+        material: pegar('material','mat','tipo','type'),
+        acabamento: pegar('acabamento','finish','acabamento','acabamentos','acabament'),
+        tipo_sifao: pegar('tipo_sifao','tiposifao','sifao','sifão','drain','dreno','ralo'),
+        lado: pegar('lado','side','posicao','posição'),
+        custo: pegar('custo','cost','preco_custo','precocusto','preçocusto','preco','preço','valor'),
+        preco_venda: pegar('preco_venda','precovenda','preçovenda','preco_venda','venda','selling','pvenda','preço_venda'),
+        imagem: pegar('imagem','image','img','foto','photo','url','link'),
+      };
+    });
+  } catch(e) { dadosBanhCatalogo = []; }
   
   // Popular select apartamentos
   const sel = document.getElementById('banh-ap-select');
@@ -413,15 +439,23 @@ async function abrirModalCalcBanheira() {
     }).join('');
   
   // Popular modelos únicos
-  const modelos = [...new Set(dadosBanhCatalogo.map(b => b.modelo))].sort();
+  const modelos = [...new Set(dadosBanhCatalogo.map(b => b.modelo).filter(Boolean))].sort();
   document.getElementById('banh-modelo').innerHTML = '<option value="">— Selecione o modelo —</option>' +
     modelos.map(m => `<option value="${m}">${m}</option>`).join('');
-  
+
+  // Resetar cascata
+  document.getElementById('banh-material').innerHTML = '<option value="">— Selecione o material —</option>';
+  document.getElementById('banh-acabamento').innerHTML = '<option value="">— Selecione o acabamento —</option>';
+  document.getElementById('banh-sifao').innerHTML = '<option value="">— Selecione o sifão —</option>';
   document.getElementById('banh-produto-selecionado').style.display = 'none';
   document.getElementById('banh-itens-lista').innerHTML = '';
   document.getElementById('banh-btn-salvar').style.display = 'none';
   document.getElementById('banh-btn-pdf').style.display = 'none';
   document.getElementById('banh-resumo').style.display = 'none';
+
+  if (!modelos.length) {
+    showToast('Atenção: catálogo de banheiras vazio. Verifique a planilha Banheiras_Catalogo.', 'error');
+  }
   abrirModal('modal-calc-banheira');
 }
 
@@ -528,29 +562,273 @@ async function salvarBanheira() {
   try {
     await apiPost('addBanhPersonalizar', dados);
     showToast('Salvo!', 'success');
+    invalidarCacheExtra('banheiras');
     const d = await lerDadosExtra('banheiras');
     dadosBanheiras = d.personalizar || [];
     renderBanheiras();
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
-// Funções auxiliares para carregar dados extras
-async function lerDadosExtra(tipo) {
+// ===================== CACHE DE DADOS EXTRAS =====================
+const _cacheExtra = {};
+async function lerDadosExtra(tipo, forcarRecarga) {
+  if (!forcarRecarga && _cacheExtra[tipo]) return _cacheExtra[tipo];
   const result = await jsonp(SCRIPT_URL + '?action=getDadosExtra&tipo=' + tipo);
   if (result.error) throw new Error(result.error);
-  return result.data || result;
+  const dados = result.data || result;
+  _cacheExtra[tipo] = dados;
+  return dados;
+}
+function invalidarCacheExtra(tipo) {
+  if (tipo) delete _cacheExtra[tipo];
+  else Object.keys(_cacheExtra).forEach(k => delete _cacheExtra[k]);
 }
 
-// Placeholder PDF funções (implementar depois)
-function gerarPDFVinilico() { showToast('Gerando PDF...', 'success'); }
-function gerarPDFVinilicoId(id) { showToast('Gerando PDF...', 'success'); }
-function editarVinilico(id) { showToast('Em desenvolvimento', 'success'); }
-function gerarPDFMarmoraria() { showToast('Gerando PDF...', 'success'); }
-function gerarPDFMarmorariaId(id) { showToast('Gerando PDF...', 'success'); }
+// Helper para obter jsPDF de forma segura
+function getJsPDF() {
+  if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+  if (window.jsPDF) return window.jsPDF;
+  return null;
+}
+// ===================== PDF VINILICO =====================
+function gerarPDFVinilico() {
+  // Chamado do modal aberto — usa variáveis globais do modal
+  if (!vinApAtual) { showToast('Selecione um apartamento', 'error'); return; }
+  const cliente = dadosParedes.find(p => p.apartamento === vinApAtual)?.cliente || '—';
+  _gerarPDFVinilicoInterno(vinApAtual, cliente, vinSelecoes, dadosPisosVin);
+}
+function gerarPDFVinilicoId(id) {
+  const p = dadosVinilico.find(x => x.id === id);
+  if (!p) { showToast('Orçamento não encontrado', 'error'); return; }
+  const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+  _gerarPDFVinilicoInterno(p.ap, p.cliente, selecoes, null);
+}
+function _gerarPDFVinilicoInterno(ap, cliente, selecoes, pisos) {
+  const jsPDF = getJsPDF();
+  if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
+  const doc = new jsPDF();
+  const verdeEscuro = [26, 38, 30], dourado = [201, 168, 76], cinza = [120, 118, 112], preto = [14, 14, 14], cinzaClaro = [220, 218, 212], bege = [252, 250, 247];
+
+  // Header simples
+  doc.setFillColor(...verdeEscuro);
+  doc.rect(0, 0, 210, 38, 'F');
+  doc.setFillColor(...dourado); doc.rect(0, 38, 210, 1.2, 'F');
+  doc.setTextColor(...dourado); doc.setFontSize(18); doc.setFont('helvetica', 'bold');
+  doc.text('ESSENCE RESIDENCE', 14, 22);
+  doc.setTextColor(180,210,190); doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+  doc.text('PERSONALIZAÇÃO — PISO VINÍLICO', 14, 30);
+
+  // Info cliente
+  doc.setFillColor(...bege); doc.rect(0, 39.2, 210, 28, 'F');
+  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+  doc.text('CLIENTE', 8, 50); doc.text('UNIDADE', 80, 50); doc.text('EMPREENDIMENTO', 140, 50);
+  doc.setTextColor(...preto); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+  doc.text(cliente || '—', 8, 60); doc.text('Apto ' + ap, 80, 60); doc.text('Essence Residence', 140, 60);
+  doc.setDrawColor(...dourado); doc.setLineWidth(0.6); doc.line(0, 67, 210, 67);
+
+  // Tabela
+  let y = 75;
+  doc.setFillColor(...verdeEscuro); doc.rect(0, y, 210, 10, 'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(7.5); doc.setFont('helvetica', 'bold');
+  doc.text('AMBIENTE / PRODUTO', 8, y+7); doc.text('M²', 170, y+7); doc.text('VALOR', 200, y+7, {align:'right'});
+  y += 14;
+
+  let totalM2 = 0, totalValor = 0, alt = false;
+  for (const [key, v] of Object.entries(selecoes)) {
+    if (!v.produto) continue;
+    const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === String(v.produto));
+    const nome = prod ? prod.nome : String(v.produto);
+    const preco = parseFloat(prod?.preco_m2)||0;
+    const m2 = parseFloat(v.m2)||0;
+    const valor = preco * m2;
+    const ambiente = key.split('-').slice(1, -1).join(' ') || key;
+    totalM2 += m2; totalValor += valor;
+    doc.setFillColor(alt?248:255, alt?247:255, alt?244:255); doc.rect(0, y-2, 210, 16, 'F');
+    doc.setFillColor(...dourado); doc.rect(0, y-2, 3, 16, 'F');
+    doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
+    doc.text(nome, 8, y+5);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...cinza);
+    doc.text(ambiente + (preco>0?'  ·  R$ '+preco.toFixed(2)+'/m²':''), 8, y+11);
+    doc.setTextColor(...preto); doc.setFontSize(9);
+    doc.text(m2.toFixed(2)+' m²', 170, y+7);
+    doc.setFont('helvetica','bold'); doc.setTextColor(preco>0?dourado[0]:cinza[0], preco>0?dourado[1]:cinza[1], preco>0?dourado[2]:cinza[2]);
+    doc.text(preco>0?'R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—', 200, y+7, {align:'right'});
+    doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2); doc.line(0,y+14,210,y+14);
+    alt = !alt; y += 18;
+    if (y > 250) { doc.addPage(); y = 20; }
+  }
+
+  // Total
+  y += 4;
+  doc.setFillColor(...verdeEscuro); doc.rect(0, y, 210, 20, 'F');
+  doc.setFillColor(...dourado); doc.rect(0, y, 3, 20, 'F');
+  doc.setTextColor(180,210,190); doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+  doc.text('TOTAL', 8, y+8);
+  doc.setTextColor(180,210,190); doc.setFontSize(9);
+  doc.text(totalM2.toFixed(2)+' m²', 170, y+13);
+  if (totalValor > 0) {
+    doc.setTextColor(...dourado); doc.setFontSize(14); doc.setFont('helvetica','bold');
+    doc.text('R$ '+totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+14, {align:'right'});
+  }
+  doc.save('Vinilico-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
+  showToast('PDF gerado!', 'success');
+}
+
+// ===================== PDF MARMORARIA =====================
+function gerarPDFMarmoraria() {
+  if (!marmApAtual) { showToast('Selecione um apartamento', 'error'); return; }
+  const cliente = dadosParedes.find(p => p.apartamento === marmApAtual)?.cliente || '—';
+  _gerarPDFMarmorariaInterno(marmApAtual, cliente, marmSelecoes);
+}
+function gerarPDFMarmorariaId(id) {
+  const p = dadosMarmoraria.find(x => x.id === id);
+  if (!p) { showToast('Orçamento não encontrado', 'error'); return; }
+  const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
+  _gerarPDFMarmorariaInterno(p.ap, p.cliente, selecoes);
+}
+function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
+  const jsPDF = getJsPDF();
+  if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
+  const doc = new jsPDF();
+  const verdeEscuro = [26,38,30], dourado = [201,168,76], cinza = [120,118,112], preto = [14,14,14], cinzaClaro = [220,218,212], bege = [252,250,247];
+
+  doc.setFillColor(...verdeEscuro); doc.rect(0,0,210,38,'F');
+  doc.setFillColor(...dourado); doc.rect(0,38,210,1.2,'F');
+  doc.setTextColor(...dourado); doc.setFontSize(18); doc.setFont('helvetica','bold');
+  doc.text('ESSENCE RESIDENCE', 14, 22);
+  doc.setTextColor(180,210,190); doc.setFontSize(8); doc.setFont('helvetica','normal');
+  doc.text('PERSONALIZAÇÃO — MARMORARIA', 14, 30);
+
+  doc.setFillColor(...bege); doc.rect(0,39.2,210,28,'F');
+  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.text('CLIENTE', 8, 50); doc.text('UNIDADE', 80, 50); doc.text('EMPREENDIMENTO', 140, 50);
+  doc.setTextColor(...preto); doc.setFontSize(10); doc.setFont('helvetica','bold');
+  doc.text(cliente||'—', 8, 60); doc.text('Apto '+ap, 80, 60); doc.text('Essence Residence', 140, 60);
+  doc.setDrawColor(...dourado); doc.setLineWidth(0.6); doc.line(0,67,210,67);
+
+  let y = 75;
+  doc.setFillColor(...verdeEscuro); doc.rect(0,y,210,10,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(7.5); doc.setFont('helvetica','bold');
+  doc.text('AMBIENTE / PEDRA', 8, y+7); doc.text('M²', 155, y+7); doc.text('VALOR', 200, y+7, {align:'right'});
+  y += 14;
+
+  let totalM2=0, totalValor=0, alt=false, temOrcamento=false;
+  (Array.isArray(selecoes)?selecoes:[]).forEach(b => {
+    const ped = dadosMarmCatalogo.find(p => String(p.id) === String(b.pedra));
+    const nomePedra = ped ? ped.nome : (b.pedra||'Não definida');
+    const m2 = parseFloat(b.m2)||0;
+    const preco = parseFloat(ped?.preco_m2)||0;
+    const valor = preco * m2;
+    totalM2 += m2; totalValor += valor;
+    if (ped?.categoria === 'Absoluta') temOrcamento = true;
+    doc.setFillColor(alt?248:255,alt?247:255,alt?244:255); doc.rect(0,y-2,210,18,'F');
+    doc.setFillColor(...dourado); doc.rect(0,y-2,3,18,'F');
+    doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica','bold');
+    doc.text(b.ambiente||'—', 8, y+5);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...cinza);
+    doc.text((b.descricao||'')+'  ·  '+nomePedra+(ped?.categoria==='Construtora'?' (Incluso)':ped?.categoria==='Absoluta'?' (Sob orçamento)':''), 8, y+12);
+    doc.setTextColor(...preto); doc.setFontSize(9);
+    doc.text(m2.toFixed(2)+' m²', 155, y+9);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(preco>0?dourado[0]:cinza[0],preco>0?dourado[1]:cinza[1],preco>0?dourado[2]:cinza[2]);
+    doc.text(preco>0?'R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2}):ped?.categoria==='Construtora'?'Incluso':'Sob orçamento', 200, y+9, {align:'right'});
+    doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2); doc.line(0,y+16,210,y+16);
+    alt=!alt; y+=20;
+    if (y>250) { doc.addPage(); y=20; }
+  });
+
+  y += 4;
+  doc.setFillColor(...verdeEscuro); doc.rect(0,y,210,20,'F');
+  doc.setFillColor(...dourado); doc.rect(0,y,3,20,'F');
+  doc.setTextColor(180,210,190); doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+  doc.text('TOTAL', 8, y+8);
+  doc.text(totalM2.toFixed(2)+' m²', 155, y+13);
+  if (totalValor>0) {
+    doc.setTextColor(...dourado); doc.setFontSize(14); doc.setFont('helvetica','bold');
+    doc.text('R$ '+totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+14, {align:'right'});
+  } else if (temOrcamento) {
+    doc.setTextColor(...dourado); doc.setFontSize(10); doc.setFont('helvetica','bold');
+    doc.text('Valor mediante orçamento', 200, y+14, {align:'right'});
+  }
+  if (temOrcamento) {
+    y += 26;
+    doc.setTextColor(...cinza); doc.setFontSize(8); doc.setFont('helvetica','italic');
+    doc.text('* Pedras Absoluta: valores serão apresentados em orçamento específico.', 8, y);
+  }
+  doc.save('Marmoraria-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
+  showToast('PDF gerado!', 'success');
+}
 function editarMarmoraria(id) { showToast('Em desenvolvimento', 'success'); }
-function gerarPDFBanheira() { showToast('Gerando PDF...', 'success'); }
-function gerarPDFBanheiraId(id) { showToast('Gerando PDF...', 'success'); }
+
+// ===================== PDF BANHEIRAS =====================
+function gerarPDFBanheira() {
+  if (!banhApAtual || !banhItens.length) { showToast('Selecione apartamento e adicione banheiras', 'error'); return; }
+  const cliente = dadosParedes.find(p => p.apartamento === banhApAtual)?.cliente || '—';
+  _gerarPDFBanheiraInterno(banhApAtual, cliente, banhItens);
+}
+function gerarPDFBanheiraId(id) {
+  const p = dadosBanheiras.find(x => x.id === id);
+  if (!p) { showToast('Orçamento não encontrado', 'error'); return; }
+  const itens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
+  _gerarPDFBanheiraInterno(p.ap, p.cliente, itens);
+}
+function _gerarPDFBanheiraInterno(ap, cliente, itens) {
+  const jsPDF = getJsPDF();
+  if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
+  const doc = new jsPDF();
+  const verdeEscuro=[26,38,30], dourado=[201,168,76], cinza=[120,118,112], preto=[14,14,14], cinzaClaro=[220,218,212], bege=[252,250,247];
+
+  doc.setFillColor(...verdeEscuro); doc.rect(0,0,210,38,'F');
+  doc.setFillColor(...dourado); doc.rect(0,38,210,1.2,'F');
+  doc.setTextColor(...dourado); doc.setFontSize(18); doc.setFont('helvetica','bold');
+  doc.text('ESSENCE RESIDENCE', 14, 22);
+  doc.setTextColor(180,210,190); doc.setFontSize(8); doc.setFont('helvetica','normal');
+  doc.text('PERSONALIZAÇÃO — BANHEIRAS SABBIA', 14, 30);
+
+  doc.setFillColor(...bege); doc.rect(0,39.2,210,28,'F');
+  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.text('CLIENTE', 8, 50); doc.text('UNIDADE', 80, 50); doc.text('EMPREENDIMENTO', 140, 50);
+  doc.setTextColor(...preto); doc.setFontSize(10); doc.setFont('helvetica','bold');
+  doc.text(cliente||'—', 8, 60); doc.text('Apto '+ap, 80, 60); doc.text('Essence Residence', 140, 60);
+  doc.setDrawColor(...dourado); doc.setLineWidth(0.6); doc.line(0,67,210,67);
+
+  let y=75;
+  doc.setFillColor(...verdeEscuro); doc.rect(0,y,210,10,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(7.5); doc.setFont('helvetica','bold');
+  doc.text('PRODUTO', 8, y+7); doc.text('ESPECIFICAÇÃO', 90, y+7); doc.text('VALOR', 200, y+7, {align:'right'});
+  y += 14;
+
+  let total=0, alt=false;
+  (Array.isArray(itens)?itens:[]).forEach(b => {
+    const preco = parseFloat(b.preco_venda)||0;
+    total += preco;
+    const nome = b.nome || (b.modelo||'—')+' '+( b.material||'');
+    const spec = [b.acabamento, b.tipo_sifao||b.sifao, b.lado].filter(Boolean).join(' · ');
+    doc.setFillColor(alt?248:255,alt?247:255,alt?244:255); doc.rect(0,y-2,210,18,'F');
+    doc.setFillColor(...dourado); doc.rect(0,y-2,3,18,'F');
+    doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica','bold');
+    doc.text(nome, 8, y+7);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...cinza);
+    if (spec) doc.text(spec, 90, y+7);
+    doc.setTextColor(...dourado); doc.setFontSize(10); doc.setFont('helvetica','bold');
+    doc.text('R$ '+preco.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+7, {align:'right'});
+    doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2); doc.line(0,y+16,210,y+16);
+    alt=!alt; y+=20;
+    if (y>250) { doc.addPage(); y=20; }
+  });
+
+  y += 4;
+  doc.setFillColor(...verdeEscuro); doc.rect(0,y,210,20,'F');
+  doc.setFillColor(...dourado); doc.rect(0,y,3,20,'F');
+  doc.setTextColor(180,210,190); doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+  doc.text('TOTAL', 8, y+8);
+  doc.setTextColor(...dourado); doc.setFontSize(14); doc.setFont('helvetica','bold');
+  doc.text('R$ '+total.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+14, {align:'right'});
+  doc.save('Banheiras-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
+  showToast('PDF gerado!', 'success');
+}
 function editarBanheira(id) { showToast('Em desenvolvimento', 'success'); }
+function editarVinilico(id) { showToast('Em desenvolvimento', 'success'); }
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -4466,7 +4744,7 @@ function gerarPDFPersonalizar(id) {
 }
 
 function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, desconto, comValor = true }) {
-  const { jsPDF } = window.jspdf;
+  const jsPDF = getJsPDF();
   const doc = new jsPDF();
   const preto = [14, 14, 14];
   const dourado = [178, 152, 89];
@@ -4763,14 +5041,16 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
 
 <!-- ==================== TELA VINÍLICO ==================== -->
 <div id="vinilico-screen" class="screen" style="display:none">
-  <div style="padding:20px 24px;max-width:1200px;margin:0 auto">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-      <div>
-        <h1 style="font-size:22px;font-weight:700;color:var(--text)">Vinílico</h1>
-        <p style="font-size:13px;color:var(--text3);margin-top:2px">Personalização de piso vinílico por apartamento</p>
-      </div>
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Vinílico</h1>
+      <p>Personalização de piso vinílico por apartamento</p>
+    </div>
+    <div class="header-actions">
       <button class="btn btn-primary" onclick="abrirModalCalcVinilico()">+ Novo Orçamento</button>
     </div>
+  </div>
+  <div class="page-content">
     <div id="vinilico-lista" style="display:flex;flex-direction:column;gap:12px">
       <div class="empty-state"><strong>Carregando...</strong></div>
     </div>
@@ -4779,14 +5059,16 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
 
 <!-- ==================== TELA MARMORARIA ==================== -->
 <div id="marmoraria-screen" class="screen" style="display:none">
-  <div style="padding:20px 24px;max-width:1200px;margin:0 auto">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-      <div>
-        <h1 style="font-size:22px;font-weight:700;color:var(--text)">Marmoraria</h1>
-        <p style="font-size:13px;color:var(--text3);margin-top:2px">Personalização de bancadas e pedras por apartamento</p>
-      </div>
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Marmoraria</h1>
+      <p>Personalização de bancadas e pedras por apartamento</p>
+    </div>
+    <div class="header-actions">
       <button class="btn btn-primary" onclick="abrirModalCalcMarmoraria()">+ Novo Orçamento</button>
     </div>
+  </div>
+  <div class="page-content">
     <div id="marmoraria-lista" style="display:flex;flex-direction:column;gap:12px">
       <div class="empty-state"><strong>Carregando...</strong></div>
     </div>
@@ -4795,14 +5077,16 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
 
 <!-- ==================== TELA BANHEIRAS ==================== -->
 <div id="banheiras-screen" class="screen" style="display:none">
-  <div style="padding:20px 24px;max-width:1200px;margin:0 auto">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-      <div>
-        <h1 style="font-size:22px;font-weight:700;color:var(--text)">Banheiras</h1>
-        <p style="font-size:13px;color:var(--text3);margin-top:2px">Personalização de banheiras Sabbia por apartamento</p>
-      </div>
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Banheiras</h1>
+      <p>Personalização de banheiras Sabbia por apartamento</p>
+    </div>
+    <div class="header-actions">
       <button class="btn btn-primary" onclick="abrirModalCalcBanheira()">+ Novo Orçamento</button>
     </div>
+  </div>
+  <div class="page-content">
     <div id="banheiras-lista" style="display:flex;flex-direction:column;gap:12px">
       <div class="empty-state"><strong>Carregando...</strong></div>
     </div>
