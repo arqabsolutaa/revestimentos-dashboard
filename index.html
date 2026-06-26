@@ -590,85 +590,174 @@ function getJsPDF() {
   if (window.jsPDF) return window.jsPDF;
   return null;
 }
+// ===================== HELPERS PDF ESSENCE =====================
+const ESSENCE_CORES = {
+  marrom:   [67, 51, 30],
+  dourado:  [140, 132, 103],
+  fundo:    [240, 238, 232],
+  branco:   [255, 255, 255],
+  cinza:    [120, 118, 112],
+  preto:    [14, 14, 14],
+  cinzaClaro: [220, 218, 212],
+};
+const ESSENCE_ASSETS = 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/assets/';
+
+// Carrega imagem de URL e retorna base64 para jsPDF
+async function carregarImagemPDF(url) {
+  const resp = await fetch(url);
+  const blob = await resp.blob();
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+}
+
+// Cabeçalho com imagem de capa (página 1)
+function _pdfCapa(doc, imgData, subtitulo) {
+  // Imagem de capa full-width, 60mm de altura
+  if (imgData) {
+    doc.addImage(imgData, 'PNG', 0, 0, 210, 60);
+  } else {
+    doc.setFillColor(...ESSENCE_CORES.marrom);
+    doc.rect(0, 0, 210, 60, 'F');
+  }
+}
+
+// Bloco info cliente
+function _pdfInfoCliente(doc, ap, cliente, data, y0) {
+  const { fundo, marrom, cinza, preto, dourado } = ESSENCE_CORES;
+  doc.setFillColor(...fundo); doc.rect(0, y0, 210, 32, 'F');
+  // Linhas separadoras verticais
+  doc.setDrawColor(...dourado); doc.setLineWidth(0.3);
+  doc.line(70, y0+6, 70, y0+26);
+  doc.line(130, y0+6, 130, y0+26);
+  doc.line(175, y0+6, 175, y0+26);
+  // Labels
+  doc.setTextColor(...cinza); doc.setFontSize(6.5); doc.setFont('helvetica', 'normal');
+  ['C L I E N T E','U N I D A D E','E M P R E E N D I M E N T O','D A T A'].forEach((l,i) => {
+    doc.text(l, [8,78,138,183][i], y0+12);
+  });
+  // Valores
+  doc.setTextColor(...preto); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+  doc.text(cliente||'—', 8, y0+23);
+  doc.text('Apto '+ap, 78, y0+23);
+  doc.text('Essence Residence', 138, y0+23);
+  doc.text(data || new Date().toLocaleDateString('pt-BR'), 183, y0+23);
+  // Linha dourada embaixo
+  doc.setDrawColor(...dourado); doc.setLineWidth(0.8);
+  doc.line(0, y0+32, 210, y0+32);
+}
+
+// Cabeçalho da tabela
+function _pdfTabelaHeader(doc, y, colunas) {
+  const { marrom, branco } = ESSENCE_CORES;
+  doc.setFillColor(...marrom); doc.rect(0, y, 210, 10, 'F');
+  doc.setTextColor(...branco); doc.setFontSize(7); doc.setFont('helvetica', 'bold');
+  colunas.forEach(c => doc.text(c.label, c.x, y+7, c.align ? {align:c.align} : {}));
+}
+
+// Linha da tabela
+function _pdfLinha(doc, y, colunas, alt) {
+  const { fundo, branco, dourado, cinzaClaro } = ESSENCE_CORES;
+  const bg = alt ? [245,244,240] : [255,255,255];
+  doc.setFillColor(...bg); doc.rect(0, y, 210, 18, 'F');
+  doc.setFillColor(...dourado); doc.rect(0, y, 2.5, 18, 'F');
+  colunas.forEach(c => {
+    if (c.bold) { doc.setFont('helvetica','bold'); } else { doc.setFont('helvetica','normal'); }
+    doc.setFontSize(c.size||9);
+    doc.setTextColor(...(c.cor || ESSENCE_CORES.preto));
+    doc.text(String(c.valor||''), c.x, y + (c.dy||10), c.align ? {align:c.align} : {});
+  });
+  doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2);
+  doc.line(0, y+18, 210, y+18);
+}
+
+// Rodapé total geral
+function _pdfTotal(doc, y, totalM2, totalValor, label) {
+  const { marrom, dourado, fundo, cinza } = ESSENCE_CORES;
+  // Seção forma de pagamento
+  doc.setFillColor(...fundo); doc.rect(0, y, 210, 20, 'F');
+  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.text('F O R M A   D E   P A G A M E N T O', 8, y+10);
+  doc.setTextColor(...ESSENCE_CORES.preto); doc.setFontSize(10); doc.setFont('helvetica','bold');
+  doc.text('À Vista', 8, y+18);
+  y += 26;
+  // Total geral
+  doc.setFillColor(...marrom); doc.rect(0, y, 210, 28, 'F');
+  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.text('T O T A L   G E R A L', 8, y+10);
+  doc.setTextColor(200,195,180); doc.setFontSize(8);
+  if (totalM2) doc.text(totalM2.toFixed(2)+' m²', 8, y+22);
+  if (totalValor > 0) {
+    doc.setTextColor(...dourado); doc.setFontSize(16); doc.setFont('helvetica','bold');
+    doc.text('R$ '+totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+22, {align:'right'});
+  }
+  // Rodapé
+  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.text('Empreendimento Essence Residence · '+label, 8, y+34);
+}
+
 // ===================== PDF VINILICO =====================
 function gerarPDFVinilico() {
-  // Chamado do modal aberto — usa variáveis globais do modal
   if (!vinApAtual) { showToast('Selecione um apartamento', 'error'); return; }
   const cliente = dadosParedes.find(p => p.apartamento === vinApAtual)?.cliente || '—';
-  _gerarPDFVinilicoInterno(vinApAtual, cliente, vinSelecoes, dadosPisosVin);
+  _gerarPDFVinilicoInterno(vinApAtual, cliente, vinSelecoes);
 }
 function gerarPDFVinilicoId(id) {
   const p = dadosVinilico.find(x => x.id === id);
   if (!p) { showToast('Orçamento não encontrado', 'error'); return; }
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
-  _gerarPDFVinilicoInterno(p.ap, p.cliente, selecoes, null);
+  _gerarPDFVinilicoInterno(p.ap, p.cliente, selecoes);
 }
-function _gerarPDFVinilicoInterno(ap, cliente, selecoes, pisos) {
+async function _gerarPDFVinilicoInterno(ap, cliente, selecoes) {
   const jsPDF = getJsPDF();
   if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
+  showToast('Gerando PDF...', 'success');
+  let imgData = null;
+  try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa-vinilico.png'); } catch(e) {}
+
   const doc = new jsPDF();
-  const verdeEscuro = [26, 38, 30], dourado = [201, 168, 76], cinza = [120, 118, 112], preto = [14, 14, 14], cinzaClaro = [220, 218, 212], bege = [252, 250, 247];
+  _pdfCapa(doc, imgData, 'PERSONALIZE — VINÍLICO');
+  _pdfInfoCliente(doc, ap, cliente, null, 62);
 
-  // Header simples
-  doc.setFillColor(...verdeEscuro);
-  doc.rect(0, 0, 210, 38, 'F');
-  doc.setFillColor(...dourado); doc.rect(0, 38, 210, 1.2, 'F');
-  doc.setTextColor(...dourado); doc.setFontSize(18); doc.setFont('helvetica', 'bold');
-  doc.text('ESSENCE RESIDENCE', 14, 22);
-  doc.setTextColor(180,210,190); doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.text('PERSONALIZAÇÃO — PISO VINÍLICO', 14, 30);
+  // Cabeçalho tabela
+  let y = 100;
+  _pdfTabelaHeader(doc, y, [
+    {label:'R E V E S T I M E N T O', x:8},
+    {label:'M²', x:162},
+    {label:'V A L O R', x:202, align:'right'},
+  ]);
+  y += 12;
 
-  // Info cliente
-  doc.setFillColor(...bege); doc.rect(0, 39.2, 210, 28, 'F');
-  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
-  doc.text('CLIENTE', 8, 50); doc.text('UNIDADE', 80, 50); doc.text('EMPREENDIMENTO', 140, 50);
-  doc.setTextColor(...preto); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-  doc.text(cliente || '—', 8, 60); doc.text('Apto ' + ap, 80, 60); doc.text('Essence Residence', 140, 60);
-  doc.setDrawColor(...dourado); doc.setLineWidth(0.6); doc.line(0, 67, 210, 67);
-
-  // Tabela
-  let y = 75;
-  doc.setFillColor(...verdeEscuro); doc.rect(0, y, 210, 10, 'F');
-  doc.setTextColor(255,255,255); doc.setFontSize(7.5); doc.setFont('helvetica', 'bold');
-  doc.text('AMBIENTE / PRODUTO', 8, y+7); doc.text('M²', 170, y+7); doc.text('VALOR', 200, y+7, {align:'right'});
-  y += 14;
-
-  let totalM2 = 0, totalValor = 0, alt = false;
+  let totalM2=0, totalValor=0, alt=false;
   for (const [key, v] of Object.entries(selecoes)) {
     if (!v.produto) continue;
     const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === String(v.produto));
     const nome = prod ? prod.nome : String(v.produto);
     const preco = parseFloat(prod?.preco_m2)||0;
     const m2 = parseFloat(v.m2)||0;
-    const valor = preco * m2;
-    const ambiente = key.split('-').slice(1, -1).join(' ') || key;
-    totalM2 += m2; totalValor += valor;
-    doc.setFillColor(alt?248:255, alt?247:255, alt?244:255); doc.rect(0, y-2, 210, 16, 'F');
-    doc.setFillColor(...dourado); doc.rect(0, y-2, 3, 16, 'F');
-    doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-    doc.text(nome, 8, y+5);
-    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...cinza);
-    doc.text(ambiente + (preco>0?'  ·  R$ '+preco.toFixed(2)+'/m²':''), 8, y+11);
-    doc.setTextColor(...preto); doc.setFontSize(9);
-    doc.text(m2.toFixed(2)+' m²', 170, y+7);
-    doc.setFont('helvetica','bold'); doc.setTextColor(preco>0?dourado[0]:cinza[0], preco>0?dourado[1]:cinza[1], preco>0?dourado[2]:cinza[2]);
-    doc.text(preco>0?'R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—', 200, y+7, {align:'right'});
-    doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2); doc.line(0,y+14,210,y+14);
-    alt = !alt; y += 18;
-    if (y > 250) { doc.addPage(); y = 20; }
+    const m2Com = m2 * 1.2;
+    const valor = preco * m2Com;
+    const ambiente = key.split('-').slice(1,-1).join(' ') || key;
+    totalM2 += m2Com; totalValor += valor;
+    if (y > 248) { doc.addPage(); y = 15; }
+    _pdfLinha(doc, y, [
+      {valor: nome, x:8, bold:true, dy:8},
+      {valor: (preco>0?'R$ '+preco.toFixed(2)+'/m²  ·  ':'')+ambiente, x:8, bold:false, size:7.5, cor:ESSENCE_CORES.cinza, dy:15},
+      {valor: m2Com.toFixed(2)+' m²', x:162, dy:10, cor:ESSENCE_CORES.preto},
+      {valor: preco>0?'R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—', x:202, align:'right', bold:true, dy:10, cor:ESSENCE_CORES.dourado},
+    ], alt);
+    alt=!alt; y+=20;
   }
-
-  // Total
-  y += 4;
-  doc.setFillColor(...verdeEscuro); doc.rect(0, y, 210, 20, 'F');
-  doc.setFillColor(...dourado); doc.rect(0, y, 3, 20, 'F');
-  doc.setTextColor(180,210,190); doc.setFontSize(7.5); doc.setFont('helvetica','normal');
-  doc.text('TOTAL', 8, y+8);
-  doc.setTextColor(180,210,190); doc.setFontSize(9);
-  doc.text(totalM2.toFixed(2)+' m²', 170, y+13);
-  if (totalValor > 0) {
-    doc.setTextColor(...dourado); doc.setFontSize(14); doc.setFont('helvetica','bold');
-    doc.text('R$ '+totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+14, {align:'right'});
+  y += 6;
+  _pdfTotal(doc, y, totalM2, totalValor, 'Apto '+ap);
+  // Numerar páginas
+  const total = doc.getNumberOfPages();
+  for (let i=1;i<=total;i++) {
+    doc.setPage(i);
+    doc.setTextColor(...ESSENCE_CORES.cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+    doc.text('Pág. '+i+' / '+total, 202, 292, {align:'right'});
   }
   doc.save('Vinilico-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
   showToast('PDF gerado!', 'success');
@@ -686,31 +775,24 @@ function gerarPDFMarmorariaId(id) {
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
   _gerarPDFMarmorariaInterno(p.ap, p.cliente, selecoes);
 }
-function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
+async function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
   const jsPDF = getJsPDF();
   if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
+  showToast('Gerando PDF...', 'success');
+  let imgData = null;
+  try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa-marmoraria.png'); } catch(e) {}
+
   const doc = new jsPDF();
-  const verdeEscuro = [26,38,30], dourado = [201,168,76], cinza = [120,118,112], preto = [14,14,14], cinzaClaro = [220,218,212], bege = [252,250,247];
+  _pdfCapa(doc, imgData);
+  _pdfInfoCliente(doc, ap, cliente, null, 62);
 
-  doc.setFillColor(...verdeEscuro); doc.rect(0,0,210,38,'F');
-  doc.setFillColor(...dourado); doc.rect(0,38,210,1.2,'F');
-  doc.setTextColor(...dourado); doc.setFontSize(18); doc.setFont('helvetica','bold');
-  doc.text('ESSENCE RESIDENCE', 14, 22);
-  doc.setTextColor(180,210,190); doc.setFontSize(8); doc.setFont('helvetica','normal');
-  doc.text('PERSONALIZAÇÃO — MARMORARIA', 14, 30);
-
-  doc.setFillColor(...bege); doc.rect(0,39.2,210,28,'F');
-  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
-  doc.text('CLIENTE', 8, 50); doc.text('UNIDADE', 80, 50); doc.text('EMPREENDIMENTO', 140, 50);
-  doc.setTextColor(...preto); doc.setFontSize(10); doc.setFont('helvetica','bold');
-  doc.text(cliente||'—', 8, 60); doc.text('Apto '+ap, 80, 60); doc.text('Essence Residence', 140, 60);
-  doc.setDrawColor(...dourado); doc.setLineWidth(0.6); doc.line(0,67,210,67);
-
-  let y = 75;
-  doc.setFillColor(...verdeEscuro); doc.rect(0,y,210,10,'F');
-  doc.setTextColor(255,255,255); doc.setFontSize(7.5); doc.setFont('helvetica','bold');
-  doc.text('AMBIENTE / PEDRA', 8, y+7); doc.text('M²', 155, y+7); doc.text('VALOR', 200, y+7, {align:'right'});
-  y += 14;
+  let y = 100;
+  _pdfTabelaHeader(doc, y, [
+    {label:'A M B I E N T E   /   P E D R A', x:8},
+    {label:'M²', x:152},
+    {label:'V A L O R', x:202, align:'right'},
+  ]);
+  y += 12;
 
   let totalM2=0, totalValor=0, alt=false, temOrcamento=false;
   (Array.isArray(selecoes)?selecoes:[]).forEach(b => {
@@ -721,39 +803,27 @@ function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
     const valor = preco * m2;
     totalM2 += m2; totalValor += valor;
     if (ped?.categoria === 'Absoluta') temOrcamento = true;
-    doc.setFillColor(alt?248:255,alt?247:255,alt?244:255); doc.rect(0,y-2,210,18,'F');
-    doc.setFillColor(...dourado); doc.rect(0,y-2,3,18,'F');
-    doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica','bold');
-    doc.text(b.ambiente||'—', 8, y+5);
-    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...cinza);
-    doc.text((b.descricao||'')+'  ·  '+nomePedra+(ped?.categoria==='Construtora'?' (Incluso)':ped?.categoria==='Absoluta'?' (Sob orçamento)':''), 8, y+12);
-    doc.setTextColor(...preto); doc.setFontSize(9);
-    doc.text(m2.toFixed(2)+' m²', 155, y+9);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(preco>0?dourado[0]:cinza[0],preco>0?dourado[1]:cinza[1],preco>0?dourado[2]:cinza[2]);
-    doc.text(preco>0?'R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2}):ped?.categoria==='Construtora'?'Incluso':'Sob orçamento', 200, y+9, {align:'right'});
-    doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2); doc.line(0,y+16,210,y+16);
+    if (y > 248) { doc.addPage(); y = 15; }
+    const valorStr = preco>0 ? 'R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2}) : ped?.categoria==='Construtora' ? 'Incluso' : 'Sob orçamento';
+    _pdfLinha(doc, y, [
+      {valor: b.ambiente||'—', x:8, bold:true, dy:8},
+      {valor: (b.descricao||'')+'  ·  '+nomePedra, x:8, bold:false, size:7.5, cor:ESSENCE_CORES.cinza, dy:15},
+      {valor: m2.toFixed(2)+' m²', x:152, dy:10},
+      {valor: valorStr, x:202, align:'right', bold:true, dy:10, cor:ESSENCE_CORES.dourado},
+    ], alt);
     alt=!alt; y+=20;
-    if (y>250) { doc.addPage(); y=20; }
   });
-
-  y += 4;
-  doc.setFillColor(...verdeEscuro); doc.rect(0,y,210,20,'F');
-  doc.setFillColor(...dourado); doc.rect(0,y,3,20,'F');
-  doc.setTextColor(180,210,190); doc.setFontSize(7.5); doc.setFont('helvetica','normal');
-  doc.text('TOTAL', 8, y+8);
-  doc.text(totalM2.toFixed(2)+' m²', 155, y+13);
-  if (totalValor>0) {
-    doc.setTextColor(...dourado); doc.setFontSize(14); doc.setFont('helvetica','bold');
-    doc.text('R$ '+totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+14, {align:'right'});
-  } else if (temOrcamento) {
-    doc.setTextColor(...dourado); doc.setFontSize(10); doc.setFont('helvetica','bold');
-    doc.text('Valor mediante orçamento', 200, y+14, {align:'right'});
-  }
+  y += 6;
+  _pdfTotal(doc, y, totalM2, totalValor, 'Apto '+ap);
   if (temOrcamento) {
-    y += 26;
-    doc.setTextColor(...cinza); doc.setFontSize(8); doc.setFont('helvetica','italic');
-    doc.text('* Pedras Absoluta: valores serão apresentados em orçamento específico.', 8, y);
+    doc.setTextColor(...ESSENCE_CORES.cinza); doc.setFontSize(7); doc.setFont('helvetica','italic');
+    doc.text('* Pedras Absoluta: valores apresentados em orçamento específico.', 8, y+60);
+  }
+  const total = doc.getNumberOfPages();
+  for (let i=1;i<=total;i++) {
+    doc.setPage(i);
+    doc.setTextColor(...ESSENCE_CORES.cinza); doc.setFontSize(7);
+    doc.text('Pág. '+i+' / '+total, 202, 292, {align:'right'});
   }
   doc.save('Marmoraria-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
   showToast('PDF gerado!', 'success');
@@ -772,63 +842,53 @@ function gerarPDFBanheiraId(id) {
   const itens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
   _gerarPDFBanheiraInterno(p.ap, p.cliente, itens);
 }
-function _gerarPDFBanheiraInterno(ap, cliente, itens) {
+async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
   const jsPDF = getJsPDF();
   if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
+  showToast('Gerando PDF...', 'success');
+  let imgData = null;
+  try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa-banheiras.png'); } catch(e) {}
+
   const doc = new jsPDF();
-  const verdeEscuro=[26,38,30], dourado=[201,168,76], cinza=[120,118,112], preto=[14,14,14], cinzaClaro=[220,218,212], bege=[252,250,247];
+  _pdfCapa(doc, imgData);
+  _pdfInfoCliente(doc, ap, cliente, null, 62);
 
-  doc.setFillColor(...verdeEscuro); doc.rect(0,0,210,38,'F');
-  doc.setFillColor(...dourado); doc.rect(0,38,210,1.2,'F');
-  doc.setTextColor(...dourado); doc.setFontSize(18); doc.setFont('helvetica','bold');
-  doc.text('ESSENCE RESIDENCE', 14, 22);
-  doc.setTextColor(180,210,190); doc.setFontSize(8); doc.setFont('helvetica','normal');
-  doc.text('PERSONALIZAÇÃO — BANHEIRAS SABBIA', 14, 30);
-
-  doc.setFillColor(...bege); doc.rect(0,39.2,210,28,'F');
-  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
-  doc.text('CLIENTE', 8, 50); doc.text('UNIDADE', 80, 50); doc.text('EMPREENDIMENTO', 140, 50);
-  doc.setTextColor(...preto); doc.setFontSize(10); doc.setFont('helvetica','bold');
-  doc.text(cliente||'—', 8, 60); doc.text('Apto '+ap, 80, 60); doc.text('Essence Residence', 140, 60);
-  doc.setDrawColor(...dourado); doc.setLineWidth(0.6); doc.line(0,67,210,67);
-
-  let y=75;
-  doc.setFillColor(...verdeEscuro); doc.rect(0,y,210,10,'F');
-  doc.setTextColor(255,255,255); doc.setFontSize(7.5); doc.setFont('helvetica','bold');
-  doc.text('PRODUTO', 8, y+7); doc.text('ESPECIFICAÇÃO', 90, y+7); doc.text('VALOR', 200, y+7, {align:'right'});
-  y += 14;
+  let y = 100;
+  _pdfTabelaHeader(doc, y, [
+    {label:'P R O D U T O', x:8},
+    {label:'E S P E C I F I C A Ç Ã O', x:100},
+    {label:'V A L O R', x:202, align:'right'},
+  ]);
+  y += 12;
 
   let total=0, alt=false;
   (Array.isArray(itens)?itens:[]).forEach(b => {
     const preco = parseFloat(b.preco_venda)||0;
     total += preco;
-    const nome = b.nome || (b.modelo||'—')+' '+( b.material||'');
+    const nome = b.nome || (b.modelo||'—')+' '+(b.material||'');
     const spec = [b.acabamento, b.tipo_sifao||b.sifao, b.lado].filter(Boolean).join(' · ');
-    doc.setFillColor(alt?248:255,alt?247:255,alt?244:255); doc.rect(0,y-2,210,18,'F');
-    doc.setFillColor(...dourado); doc.rect(0,y-2,3,18,'F');
-    doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica','bold');
-    doc.text(nome, 8, y+7);
-    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...cinza);
-    if (spec) doc.text(spec, 90, y+7);
-    doc.setTextColor(...dourado); doc.setFontSize(10); doc.setFont('helvetica','bold');
-    doc.text('R$ '+preco.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+7, {align:'right'});
-    doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2); doc.line(0,y+16,210,y+16);
+    if (y > 248) { doc.addPage(); y = 15; }
+    _pdfLinha(doc, y, [
+      {valor: nome, x:8, bold:true, dy:10},
+      {valor: spec||'—', x:100, bold:false, size:8, cor:ESSENCE_CORES.cinza, dy:10},
+      {valor: 'R$ '+preco.toLocaleString('pt-BR',{minimumFractionDigits:2}), x:202, align:'right', bold:true, dy:10, cor:ESSENCE_CORES.dourado},
+    ], alt);
     alt=!alt; y+=20;
-    if (y>250) { doc.addPage(); y=20; }
   });
-
-  y += 4;
-  doc.setFillColor(...verdeEscuro); doc.rect(0,y,210,20,'F');
-  doc.setFillColor(...dourado); doc.rect(0,y,3,20,'F');
-  doc.setTextColor(180,210,190); doc.setFontSize(7.5); doc.setFont('helvetica','normal');
-  doc.text('TOTAL', 8, y+8);
-  doc.setTextColor(...dourado); doc.setFontSize(14); doc.setFont('helvetica','bold');
-  doc.text('R$ '+total.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+14, {align:'right'});
+  y += 6;
+  _pdfTotal(doc, y, null, total, 'Apto '+ap);
+  const totalPag = doc.getNumberOfPages();
+  for (let i=1;i<=totalPag;i++) {
+    doc.setPage(i);
+    doc.setTextColor(...ESSENCE_CORES.cinza); doc.setFontSize(7);
+    doc.text('Pág. '+i+' / '+totalPag, 202, 292, {align:'right'});
+  }
   doc.save('Banheiras-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
   showToast('PDF gerado!', 'success');
 }
 function editarBanheira(id) { showToast('Em desenvolvimento', 'success'); }
 function editarVinilico(id) { showToast('Em desenvolvimento', 'success'); }
+
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
