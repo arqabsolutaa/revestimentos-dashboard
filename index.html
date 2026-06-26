@@ -1781,6 +1781,62 @@ body.mobile-mode #main{padding-bottom:72px}
     </div>
   </div>
 
+
+
+<!-- ==================== TELA VINÍLICO ==================== -->
+<div id="vinilico-screen" class="screen" style="display:none">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Vinílico</h1>
+      <p>Personalização de piso vinílico por apartamento</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="abrirModalCalcVinilico()">+ Novo Orçamento</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div id="vinilico-lista" style="display:flex;flex-direction:column;gap:12px">
+      <div class="empty-state"><strong>Carregando...</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TELA MARMORARIA ==================== -->
+<div id="marmoraria-screen" class="screen" style="display:none">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Marmoraria</h1>
+      <p>Personalização de bancadas e pedras por apartamento</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="abrirModalCalcMarmoraria()">+ Novo Orçamento</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div id="marmoraria-lista" style="display:flex;flex-direction:column;gap:12px">
+      <div class="empty-state"><strong>Carregando...</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TELA BANHEIRAS ==================== -->
+<div id="banheiras-screen" class="screen" style="display:none">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Banheiras</h1>
+      <p>Personalização de banheiras Sabbia por apartamento</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="abrirModalCalcBanheira()">+ Novo Orçamento</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div id="banheiras-lista" style="display:flex;flex-direction:column;gap:12px">
+      <div class="empty-state"><strong>Carregando...</strong></div>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <!-- MODAL LOTE -->
@@ -5038,60 +5094,6 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
   </button>
 </div>
 
-
-<!-- ==================== TELA VINÍLICO ==================== -->
-<div id="vinilico-screen" class="screen" style="display:none">
-  <div class="page-header">
-    <div class="page-header-left">
-      <h1>Vinílico</h1>
-      <p>Personalização de piso vinílico por apartamento</p>
-    </div>
-    <div class="header-actions">
-      <button class="btn btn-primary" onclick="abrirModalCalcVinilico()">+ Novo Orçamento</button>
-    </div>
-  </div>
-  <div class="page-content">
-    <div id="vinilico-lista" style="display:flex;flex-direction:column;gap:12px">
-      <div class="empty-state"><strong>Carregando...</strong></div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== TELA MARMORARIA ==================== -->
-<div id="marmoraria-screen" class="screen" style="display:none">
-  <div class="page-header">
-    <div class="page-header-left">
-      <h1>Marmoraria</h1>
-      <p>Personalização de bancadas e pedras por apartamento</p>
-    </div>
-    <div class="header-actions">
-      <button class="btn btn-primary" onclick="abrirModalCalcMarmoraria()">+ Novo Orçamento</button>
-    </div>
-  </div>
-  <div class="page-content">
-    <div id="marmoraria-lista" style="display:flex;flex-direction:column;gap:12px">
-      <div class="empty-state"><strong>Carregando...</strong></div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== TELA BANHEIRAS ==================== -->
-<div id="banheiras-screen" class="screen" style="display:none">
-  <div class="page-header">
-    <div class="page-header-left">
-      <h1>Banheiras</h1>
-      <p>Personalização de banheiras Sabbia por apartamento</p>
-    </div>
-    <div class="header-actions">
-      <button class="btn btn-primary" onclick="abrirModalCalcBanheira()">+ Novo Orçamento</button>
-    </div>
-  </div>
-  <div class="page-content">
-    <div id="banheiras-lista" style="display:flex;flex-direction:column;gap:12px">
-      <div class="empty-state"><strong>Carregando...</strong></div>
-    </div>
-  </div>
-</div>
 
 <!-- MODAL VINILICO -->
 <div id="modal-calc-vinilico" class="modal-overlay">
