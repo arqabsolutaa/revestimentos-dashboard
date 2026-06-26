@@ -248,14 +248,14 @@
       "site": "https://www.portobello.com.br/produtos/oh-take/field-tile/oh-take-mountain/120x120-natural/200330E",
       "m2_por_caixa": "2.87",
       "pecas_por_caixa": "2",
-      "qtd_caixas": "250.22",
+      "qtd_caixas": "271.13",
       "tamanho": "120x120",
       "junta": "1,5mm",
       "espessura": "7,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Vista Park",
-      "estoque_m2": "718.13",
+      "estoque_m2": "778.13",
       "": "",
       "criado_em": "",
       "perda_pct": "20"
@@ -20013,19 +20013,6 @@
       "destino": "uso",
       "obs": "Migrado - Vista Park",
       "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
-    {
-      "id": "id_1781882798249_blocz",
-      "data": "Fri Jun 19 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "revestimento": "Oh!Take Moutain Nat Ret",
-      "codigo_rev": "12011",
-      "obra": "41 - Vista Park",
-      "local": "Living, hall, lavabo e área de serviço",
-      "apto": "Vista Park - Apto 41 - Vista Park ",
-      "quantidade_m2": "60",
-      "destino": "uso",
-      "obs": "Instalação Nova",
-      "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096135809_0rlw9",
