@@ -662,15 +662,15 @@ const ESSENCE_PALETAS = {
 const ESSENCE_CORES = ESSENCE_PALETAS.vinilico; // fallback
 const ESSENCE_ASSETS = 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/assets/';
 
-// Carrega imagem de URL e retorna base64 para jsPDF
+// Carrega imagem de URL e retorna base64 para jsPDF (com timeout de 5s)
 async function carregarImagemPDF(url) {
-  const resp = await fetch(url);
-  const blob = await resp.blob();
-  return new Promise(resolve => {
+  const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+  const load = fetch(url).then(r => r.blob()).then(blob => new Promise(resolve => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
     reader.readAsDataURL(blob);
-  });
+  }));
+  return Promise.race([load, timeout]);
 }
 
 // Cabeçalho com imagem de capa (página 1)
@@ -926,9 +926,10 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
   if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
   showToast('Gerando PDF...', 'success');
   let imgData = null;
-  try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa-banheiras.png'); } catch(e) {}
+  try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa-banheiras.png'); } catch(e) { console.log('Capa nao carregada:', e.message); }
 
   const doc = new jsPDF();
+  try {
   _pdfCapa(doc, imgData);
   _pdfInfoCliente(doc, ap, cliente, null, 50);
 
@@ -966,6 +967,7 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
   }
   doc.save('Banheiras-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
   showToast('PDF gerado!', 'success');
+  } catch(pdfErr) { showToast('Erro ao gerar PDF: ' + pdfErr.message, 'error'); console.error(pdfErr); }
 }
 function editarBanheira(id) { showToast('Em desenvolvimento', 'success'); }
 function editarVinilico(id) { showToast('Em desenvolvimento', 'success'); }
