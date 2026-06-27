@@ -401,7 +401,7 @@ function renderBanheiras() {
 async function abrirModalCalcBanheira() {
   banhItens = []; banhApAtual = ''; banhProdutoAtual = null;
   try {
-    const d = await lerDadosExtra('banheiras');
+    const d = await lerDadosExtra('banheiras', true); // sempre buscar fresco
     // Normalizar colunas — planilha da Sabbia pode ter nomes diferentes
     dadosBanhCatalogo = (d.catalogo || []).map(b => {
       // Encontrar valores independente do case/nome da coluna
