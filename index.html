@@ -730,18 +730,21 @@ function _pdfTabelaHeader(doc, y, colunas, cores) {
 }
 
 // Linha da tabela
-function _pdfLinha(doc, y, colunas, alt, cores) {
+function _pdfLinha(doc, y, colunas, alt, cores, imgUrl) {
   const C = cores || ESSENCE_CORES;
   const bg = alt ? [245,244,240] : [255,255,255];
   doc.setFillColor(...bg); doc.rect(0, y, 210, 18, 'F');
   doc.setFillColor(...C.secundaria); doc.rect(0, y, 2.5, 18, 'F');
+  if (imgUrl) {
+    try { doc.addImage(imgUrl, 'JPEG', 5, y+2, 14, 14); } catch(e) {}
+  }
   colunas.forEach(c => {
     if (c.bold) { doc.setFont('helvetica','bold'); } else { doc.setFont('helvetica','normal'); }
     doc.setFontSize(c.size||9);
-    doc.setTextColor(...(c.cor || ESSENCE_CORES.preto));
+    doc.setTextColor(...(c.cor || C.preto));
     doc.text(String(c.valor||''), c.x, y + (c.dy||10), c.align ? {align:c.align} : {});
   });
-  doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2);
+  doc.setDrawColor(...C.cinzaClaro); doc.setLineWidth(0.2);
   doc.line(0, y+18, 210, y+18);
 }
 
