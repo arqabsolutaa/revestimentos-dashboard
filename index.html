@@ -531,11 +531,15 @@ function selecionarBanheira() {
 }
 
 function adicionarBanheiraSelecionada() {
-  if (!banhProdutoAtual) return;
+  if (!banhProdutoAtual) { showToast('Selecione um produto primeiro', 'error'); return; }
   banhItens.push({ ...banhProdutoAtual });
   renderItensBanheira();
-  document.getElementById('banh-btn-salvar').style.display = 'inline-flex';
-  document.getElementById('banh-btn-pdf').style.display = 'inline-flex';
+  ['banh-btn-salvar','banh-btn-pdf','banh-btn-salvar2','banh-btn-pdf2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.display = 'inline-flex'; el.style.visibility = 'visible'; el.removeAttribute('hidden'); }
+  });
+  const acoes = document.getElementById('banh-acoes');
+  if (acoes) acoes.style.display = 'flex';
 }
 
 function renderItensBanheira() {
@@ -5350,6 +5354,10 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
         </div>
         <button class="btn btn-secondary" onclick="adicionarBanheiraSelecionada()" style="margin-top:12px;width:100%" id="banh-btn-adicionar" style="display:none">+ Adicionar ao orçamento</button>
         <div id="banh-itens-lista" style="margin-top:12px"></div>
+        <div id="banh-acoes" style="display:none;margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-secondary" style="flex:1" onclick="salvarBanheira()" id="banh-btn-salvar2">Salvar em Personalizar</button>
+          <button class="btn btn-primary" style="flex:1" onclick="gerarPDFBanheira()" id="banh-btn-pdf2">Gerar PDF</button>
+        </div>
       </div>
       <div id="banh-resumo" style="display:none;margin-top:16px"></div>
     </div>
