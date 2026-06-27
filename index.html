@@ -615,12 +615,12 @@ async function carregarImagemPDF(url) {
 
 // Cabeçalho com imagem de capa (página 1)
 function _pdfCapa(doc, imgData, subtitulo) {
-  // Imagem de capa full-width, 60mm de altura
+  // Imagem panorâmica 2000x457px → proporção 210x48mm
   if (imgData) {
-    doc.addImage(imgData, 'PNG', 0, 0, 210, 60);
+    doc.addImage(imgData, 'PNG', 0, 0, 210, 48);
   } else {
     doc.setFillColor(...ESSENCE_CORES.marrom);
-    doc.rect(0, 0, 210, 60, 'F');
+    doc.rect(0, 0, 210, 48, 'F');
   }
 }
 
@@ -719,10 +719,10 @@ async function _gerarPDFVinilicoInterno(ap, cliente, selecoes) {
 
   const doc = new jsPDF();
   _pdfCapa(doc, imgData, 'PERSONALIZE — VINÍLICO');
-  _pdfInfoCliente(doc, ap, cliente, null, 62);
+  _pdfInfoCliente(doc, ap, cliente, null, 50);
 
   // Cabeçalho tabela
-  let y = 100;
+  let y = 88;
   _pdfTabelaHeader(doc, y, [
     {label:'R E V E S T I M E N T O', x:8},
     {label:'M²', x:162},
@@ -784,9 +784,9 @@ async function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
 
   const doc = new jsPDF();
   _pdfCapa(doc, imgData);
-  _pdfInfoCliente(doc, ap, cliente, null, 62);
+  _pdfInfoCliente(doc, ap, cliente, null, 50);
 
-  let y = 100;
+  let y = 88;
   _pdfTabelaHeader(doc, y, [
     {label:'A M B I E N T E   /   P E D R A', x:8},
     {label:'M²', x:152},
@@ -851,9 +851,9 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
 
   const doc = new jsPDF();
   _pdfCapa(doc, imgData);
-  _pdfInfoCliente(doc, ap, cliente, null, 62);
+  _pdfInfoCliente(doc, ap, cliente, null, 50);
 
-  let y = 100;
+  let y = 88;
   _pdfTabelaHeader(doc, y, [
     {label:'P R O D U T O', x:8},
     {label:'E S P E C I F I C A Ç Ã O', x:100},
