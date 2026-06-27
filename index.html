@@ -691,8 +691,9 @@ function _pdfCapa(doc, imgData, subtitulo) {
 }
 
 // Bloco info cliente
-function _pdfInfoCliente(doc, ap, cliente, data, y0) {
-  const { fundo, marrom, cinza, preto, dourado } = ESSENCE_CORES;
+function _pdfInfoCliente(doc, ap, cliente, data, y0, cores) {
+  const C = cores || ESSENCE_CORES;
+  const { fundo, marrom, cinza, preto, dourado } = C;
   doc.setFillColor(...fundo); doc.rect(0, y0, 210, 32, 'F');
   // Linhas separadoras verticais
   doc.setDrawColor(...dourado); doc.setLineWidth(0.3);
@@ -718,13 +719,10 @@ function _pdfInfoCliente(doc, ap, cliente, data, y0) {
 // Cabeçalho da tabela
 function _pdfTabelaHeader(doc, y, colunas, cores) {
   const C = cores || ESSENCE_CORES;
-  // Se fundo primário é claro (banheiras), usar texto escuro
   const isPrimarioClaro = C.primaria[0] > 200;
   const bgColor = isPrimarioClaro ? C.secundaria : C.primaria;
-  const textColor = isPrimarioClaro ? C.branco : C.branco;
-  const altTextColor = isPrimarioClaro ? [67,51,30] : C.branco;
   doc.setFillColor(...bgColor); doc.rect(0, y, 210, 10, 'F');
-  doc.setTextColor(...(isPrimarioClaro ? [255,255,255] : [255,255,255]));
+  doc.setTextColor(255,255,255);
   doc.setFontSize(7); doc.setFont('helvetica', 'bold');
   colunas.forEach(c => doc.text(c.label, c.x, y+7, c.align ? {align:c.align} : {}));
 }
@@ -751,28 +749,30 @@ function _pdfLinha(doc, y, colunas, alt, cores, imgUrl) {
 // Rodapé total geral
 function _pdfTotal(doc, y, totalM2, totalValor, label, cores) {
   const C = cores || ESSENCE_CORES;
-  // Seção forma de pagamento
-  doc.setFillColor(...C.fundo); doc.rect(0, y, 210, 20, 'F');
-  doc.setTextColor(...C.cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  const fundo = C.fundo || [240,238,232];
+  const cinza = C.cinza || [120,118,112];
+  const preto = C.preto || [14,14,14];
+  const primaria = C.primaria || [67,51,30];
+  const secundaria = C.secundaria || [140,132,103];
+  // Forma de pagamento
+  doc.setFillColor(...fundo); doc.rect(0, y, 210, 20, 'F');
+  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
   doc.text('F O R M A   D E   P A G A M E N T O', 8, y+10);
-  doc.setTextColor(...C.preto); doc.setFontSize(10); doc.setFont('helvetica','bold');
+  doc.setTextColor(...preto); doc.setFontSize(10); doc.setFont('helvetica','bold');
   doc.text('À Vista', 8, y+18);
   y += 26;
   // Total geral
-  doc.setFillColor(...C.primaria); doc.rect(0, y, 210, 28, 'F');
-  // Texto sobre primária — se clara, usar escuro
-  const sobrePrimaria = C.primaria[0] > 200 ? C.preto : [200,195,180];
-  const valorColor = C.primaria[0] > 200 ? C.secundaria : C.secundaria;
+  doc.setFillColor(...primaria); doc.rect(0, y, 210, 28, 'F');
+  const sobrePrimaria = primaria[0] > 200 ? preto : [200,195,180];
   doc.setTextColor(...sobrePrimaria); doc.setFontSize(7); doc.setFont('helvetica','normal');
   doc.text('T O T A L   G E R A L', 8, y+10);
   doc.setFontSize(8);
   if (totalM2) doc.text(totalM2.toFixed(2)+' m²', 8, y+22);
   if (totalValor > 0) {
-    doc.setTextColor(...valorColor); doc.setFontSize(16); doc.setFont('helvetica','bold');
+    doc.setTextColor(...secundaria); doc.setFontSize(16); doc.setFont('helvetica','bold');
     doc.text('R$ '+totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+22, {align:'right'});
   }
-  // Rodapé
-  doc.setTextColor(...C.cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
   doc.text('Empreendimento Essence Residence · '+label, 8, y+34);
 }
 
@@ -798,7 +798,7 @@ async function _gerarPDFVinilicoInterno(ap, cliente, selecoes) {
 
   const doc = new jsPDF();
   _pdfCapa(doc, imgData, 'PERSONALIZE — VINÍLICO');
-  _pdfInfoCliente(doc, ap, cliente, null, 50);
+  _pdfInfoCliente(doc, ap, cliente, null, 50, ESSENCE_CORES);
 
   // Cabeçalho tabela
   let y = 88;
@@ -866,7 +866,7 @@ async function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
 
   const doc = new jsPDF();
   _pdfCapa(doc, imgData);
-  _pdfInfoCliente(doc, ap, cliente, null, 50);
+  _pdfInfoCliente(doc, ap, cliente, null, 50, ESSENCE_CORES);
 
   let y = 88;
   _pdfTabelaHeader(doc, y, [
@@ -940,7 +940,7 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
   const doc = new jsPDF();
   try {
   _pdfCapa(doc, imgData);
-  _pdfInfoCliente(doc, ap, cliente, null, 50);
+  _pdfInfoCliente(doc, ap, cliente, null, 50, ESSENCE_CORES);
 
   let y = 88;
   _pdfTabelaHeader(doc, y, [
