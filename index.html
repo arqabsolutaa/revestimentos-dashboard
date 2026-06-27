@@ -4651,7 +4651,20 @@ function selecionarAp() {
   document.getElementById('calc-paredes-container').innerHTML = html;
   document.getElementById('calc-step2').style.display = 'block';
   document.getElementById('calc-step3').style.display = 'block';
-  if (!window._editandoPersonalizacaoId) calcSelecoes = {};
+  // Só limpar seleções se NÃO for edição
+  if (!window._editandoPersonalizacaoId) {
+    calcSelecoes = {};
+  }
+  // Abrir automaticamente os ambientes que têm paredes selecionadas
+  if (window._selecoesParaRestaurar || window._editandoPersonalizacaoId) {
+    document.querySelectorAll('[id^="amb-"]').forEach(el => {
+      if (!el.id.includes('arrow')) {
+        el.style.display = 'block';
+        const arrow = document.getElementById(el.id + '-arrow');
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+      }
+    });
+  }
   window._selecoesParaRestaurar = null;
   atualizarResumo();
 }
@@ -4857,34 +4870,30 @@ async function confirmarSaidaPersonalizar(id) {
 
 async function editarPersonalizacao(id) {
   const p = dadosPersonalizar.find(x => x.id === id);
-  if (!p) return;
+  if (!p) { showToast('Orçamento não encontrado', 'error'); return; }
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
-  
-  // Guardar ID para atualizar ao salvar
+
+  // Garantir que dadosParedes está carregado
+  if (!dadosParedes.length) {
+    const dados = await lerDados();
+    dadosParedes = dados.paredes || [];
+  }
+
+  // Configurar modo edição ANTES de abrir o modal
   window._editandoPersonalizacaoId = id;
   window._selecoesParaRestaurar = selecoes;
-  
+  calcSelecoes = {};
+
   // Definir apartamento e abrir modal
   calcApAtual = p.ap;
-  document.getElementById('calc-ap-select').value = p.ap;
   abrirModal('modal-calculo');
-  
-  // Carregar paredes do apartamento
-  await selecionarAp();
-  
-  // Restaurar seleções após renderizar
-  const restaurar = () => {
-    calcSelecoes = {};
-    for (const [key, v] of Object.entries(selecoes)) {
-      calcSelecoes[key] = v;
-      const el = document.getElementById('wi-' + key);
-      const fs = document.getElementById('fs-' + key);
-      if (el && !el.classList.contains('checked')) el.classList.add('checked');
-      if (fs && v.piso) { fs.value = v.piso; }
-    }
-    atualizarResumo();
-  };
-  // Restaurar inline durante renderização — sem setTimeout necessário
+
+  // Aguardar modal abrir e então popular o select e carregar paredes
+  setTimeout(() => {
+    const sel = document.getElementById('calc-ap-select');
+    if (sel) sel.value = p.ap;
+    selecionarAp();
+  }, 100);
 }
 
 
