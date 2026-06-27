@@ -959,12 +959,27 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
     if (y > 248) { doc.addPage(); y = 15; }
     const imgBanh = b.imagem || null;
     const xBanh = imgBanh ? 24 : 8;
-    _pdfLinha(doc, y, [
-      {valor: nome, x:xBanh, bold:true, dy:10},
-      {valor: spec||'—', x:100, bold:false, size:8, cor:ESSENCE_CORES.cinza, dy:10},
-      {valor: 'R$ '+preco.toLocaleString('pt-BR',{minimumFractionDigits:2}), x:202, align:'right', bold:true, dy:10, cor:ESSENCE_CORES.dourado},
-    ], alt, ESSENCE_CORES, imgBanh);
-    alt=!alt; y+=20;
+    // Quebrar nome longo em até 2 linhas
+    const nomeLinhas = doc.splitTextToSize ? doc.splitTextToSize(nome, 85) : [nome];
+    const linhaAltura = nomeLinhas.length > 1 ? 24 : 18;
+    const bg2 = alt ? [245,244,240] : [255,255,255];
+    doc.setFillColor(...bg2); doc.rect(0, y, 210, linhaAltura, 'F');
+    doc.setFillColor(...ESSENCE_CORES.secundaria); doc.rect(0, y, 2.5, linhaAltura, 'F');
+    if (imgBanh) { try { doc.addImage(imgBanh, 'JPEG', 5, y+2, 14, 14); } catch(e) {} }
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...ESSENCE_CORES.preto);
+    if (nomeLinhas.length > 1) {
+      doc.text(nomeLinhas[0], xBanh, y+8);
+      doc.text(nomeLinhas[1], xBanh, y+15);
+    } else {
+      doc.text(nome, xBanh, y+10);
+    }
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...ESSENCE_CORES.cinza);
+    if (spec) doc.text(spec, 100, y+(linhaAltura/2)+2);
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...ESSENCE_CORES.dourado);
+    doc.text('R$ '+preco.toLocaleString('pt-BR',{minimumFractionDigits:2}), 202, y+(linhaAltura/2)+2, {align:'right'});
+    doc.setDrawColor(...ESSENCE_CORES.cinzaClaro); doc.setLineWidth(0.2);
+    doc.line(0, y+linhaAltura, 210, y+linhaAltura);
+    alt=!alt; y+=linhaAltura+2;
   });
   y += 6;
   _pdfTotal(doc, y, null, total, 'Apto '+ap, ESSENCE_CORES);
