@@ -568,6 +568,8 @@ function renderItensBanheira() {
 }
 
 async function salvarBanheira() {
+  const sel = document.getElementById('banh-ap-select');
+  if (sel && sel.value) banhApAtual = sel.value;
   if (!banhApAtual || !banhItens.length) { showToast('Selecione o apartamento e adicione pelo menos uma banheira', 'error'); return; }
   const cliente = dadosParedes.find(p => p.apartamento === banhApAtual)?.cliente || '—';
   const dados = { ap: banhApAtual, cliente, data: new Date().toLocaleDateString('pt-BR'), selecoes: banhItens, tipo: 'banheiras' };
@@ -899,8 +901,13 @@ function editarMarmoraria(id) { showToast('Em desenvolvimento', 'success'); }
 
 // ===================== PDF BANHEIRAS =====================
 function gerarPDFBanheira() {
-  if (!banhApAtual || !banhItens.length) { showToast('Selecione apartamento e adicione banheiras', 'error'); return; }
-  const cliente = dadosParedes.find(p => p.apartamento === banhApAtual)?.cliente || '—';
+  // Garantir que banhApAtual está atualizado
+  const sel = document.getElementById('banh-ap-select');
+  if (sel && sel.value) banhApAtual = sel.value;
+  if (!banhApAtual) { showToast('Selecione um apartamento', 'error'); return; }
+  if (!banhItens.length) { showToast('Adicione pelo menos uma banheira', 'error'); return; }
+  const cliente = dadosParedes.find(p => p.apartamento === banhApAtual)?.cliente || 
+    (sel ? sel.options[sel.selectedIndex]?.text.split(' - ')[1] : '—') || '—';
   _gerarPDFBanheiraInterno(banhApAtual, cliente, banhItens);
 }
 function gerarPDFBanheiraId(id) {
