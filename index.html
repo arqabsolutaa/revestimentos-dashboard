@@ -802,12 +802,14 @@ async function _gerarPDFVinilicoInterno(ap, cliente, selecoes) {
     const ambiente = key.split('-').slice(1,-1).join(' ') || key;
     totalM2 += m2Com; totalValor += valor;
     if (y > 248) { doc.addPage(); y = 15; }
+    const imgVin = prod?.imagem || null;
+    const xVin = imgVin ? 24 : 8;
     _pdfLinha(doc, y, [
-      {valor: nome, x:8, bold:true, dy:8},
-      {valor: (preco>0?'R$ '+preco.toFixed(2)+'/m²  ·  ':'')+ambiente, x:8, bold:false, size:7.5, cor:ESSENCE_CORES.cinza, dy:15},
+      {valor: nome, x:xVin, bold:true, dy:8},
+      {valor: (preco>0?'R$ '+preco.toFixed(2)+'/m²  ·  ':'')+ambiente, x:xVin, bold:false, size:7.5, cor:ESSENCE_CORES.cinza, dy:15},
       {valor: m2Com.toFixed(2)+' m²', x:162, dy:10, cor:ESSENCE_CORES.preto},
       {valor: preco>0?'R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—', x:202, align:'right', bold:true, dy:10, cor:ESSENCE_CORES.dourado},
-    ], alt);
+    ], alt, ESSENCE_CORES, imgVin);
     alt=!alt; y+=20;
   }
   y += 6;
@@ -930,11 +932,13 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
     const nome = b.nome || (b.modelo||'—')+' '+(b.material||'');
     const spec = [b.acabamento, b.tipo_sifao||b.sifao, b.lado].filter(Boolean).join(' · ');
     if (y > 248) { doc.addPage(); y = 15; }
+    const imgBanh = b.imagem || null;
+    const xBanh = imgBanh ? 24 : 8;
     _pdfLinha(doc, y, [
-      {valor: nome, x:8, bold:true, dy:10},
+      {valor: nome, x:xBanh, bold:true, dy:10},
       {valor: spec||'—', x:100, bold:false, size:8, cor:ESSENCE_CORES.cinza, dy:10},
       {valor: 'R$ '+preco.toLocaleString('pt-BR',{minimumFractionDigits:2}), x:202, align:'right', bold:true, dy:10, cor:ESSENCE_CORES.dourado},
-    ], alt);
+    ], alt, ESSENCE_CORES, imgBanh);
     alt=!alt; y+=20;
   });
   y += 6;
