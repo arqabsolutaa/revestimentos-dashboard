@@ -498,24 +498,28 @@ function selecionarBanheira() {
   const sifao = document.getElementById('banh-sifao').value;
   const lado = document.getElementById('banh-lado').value;
 
-  if (!modelo || !material || !acabamento || !sifao) {
+  if (!modelo || !material) {
     document.getElementById('banh-produto-selecionado').style.display = 'none';
     document.getElementById('banh-btn-adicionar').style.display = 'none';
     return;
   }
 
-  // Verificar se existe variação com lado para esse conjunto
-  const temLado = dadosBanhCatalogo.some(b =>
+  // Filtrar candidatos por modelo e material (acabamento e sifão opcionais)
+  let candidatos = dadosBanhCatalogo.filter(b =>
     b.modelo === modelo && b.material === material &&
-    b.acabamento === acabamento && b.tipo_sifao === sifao && b.lado
+    (!acabamento || b.acabamento === acabamento) &&
+    (!sifao || b.tipo_sifao === sifao) &&
+    (!lado || b.lado === lado || (!b.lado && !lado))
+  );
+
+  // Pegar o primeiro candidato
+  const produto = candidatos[0] || null;
+
+  // Mostrar campo lado só se houver variação
+  const temLado = dadosBanhCatalogo.some(b =>
+    b.modelo === modelo && b.material === material && b.lado
   );
   document.getElementById('banh-lado-grupo').style.display = temLado ? 'block' : 'none';
-
-  const produto = dadosBanhCatalogo.find(b =>
-    b.modelo === modelo && b.material === material &&
-    b.acabamento === acabamento && b.tipo_sifao === sifao &&
-    (!temLado || b.lado === lado)
-  );
 
   banhProdutoAtual = produto || null;
 
@@ -526,7 +530,7 @@ function selecionarBanheira() {
     document.getElementById('banh-btn-adicionar').style.display = 'block';
   } else {
     document.getElementById('banh-produto-selecionado').style.display = 'none';
-    document.getElementById('banh-btn-adicionar').style.display = temLado && !lado ? 'none' : 'none';
+    document.getElementById('banh-btn-adicionar').style.display = 'none';
   }
 }
 
