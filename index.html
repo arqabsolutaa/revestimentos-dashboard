@@ -601,15 +601,46 @@ function getJsPDF() {
   return null;
 }
 // ===================== HELPERS PDF ESSENCE =====================
-const ESSENCE_CORES = {
-  marrom:   [67, 51, 30],
-  dourado:  [140, 132, 103],
-  fundo:    [240, 238, 232],
-  branco:   [255, 255, 255],
-  cinza:    [120, 118, 112],
-  preto:    [14, 14, 14],
-  cinzaClaro: [220, 218, 212],
+// Paletas por módulo
+// Vinílico: marrom escuro #43331e
+// Marmoraria: dourado/bege #8c8467
+// Banheiras: off/bege clarinho #f0eee8
+const ESSENCE_PALETAS = {
+  vinilico: {
+    primaria:   [67, 51, 30],      // #43331e marrom escuro
+    secundaria: [140, 132, 103],   // #8c8467 dourado
+    fundo:      [240, 238, 232],   // #f0eee8 bege claro
+    texto:      [67, 51, 30],      // marrom escuro
+    cinza:      [120, 118, 112],
+    cinzaClaro: [220, 218, 212],
+    branco:     [255, 255, 255],
+    preto:      [14, 14, 14],
+    rodape:     [200, 195, 180],
+  },
+  marmoraria: {
+    primaria:   [140, 132, 103],   // #8c8467 dourado/bege
+    secundaria: [67, 51, 30],      // #43331e marrom
+    fundo:      [240, 238, 232],   // #f0eee8 bege claro
+    texto:      [67, 51, 30],
+    cinza:      [140, 132, 103],
+    cinzaClaro: [220, 218, 212],
+    branco:     [255, 255, 255],
+    preto:      [14, 14, 14],
+    rodape:     [200, 195, 180],
+  },
+  banheiras: {
+    primaria:   [240, 238, 232],   // #f0eee8 bege clarinho
+    secundaria: [140, 132, 103],   // #8c8467 dourado suave
+    fundo:      [252, 251, 249],   // quase branco
+    texto:      [67, 51, 30],
+    cinza:      [160, 155, 145],
+    cinzaClaro: [230, 228, 222],
+    branco:     [255, 255, 255],
+    preto:      [14, 14, 14],
+    rodape:     [180, 175, 165],
+  },
 };
+const ESSENCE_CORES = ESSENCE_PALETAS.vinilico; // fallback
 const ESSENCE_ASSETS = 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/assets/';
 
 // Carrega imagem de URL e retorna base64 para jsPDF
@@ -660,19 +691,25 @@ function _pdfInfoCliente(doc, ap, cliente, data, y0) {
 }
 
 // Cabeçalho da tabela
-function _pdfTabelaHeader(doc, y, colunas) {
-  const { marrom, branco } = ESSENCE_CORES;
-  doc.setFillColor(...marrom); doc.rect(0, y, 210, 10, 'F');
-  doc.setTextColor(...branco); doc.setFontSize(7); doc.setFont('helvetica', 'bold');
+function _pdfTabelaHeader(doc, y, colunas, cores) {
+  const C = cores || ESSENCE_CORES;
+  // Se fundo primário é claro (banheiras), usar texto escuro
+  const isPrimarioClaro = C.primaria[0] > 200;
+  const bgColor = isPrimarioClaro ? C.secundaria : C.primaria;
+  const textColor = isPrimarioClaro ? C.branco : C.branco;
+  const altTextColor = isPrimarioClaro ? [67,51,30] : C.branco;
+  doc.setFillColor(...bgColor); doc.rect(0, y, 210, 10, 'F');
+  doc.setTextColor(...(isPrimarioClaro ? [255,255,255] : [255,255,255]));
+  doc.setFontSize(7); doc.setFont('helvetica', 'bold');
   colunas.forEach(c => doc.text(c.label, c.x, y+7, c.align ? {align:c.align} : {}));
 }
 
 // Linha da tabela
-function _pdfLinha(doc, y, colunas, alt) {
-  const { fundo, branco, dourado, cinzaClaro } = ESSENCE_CORES;
+function _pdfLinha(doc, y, colunas, alt, cores) {
+  const C = cores || ESSENCE_CORES;
   const bg = alt ? [245,244,240] : [255,255,255];
   doc.setFillColor(...bg); doc.rect(0, y, 210, 18, 'F');
-  doc.setFillColor(...dourado); doc.rect(0, y, 2.5, 18, 'F');
+  doc.setFillColor(...C.secundaria); doc.rect(0, y, 2.5, 18, 'F');
   colunas.forEach(c => {
     if (c.bold) { doc.setFont('helvetica','bold'); } else { doc.setFont('helvetica','normal'); }
     doc.setFontSize(c.size||9);
@@ -684,27 +721,30 @@ function _pdfLinha(doc, y, colunas, alt) {
 }
 
 // Rodapé total geral
-function _pdfTotal(doc, y, totalM2, totalValor, label) {
-  const { marrom, dourado, fundo, cinza } = ESSENCE_CORES;
+function _pdfTotal(doc, y, totalM2, totalValor, label, cores) {
+  const C = cores || ESSENCE_CORES;
   // Seção forma de pagamento
-  doc.setFillColor(...fundo); doc.rect(0, y, 210, 20, 'F');
-  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.setFillColor(...C.fundo); doc.rect(0, y, 210, 20, 'F');
+  doc.setTextColor(...C.cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
   doc.text('F O R M A   D E   P A G A M E N T O', 8, y+10);
-  doc.setTextColor(...ESSENCE_CORES.preto); doc.setFontSize(10); doc.setFont('helvetica','bold');
+  doc.setTextColor(...C.preto); doc.setFontSize(10); doc.setFont('helvetica','bold');
   doc.text('À Vista', 8, y+18);
   y += 26;
   // Total geral
-  doc.setFillColor(...marrom); doc.rect(0, y, 210, 28, 'F');
-  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.setFillColor(...C.primaria); doc.rect(0, y, 210, 28, 'F');
+  // Texto sobre primária — se clara, usar escuro
+  const sobrePrimaria = C.primaria[0] > 200 ? C.preto : [200,195,180];
+  const valorColor = C.primaria[0] > 200 ? C.secundaria : C.secundaria;
+  doc.setTextColor(...sobrePrimaria); doc.setFontSize(7); doc.setFont('helvetica','normal');
   doc.text('T O T A L   G E R A L', 8, y+10);
-  doc.setTextColor(200,195,180); doc.setFontSize(8);
+  doc.setFontSize(8);
   if (totalM2) doc.text(totalM2.toFixed(2)+' m²', 8, y+22);
   if (totalValor > 0) {
-    doc.setTextColor(...dourado); doc.setFontSize(16); doc.setFont('helvetica','bold');
+    doc.setTextColor(...valorColor); doc.setFontSize(16); doc.setFont('helvetica','bold');
     doc.text('R$ '+totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+22, {align:'right'});
   }
   // Rodapé
-  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.setTextColor(...C.cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
   doc.text('Empreendimento Essence Residence · '+label, 8, y+34);
 }
 
@@ -721,6 +761,7 @@ function gerarPDFVinilicoId(id) {
   _gerarPDFVinilicoInterno(p.ap, p.cliente, selecoes);
 }
 async function _gerarPDFVinilicoInterno(ap, cliente, selecoes) {
+  const ESSENCE_CORES = ESSENCE_PALETAS.vinilico;
   const jsPDF = getJsPDF();
   if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
   showToast('Gerando PDF...', 'success');
@@ -761,7 +802,7 @@ async function _gerarPDFVinilicoInterno(ap, cliente, selecoes) {
     alt=!alt; y+=20;
   }
   y += 6;
-  _pdfTotal(doc, y, totalM2, totalValor, 'Apto '+ap);
+  _pdfTotal(doc, y, totalM2, totalValor, 'Apto '+ap, ESSENCE_CORES);
   // Numerar páginas
   const total = doc.getNumberOfPages();
   for (let i=1;i<=total;i++) {
@@ -786,6 +827,7 @@ function gerarPDFMarmorariaId(id) {
   _gerarPDFMarmorariaInterno(p.ap, p.cliente, selecoes);
 }
 async function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
+  const ESSENCE_CORES = ESSENCE_PALETAS.marmoraria;
   const jsPDF = getJsPDF();
   if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
   showToast('Gerando PDF...', 'success');
@@ -824,7 +866,7 @@ async function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
     alt=!alt; y+=20;
   });
   y += 6;
-  _pdfTotal(doc, y, totalM2, totalValor, 'Apto '+ap);
+  _pdfTotal(doc, y, totalM2, totalValor, 'Apto '+ap, ESSENCE_CORES);
   if (temOrcamento) {
     doc.setTextColor(...ESSENCE_CORES.cinza); doc.setFontSize(7); doc.setFont('helvetica','italic');
     doc.text('* Pedras Absoluta: valores apresentados em orçamento específico.', 8, y+60);
@@ -853,6 +895,7 @@ function gerarPDFBanheiraId(id) {
   _gerarPDFBanheiraInterno(p.ap, p.cliente, itens);
 }
 async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
+  const ESSENCE_CORES = ESSENCE_PALETAS.banheiras;
   const jsPDF = getJsPDF();
   if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
   showToast('Gerando PDF...', 'success');
@@ -886,7 +929,7 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
     alt=!alt; y+=20;
   });
   y += 6;
-  _pdfTotal(doc, y, null, total, 'Apto '+ap);
+  _pdfTotal(doc, y, null, total, 'Apto '+ap, ESSENCE_CORES);
   const totalPag = doc.getNumberOfPages();
   for (let i=1;i<=totalPag;i++) {
     doc.setPage(i);
