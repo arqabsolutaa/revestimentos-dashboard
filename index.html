@@ -579,6 +579,16 @@ async function lerDadosExtra(tipo, forcarRecarga) {
   _cacheExtra[tipo] = dados;
   return dados;
 }
+// Invalida cache de dados em memória para forçar recarga na próxima troca de aba
+function invalidarCacheDados() {
+  dadosRevestimentos = [];
+  dadosSaidas = [];
+  dadosParedes = [];
+  dadosPersonalizar = [];
+  dadosOrcamentos = [];
+  dadosLotes = [];
+  dadosInstalacoes = [];
+}
 function invalidarCacheExtra(tipo) {
   if (tipo) delete _cacheExtra[tipo];
   else Object.keys(_cacheExtra).forEach(k => delete _cacheExtra[k]);
@@ -3145,6 +3155,8 @@ async function apiPost(action, data) {
   const params = new URLSearchParams({ action, dados: JSON.stringify(data) });
   const result = await jsonp(SCRIPT_URL + '?' + params);
   if (result.error) throw new Error(result.error);
+  // Invalidar cache em memória para que a próxima troca de aba busque dados frescos
+  invalidarCacheDados();
   return result.data;
 }
 
@@ -3675,6 +3687,7 @@ async function salvarOrcamentoHistorico({ ap, cliente, empresa, selecoes, data, 
 let dadosOrcamentos = [];
 
 async function loadOrcamentos() {
+  if (dadosOrcamentos.length) { renderOrcamentos(dadosOrcamentos); return; }
   document.getElementById('orcamentos-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
   try {
     const dados = await lerDados();
@@ -3760,10 +3773,11 @@ let chartConclusao = null, chartAmbientes = null, chartStatus = null;
 
 async function loadVisaoGeral() {
   try {
-    const dados = await lerDados();
-    const personalizacoes = dados.personalizar || [];
-    const paredes = dados.paredes || [];
-    const revestimentos = dados.revestimentos || [];
+    const usarCache = dadosParedes.length && dadosPersonalizar.length && dadosRevestimentos.length;
+    const dados = usarCache ? {} : await lerDados();
+    const personalizacoes = usarCache ? dadosPersonalizar : (dados.personalizar || []);
+    const paredes = usarCache ? dadosParedes : (dados.paredes || []);
+    const revestimentos = usarCache ? dadosRevestimentos : (dados.revestimentos || []);
 
     // --- MÉTRICAS ---
     const aps = [...new Set(personalizacoes.map(p => p.ap).filter(Boolean))];
@@ -3890,10 +3904,19 @@ async function loadVisaoGeral() {
 
 
 async function loadEstoque() {
+  if (dadosRevestimentos.length) {
+    dadosEstoque = dadosRevestimentos;
+    renderEstoque(dadosEstoque);
+    if (document.getElementById('painel-ultimas-saidas')?.style.display !== 'none') renderUltimasSaidas();
+    renderStatsEstoque(dadosEstoque);
+    popularFiltroObra(dadosEstoque, 'filtro-estoque-obra');
+    return;
+  }
   document.getElementById('estoque-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
   try {
     const dados = await lerDados();
     dadosEstoque = dados.revestimentos || [];
+    dadosRevestimentos = dadosEstoque;
     renderEstoque(dadosEstoque);
     if (document.getElementById('painel-ultimas-saidas')?.style.display !== 'none') renderUltimasSaidas();
     renderStatsEstoque(dadosEstoque);
@@ -3960,6 +3983,7 @@ function popularFiltroObra(d, selectId) {
 
 // ===================== SAIDAS =====================
 async function loadSaidas() {
+  if (dadosSaidas.length) { renderSaidas(dadosSaidas); popularFiltroLocal(dadosSaidas); return; }
   document.getElementById('saidas-tbody').innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
   try {
     const dados = await lerDados();
@@ -4171,6 +4195,7 @@ async function excluirSaida(id) {
 
 // ===================== PAREDES =====================
 async function loadParedes() {
+  if (dadosParedes.length) { renderParedes(dadosParedes); popularFiltrosParedes(dadosParedes); return; }
   document.getElementById('paredes-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
   try {
     const dados = await lerDados();
@@ -4240,6 +4265,7 @@ async function excluirParede(id) {
 
 // ===================== REVESTIMENTOS =====================
 async function loadRevestimentos() {
+  if (dadosRevestimentos.length) { renderRevestimentos(dadosRevestimentos); popularFiltroObra(dadosRevestimentos, 'filtro-obra'); return; }
   document.getElementById('revestimentos-tbody').innerHTML = '<tr><td colspan="10"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
   try {
     const dados = await lerDados();
@@ -4623,6 +4649,7 @@ async function salvarSelecao() {
 
 // ===================== PERSONALIZAR =====================
 async function loadPersonalizar() {
+  if (dadosPersonalizar.length) { renderPersonalizar(dadosPersonalizar); return; }
   document.getElementById('personalizar-lista').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
   try {
     const dados = await lerDados();
