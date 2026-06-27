@@ -355,7 +355,7 @@ async function salvarMarmoraria() {
 }
 
 // ===================== BANHEIRAS =====================
-let dadosBanheiras = [], dadosBanhCatalogo = [], banhItens = [], banhApAtual = '';
+let dadosBanheiras = [], dadosBanhCatalogo = [], banhItens = [], banhApAtual = '', banhProdutoAtual = null;
 let banhProdutoAtual = null;
 
 async function loadBanheiras() {
@@ -905,13 +905,13 @@ function editarMarmoraria(id) { showToast('Em desenvolvimento', 'success'); }
 
 // ===================== PDF BANHEIRAS =====================
 function gerarPDFBanheira() {
-  // Garantir que banhApAtual está atualizado
   const sel = document.getElementById('banh-ap-select');
   if (sel && sel.value) banhApAtual = sel.value;
-  if (!banhApAtual) { showToast('Selecione um apartamento', 'error'); return; }
-  if (!banhItens.length) { showToast('Adicione pelo menos uma banheira', 'error'); return; }
+  if (!banhApAtual) { showToast('Selecione um apartamento primeiro', 'error'); return; }
+  if (!banhItens || !banhItens.length) { showToast('Clique em "+ Adicionar ao orçamento" antes de gerar o PDF', 'error'); return; }
+  const clienteTexto = sel ? sel.options[sel.selectedIndex]?.text || '' : '';
   const cliente = dadosParedes.find(p => p.apartamento === banhApAtual)?.cliente || 
-    (sel ? sel.options[sel.selectedIndex]?.text.split(' - ')[1] : '—') || '—';
+    clienteTexto.split(' - ').slice(1).join(' - ') || '—';
   _gerarPDFBanheiraInterno(banhApAtual, cliente, banhItens);
 }
 function gerarPDFBanheiraId(id) {
@@ -5376,8 +5376,8 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="fecharModal('modal-calc-banheira')">Fechar</button>
-      <button class="btn btn-secondary" id="banh-btn-salvar" onclick="salvarBanheira()" style="display:none">Salvar em Personalizar</button>
-      <button class="btn btn-primary" id="banh-btn-pdf" onclick="gerarPDFBanheira()" style="display:none">Gerar PDF</button>
+      <button class="btn btn-secondary" id="banh-btn-salvar" onclick="salvarBanheira()">Salvar</button>
+      <button class="btn btn-primary" id="banh-btn-pdf" onclick="gerarPDFBanheira()">Gerar PDF</button>
     </div>
   </div>
 </div>
