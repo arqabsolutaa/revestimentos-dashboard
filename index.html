@@ -497,20 +497,28 @@ function selecionarBanheira() {
   const acabamento = document.getElementById('banh-acabamento').value;
   const sifao = document.getElementById('banh-sifao').value;
   const lado = document.getElementById('banh-lado').value;
-  
+
   if (!modelo || !material || !acabamento || !sifao) {
     document.getElementById('banh-produto-selecionado').style.display = 'none';
+    document.getElementById('banh-btn-adicionar').style.display = 'none';
     return;
   }
-  
+
+  // Verificar se existe variação com lado para esse conjunto
+  const temLado = dadosBanhCatalogo.some(b =>
+    b.modelo === modelo && b.material === material &&
+    b.acabamento === acabamento && b.tipo_sifao === sifao && b.lado
+  );
+  document.getElementById('banh-lado-grupo').style.display = temLado ? 'block' : 'none';
+
   const produto = dadosBanhCatalogo.find(b =>
     b.modelo === modelo && b.material === material &&
     b.acabamento === acabamento && b.tipo_sifao === sifao &&
-    (lado === '' || b.lado === lado || (!b.lado && !lado))
+    (!temLado || b.lado === lado)
   );
-  
+
   banhProdutoAtual = produto || null;
-  
+
   if (produto) {
     document.getElementById('banh-produto-selecionado').style.display = 'block';
     document.getElementById('banh-produto-nome').textContent = produto.nome;
@@ -518,6 +526,7 @@ function selecionarBanheira() {
     document.getElementById('banh-btn-adicionar').style.display = 'block';
   } else {
     document.getElementById('banh-produto-selecionado').style.display = 'none';
+    document.getElementById('banh-btn-adicionar').style.display = temLado && !lado ? 'none' : 'none';
   }
 }
 
@@ -5318,15 +5327,14 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
         </div>
         <div class="form-group" style="margin-top:10px">
           <label class="form-label">Tipo de Sifão</label>
-          <select class="form-control" id="banh-sifao" onchange="filtrarBanheiras()">
+          <select class="form-control" id="banh-sifao" onchange="filtrarBanheiras();selecionarBanheira()">
             <option value="">— Selecione o sifão —</option>
           </select>
         </div>
-        <div class="form-group" style="margin-top:10px">
-          <label class="form-label">Lado</label>
+        <div class="form-group" style="margin-top:10px" id="banh-lado-grupo" style="display:none">
+          <label class="form-label">Lado <span style="font-size:11px;color:var(--text3)">(se aplicável)</span></label>
           <select class="form-control" id="banh-lado" onchange="selecionarBanheira()">
-            <option value="">— Selecione o lado —</option>
-            <option value="">Sem especificação</option>
+            <option value="">— Sem especificação —</option>
             <option value="LADO D">Lado D</option>
             <option value="LADO E">Lado E</option>
           </select>
