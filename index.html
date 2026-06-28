@@ -252,10 +252,13 @@ function renderMarmoraria() {
     }, 0);
     return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
-          <p style="font-size:15px;font-weight:600">${p.cliente||'—'}</p>
-          <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
-          <p style="font-size:12px;color:var(--text3);margin-top:4px">${sel.length} bancada(s)</p>
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <input type="checkbox" class="orcamento-check marm-check" data-id="${p.id}" onchange="atualizarBtnExcluir('marm')" style="margin-top:4px">
+          <div>
+            <p style="font-size:15px;font-weight:600">${p.cliente||'—'}</p>
+            <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
+            <p style="font-size:12px;color:var(--text3);margin-top:4px">${sel.length} bancada(s)</p>
+          </div>
         </div>
         <div style="text-align:right">
           <span style="font-size:13px;font-weight:600;color:#8c8467">${totalM2.toFixed(2)} m²</span>
