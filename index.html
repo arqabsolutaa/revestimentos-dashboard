@@ -114,6 +114,8 @@ async function abrirModalCalcVinilico() {
 }
 
 async function carregarPisosVinilico() {
+  const apVin = document.getElementById('vin-ap-select').value;
+  mostrarCardCliente('vin-cliente-card', apVin, dadosParedes);
   vinApAtual = document.getElementById('vin-ap-select').value;
   if (!vinApAtual) return;
   // Buscar pisos da aba Vinilico_Pisos
@@ -136,8 +138,10 @@ async function carregarPisosVinilico() {
       const key = vinApAtual + '-' + p.local + '-' + (p.id||p.local);
       return `<div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;border:1px solid var(--border)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <p style="font-size:13px;font-weight:600">${p.local}</p>
-          <span style="font-size:12px;color:var(--accent);font-weight:600">${parseFloat(p.m2||0).toFixed(2)} m²</span>
+          <div>
+            <p style="font-size:13px;font-weight:600">${p.local}</p>
+            <p style="font-size:11px;color:var(--text3);margin-top:1px">${parseFloat(p.m2||0).toFixed(2)} m²</p>
+          </div>
         </div>
         <select class="form-control" id="vfs-${key}" onchange="atualizarResumoVin()" style="font-size:12px">
           <option value="">— Selecione o vinílico —</option>
@@ -265,6 +269,8 @@ async function abrirModalCalcMarmoraria() {
 }
 
 async function carregarBancadasMarmoraria() {
+  marmApAtual = document.getElementById('marm-ap-select').value;
+  mostrarCardCliente('marm-cliente-card', marmApAtual, dadosParedes);
   marmApAtual = document.getElementById('marm-ap-select').value;
   if (!marmApAtual) return;
   marmSelecoes = [];
@@ -459,8 +465,23 @@ async function abrirModalCalcBanheira() {
   abrirModal('modal-calc-banheira');
 }
 
+
+function mostrarCardCliente(cardId, ap, dadosParedes) {
+  const card = document.getElementById(cardId);
+  if (!card) return;
+  if (!ap) { card.style.display = 'none'; return; }
+  const p = dadosParedes.find(x => x.apartamento === ap);
+  if (p) {
+    document.getElementById(cardId + '-nome').textContent = p.cliente || '—';
+    document.getElementById(cardId + '-info').textContent = 'Apartamento ' + ap;
+    card.style.display = 'block';
+  } else {
+    card.style.display = 'none';
+  }
+}
 function atualizarClienteBanheira() {
   banhApAtual = document.getElementById('banh-ap-select').value;
+  mostrarCardCliente('banh-cliente-card', banhApAtual, dadosParedes);
 }
 
 function filtrarBanheiras() {
@@ -5302,6 +5323,10 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
           <option value="">— Selecione —</option>
         </select>
       </div>
+      <div id="vin-cliente-card" style="display:none;margin-top:12px;padding:12px 16px;background:var(--accent-bg);border-radius:var(--radius-sm);border:1px solid #b8d4c0">
+          <p style="font-size:13px;font-weight:500;color:var(--accent)" id="vin-cliente-card-nome"></p>
+          <p style="font-size:12px;color:var(--text2)" id="vin-cliente-card-info"></p>
+        </div>
       <div id="vin-pisos-container" style="margin-top:16px;display:none">
         <h3 style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px">Selecione o vinílico para cada ambiente</h3>
         <div id="vin-pisos-lista"></div>
@@ -5330,6 +5355,10 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
           <option value="">— Selecione —</option>
         </select>
       </div>
+      <div id="marm-cliente-card" style="display:none;margin-top:12px;padding:12px 16px;background:var(--accent-bg);border-radius:var(--radius-sm);border:1px solid #b8d4c0">
+          <p style="font-size:13px;font-weight:500;color:var(--accent)" id="marm-cliente-card-nome"></p>
+          <p style="font-size:12px;color:var(--text2)" id="marm-cliente-card-info"></p>
+        </div>
       <div id="marm-bancadas-container" style="margin-top:16px;display:none">
         <h3 style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px">Bancadas e pedras selecionadas</h3>
         <div id="marm-bancadas-lista"></div>
@@ -5359,6 +5388,10 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
           <option value="">— Selecione —</option>
         </select>
       </div>
+      <div id="banh-cliente-card" style="display:none;margin-top:12px;padding:12px 16px;background:var(--accent-bg);border-radius:var(--radius-sm);border:1px solid #b8d4c0">
+          <p style="font-size:13px;font-weight:500;color:var(--accent)" id="banh-cliente-card-nome"></p>
+          <p style="font-size:12px;color:var(--text2)" id="banh-cliente-card-info"></p>
+        </div>
       <div id="banh-container" style="margin-top:16px">
         <h3 style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px">Selecionar banheira</h3>
         <div class="form-group" style="margin-top:10px">
