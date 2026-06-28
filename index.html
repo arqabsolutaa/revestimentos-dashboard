@@ -2893,7 +2893,7 @@ function atualizarDesconto() {
   calcDesconto = pct;
   let totalValor = 0;
   for (const v of Object.values(calcSelecoes)) {
-    const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
+    const rev = v.piso ? dadosRevestimentos.find(r => String(r.id||r.codigo) === String(v.piso)) : null;
     totalValor += getPreco(rev) * (parseFloat(v.m2)||0);
   }
   const descVal = totalValor * (pct / 100);
@@ -2916,8 +2916,8 @@ function selecionarPagamento(btn, tipo) {
 function calcularTotalValor() {
   let total = 0;
   for (const v of Object.values(calcSelecoes)) {
-    const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
-    const perda = rev ? (parseFloat(rev.perda_pct)||10) / 100 : 0.10;
+    const rev = v.piso ? dadosRevestimentos.find(r => String(r.id||r.codigo) === String(v.piso)) : null;
+    const perda = rev ? (parseFloat(rev.perda_pct)||20) / 100 : 0.20;
     const m2comPerda = (parseFloat(v.m2)||0) * (1 + perda);
     total += getPreco(rev) * m2comPerda;
   }
@@ -3703,7 +3703,7 @@ function renderPagamentos(lista) {
     let totalM2 = 0, totalValor = 0;
     for (const v of Object.values(selecoes)) {
       const rev = dadosRevestimentos.find(r => r.id === v.piso || r.codigo === v.piso || String(r.id) === String(v.piso));
-      const perda = rev ? (parseFloat(rev.perda_pct)||10) / 100 : 0.10;
+      const perda = rev ? (parseFloat(rev.perda_pct)||20) / 100 : 0.20;
       const m2 = (parseFloat(v.m2)||0) * (1 + perda);
       totalM2 += m2;
       totalValor += getPreco(rev) * m2;
@@ -4976,8 +4976,8 @@ function atualizarResumo() {
   let total = 0;
   let totalValor = 0;
   Object.values(calcSelecoes).forEach(v => {
-    const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
-    const perda = rev ? (parseFloat(rev.perda_pct)||10) / 100 : 0.10;
+    const rev = v.piso ? dadosRevestimentos.find(r => String(r.id||r.codigo) === String(v.piso)) : null;
+    const perda = rev ? (parseFloat(rev.perda_pct)||20) / 100 : 0.20;
     const m2comPerda = parseFloat(v.m2||0) * (1 + perda);
     total += m2comPerda;
     const preco = getPreco(rev);
@@ -4989,12 +4989,12 @@ function atualizarResumo() {
   const resumo = Object.entries(calcSelecoes).map(([key, v]) => {
     const wi = document.getElementById('wi-' + key);
     const nomePar = wi?.querySelector('.wall-info p')?.textContent || key;
-    const rev = v.piso ? dadosRevestimentos.find(r => (r.id||r.codigo) === v.piso) : null;
+    const rev = v.piso ? dadosRevestimentos.find(r => String(r.id||r.codigo) === String(v.piso)) : null;
     const pisoNome = rev ? rev.nome : (v.piso ? v.piso : 'Sem piso selecionado');
     const semEstoque = rev && (parseFloat(rev.estoque_m2)||0) <= 0;
     const preco = getPreco(rev);
     const m2v = parseFloat(v.m2)||0;
-    const perda = rev ? (parseFloat(rev.perda_pct)||10) / 100 : 0.10;
+    const perda = rev ? (parseFloat(rev.perda_pct)||20) / 100 : 0.20;
     const m2comPerda = m2v * (1 + perda);
     const valorItem = preco * m2comPerda;
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:6px;border-left:3px solid transparent">
@@ -5377,7 +5377,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     const tamanho = rev?.tamanho || '—';
     const lote = rev?.lote || '—';
     const m2base = parseFloat(v.m2) || 0;
-    const perdaPct = rev ? (parseFloat(rev.perda_pct)||10) / 100 : 0.10;
+    const perdaPct = rev ? (parseFloat(rev.perda_pct)||20) / 100 : 0.20;
     const m2total = m2base * (1 + perdaPct);
     const preco = rev ? (TABELA_PRECOS[rev.codigo] || 0) : 0;
     const valorItem = preco * m2total;
