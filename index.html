@@ -4898,23 +4898,26 @@ async function editarPersonalizacao(id) {
   if (!dadosParedes.length) {
     const dados = await lerDados();
     dadosParedes = dados.paredes || [];
+    dadosRevestimentos = dados.revestimentos || [];
   }
 
   // Configurar modo edição ANTES de abrir o modal
   window._editandoPersonalizacaoId = id;
   window._selecoesParaRestaurar = selecoes;
   calcSelecoes = {};
-
-  // Definir apartamento e abrir modal
   calcApAtual = p.ap;
+
+  // Abrir modal
   abrirModal('modal-calculo');
 
-  // Aguardar modal abrir e então popular o select e carregar paredes
-  setTimeout(() => {
-    const sel = document.getElementById('calc-ap-select');
-    if (sel) sel.value = p.ap;
-    selecionarAp();
-  }, 100);
+  // Popular select de apartamentos
+  const aps = [...new Set(dadosParedes.map(x => x.apartamento).filter(Boolean))];
+  const sel = document.getElementById('calc-ap-select');
+  sel.innerHTML = '<option value="">— Escolha um apartamento —</option>' + 
+    aps.map(a => `<option value="${a}"${a === p.ap ? ' selected' : ''}>${a}</option>`).join('');
+
+  // Carregar paredes
+  selecionarAp();
 }
 
 
