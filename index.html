@@ -4406,13 +4406,15 @@ function adicionarItemSaida() {
       <label class="form-label">Quantidade (m²)</label>
       <input class="form-control" id="si-m2-${id}" type="number" step="0.01" placeholder="0.00" min="0" oninput="calcularCaixasPorM2(${id})">
     </div>
-    <div class="form-group" style="margin-top:12px">
-      <label class="form-label">Qtd peças <span style="font-weight:400;color:var(--text3)">(opcional)</span></label>
-      <input class="form-control" id="si-pecas-${id}" type="number" step="1" placeholder="0" min="0" oninput="calcularM2PorPecas(${id})">
-    </div>
-    <div class="form-group" style="margin-top:12px">
-      <label class="form-label">Qtd caixas <span style="font-weight:400;font-size:10px;color:var(--accent)">(calculado automaticamente)</span></label>
-      <input class="form-control" id="si-caixas-${id}" type="number" step="0.5" placeholder="0" readonly style="background:var(--surface2);color:var(--accent);font-weight:600">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+      <div class="form-group">
+        <label class="form-label">Qtd peças <span style="font-weight:400;color:var(--text3);font-size:10px">(opcional)</span></label>
+        <input class="form-control" id="si-pecas-${id}" type="number" step="1" placeholder="0" min="0" oninput="calcularM2PorPecas(${id})">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Qtd caixas <span style="font-weight:400;font-size:10px;color:var(--accent)">(automático)</span></label>
+        <input class="form-control" id="si-caixas-${id}" type="number" step="0.5" placeholder="0" readonly style="background:var(--surface2);color:var(--accent);font-weight:600">
+      </div>
     </div>
   `;
   document.getElementById('saida-itens-lista').appendChild(div);
@@ -4437,16 +4439,17 @@ function calcularCaixasPorM2(id) {
   const rev = getRev(codRev);
   if (!rev) return;
   const m2cx = parseFloat(rev.m2_por_caixa) || 0;
+  const pecasCx = parseFloat(rev.pecas_por_caixa) || 0;
   if (m2cx > 0) {
+    // Caixas = m² ÷ m²_por_caixa (arredonda pra cima)
     const caixas = Math.ceil(m2 / m2cx * 100) / 100;
     const caixasInput = document.getElementById('si-caixas-' + id);
     if (caixasInput) caixasInput.value = caixas.toFixed(2);
-    // Calcular peças
-    const pecasCx = parseFloat(rev.pecas_por_caixa) || 0;
+    // Peças = caixas × pecas_por_caixa (só preenche se vazio)
     if (pecasCx > 0) {
-      const pecas = Math.ceil(m2 / (m2cx / pecasCx));
+      const pecasTotal = Math.ceil(caixas * pecasCx);
       const pecasInput = document.getElementById('si-pecas-' + id);
-      if (pecasInput && !pecasInput.value) pecasInput.value = pecas;
+      if (pecasInput && !pecasInput.value) pecasInput.value = pecasTotal;
     }
   }
 }
