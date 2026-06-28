@@ -5220,12 +5220,13 @@ async function salvarRevExterno() {
     };
     await apiPost('addRevestimento', novoRev);
     // Recarregar revestimentos
+    const resultadoCad = await apiPost('addRevestimento', novoRev);
+    const novoId = String(resultadoCad?.id || codigo);
     const novos = await lerDados();
     if (novos.revestimentos) dadosRevestimentos = novos.revestimentos;
     fecharModal('modal-rev-externo');
     showToast('Revestimento cadastrado! Já disponível para seleção.', 'success');
     // Adicionar novo revestimento em todos os selects e selecionar no alvo
-    const novoId = String(dadosRevestimentos[dadosRevestimentos.length-1]?.id || codigo);
     document.querySelectorAll('.floor-select-row select').forEach(sel => {
       const novoOpt = document.createElement('option');
       novoOpt.value = novoId;
