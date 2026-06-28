@@ -901,7 +901,7 @@
       "perda_pct": "20"
     },
     {
-      "id": "84",
+      "id": "83",
       "codigo": "40142",
       "nome": "Gouache Bleu Jour - Br Bold",
       "imagem": "https://media.portobello.com.br/portobello-shop-211998-e-gouache-gouache-bleu-jour-brilho-15x15-bold-0.png?ims=660x0",
@@ -921,7 +921,7 @@
       "perda_pct": ""
     },
     {
-      "id": "83",
+      "id": "84",
       "codigo": "4091",
       "nome": "Dansk Cement Graphite Nat Ret",
       "imagem": "https://media.portobello.com.br/portobello-shop-205765-e-dansk-dansk-cement-graphite-nat-120x120-ret-0.png?ims=660x0",
@@ -941,7 +941,7 @@
       "perda_pct": "20"
     },
     {
-      "id": "86",
+      "id": "85",
       "codigo": "40911",
       "nome": "Gouache Bleu Nuit  Brilho Bold",
       "imagem": "https://media.portobello.com.br/portobello-shop-211991-e-gouache-gouache-bleu-nuit-brilho-07x15-bold-0.png?ims=660x0",
@@ -952,6 +952,26 @@
       "tamanho": "7,5x15,5",
       "junta": "1,5mm",
       "espessura": "9,0mm",
+      "data_fabricacao": "N / D ",
+      "lote": "N / I ",
+      "obra": "Personalize",
+      "estoque_m2": "0",
+      "preco_m2": "",
+      "criado_em": "",
+      "perda_pct": ""
+    },
+    {
+      "id": "86",
+      "codigo": "40912",
+      "nome": "Sintese Off White Nat Ret",
+      "imagem": "https://media.portobello.com.br/portobello-shop-210408-e-sintese-sintese-off-white-st-nat-120x120-ret-0.png?ims=660x0",
+      "site": "",
+      "m2_por_caixa": "2.87",
+      "pecas_por_caixa": "2",
+      "qtd_caixas": "0",
+      "tamanho": "120x120",
+      "junta": "1,5mm",
+      "espessura": "7,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Personalize",
