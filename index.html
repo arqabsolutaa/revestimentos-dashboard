@@ -3824,7 +3824,7 @@ async function salvarNovaParede() {
 
   try {
     showToast('Salvando parede...', 'info');
-    await api('addParede', {
+    await apiPost('addParede', {
       apartamento: calcApAtual,
       cliente,
       local,
