@@ -33,6 +33,10 @@
 .status-pago{background:#E8F5E9;color:#22863A;border-color:#22863A}
 .status-parcial{background:#E3F2FD;color:#1976D2;border-color:#1976D2}
 .pgto-btn-modal{width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:left;cursor:pointer;font-size:13px;color:var(--text);transition:all 0.15s}.pgto-btn-modal:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.pgto-tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.15s;margin-bottom:-1px}
+.pgto-tab:hover{color:var(--text)}
+.pgto-tab-ativo{color:var(--accent);border-bottom-color:var(--accent)}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -795,6 +799,193 @@ function _pdfTotal(doc, y, totalM2, totalValor, label, cores) {
   }
   doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
   doc.text('Empreendimento Essence Residence · '+label, 8, y+34);
+}
+
+
+// ===================== CONTROLE PAGAMENTOS - SUB-ABAS =====================
+let pgtoTabAtiva = 'revestimentos';
+
+function trocarTabPgto(tab) {
+  pgtoTabAtiva = tab;
+  // Atualizar visual das tabs
+  ['rev','vin','marm','banh'].forEach(t => {
+    const el = document.getElementById('pgto-tab-' + t);
+    if (el) el.classList.remove('pgto-tab-ativo');
+  });
+  const map = {revestimentos:'rev', vinilico:'vin', marmoraria:'marm', banheiras:'banh'};
+  const tabEl = document.getElementById('pgto-tab-' + map[tab]);
+  if (tabEl) tabEl.classList.add('pgto-tab-ativo');
+  // Mostrar/ocultar listas
+  document.getElementById('pgto-lista').style.display = tab === 'revestimentos' ? 'block' : 'none';
+  document.getElementById('pgto-lista-vin').style.display = tab === 'vinilico' ? 'block' : 'none';
+  document.getElementById('pgto-lista-marm').style.display = tab === 'marmoraria' ? 'block' : 'none';
+  document.getElementById('pgto-lista-banh').style.display = tab === 'banheiras' ? 'block' : 'none';
+  loadPagamentosAtivo();
+}
+
+async function loadPagamentosAtivo() {
+  if (!pgtoDesbloqueado) return;
+  if (pgtoTabAtiva === 'revestimentos') {
+    loadPagamentos();
+  } else if (pgtoTabAtiva === 'vinilico') {
+    loadPagamentosVinilico();
+  } else if (pgtoTabAtiva === 'marmoraria') {
+    loadPagamentosMarmoraria();
+  } else if (pgtoTabAtiva === 'banheiras') {
+    loadPagamentosBanheiras();
+  }
+}
+
+// ---- VINILICO ----
+async function loadPagamentosVinilico() {
+  const el = document.getElementById('pgto-lista-vin');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  try {
+    invalidarCacheExtra('vinilico');
+    const d = await lerDadosExtra('vinilico');
+    renderPagamentosVinilico(d.personalizar || []);
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
+  }
+}
+
+function renderPagamentosVinilico(lista) {
+  const el = document.getElementById('pgto-lista-vin');
+  if (!lista.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de vinílico encontrado</strong></div>'; return; }
+  el.innerHTML = lista.map(p => {
+    const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+    let totalValor = 0, totalM2 = 0;
+    for (const v of Object.values(selecoes)) {
+      const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === String(v.produto));
+      const preco = parseFloat(prod?.preco_m2)||0;
+      const m2 = parseFloat(v.m2)||0;
+      totalM2 += m2; totalValor += preco * m2;
+    }
+    const status = p.status_pgto || 'pendente';
+    return _renderCardPgto(p, totalValor, totalM2 + ' m²', status, 'vin', 'vinilico');
+  }).join('');
+}
+
+// ---- MARMORARIA ----
+async function loadPagamentosMarmoraria() {
+  const el = document.getElementById('pgto-lista-marm');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  try {
+    invalidarCacheExtra('marmoraria');
+    const d = await lerDadosExtra('marmoraria');
+    renderPagamentosMarmoraria(d.personalizar || []);
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
+  }
+}
+
+function renderPagamentosMarmoraria(lista) {
+  const el = document.getElementById('pgto-lista-marm');
+  if (!lista.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de marmoraria encontrado</strong></div>'; return; }
+  el.innerHTML = lista.map(p => {
+    const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
+    let totalValor = 0;
+    (Array.isArray(selecoes)?selecoes:[]).forEach(b => { totalValor += parseFloat(b.valor)||0; });
+    const status = p.status_pgto || 'pendente';
+    return _renderCardPgto(p, totalValor, null, status, 'marm', 'marmoraria');
+  }).join('');
+}
+
+// ---- BANHEIRAS ----
+async function loadPagamentosBanheiras() {
+  const el = document.getElementById('pgto-lista-banh');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  try {
+    invalidarCacheExtra('banheiras');
+    const d = await lerDadosExtra('banheiras');
+    renderPagamentosBanheiras(d.personalizar || []);
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
+  }
+}
+
+function renderPagamentosBanheiras(lista) {
+  const el = document.getElementById('pgto-lista-banh');
+  if (!lista.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de banheiras encontrado</strong></div>'; return; }
+  el.innerHTML = lista.map(p => {
+    const itens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
+    let totalValor = 0;
+    (Array.isArray(itens)?itens:[]).forEach(b => { totalValor += parseFloat(b.preco_venda)||0; });
+    const status = p.status_pgto || 'pendente';
+    return _renderCardPgto(p, totalValor, null, status, 'banh', 'banheiras');
+  }).join('');
+}
+
+// ---- CARD GENÉRICO ----
+function _renderCardPgto(p, totalValor, extra, status, prefixo, modulo) {
+  const valorStr = totalValor > 0 ? 'R$ ' + totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2}) : '—';
+  const extraStr = extra ? ' · ' + extra : '';
+  return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    <div>
+      <p style="font-weight:600;font-size:14px">${p.cliente||'—'}</p>
+      <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
+      <p style="font-size:13px;font-weight:500;color:var(--accent2);margin-top:4px">${valorStr}${extraStr}</p>
+      ${p.obs_pgto ? `<p style="font-size:12px;color:var(--text2);margin-top:4px">Obs: ${p.obs_pgto}</p>` : ''}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+      <div style="display:flex;gap:6px">
+        <button class="status-pgto-badge status-pendente" onclick="alterarStatusPgtoModulo('${p.id}','pendente','${modulo}')" style="${status==='pendente'?'':'opacity:0.4'}">Pendente</button>
+        <button class="status-pgto-badge status-parcial" onclick="alterarStatusPgtoModulo('${p.id}','parcial','${modulo}')" style="${status==='parcial'?'':'opacity:0.4'}">Parcial</button>
+        <button class="status-pgto-badge status-pago" onclick="alterarStatusPgtoModulo('${p.id}','pago','${modulo}')" style="${status==='pago'?'':'opacity:0.4'}">Pago</button>
+      </div>
+      <input class="form-control" placeholder="Observação" style="font-size:11px;padding:4px 8px;width:220px" value="${p.obs_pgto||''}" onblur="salvarObsPgtoModulo('${p.id}', this.value, '${modulo}')">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-secondary" onclick="gerarPDFModulo('${p.id}','${modulo}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
+        ${p.comprovante_url 
+          ? `<a href="${p.comprovante_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px;text-decoration:none">📎 Ver comprovante</a>`
+          : `<button class="btn btn-secondary" onclick="document.getElementById('file-comp-${prefixo}-${p.id}').click()" style="font-size:11px;padding:4px 10px">📎 Anexar comprovante</button>`
+        }
+        <input type="file" id="file-comp-${prefixo}-${p.id}" accept="image/*,.pdf" style="display:none" onchange="uploadComprovanteModulo('${p.id}', this, '${modulo}')">
+      </div>
+    </div>
+  </div>`;
+}
+
+async function alterarStatusPgtoModulo(id, status, modulo) {
+  try {
+    await apiPost('updateStatusPgtoExtra', { id, status, modulo });
+    invalidarCacheExtra(modulo);
+    loadPagamentosAtivo();
+    showToast('Status atualizado!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function salvarObsPgtoModulo(id, obs, modulo) {
+  try {
+    await apiPost('updateObsPgtoExtra', { id, obs, modulo });
+    invalidarCacheExtra(modulo);
+    showToast('Observação salva!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function uploadComprovanteModulo(id, inputEl, modulo) {
+  const file = inputEl.files[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { showToast('Arquivo muito grande (máx 10MB)', 'error'); return; }
+  showToast('Enviando comprovante...', 'success');
+  try {
+    const base64data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    const result = await apiPost('uploadComprovanteExtra', { id, filename: file.name, mimeType: file.type, base64data, modulo });
+    invalidarCacheExtra(modulo);
+    loadPagamentosAtivo();
+    showToast('Comprovante anexado!', 'success');
+  } catch(e) { showToast('Erro ao enviar: ' + e.message, 'error'); }
+}
+
+function gerarPDFModulo(id, modulo) {
+  if (modulo === 'vinilico') gerarPDFVinilicoId(id);
+  else if (modulo === 'marmoraria') gerarPDFMarmorariaId(id);
+  else if (modulo === 'banheiras') gerarPDFBanheiraId(id);
 }
 
 // ===================== PDF VINILICO =====================
@@ -1934,15 +2125,25 @@ body.mobile-mode #main{padding-bottom:72px}
           <p>Gerencie os pagamentos dos clientes</p>
         </div>
         <div class="header-actions">
-          <button class="btn btn-secondary" onclick="loadPagamentos()">
+          <button class="btn btn-secondary" onclick="loadPagamentosAtivo()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
             Atualizar
           </button>
           <button class="btn btn-secondary" onclick="sairControlePgto()" style="margin-left:4px">Sair</button>
         </div>
       </div>
+      <!-- Sub-abas -->
+      <div style="padding:0 24px;border-bottom:1px solid var(--border);display:flex;gap:4px">
+        <button id="pgto-tab-rev" class="pgto-tab pgto-tab-ativo" onclick="trocarTabPgto('revestimentos')">🪨 Revestimentos</button>
+        <button id="pgto-tab-vin" class="pgto-tab" onclick="trocarTabPgto('vinilico')">🪵 Vinílico</button>
+        <button id="pgto-tab-marm" class="pgto-tab" onclick="trocarTabPgto('marmoraria')">🏛️ Marmoraria</button>
+        <button id="pgto-tab-banh" class="pgto-tab" onclick="trocarTabPgto('banheiras')">🛁 Banheiras</button>
+      </div>
       <div class="page-content">
         <div id="pgto-lista"></div>
+        <div id="pgto-lista-vin" style="display:none"></div>
+        <div id="pgto-lista-marm" style="display:none"></div>
+        <div id="pgto-lista-banh" style="display:none"></div>
       </div>
     </div>
   </div>
