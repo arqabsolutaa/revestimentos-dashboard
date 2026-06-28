@@ -146,7 +146,8 @@ async function carregarPisosVinilico() {
   } else {
     const opcoes = dadosViniProdutos.map(r => {
       const est = parseFloat(r.estoque_m2)||0;
-      const cor = est <= 0 ? 'color:#bbb' : est <= 100 ? 'color:#c4a35a' : '';
+      const isExterno = (r.obs||'').toLowerCase().includes('externo');
+      const cor = (!isExterno && est <= 0) ? 'color:#bbb' : (!isExterno && est <= 100) ? 'color:#c4a35a' : '';
       return `<option value="${r.id||r.codigo}" style="${cor}">${r.nome} [${r.tamanho||''}] - R$ ${parseFloat(r.preco_m2||0).toFixed(2)}/m²</option>`;
     }).join('');
     
@@ -4456,7 +4457,8 @@ function adicionarItemSaida() {
         <option value="">— Selecione o revestimento —</option>
         ${opcoes.map(r => {
           const est = parseFloat(r.estoque_m2)||0;
-          const cor = est <= 0 ? 'color:#bbb' : est <= 100 ? 'color:#c4a35a' : '';
+          const isExterno = (r.obs||'').toLowerCase().includes('externo');
+          const cor = (!isExterno && est <= 0) ? 'color:#bbb' : (!isExterno && est <= 100) ? 'color:#c4a35a' : '';
           return `<option value="${r.codigo||r.id}" style="${cor}">${r.nome}${r.tamanho ? ' · '+r.tamanho : ''}</option>`;
         }).join('')}
       </select>
@@ -4911,8 +4913,9 @@ function selecionarAp() {
       if (selPreVal) { calcSelecoes[key] = { m2: parseFloat(m2), piso: pisoPre }; }
       const opcoesRev = dadosRevestimentos.map(r => {
         const estoque = parseFloat(r.estoque_m2) || 0;
-        const semEstoque = estoque <= 0;
-        const estoqueBaixo = estoque > 0 && estoque <= 100;
+        const isExterno = (r.obs||'').toLowerCase().includes('externo');
+        const semEstoque = !isExterno && estoque <= 0;
+        const estoqueBaixo = !isExterno && estoque > 0 && estoque <= 100;
         const styleOpt = semEstoque ? 'color:#bbb' : estoqueBaixo ? 'color:#c4a35a' : '';
         const selected = (String(r.id||r.codigo) === String(pisoPre)) ? 'selected' : '';
         return `<option value="${r.id||r.codigo}" style="${styleOpt}" ${selected}>${r.nome} [${r.tamanho||''}]</option>`;
