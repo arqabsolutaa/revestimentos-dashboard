@@ -34,9 +34,12 @@
 .status-parcial{background:#E3F2FD;color:#1976D2;border-color:#1976D2}
 .pgto-btn-modal{width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:left;cursor:pointer;font-size:13px;color:var(--text);transition:all 0.15s}.pgto-btn-modal:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-.pgto-tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.15s;margin-bottom:-1px}
+.pgto-tab{padding:10px 20px;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;margin-bottom:-1px;font-family:"Cormorant Garamond",serif}
 .pgto-tab:hover{color:var(--text)}
 .pgto-tab-ativo{color:var(--accent);border-bottom-color:var(--accent)}
+
+.orcamento-check{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+.excluir-selecionados-btn{display:none;font-size:12px;padding:5px 12px}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -62,7 +65,12 @@ function renderVinilico() {
     el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de vinílico encontrado</strong></div>';
     return;
   }
-  el.innerHTML = dadosVinilico.map(p => {
+  el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer">
+      <input type="checkbox" class="orcamento-check" onchange="toggleSelecionarTodos('vin',this)"> Selecionar todos
+    </label>
+    <button class="btn btn-danger excluir-selecionados-btn" id="excluir-vin-btn" onclick="excluirSelecionadosModulo('vinilico','vin')">Excluir selecionados</button>
+  </div>` + dadosVinilico.map(p => {
     const sel = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
     let totalM2 = 0, totalValor = 0;
     for (const v of Object.values(sel)) {
@@ -72,22 +80,26 @@ function renderVinilico() {
     }
     const statusCor = p.status === 'confirmado' ? '#2d6a4f' : '#b08040';
     const statusLabel = p.status === 'confirmado' ? '✓ Entregue' : 'PENDENTE';
-    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
-          <p style="font-size:15px;font-weight:600">${p.cliente||'—'}</p>
-          <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
-          <p style="font-size:12px;color:var(--text3);margin-top:4px">${Object.keys(sel).length} ambiente(s)</p>
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:8px">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <input type="checkbox" class="orcamento-check vin-check" data-id="${p.id}" onchange="atualizarBtnExcluir('vin')">
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <p style="font-size:15px;font-weight:600">${p.cliente||'—'}</p>
+              <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
+              <p style="font-size:12px;color:var(--text3);margin-top:4px">${Object.keys(sel).length} ambiente(s)</p>
+            </div>
+            <div style="text-align:right">
+              <span style="font-size:13px;font-weight:600;color:#8c8467">${totalM2.toFixed(2)} m²</span>
+              ${totalValor > 0 ? `<p style="font-size:12px;color:var(--accent)">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})}</p>` : ''}
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;background:${statusCor}22;color:${statusCor}">${statusLabel}</span>
+            <button class="btn btn-secondary" onclick="gerarPDFVinilicoId('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
+          </div>
         </div>
-        <div style="text-align:right">
-          <span style="font-size:13px;font-weight:600;color:#8c8467">${totalM2.toFixed(2)} m²</span>
-          ${totalValor > 0 ? `<p style="font-size:12px;color:var(--accent)">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})}</p>` : ''}
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        <span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;background:${statusCor}22;color:${statusCor}">${statusLabel}</span>
-        <button class="btn btn-secondary" onclick="gerarPDFVinilicoId('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
-        <button class="btn btn-secondary" onclick="editarVinilico('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
       </div>
     </div>`;
   }).join('');
@@ -225,6 +237,12 @@ function renderMarmoraria() {
     el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de marmoraria encontrado</strong></div>';
     return;
   }
+  const cabecalho = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer">
+      <input type="checkbox" class="orcamento-check" onchange="toggleSelecionarTodos('marm',this)"> Selecionar todos
+    </label>
+    <button class="btn btn-danger excluir-selecionados-btn" id="excluir-marm-btn" onclick="excluirSelecionadosModulo('marmoraria','marm')">Excluir selecionados</button>
+  </div>`;
   el.innerHTML = dadosMarmoraria.map(p => {
     const sel = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
     const totalM2 = sel.reduce((a, v) => a + (parseFloat(v.m2)||0), 0);
@@ -386,11 +404,20 @@ function renderBanheiras() {
     el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de banheira encontrado</strong></div>';
     return;
   }
-  el.innerHTML = dadosBanheiras.map(p => {
+  const cabecalhoBanh = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer">
+      <input type="checkbox" class="orcamento-check" onchange="toggleSelecionarTodos('banh',this)"> Selecionar todos
+    </label>
+    <button class="btn btn-danger excluir-selecionados-btn" id="excluir-banh-btn" onclick="excluirSelecionadosModulo('banheiras','banh')">Excluir selecionados</button>
+  </div>`;
+  el.innerHTML = cabecalhoBanh + dadosBanheiras.map(p => {
     const itens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
     const total = itens.reduce((a, v) => a + (parseFloat(v.preco_venda)||0), 0);
-    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:8px">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <input type="checkbox" class="orcamento-check banh-check" data-id="${p.id}" onchange="atualizarBtnExcluir('banh')">
+        <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
           <p style="font-size:15px;font-weight:600">${p.cliente||'—'}</p>
           <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
@@ -402,7 +429,8 @@ function renderBanheiras() {
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
         <button class="btn btn-secondary" onclick="gerarPDFBanheiraId('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
-        <button class="btn btn-secondary" onclick="editarBanheira('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
+      </div>
+      </div>
       </div>
     </div>`;
   }).join('');
@@ -801,6 +829,38 @@ function _pdfTotal(doc, y, totalM2, totalValor, label, cores) {
   doc.text('Empreendimento Essence Residence · '+label, 8, y+34);
 }
 
+
+
+// ===================== CHECKBOXES E EXCLUSÃO =====================
+function toggleSelecionarTodos(prefixo, checkMaster) {
+  document.querySelectorAll('.' + prefixo + '-check').forEach(cb => {
+    cb.checked = checkMaster.checked;
+  });
+  atualizarBtnExcluir(prefixo);
+}
+
+function atualizarBtnExcluir(prefixo) {
+  const selecionados = document.querySelectorAll('.' + prefixo + '-check:checked').length;
+  const btn = document.getElementById('excluir-' + prefixo + '-btn');
+  if (btn) btn.style.display = selecionados > 0 ? 'inline-flex' : 'none';
+}
+
+async function excluirSelecionadosModulo(modulo, prefixo) {
+  const ids = [...document.querySelectorAll('.' + prefixo + '-check:checked')].map(cb => cb.dataset.id);
+  if (!ids.length) return;
+  if (!confirm('Excluir ' + ids.length + ' orçamento(s)?')) return;
+  showToast('Excluindo...', 'success');
+  try {
+    for (const id of ids) {
+      await apiPost('deletePersonalizarExtra', { id, modulo });
+    }
+    invalidarCacheExtra(modulo);
+    if (modulo === 'vinilico') { const d = await lerDadosExtra('vinilico'); dadosVinilico = d.personalizar||[]; renderVinilico(); }
+    else if (modulo === 'marmoraria') { const d = await lerDadosExtra('marmoraria'); dadosMarmoraria = d.personalizar||[]; renderMarmoraria(); }
+    else if (modulo === 'banheiras') { const d = await lerDadosExtra('banheiras'); dadosBanheiras = d.personalizar||[]; renderBanheiras(); }
+    showToast('Excluído com sucesso!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
 
 // ===================== CONTROLE PAGAMENTOS - SUB-ABAS =====================
 let pgtoTabAtiva = 'revestimentos';
@@ -2134,10 +2194,10 @@ body.mobile-mode #main{padding-bottom:72px}
       </div>
       <!-- Sub-abas -->
       <div style="padding:0 24px;border-bottom:1px solid var(--border);display:flex;gap:4px">
-        <button id="pgto-tab-rev" class="pgto-tab pgto-tab-ativo" onclick="trocarTabPgto('revestimentos')">🪨 Revestimentos</button>
-        <button id="pgto-tab-vin" class="pgto-tab" onclick="trocarTabPgto('vinilico')">🪵 Vinílico</button>
-        <button id="pgto-tab-marm" class="pgto-tab" onclick="trocarTabPgto('marmoraria')">🏛️ Marmoraria</button>
-        <button id="pgto-tab-banh" class="pgto-tab" onclick="trocarTabPgto('banheiras')">🛁 Banheiras</button>
+        <button id="pgto-tab-rev" class="pgto-tab pgto-tab-ativo" onclick="trocarTabPgto('revestimentos')">Revestimentos</button>
+        <button id="pgto-tab-vin" class="pgto-tab" onclick="trocarTabPgto('vinilico')">Vinílico</button>
+        <button id="pgto-tab-marm" class="pgto-tab" onclick="trocarTabPgto('marmoraria')">Marmoraria</button>
+        <button id="pgto-tab-banh" class="pgto-tab" onclick="trocarTabPgto('banheiras')">Banheiras</button>
       </div>
       <div class="page-content">
         <div id="pgto-lista"></div>
