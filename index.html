@@ -3712,13 +3712,17 @@ function renderPagamentos(lista) {
   }
   document.getElementById('pgto-lista').innerHTML = lista.map(p => {
     const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
-    let totalM2 = 0, totalValor = 0;
-    for (const v of Object.values(selecoes)) {
-      const rev = dadosRevestimentos.find(r => r.id === v.piso || r.codigo === v.piso || String(r.id) === String(v.piso));
-      const perda = rev ? (parseFloat(rev.perda_pct) > 0 ? parseFloat(rev.perda_pct) : 20) / 100 : 0.20;
-      const m2 = (parseFloat(v.m2)||0) * (1 + perda);
-      totalM2 += m2;
-      totalValor += getPreco(rev) * m2;
+    let totalM2 = parseFloat(p.total_m2) || 0;
+    let totalValor = parseFloat(p.total_valor) || 0;
+    if (!totalM2 || !totalValor) {
+      totalM2 = 0; totalValor = 0;
+      for (const v of Object.values(selecoes)) {
+        const rev = dadosRevestimentos.find(r => r.id === v.piso || r.codigo === v.piso || String(r.id) === String(v.piso));
+        const perda = rev ? (parseFloat(rev.perda_pct) > 0 ? parseFloat(rev.perda_pct) : 20) / 100 : 0.20;
+        const m2 = (parseFloat(v.m2)||0) * (1 + perda);
+        totalM2 += m2;
+        totalValor += getPreco(rev) * m2;
+      }
     }
     const status = p.status_pgto || 'pendente';
     return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
@@ -4998,6 +5002,8 @@ function atualizarResumo() {
     const preco = getPreco(rev);
     totalValor += preco * m2comPerda;
   });
+  window._calcTotalM2 = total;
+  window._calcTotalValor = totalValor;
   document.getElementById('calc-total-val').textContent = total.toFixed(2) + ' m²';
   const totalValEl = document.getElementById('calc-total-valor');
   if (totalValEl) totalValEl.textContent = 'R$ ' + totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2});
@@ -5041,7 +5047,7 @@ async function salvarSelecao() {
   const paredesAp = dadosParedes.filter(p => p.apartamento === calcApAtual);
   const cliente = paredesAp[0]?.cliente || '—';
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA) || 'Empresa';
-  const dados = { ap: calcApAtual, cliente, empresa, data: new Date().toLocaleDateString('pt-BR'), selecoes: calcSelecoes };
+  const dados = { ap: calcApAtual, cliente, empresa, data: new Date().toLocaleDateString('pt-BR'), selecoes: calcSelecoes, total_m2: window._calcTotalM2 || 0, total_valor: window._calcTotalValor || 0 };
   showToast('Salvando...', 'success');
   try {
     if (window._editandoPersonalizacaoId) {
