@@ -2720,6 +2720,7 @@ body.mobile-mode #main{padding-bottom:72px}
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="fecharModal('modal-calculo')">Fechar</button>
       <button class="btn btn-secondary" id="calc-btn-salvar" onclick="salvarSelecao()" style="display:none">Salvar em Personalizar</button>
+      <button class="btn btn-secondary" id="calc-btn-salvar-versao" onclick="salvarNovaVersao()" style="display:none">Salvar como nova versão</button>
       <button class="btn btn-primary" id="calc-btn-pdf" onclick="gerarPDF()" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Gerar PDF
@@ -4850,6 +4851,7 @@ async function abrirCalculo() {
   document.getElementById('calc-step2').style.display = 'none';
   document.getElementById('calc-step3').style.display = 'none';
   document.getElementById('calc-btn-salvar').style.display = 'none';
+  const btnVersao = document.getElementById('calc-btn-salvar-versao'); if (btnVersao) btnVersao.style.display = 'none';
   document.getElementById('calc-btn-pdf').style.display = 'none';
   document.getElementById('calc-cliente-info').style.display = 'none';
 
@@ -5037,11 +5039,32 @@ function atualizarResumo() {
   document.getElementById('calc-resumo').innerHTML = resumo || '<p style="font-size:13px;color:var(--text3)">Selecione as paredes acima</p>';
   const temSelecao = Object.keys(calcSelecoes).length > 0;
   document.getElementById('calc-btn-salvar').style.display = temSelecao ? 'inline-flex' : 'none';
+  const btnV = document.getElementById('calc-btn-salvar-versao'); if (btnV) btnV.style.display = temSelecao ? 'inline-flex' : 'none';
   document.getElementById('calc-btn-pdf').style.display = temSelecao ? 'inline-flex' : 'none';
   const pgtoBox = document.getElementById('calc-desconto-box');
   if (pgtoBox) pgtoBox.style.display = temSelecao ? 'block' : 'none';
   if (temSelecao) { atualizarParcela(); atualizarDesconto(); }
 }
+async function salvarNovaVersao() {
+  if (!calcApAtual) return;
+  const obs = prompt('Nome desta versão (ex: "sem banheiros", "v2"):');
+  if (obs === null) return; // cancelou
+  const paredesAp = dadosParedes.filter(p => p.apartamento === calcApAtual);
+  const cliente = (paredesAp[0]?.cliente || '—') + (obs ? ' (' + obs + ')' : ' (nova versão)');
+  const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA) || 'Empresa';
+  const dados = { ap: calcApAtual, cliente, empresa, data: new Date().toLocaleDateString('pt-BR'), selecoes: calcSelecoes, total_m2: window._calcTotalM2 || 0, total_valor: window._calcTotalValor || 0 };
+  showToast('Salvando nova versão...', 'success');
+  try {
+    await apiPost('addPersonalizar', dados);
+    showToast('Nova versão salva!', 'success');
+    const novos = await lerDados();
+    if (novos) dadosPersonalizar = novos.personalizar || dadosPersonalizar;
+    renderPersonalizar(dadosPersonalizar);
+  } catch(e) {
+    showToast('Erro ao salvar: ' + e.message, 'error');
+  }
+}
+
 async function salvarSelecao() {
   if (!calcApAtual) return;
   const paredesAp = dadosParedes.filter(p => p.apartamento === calcApAtual);
