@@ -76,7 +76,7 @@ function renderVinilico() {
     for (const v of Object.values(sel)) {
       const prod = dadosViniProdutos?.find(r => String(r.id||r.codigo) === String(v.produto)) || dadosRevestimentos?.find(r => String(r.id||r.codigo) === String(v.produto));
       totalM2 += parseFloat(v.m2)||0;
-      totalValor += (parseFloat(prod?.preco_m2)||0) * (parseFloat(v.m2)||0);
+      totalValor += (precoM2(prod?.preco_m2)||0) * (parseFloat(v.m2)||0);
     }
     const statusCor = p.status === 'confirmado' ? '#2d6a4f' : '#b08040';
     const statusLabel = p.status === 'confirmado' ? '✓ Entregue' : 'PENDENTE';
@@ -148,7 +148,7 @@ async function carregarPisosVinilico() {
       const est = parseFloat(r.estoque_m2)||0;
       const isExterno = (r.obs||'').toLowerCase().includes('externo');
       const cor = (!isExterno && est <= 0) ? 'color:#bbb' : (!isExterno && est <= 100) ? 'color:#c4a35a' : '';
-      return `<option value="${r.id||r.codigo}" style="${cor}">${r.nome} [${r.tamanho||''}] - R$ ${parseFloat(r.preco_m2||0).toFixed(2)}/m²</option>`;
+      return `<option value="${r.id||r.codigo}" style="${cor}">${r.nome} [${r.tamanho||''}] - R$ ${precoM2(r.preco_m2||0).toFixed(2)}/m²</option>`;
     }).join('');
     
     container.innerHTML = dadosPisosVin.map(p => {
@@ -183,7 +183,7 @@ function atualizarResumoVin() {
     if (sel && sel.value) {
       const m2 = parseFloat(p.m2)||0;
       const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === sel.value) || dadosRevestimentos?.find(r => String(r.id||r.codigo) === sel.value);
-      const preco = parseFloat(prod?.preco_m2)||0;
+      const preco = precoM2(prod?.preco_m2)||0;
       totalM2 += m2;
       totalValor += preco * m2;
       vinSelecoes[key] = { m2, produto: sel.value };
@@ -249,7 +249,7 @@ function renderMarmoraria() {
     const totalM2 = sel.reduce((a, v) => a + (parseFloat(v.m2)||0), 0);
     const totalValor = sel.reduce((a, v) => {
       const ped = dadosMarmCatalogo.find(r => String(r.id) === String(v.pedra));
-      return a + (parseFloat(ped?.preco_m2)||0) * (parseFloat(v.m2)||0);
+      return a + (precoM2(ped?.preco_m2)||0) * (parseFloat(v.m2)||0);
     }, 0);
     return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
@@ -358,7 +358,7 @@ function atualizarResumoMarm() {
     const m2 = parseFloat(b.m2)||0;
     totalM2 += m2;
     const ped = dadosMarmCatalogo.find(p => String(p.id) === String(b.pedra));
-    if (ped && parseFloat(ped.preco_m2) > 0) totalValor += parseFloat(ped.preco_m2) * m2;
+    if (ped && precoM2(ped.preco_m2) > 0) totalValor += precoM2(ped.preco_m2) * m2;
     else if (ped && ped.categoria === 'Absoluta') temOrcamento = true;
   });
   const resumo = document.getElementById('marm-resumo');
@@ -921,7 +921,7 @@ function renderPagamentosVinilico(lista) {
     let totalValor = 0, totalM2 = 0;
     for (const v of Object.values(selecoes)) {
       const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === String(v.produto)) || dadosRevestimentos?.find(r => String(r.id||r.codigo) === String(v.produto));
-      const preco = parseFloat(prod?.preco_m2)||0;
+      const preco = precoM2(prod?.preco_m2)||0;
       const m2 = parseFloat(v.m2)||0;
       totalM2 += m2; totalValor += preco * m2;
     }
@@ -1090,7 +1090,7 @@ async function _gerarPDFVinilicoInterno(ap, cliente, selecoes) {
     if (!v.produto) continue;
     const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === String(v.produto)) || dadosRevestimentos?.find(r => String(r.id||r.codigo) === String(v.produto));
     const nome = prod ? prod.nome : String(v.produto);
-    const preco = parseFloat(prod?.preco_m2)||0;
+    const preco = precoM2(prod?.preco_m2)||0;
     const m2 = parseFloat(v.m2)||0;
     const m2Com = m2 * 1.2;
     const valor = preco * m2Com;
@@ -1157,7 +1157,7 @@ async function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
     const ped = dadosMarmCatalogo.find(p => String(p.id) === String(b.pedra));
     const nomePedra = ped ? ped.nome : (b.pedra||'Não definida');
     const m2 = parseFloat(b.m2)||0;
-    const preco = parseFloat(ped?.preco_m2)||0;
+    const preco = precoM2(ped?.preco_m2)||0;
     const valor = preco * m2;
     totalM2 += m2; totalValor += valor;
     if (ped?.categoria === 'Absoluta') temOrcamento = true;
@@ -2982,6 +2982,12 @@ function setMode(mode) {
 // ===================== LOTES POR DATA =====================
 let dadosLotes = [];
 
+
+function precoM2(val) {
+  if (!val) return 0;
+  const s = String(val).replace(/R\$\s*/g,'').replace(/\s/g,'').replace(',','.').trim();
+  return parseFloat(s)||0;
+}
 
 function formatarDataDisplay(val) {
   if (!val) return '';
