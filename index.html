@@ -147,7 +147,8 @@ async function carregarPisosVinilico() {
     const opcoes = dadosViniProdutos.map(r => {
       const est = parseFloat(r.estoque_m2)||0;
       const isExterno = (r.obs||'').toLowerCase().includes('externo');
-      const cor = (!isExterno && est <= 0) ? 'color:#bbb' : (!isExterno && est <= 100) ? 'color:#c4a35a' : '';
+      const temPreco = precoM2(r.preco_m2) > 0;
+      const cor = (!isExterno && !temPreco && est <= 0) ? 'color:#bbb' : (!isExterno && !temPreco && est <= 100) ? 'color:#c4a35a' : '';
       return `<option value="${r.id||r.codigo}" style="${cor}">${r.nome} [${r.tamanho||''}] - R$ ${precoM2(r.preco_m2||0).toFixed(2)}/m²</option>`;
     }).join('');
     
@@ -4924,8 +4925,9 @@ function selecionarAp() {
       const opcoesRev = dadosRevestimentos.map(r => {
         const estoque = parseFloat(r.estoque_m2) || 0;
         const isExterno = (r.obs||'').toLowerCase().includes('externo');
-        const semEstoque = !isExterno && estoque <= 0;
-        const estoqueBaixo = !isExterno && estoque > 0 && estoque <= 100;
+        const temPreco = precoM2(r.preco_m2) > 0;
+        const semEstoque = !isExterno && !temPreco && estoque <= 0;
+        const estoqueBaixo = !isExterno && !temPreco && estoque > 0 && estoque <= 100;
         const styleOpt = semEstoque ? 'color:#bbb' : estoqueBaixo ? 'color:#c4a35a' : '';
         const selected = (String(r.id||r.codigo) === String(pisoPre)) ? 'selected' : '';
         return `<option value="${r.id||r.codigo}" style="${styleOpt}" ${selected}>${r.nome} [${r.tamanho||''}]</option>`;
