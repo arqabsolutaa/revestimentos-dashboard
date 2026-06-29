@@ -918,7 +918,7 @@
       "estoque_m2": "0",
       "preco_m2": "98.5",
       "criado_em": "",
-      "perda_pct": ""
+      "perda_pct": "20"
     },
     {
       "id": "84",
@@ -958,7 +958,7 @@
       "estoque_m2": "0",
       "preco_m2": "98.5",
       "criado_em": "",
-      "perda_pct": ""
+      "perda_pct": "20"
     },
     {
       "id": "86",
@@ -978,7 +978,7 @@
       "estoque_m2": "0",
       "preco_m2": "156",
       "criado_em": "",
-      "perda_pct": ""
+      "perda_pct": "20"
     }
   ],
   "paredes": [
