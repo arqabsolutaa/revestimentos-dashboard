@@ -2987,8 +2987,8 @@ let dadosLotes = [];
 function precoM2(val) {
   if (!val) return 0;
   let s = String(val).replace(/R\$\s*/g,'').trim();
-  // Formato BR: 1.234,56 -> remover ponto de milhar, trocar vírgula por ponto
-  if (s.indexOf(',') > s.indexOf('.') || (s.includes(',') && !s.includes('.'))) {
+  // Se tem vírgula como separador decimal (formato BR): 156,00 ou 1.234,56
+  if (s.includes(',')) {
     s = s.replace(/\./g,'').replace(',','.');
   }
   return parseFloat(s)||0;
