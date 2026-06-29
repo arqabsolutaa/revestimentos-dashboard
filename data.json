@@ -21650,7 +21650,9 @@
       "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "pago",
       "obs_pgto": "Pagamento foi efetuado na conta do granito",
-      "comprovante_url": "https://drive.google.com/file/d/1_qXTG9RkFab4zfitjNWxNFV7XU9wcSHt/view?usp=drivesdk"
+      "comprovante_url": "https://drive.google.com/file/d/1_qXTG9RkFab4zfitjNWxNFV7XU9wcSHt/view?usp=drivesdk",
+      "total_m2": "",
+      "total_valor": ""
     },
     {
       "id": "id_1781789858937_4totb",
@@ -21663,7 +21665,9 @@
       "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "",
       "obs_pgto": "",
-      "comprovante_url": ""
+      "comprovante_url": "",
+      "total_m2": "",
+      "total_valor": ""
     },
     {
       "id": "id_1781876001668_g692d",
@@ -21676,7 +21680,9 @@
       "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "",
       "obs_pgto": "",
-      "comprovante_url": ""
+      "comprovante_url": "",
+      "total_m2": "",
+      "total_valor": ""
     },
     {
       "id": "id_1782135227820_y8prm",
@@ -21689,7 +21695,9 @@
       "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "",
       "obs_pgto": "",
-      "comprovante_url": ""
+      "comprovante_url": "",
+      "total_m2": "",
+      "total_valor": ""
     },
     {
       "id": "id_1782157710207_2lzyv",
@@ -21702,7 +21710,9 @@
       "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "",
       "obs_pgto": "",
-      "comprovante_url": ""
+      "comprovante_url": "",
+      "total_m2": "",
+      "total_valor": ""
     },
     {
       "id": "id_1782312642958_g0v4v",
@@ -21715,7 +21725,9 @@
       "criado_em": "Wed Jun 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "",
       "obs_pgto": "",
-      "comprovante_url": ""
+      "comprovante_url": "",
+      "total_m2": "",
+      "total_valor": ""
     },
     {
       "id": "id_1782321305054_ekaae",
@@ -21728,7 +21740,9 @@
       "criado_em": "Wed Jun 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "",
       "obs_pgto": "",
-      "comprovante_url": ""
+      "comprovante_url": "",
+      "total_m2": "",
+      "total_valor": ""
     },
     {
       "id": "id_1782408341525_gsdzf",
@@ -21741,7 +21755,9 @@
       "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "",
       "obs_pgto": "",
-      "comprovante_url": ""
+      "comprovante_url": "",
+      "total_m2": "",
+      "total_valor": ""
     },
     {
       "id": "id_1782426976430_bb3rw",
@@ -21754,7 +21770,9 @@
       "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "",
       "obs_pgto": "",
-      "comprovante_url": ""
+      "comprovante_url": "",
+      "total_m2": "",
+      "total_valor": ""
     }
   ],
   "orcamentos": [
