@@ -2857,7 +2857,7 @@ const TABELA_PRECOS = {
 
 function getPreco(rev) {
   if (!rev) return 0;
-  return TABELA_PRECOS[rev.codigo] || 0;
+  return TABELA_PRECOS[rev.codigo] || precoM2(rev.preco_m2) || 0;
 }
 
 // ===================== INIT =====================
@@ -4726,7 +4726,7 @@ async function confirmarPgtoPDF() {
 function abrirDetalheRevestimento(idOuCodigo) {
   const r = dadosRevestimentos.find(x => (x.id||x.codigo) === idOuCodigo);
   if (!r) return;
-  const preco = TABELA_PRECOS[r.codigo] || 0;
+  const preco = TABELA_PRECOS[r.codigo] || precoM2(r.preco_m2) || 0;
   const estoque = parseFloat(r.estoque_m2)||0;
   const estoqueColor = estoque <= 0 ? 'var(--danger)' : estoque < 10 ? 'var(--warn)' : 'var(--accent2)';
   document.getElementById('detalhe-rev-content').innerHTML = `
@@ -5394,7 +5394,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     const m2base = parseFloat(v.m2) || 0;
     const perdaPct = rev ? (parseFloat(rev.perda_pct) > 0 ? parseFloat(rev.perda_pct) : 20) / 100 : 0.20;
     const m2total = m2base * (1 + perdaPct);
-    const preco = rev ? (TABELA_PRECOS[rev.codigo] || 0) : 0;
+    const preco = rev ? (TABELA_PRECOS[rev.codigo] || precoM2(rev.preco_m2) || 0) : 0;
     const valorItem = preco * m2total;
     const semEstoque = rev && (parseFloat(rev.estoque_m2)||0) <= 0;
 
