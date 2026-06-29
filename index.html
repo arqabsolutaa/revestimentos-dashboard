@@ -74,7 +74,7 @@ function renderVinilico() {
     const sel = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
     let totalM2 = 0, totalValor = 0;
     for (const v of Object.values(sel)) {
-      const prod = dadosViniProdutos?.find(r => String(r.id||r.codigo) === String(v.produto));
+      const prod = dadosViniProdutos?.find(r => String(r.id||r.codigo) === String(v.produto)) || dadosRevestimentos?.find(r => String(r.id||r.codigo) === String(v.produto));
       totalM2 += parseFloat(v.m2)||0;
       totalValor += (parseFloat(prod?.preco_m2)||0) * (parseFloat(v.m2)||0);
     }
@@ -182,7 +182,7 @@ function atualizarResumoVin() {
     const sel = document.getElementById('vfs-' + key);
     if (sel && sel.value) {
       const m2 = parseFloat(p.m2)||0;
-      const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === sel.value);
+      const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === sel.value) || dadosRevestimentos?.find(r => String(r.id||r.codigo) === sel.value);
       const preco = parseFloat(prod?.preco_m2)||0;
       totalM2 += m2;
       totalValor += preco * m2;
@@ -920,7 +920,7 @@ function renderPagamentosVinilico(lista) {
     const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
     let totalValor = 0, totalM2 = 0;
     for (const v of Object.values(selecoes)) {
-      const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === String(v.produto));
+      const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === String(v.produto)) || dadosRevestimentos?.find(r => String(r.id||r.codigo) === String(v.produto));
       const preco = parseFloat(prod?.preco_m2)||0;
       const m2 = parseFloat(v.m2)||0;
       totalM2 += m2; totalValor += preco * m2;
@@ -1088,7 +1088,7 @@ async function _gerarPDFVinilicoInterno(ap, cliente, selecoes) {
   let totalM2=0, totalValor=0, alt=false;
   for (const [key, v] of Object.entries(selecoes)) {
     if (!v.produto) continue;
-    const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === String(v.produto));
+    const prod = dadosViniProdutos.find(r => String(r.id||r.codigo) === String(v.produto)) || dadosRevestimentos?.find(r => String(r.id||r.codigo) === String(v.produto));
     const nome = prod ? prod.nome : String(v.produto);
     const preco = parseFloat(prod?.preco_m2)||0;
     const m2 = parseFloat(v.m2)||0;
