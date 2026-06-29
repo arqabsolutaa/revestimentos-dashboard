@@ -756,7 +756,7 @@
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "952",
-      "preco_m2": "182.02",
+      "preco_m2": "142",
       "criado_em": "",
       "perda_pct": "20"
     },
@@ -776,7 +776,7 @@
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "72.558",
-      "preco_m2": "182.02",
+      "preco_m2": "98.5",
       "criado_em": "",
       "perda_pct": "20"
     },
@@ -796,7 +796,7 @@
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "112.23",
-      "preco_m2": "182.02",
+      "preco_m2": "98.5",
       "criado_em": "",
       "perda_pct": "20"
     },
@@ -809,7 +809,7 @@
       "m2_por_caixa": "1.19",
       "pecas_por_caixa": "4",
       "qtd_caixas": "80",
-      "tamanho": "20x120",
+      "tamanho": "30x120",
       "junta": "1,5mm",
       "espessura": "9,0mm",
       "data_fabricacao": "N / D ",
@@ -836,7 +836,7 @@
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "270",
-      "preco_m2": "182.02",
+      "preco_m2": "166.86",
       "criado_em": "",
       "perda_pct": "20"
     },
@@ -856,7 +856,7 @@
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "239.25",
-      "preco_m2": "182.02",
+      "preco_m2": "98.5",
       "criado_em": "",
       "perda_pct": "20"
     },
@@ -876,7 +876,7 @@
       "lote": "N / I ",
       "obra": "Vista Park",
       "estoque_m2": "87",
-      "preco_m2": "182.02",
+      "preco_m2": "98.5",
       "criado_em": "",
       "perda_pct": "20"
     },
