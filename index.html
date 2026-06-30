@@ -526,26 +526,37 @@ function filtrarBanheiras() {
   const material = document.getElementById('banh-material').value;
   const acabamento = document.getElementById('banh-acabamento').value;
   const sifao = document.getElementById('banh-sifao').value;
-  
-  // Filtrar materiais disponíveis para o modelo selecionado
+  const sistema = document.getElementById('banh-sistema')?.value || '';
+
+  // Mostrar/esconder select de sistema (só para Camboriu)
+  const sistemaGrupo = document.getElementById('banh-sistema-grupo');
+  if (sistemaGrupo) sistemaGrupo.style.display = modelo === 'CAMBORIU' ? 'block' : 'none';
+
   if (modelo) {
     const materiais = [...new Set(dadosBanhCatalogo.filter(b => b.modelo === modelo).map(b => b.material))].sort();
     document.getElementById('banh-material').innerHTML = '<option value="">— Selecione o material —</option>' +
       materiais.map(m => `<option value="${m}" ${m===material?'selected':''}>${m}</option>`).join('');
   }
-  
+
   if (modelo && material) {
     const acabamentos = [...new Set(dadosBanhCatalogo.filter(b => b.modelo===modelo && b.material===material && b.acabamento).map(b => b.acabamento))].sort();
     document.getElementById('banh-acabamento').innerHTML = '<option value="">— Selecione o acabamento —</option>' +
       acabamentos.map(a => `<option value="${a}" ${a===acabamento?'selected':''}>${a}</option>`).join('');
   }
-  
+
   if (modelo && material && acabamento) {
     const sifoes = [...new Set(dadosBanhCatalogo.filter(b => b.modelo===modelo && b.material===material && b.acabamento===acabamento).map(b => b.tipo_sifao))].sort();
     document.getElementById('banh-sifao').innerHTML = '<option value="">— Selecione o sifão —</option>' +
       sifoes.map(s => `<option value="${s}" ${s===sifao?'selected':''}>${s}</option>`).join('');
   }
-  
+
+  // Popular sistemas (Camboriu)
+  if (modelo === 'CAMBORIU' && document.getElementById('banh-sistema')) {
+    const sistemas = [...new Set(dadosBanhCatalogo.filter(b => b.modelo===modelo && (!material || b.material===material)).map(b => b.sistema).filter(Boolean))].sort();
+    document.getElementById('banh-sistema').innerHTML = '<option value="">— Selecione o sistema —</option>' +
+      sistemas.map(s => `<option value="${s}" ${s===sistema?'selected':''}>${s}</option>`).join('');
+  }
+
   selecionarBanheira();
 }
 
@@ -555,6 +566,7 @@ function selecionarBanheira() {
   const acabamento = document.getElementById('banh-acabamento').value;
   const sifao = document.getElementById('banh-sifao').value;
   const lado = document.getElementById('banh-lado').value;
+  const sistema = document.getElementById('banh-sistema')?.value || '';
 
   if (!modelo || !material) {
     document.getElementById('banh-produto-selecionado').style.display = 'none';
@@ -562,15 +574,14 @@ function selecionarBanheira() {
     return;
   }
 
-  // Filtrar candidatos por modelo e material (acabamento e sifão opcionais)
   let candidatos = dadosBanhCatalogo.filter(b =>
     b.modelo === modelo && b.material === material &&
     (!acabamento || b.acabamento === acabamento) &&
     (!sifao || b.tipo_sifao === sifao) &&
-    (!lado || b.lado === lado || (!b.lado && !lado))
+    (!lado || b.lado === lado || (!b.lado && !lado)) &&
+    (!sistema || b.sistema === sistema)
   );
 
-  // Pegar o primeiro candidato
   const produto = candidatos[0] || null;
 
   // Mostrar campo lado só se houver variação
@@ -6053,6 +6064,12 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
           <label class="form-label">Tipo de Sifão</label>
           <select class="form-control" id="banh-sifao" onchange="filtrarBanheiras();selecionarBanheira()">
             <option value="">— Selecione o sifão —</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-top:10px" id="banh-sistema-grupo" style="display:none">
+          <label class="form-label">Sistema</label>
+          <select class="form-control" id="banh-sistema" onchange="filtrarBanheiras();selecionarBanheira()">
+            <option value="">— Selecione o sistema —</option>
           </select>
         </div>
         <div class="form-group" style="margin-top:10px" id="banh-lado-grupo" style="display:none">
