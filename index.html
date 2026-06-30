@@ -2365,6 +2365,10 @@ body.mobile-mode #main{padding-bottom:72px}
 
       <div id="vagasdep-detalhe" style="display:none">
         <div class="card" style="margin-bottom:16px">
+          <label>Cliente</label>
+          <input class="form-control" id="vagasdep-cliente-input" placeholder="Nome do proprietário" style="max-width:300px">
+        </div>
+        <div class="card" style="margin-bottom:16px">
           <h3 style="font-size:14px;margin-bottom:12px">Depósito vinculado</h3>
           <select class="form-control" id="vagasdep-deposito-select" style="max-width:300px">
             <option value="">— Nenhum depósito —</option>
@@ -3801,6 +3805,10 @@ function selecionarApVagasDep() {
   vagasDepSelecionadas = vinculo ? String(vinculo.vagas || '').split(',').map(v=>v.trim()).filter(Boolean) : [];
   const depositoAtual = vinculo ? String(vinculo.deposito || '') : '';
 
+  // Cliente: prioriza o que já está salvo no vínculo; senão tenta achar em Paredes (reforma)
+  const clienteInput = document.getElementById('vagasdep-cliente-input');
+  clienteInput.value = (vinculo && vinculo.cliente) ? vinculo.cliente : nomeClienteAp(ap);
+
   // Montar select de depósitos: livres + o que já está vinculado a este apto
   const depSelect = document.getElementById('vagasdep-deposito-select');
   const depositosLivres = vagasDepCatalogo.filter(c => c.tipo === 'deposito' && (c.status === 'livre' || String(c.numero) === depositoAtual));
@@ -3854,7 +3862,7 @@ async function salvarVagasDepAtual() {
   if (!vagasDepApAtual) { showToast('Selecione um apartamento', 'error'); return; }
   const deposito = document.getElementById('vagasdep-deposito-select').value;
   const obs = document.getElementById('vagasdep-obs-input').value;
-  const cliente = nomeClienteAp(vagasDepApAtual);
+  const cliente = document.getElementById('vagasdep-cliente-input').value.trim();
   showToast('Salvando...', 'success');
   try {
     await apiPost('salvarVinculoVagas', { ap: vagasDepApAtual, cliente, vagas: vagasDepSelecionadas, deposito, obs });
@@ -3869,10 +3877,10 @@ async function salvarVagasDepAtual() {
 const TODOS_APARTAMENTOS_PREDIO = ['11','12','21','22','31','32','41','42','51','52','61','62','71','72','81','82','91','92','101','102','111','112','121','122','131','132','141','142','151','152'];
 
 function renderVagasDepResumo() {
-  const apsComCliente = TODOS_APARTAMENTOS_PREDIO.map(ap => ({ ap, cliente: nomeClienteAp(ap) }));
   const lista = document.getElementById('vagasdep-resumo-lista');
-  lista.innerHTML = apsComCliente.map(({ap, cliente}) => {
+  lista.innerHTML = TODOS_APARTAMENTOS_PREDIO.map(ap => {
     const v = vagasDepVinculos.find(x => String(x.ap) === String(ap));
+    const cliente = (v && v.cliente) ? v.cliente : nomeClienteAp(ap);
     const vagas = v ? String(v.vagas || '').split(',').map(s=>s.trim()).filter(Boolean) : [];
     const deposito = v ? v.deposito : '';
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--surface2);border-radius:8px">
