@@ -1801,6 +1801,10 @@ body.mobile-mode #main{padding-bottom:72px}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
           Controle de Pagamentos
         </button>
+        <button class="nav-btn" onclick="showScreen('vagasdep')" id="nav-vagasdep" style="padding-left:20px;font-size:11px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><rect x="1" y="3" width="22" height="13" rx="2"/><circle cx="6" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
+          Vagas e Depósitos
+        </button>
         <button class="nav-btn" onclick="showScreen('config');document.getElementById('nav-config').classList.add('active')" id="nav-config" style="padding-left:20px;font-size:11px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
           Configurações do Sistema
@@ -2283,15 +2287,91 @@ body.mobile-mode #main{padding-bottom:72px}
     <div class="header-actions">
       <button class="btn btn-primary" onclick="abrirModalCalcBanheira()">+ Novo Orçamento</button>
     </div>
+</div>
+<div class="page-content">
+  <div id="banheiras-lista" style="display:flex;flex-direction:column;gap:12px">
+    <div class="empty-state"><strong>Carregando...</strong></div>
   </div>
-  <div class="page-content">
-    <div id="banheiras-lista" style="display:flex;flex-direction:column;gap:12px">
-      <div class="empty-state"><strong>Carregando...</strong></div>
+</div>
+</div>
+
+<!-- VAGAS E DEPÓSITOS -->
+<div id="vagasdep-screen" class="screen">
+  <div id="vagasdep-lock" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:20px;padding:40px;text-align:center">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="color:var(--text3)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    <p style="font-size:18px;font-weight:600;color:var(--text)">Área Restrita</p>
+    <p style="font-size:13px;color:var(--text3)">Vagas e Depósitos</p>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="password" id="vagasdep-senha-input" placeholder="Digite a senha" class="form-control" style="width:220px;text-align:center" onkeydown="if(event.key==='Enter')verificarSenhaVagasDep()">
+      <button class="btn btn-primary" onclick="verificarSenhaVagasDep()">Entrar</button>
+    </div>
+    <p id="vagasdep-senha-erro" style="font-size:12px;color:var(--danger);display:none">Senha incorreta</p>
+  </div>
+  <div id="vagasdep-conteudo" style="display:none;width:100%">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Vagas e Depósitos</h1>
+        <p>Vincule vagas de garagem e depósitos a cada apartamento</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="loadVagasDep(true)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Atualizar
+        </button>
+        <button class="btn btn-secondary" onclick="sairVagasDep()" style="margin-left:4px">Sair</button>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="card" style="margin-bottom:16px">
+        <div class="form-grid">
+          <div class="form-group span-2">
+            <label>Apartamento</label>
+            <select class="form-control" id="vagasdep-ap-select" onchange="selecionarApVagasDep()">
+              <option value="">— Selecione o apartamento —</option>
+              <option value="12">Apto 12</option>
+              <option value="42">Apto 42</option>
+              <option value="51">Apto 51</option>
+              <option value="61">Apto 61</option>
+              <option value="91">Apto 91</option>
+              <option value="92">Apto 92</option>
+              <option value="112">Apto 112</option>
+              <option value="142">Apto 142</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="vagasdep-detalhe" style="display:none">
+        <div class="card" style="margin-bottom:16px">
+          <h3 style="font-size:14px;margin-bottom:12px">Depósito vinculado</h3>
+          <select class="form-control" id="vagasdep-deposito-select" style="max-width:300px">
+            <option value="">— Nenhum depósito —</option>
+          </select>
+        </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <h3 style="font-size:14px;margin-bottom:4px">Vagas vinculadas</h3>
+          <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Selecione uma ou mais vagas para este apartamento. Vagas ocupadas por outros apartamentos aparecem desabilitadas.</p>
+          <div id="vagasdep-vagas-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:6px;max-height:340px;overflow-y:auto;padding:4px"></div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <label>Observações <span style="font-weight:400;color:var(--text3)">(opcional)</span></label>
+          <input class="form-control" id="vagasdep-obs-input" placeholder="Ex: vaga dupla, próxima à entrada">
+        </div>
+
+        <button class="btn btn-primary" onclick="salvarVagasDepAtual()">Salvar vínculo</button>
+      </div>
+
+      <div class="card" style="margin-top:24px">
+        <h3 style="font-size:14px;margin-bottom:12px">Resumo de todos os apartamentos</h3>
+        <div id="vagasdep-resumo-lista" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
     </div>
   </div>
 </div>
 
-</main>
+
 
 <!-- MODAL LOTE -->
 <div id="modal-lote" class="modal-overlay">
@@ -3505,6 +3585,7 @@ function showScreen(name) {
   if (name === 'vinilico') loadVinilico();
   if (name === 'marmoraria') loadMarmoraria();
   if (name === 'banheiras') loadBanheiras();
+  if (name === 'vagasdep') { if (!vagasDepDesbloqueado) { document.getElementById('vagasdep-lock').style.display = 'flex'; document.getElementById('vagasdep-conteudo').style.display = 'none'; } else loadVagasDep(); }
 }
 
 
@@ -3636,6 +3717,146 @@ function sairControlePgto() {
   document.getElementById('pgto-conteudo').style.display = 'none';
   document.getElementById('pgto-senha-input').value = '';
   document.getElementById('pgto-senha-erro').style.display = 'none';
+}
+
+// ===================== VAGAS E DEPÓSITOS =====================
+const SENHA_VAGASDEP = SENHA_PGTO; // mesma senha do Controle de Pagamentos
+let vagasDepDesbloqueado = false;
+let vagasDepCatalogo = [];
+let vagasDepVinculos = [];
+let vagasDepApAtual = '';
+let vagasDepSelecionadas = [];
+
+function verificarSenhaVagasDep() {
+  const senha = document.getElementById('vagasdep-senha-input').value;
+  if (senha === SENHA_VAGASDEP) {
+    vagasDepDesbloqueado = true;
+    document.getElementById('vagasdep-lock').style.display = 'none';
+    document.getElementById('vagasdep-conteudo').style.display = 'block';
+    loadVagasDep();
+  } else {
+    document.getElementById('vagasdep-senha-erro').style.display = 'block';
+  }
+}
+
+function sairVagasDep() {
+  vagasDepDesbloqueado = false;
+  document.getElementById('vagasdep-lock').style.display = 'flex';
+  document.getElementById('vagasdep-conteudo').style.display = 'none';
+  document.getElementById('vagasdep-senha-input').value = '';
+  document.getElementById('vagasdep-senha-erro').style.display = 'none';
+}
+
+async function loadVagasDep(forcar) {
+  try {
+    const dados = await lerDadosExtra('vagas', forcar);
+    vagasDepCatalogo = dados.catalogo || [];
+    vagasDepVinculos = dados.vinculos || [];
+    renderVagasDepResumo();
+    if (vagasDepApAtual) selecionarApVagasDep();
+  } catch(e) {
+    showToast('Erro ao carregar: ' + e.message, 'error');
+  }
+}
+
+function nomeClienteAp(ap) {
+  const paredesAp = dadosParedes.filter(p => p.apartamento === ap);
+  return paredesAp[0]?.cliente || '';
+}
+
+function selecionarApVagasDep() {
+  const ap = document.getElementById('vagasdep-ap-select').value;
+  vagasDepApAtual = ap;
+  const detalhe = document.getElementById('vagasdep-detalhe');
+  if (!ap) { detalhe.style.display = 'none'; return; }
+  detalhe.style.display = 'block';
+
+  const vinculo = vagasDepVinculos.find(v => String(v.ap) === String(ap));
+  vagasDepSelecionadas = vinculo ? String(vinculo.vagas || '').split(',').map(v=>v.trim()).filter(Boolean) : [];
+  const depositoAtual = vinculo ? String(vinculo.deposito || '') : '';
+
+  // Montar select de depósitos: livres + o que já está vinculado a este apto
+  const depSelect = document.getElementById('vagasdep-deposito-select');
+  const depositosLivres = vagasDepCatalogo.filter(c => c.tipo === 'deposito' && (c.status === 'livre' || String(c.numero) === depositoAtual));
+  depositosLivres.sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
+  depSelect.innerHTML = '<option value="">— Nenhum depósito —</option>' +
+    depositosLivres.map(d => `<option value="${d.numero}" ${String(d.numero)===depositoAtual?'selected':''}>Depósito ${d.numero}</option>`).join('');
+
+  // Montar grid de vagas
+  const vagas = vagasDepCatalogo.filter(c => c.tipo === 'vaga').sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
+  const grid = document.getElementById('vagasdep-vagas-grid');
+  grid.innerHTML = vagas.map(v => {
+    const num = String(v.numero);
+    const ocupadaPorOutro = v.status === 'ocupado' && !vagasDepSelecionadas.includes(num);
+    const selecionada = vagasDepSelecionadas.includes(num);
+    const bg = selecionada ? 'var(--accent)' : (ocupadaPorOutro ? 'var(--surface3, #e5e0d5)' : 'var(--surface2)');
+    const color = selecionada ? '#fff' : (ocupadaPorOutro ? 'var(--text3)' : 'var(--text)');
+    const cursor = ocupadaPorOutro ? 'not-allowed' : 'pointer';
+    return `<button type="button" onclick="${ocupadaPorOutro ? '' : 'toggleVagaSelecionada(\''+num+'\')'}" 
+      style="padding:8px 4px;border-radius:8px;border:1px solid var(--border);background:${bg};color:${color};font-size:11px;font-weight:600;cursor:${cursor}" 
+      ${ocupadaPorOutro ? 'disabled title="Ocupada por outro apartamento"' : ''}>${num}</button>`;
+  }).join('');
+
+  document.getElementById('vagasdep-obs-input').value = vinculo?.obs || '';
+}
+
+function toggleVagaSelecionada(num) {
+  const idx = vagasDepSelecionadas.indexOf(num);
+  if (idx >= 0) vagasDepSelecionadas.splice(idx, 1);
+  else vagasDepSelecionadas.push(num);
+  selecionarApVagasDepRefresh();
+}
+
+function selecionarApVagasDepRefresh() {
+  // Re-renderiza só o grid sem perder a seleção atual em memória
+  const vagas = vagasDepCatalogo.filter(c => c.tipo === 'vaga').sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
+  const grid = document.getElementById('vagasdep-vagas-grid');
+  grid.innerHTML = vagas.map(v => {
+    const num = String(v.numero);
+    const ocupadaPorOutro = v.status === 'ocupado' && !vagasDepSelecionadas.includes(num);
+    const selecionada = vagasDepSelecionadas.includes(num);
+    const bg = selecionada ? 'var(--accent)' : (ocupadaPorOutro ? 'var(--surface3, #e5e0d5)' : 'var(--surface2)');
+    const color = selecionada ? '#fff' : (ocupadaPorOutro ? 'var(--text3)' : 'var(--text)');
+    const cursor = ocupadaPorOutro ? 'not-allowed' : 'pointer';
+    return `<button type="button" onclick="${ocupadaPorOutro ? '' : 'toggleVagaSelecionada(\''+num+'\')'}" 
+      style="padding:8px 4px;border-radius:8px;border:1px solid var(--border);background:${bg};color:${color};font-size:11px;font-weight:600;cursor:${cursor}" 
+      ${ocupadaPorOutro ? 'disabled title="Ocupada por outro apartamento"' : ''}>${num}</button>`;
+  }).join('');
+}
+
+async function salvarVagasDepAtual() {
+  if (!vagasDepApAtual) { showToast('Selecione um apartamento', 'error'); return; }
+  const deposito = document.getElementById('vagasdep-deposito-select').value;
+  const obs = document.getElementById('vagasdep-obs-input').value;
+  const cliente = nomeClienteAp(vagasDepApAtual);
+  showToast('Salvando...', 'success');
+  try {
+    await apiPost('salvarVinculoVagas', { ap: vagasDepApAtual, cliente, vagas: vagasDepSelecionadas, deposito, obs });
+    showToast('Vínculo salvo!', 'success');
+    await loadVagasDep(true);
+    selecionarApVagasDep();
+  } catch(e) {
+    showToast('Erro ao salvar: ' + e.message, 'error');
+  }
+}
+
+function renderVagasDepResumo() {
+  const apsComCliente = ['12','42','51','61','91','92','112','142'].map(ap => ({ ap, cliente: nomeClienteAp(ap) }));
+  const lista = document.getElementById('vagasdep-resumo-lista');
+  lista.innerHTML = apsComCliente.map(({ap, cliente}) => {
+    const v = vagasDepVinculos.find(x => String(x.ap) === String(ap));
+    const vagas = v ? String(v.vagas || '').split(',').map(s=>s.trim()).filter(Boolean) : [];
+    const deposito = v ? v.deposito : '';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--surface2);border-radius:8px">
+      <div>
+        <strong style="font-size:13px">Apto ${ap}</strong>
+        <span style="font-size:12px;color:var(--text3)"> · ${cliente || 'sem cliente'}</span>
+      </div>
+      <div style="font-size:12px;color:var(--text2);text-align:right">
+        ${vagas.length ? 'Vagas: ' + vagas.join(', ') : 'Sem vagas'} ${deposito ? ' · Depósito ' + deposito : ''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 async function loadPagamentos() {
@@ -5606,6 +5827,10 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
   <button class="mobile-nav-btn" style="flex-direction:row;justify-content:flex-start;gap:12px;width:100%;padding:12px 16px;font-size:11px" onclick="showScreen('pagamentos');setMobileNav('pagamentos');toggleMobileMenu()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
     Pagamentos
+  </button>
+  <button class="mobile-nav-btn" style="flex-direction:row;justify-content:flex-start;gap:12px;width:100%;padding:12px 16px;font-size:11px" onclick="showScreen('vagasdep');setMobileNav('vagasdep');toggleMobileMenu()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><rect x="1" y="3" width="22" height="13" rx="2"/><circle cx="6" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
+    Vagas e Depósitos
   </button>
   <button class="mobile-nav-btn" style="flex-direction:row;justify-content:flex-start;gap:12px;width:100%;padding:12px 16px;font-size:11px" onclick="showScreen('orcamentos');setMobileNav('orcamentos');toggleMobileMenu()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
