@@ -3752,6 +3752,10 @@ async function loadVagasDep(forcar) {
     const dados = await lerDadosExtra('vagas', forcar);
     vagasDepCatalogo = dados.catalogo || [];
     vagasDepVinculos = dados.vinculos || [];
+    if (!dadosParedes.length) {
+      const principal = await lerDados();
+      if (principal && principal.paredes) dadosParedes = principal.paredes;
+    }
     renderVagasDepResumo();
     if (vagasDepApAtual) selecionarApVagasDep();
   } catch(e) {
