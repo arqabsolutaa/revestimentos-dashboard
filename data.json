@@ -22013,6 +22013,21 @@
       "itens": "[]",
       "selecoes": "{}",
       "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1782853667019_fcawc",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "cliente": "",
+      "ap": "",
+      "empresa": "",
+      "totalM2": "0",
+      "totalValor": "0",
+      "pagamento": "avista",
+      "desconto": "0",
+      "itens": "[]",
+      "selecoes": "{}",
+      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "instalacoes": [],
