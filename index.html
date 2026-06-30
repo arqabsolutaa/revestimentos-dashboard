@@ -3794,6 +3794,42 @@ function nomeClienteAp(ap) {
   return paredesAp[0]?.cliente || '';
 }
 
+function renderGridVagasAgrupado() {
+  const vagas = vagasDepCatalogo.filter(c => c.tipo === 'vaga').sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
+  const grid = document.getElementById('vagasdep-vagas-grid');
+
+  const renderBotao = v => {
+    const num = String(v.numero);
+    const ocupadaPorOutro = v.status === 'ocupado' && !vagasDepSelecionadas.includes(num);
+    const selecionada = vagasDepSelecionadas.includes(num);
+    const bg = selecionada ? 'var(--accent)' : (ocupadaPorOutro ? 'var(--surface3, #e5e0d5)' : 'var(--surface2)');
+    const color = selecionada ? '#fff' : (ocupadaPorOutro ? 'var(--text3)' : 'var(--text)');
+    const cursor = ocupadaPorOutro ? 'not-allowed' : 'pointer';
+    return `<button type="button" onclick="${ocupadaPorOutro ? '' : 'toggleVagaSelecionada(\''+num+'\')'}" 
+      style="padding:8px 4px;border-radius:8px;border:1px solid var(--border);background:${bg};color:${color};font-size:11px;font-weight:600;cursor:${cursor}" 
+      ${ocupadaPorOutro ? 'disabled title="Ocupada por outro apartamento"' : ''}>${num}</button>`;
+  };
+
+  const temSubsolo = vagas.some(v => v.subsolo);
+  if (!temSubsolo) {
+    grid.innerHTML = vagas.map(renderBotao).join('');
+    return;
+  }
+
+  const grupos = {};
+  vagas.forEach(v => {
+    const key = v.subsolo || 'Sem subsolo definido';
+    if (!grupos[key]) grupos[key] = [];
+    grupos[key].push(v);
+  });
+  const ordemGrupos = Object.keys(grupos).sort();
+
+  grid.innerHTML = ordemGrupos.map(grupo => `
+    <div style="grid-column:1/-1;font-size:11px;font-weight:700;color:var(--text2);margin:6px 0 2px;text-transform:uppercase;letter-spacing:.5px">${grupo}</div>
+    ${grupos[grupo].map(renderBotao).join('')}
+  `).join('');
+}
+
 function selecionarApVagasDep() {
   const ap = document.getElementById('vagasdep-ap-select').value;
   vagasDepApAtual = ap;
@@ -3816,20 +3852,7 @@ function selecionarApVagasDep() {
   depSelect.innerHTML = '<option value="">— Nenhum depósito —</option>' +
     depositosLivres.map(d => `<option value="${d.numero}" ${String(d.numero)===depositoAtual?'selected':''}>Depósito ${d.numero}</option>`).join('');
 
-  // Montar grid de vagas
-  const vagas = vagasDepCatalogo.filter(c => c.tipo === 'vaga').sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
-  const grid = document.getElementById('vagasdep-vagas-grid');
-  grid.innerHTML = vagas.map(v => {
-    const num = String(v.numero);
-    const ocupadaPorOutro = v.status === 'ocupado' && !vagasDepSelecionadas.includes(num);
-    const selecionada = vagasDepSelecionadas.includes(num);
-    const bg = selecionada ? 'var(--accent)' : (ocupadaPorOutro ? 'var(--surface3, #e5e0d5)' : 'var(--surface2)');
-    const color = selecionada ? '#fff' : (ocupadaPorOutro ? 'var(--text3)' : 'var(--text)');
-    const cursor = ocupadaPorOutro ? 'not-allowed' : 'pointer';
-    return `<button type="button" onclick="${ocupadaPorOutro ? '' : 'toggleVagaSelecionada(\''+num+'\')'}" 
-      style="padding:8px 4px;border-radius:8px;border:1px solid var(--border);background:${bg};color:${color};font-size:11px;font-weight:600;cursor:${cursor}" 
-      ${ocupadaPorOutro ? 'disabled title="Ocupada por outro apartamento"' : ''}>${num}</button>`;
-  }).join('');
+  renderGridVagasAgrupado();
 
   document.getElementById('vagasdep-obs-input').value = vinculo?.obs || '';
 }
@@ -3838,24 +3861,7 @@ function toggleVagaSelecionada(num) {
   const idx = vagasDepSelecionadas.indexOf(num);
   if (idx >= 0) vagasDepSelecionadas.splice(idx, 1);
   else vagasDepSelecionadas.push(num);
-  selecionarApVagasDepRefresh();
-}
-
-function selecionarApVagasDepRefresh() {
-  // Re-renderiza só o grid sem perder a seleção atual em memória
-  const vagas = vagasDepCatalogo.filter(c => c.tipo === 'vaga').sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
-  const grid = document.getElementById('vagasdep-vagas-grid');
-  grid.innerHTML = vagas.map(v => {
-    const num = String(v.numero);
-    const ocupadaPorOutro = v.status === 'ocupado' && !vagasDepSelecionadas.includes(num);
-    const selecionada = vagasDepSelecionadas.includes(num);
-    const bg = selecionada ? 'var(--accent)' : (ocupadaPorOutro ? 'var(--surface3, #e5e0d5)' : 'var(--surface2)');
-    const color = selecionada ? '#fff' : (ocupadaPorOutro ? 'var(--text3)' : 'var(--text)');
-    const cursor = ocupadaPorOutro ? 'not-allowed' : 'pointer';
-    return `<button type="button" onclick="${ocupadaPorOutro ? '' : 'toggleVagaSelecionada(\''+num+'\')'}" 
-      style="padding:8px 4px;border-radius:8px;border:1px solid var(--border);background:${bg};color:${color};font-size:11px;font-weight:600;cursor:${cursor}" 
-      ${ocupadaPorOutro ? 'disabled title="Ocupada por outro apartamento"' : ''}>${num}</button>`;
-  }).join('');
+  renderGridVagasAgrupado();
 }
 
 async function salvarVagasDepAtual() {
