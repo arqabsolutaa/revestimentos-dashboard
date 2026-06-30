@@ -3805,9 +3805,9 @@ function selecionarApVagasDep() {
   vagasDepSelecionadas = vinculo ? String(vinculo.vagas || '').split(',').map(v=>v.trim()).filter(Boolean) : [];
   const depositoAtual = vinculo ? String(vinculo.deposito || '') : '';
 
-  // Cliente: prioriza o que já está salvo no vínculo; senão tenta achar em Paredes (reforma)
+  // Cliente: prioriza o que já está salvo no vínculo; senão usa o mapa fixo do prédio
   const clienteInput = document.getElementById('vagasdep-cliente-input');
-  clienteInput.value = (vinculo && vinculo.cliente) ? vinculo.cliente : nomeClienteAp(ap);
+  clienteInput.value = (vinculo && vinculo.cliente) ? vinculo.cliente : (CLIENTES_POR_APARTAMENTO[ap] || '');
 
   // Montar select de depósitos: livres + o que já está vinculado a este apto
   const depSelect = document.getElementById('vagasdep-deposito-select');
@@ -3876,11 +3876,44 @@ async function salvarVagasDepAtual() {
 
 const TODOS_APARTAMENTOS_PREDIO = ['11','12','21','22','31','32','41','42','51','52','61','62','71','72','81','82','91','92','101','102','111','112','121','122','131','132','141','142','151','152'];
 
+const CLIENTES_POR_APARTAMENTO = {
+  '11': 'Disponível',
+  '12': 'Suzana e Junior',
+  '21': 'Disponível',
+  '22': 'Disponível',
+  '31': 'Therezinha e Daniel',
+  '32': 'Raissa e Caio',
+  '41': 'Permutante',
+  '42': 'Claudia e Caio',
+  '51': 'Danilo',
+  '52': 'Permutante',
+  '61': 'Patricia e Edson',
+  '62': 'Jadir',
+  '71': 'Alexandre Morassi',
+  '72': 'Permutante',
+  '81': 'Fernanda e Bruno',
+  '82': 'Leonardo',
+  '91': 'Ana Paula e Alexandre Tarifa',
+  '92': 'Fabricia e Anderson',
+  '101': 'Leticia e Gerson',
+  '102': 'Permutante',
+  '111': 'Carla e Marcos',
+  '112': 'Valquíria e Mauricio',
+  '121': 'Permutante',
+  '122': 'Michel',
+  '131': 'Disponível',
+  '132': 'Permutante',
+  '141': 'Eliana e Fabio',
+  '142': 'Alexandre e Ivana',
+  '151': 'Disponível',
+  '152': 'Luiz Roberto'
+};
+
 function renderVagasDepResumo() {
   const lista = document.getElementById('vagasdep-resumo-lista');
   lista.innerHTML = TODOS_APARTAMENTOS_PREDIO.map(ap => {
     const v = vagasDepVinculos.find(x => String(x.ap) === String(ap));
-    const cliente = (v && v.cliente) ? v.cliente : nomeClienteAp(ap);
+    const cliente = (v && v.cliente) ? v.cliente : (CLIENTES_POR_APARTAMENTO[ap] || '');
     const vagas = v ? String(v.vagas || '').split(',').map(s=>s.trim()).filter(Boolean) : [];
     const deposito = v ? v.deposito : '';
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--surface2);border-radius:8px">
