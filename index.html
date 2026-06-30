@@ -2328,14 +2328,36 @@ body.mobile-mode #main{padding-bottom:72px}
             <label>Apartamento</label>
             <select class="form-control" id="vagasdep-ap-select" onchange="selecionarApVagasDep()">
               <option value="">— Selecione o apartamento —</option>
+              <option value="11">Apto 11</option>
               <option value="12">Apto 12</option>
+              <option value="21">Apto 21</option>
+              <option value="22">Apto 22</option>
+              <option value="31">Apto 31</option>
+              <option value="32">Apto 32</option>
+              <option value="41">Apto 41</option>
               <option value="42">Apto 42</option>
               <option value="51">Apto 51</option>
+              <option value="52">Apto 52</option>
               <option value="61">Apto 61</option>
+              <option value="62">Apto 62</option>
+              <option value="71">Apto 71</option>
+              <option value="72">Apto 72</option>
+              <option value="81">Apto 81</option>
+              <option value="82">Apto 82</option>
               <option value="91">Apto 91</option>
               <option value="92">Apto 92</option>
+              <option value="101">Apto 101</option>
+              <option value="102">Apto 102</option>
+              <option value="111">Apto 111</option>
               <option value="112">Apto 112</option>
+              <option value="121">Apto 121</option>
+              <option value="122">Apto 122</option>
+              <option value="131">Apto 131</option>
+              <option value="132">Apto 132</option>
+              <option value="141">Apto 141</option>
               <option value="142">Apto 142</option>
+              <option value="151">Apto 151</option>
+              <option value="152">Apto 152</option>
             </select>
           </div>
         </div>
@@ -3844,8 +3866,10 @@ async function salvarVagasDepAtual() {
   }
 }
 
+const TODOS_APARTAMENTOS_PREDIO = ['11','12','21','22','31','32','41','42','51','52','61','62','71','72','81','82','91','92','101','102','111','112','121','122','131','132','141','142','151','152'];
+
 function renderVagasDepResumo() {
-  const apsComCliente = ['12','42','51','61','91','92','112','142'].map(ap => ({ ap, cliente: nomeClienteAp(ap) }));
+  const apsComCliente = TODOS_APARTAMENTOS_PREDIO.map(ap => ({ ap, cliente: nomeClienteAp(ap) }));
   const lista = document.getElementById('vagasdep-resumo-lista');
   lista.innerHTML = apsComCliente.map(({ap, cliente}) => {
     const v = vagasDepVinculos.find(x => String(x.ap) === String(ap));
