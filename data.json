@@ -21811,7 +21811,7 @@
       "selecoes": "{\"142-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"11\"},\"142-Lavabo-Piso-0\":{\"m2\":2.4,\"piso\":\"49\"},\"142-Cozinha-A-0\":{\"m2\":6.55,\"piso\":\"17\"},\"142-Cozinha-B-1\":{\"m2\":11.47,\"piso\":\"17\"},\"142-Cozinha-C-2\":{\"m2\":2.24,\"piso\":\"17\"},\"142-Cozinha-D-3\":{\"m2\":0.99,\"piso\":\"17\"},\"142-A.S-A-0\":{\"m2\":4.41,\"piso\":\"17\"},\"142-A.S-B-1\":{\"m2\":2.24,\"piso\":\"17\"},\"142-A.S-Parede fundo diagonal-2\":{\"m2\":12.7,\"piso\":\"17\"},\"142-A.S-Parede Gerais A.S (sem diagonal e shaft)-3\":{\"m2\":31.06,\"piso\":\"17\"},\"142-Banho A.S-A-0\":{\"m2\":2.65,\"piso\":\"11\"},\"142-Banho A.S-B-1\":{\"m2\":4.74,\"piso\":\"11\"},\"142-Banho A.S-C-2\":{\"m2\":2.29,\"piso\":\"11\"},\"142-Banho A.S-E-4\":{\"m2\":4.33,\"piso\":\"11\"},\"142-Banho A.S-Piso-5\":{\"m2\":1.91,\"piso\":\"11\"},\"142-Living/ Coz. / A.S-Piso Total-0\":{\"m2\":130.2,\"piso\":\"49\"}}",
       "status": "pendente",
       "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "status_pgto": "267.46799999999996",
+      "status_pgto": "parcial",
       "obs_pgto": "69996.9348",
       "comprovante_url": "",
       "total_m2": "",
