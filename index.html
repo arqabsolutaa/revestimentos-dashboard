@@ -3845,12 +3845,16 @@ function selecionarApVagasDep() {
   const clienteInput = document.getElementById('vagasdep-cliente-input');
   clienteInput.value = (vinculo && vinculo.cliente) ? vinculo.cliente : (CLIENTES_POR_APARTAMENTO[ap] || '');
 
-  // Montar select de depósitos: livres + o que já está vinculado a este apto
+  // Montar select de depósitos: livres + o que já está vinculado a este apto, agrupado por subsolo
   const depSelect = document.getElementById('vagasdep-deposito-select');
   const depositosLivres = vagasDepCatalogo.filter(c => c.tipo === 'deposito' && (c.status === 'livre' || String(c.numero) === depositoAtual));
   depositosLivres.sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
+  const sub1Dep = depositosLivres.filter(d => parseInt(d.numero) <= 15);
+  const sub2Dep = depositosLivres.filter(d => parseInt(d.numero) > 15);
+  const optDep = d => `<option value="${d.numero}" ${String(d.numero)===depositoAtual?'selected':''}>Depósito ${d.numero}</option>`;
   depSelect.innerHTML = '<option value="">— Nenhum depósito —</option>' +
-    depositosLivres.map(d => `<option value="${d.numero}" ${String(d.numero)===depositoAtual?'selected':''}>Depósito ${d.numero}</option>`).join('');
+    (sub1Dep.length ? `<optgroup label="1º Subsolo">${sub1Dep.map(optDep).join('')}</optgroup>` : '') +
+    (sub2Dep.length ? `<optgroup label="2º Subsolo">${sub2Dep.map(optDep).join('')}</optgroup>` : '');
 
   renderGridVagasAgrupado();
 
