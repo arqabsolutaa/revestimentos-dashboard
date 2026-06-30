@@ -5058,7 +5058,11 @@ async function salvarNovaVersao() {
     await apiPost('addPersonalizar', dados);
     showToast('Nova versão salva!', 'success');
     const novos = await lerDados();
-    if (novos) dadosPersonalizar = novos.personalizar || dadosPersonalizar;
+    if (novos) {
+      dadosPersonalizar = novos.personalizar || dadosPersonalizar;
+      dadosRevestimentos = novos.revestimentos || dadosRevestimentos;
+      dadosParedes = novos.paredes || dadosParedes;
+    }
     renderPersonalizar(dadosPersonalizar);
   } catch(e) {
     showToast('Erro ao salvar: ' + e.message, 'error');
@@ -5084,6 +5088,8 @@ async function salvarSelecao() {
     }
     const novos = await lerDados();
     if (novos.personalizar) dadosPersonalizar = novos.personalizar;
+    if (novos.revestimentos) dadosRevestimentos = novos.revestimentos;
+    if (novos.paredes) dadosParedes = novos.paredes;
   } catch(e) {
     showToast('Erro ao salvar: ' + e.message, 'error');
   }
