@@ -552,9 +552,10 @@ function filtrarBanheiras() {
 
   // Popular sistemas (Camboriu)
   if (modelo === 'CAMBORIU' && document.getElementById('banh-sistema')) {
-    const sistemas = [...new Set(dadosBanhCatalogo
-      .filter(b => b.modelo?.trim().toUpperCase() === 'CAMBORIU' && b.sistema && b.sistema.trim())
-      .map(b => b.sistema.trim()))].sort();
+    const todosCamboriu = dadosBanhCatalogo.filter(b => b.modelo?.trim().toUpperCase() === 'CAMBORIU');
+    console.log('Camboriu no catalogo:', todosCamboriu.length, todosCamboriu.map(b => b.sistema));
+    const sistemas = [...new Set(todosCamboriu.filter(b => b.sistema && b.sistema.trim()).map(b => b.sistema.trim()))].sort();
+    console.log('Sistemas encontrados:', sistemas);
     document.getElementById('banh-sistema').innerHTML = '<option value="">— Selecione o sistema —</option>' +
       sistemas.map(s => `<option value="${s}" ${s===sistema?'selected':''}>${s}</option>`).join('');
   }
