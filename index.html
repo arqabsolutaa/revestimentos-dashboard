@@ -552,7 +552,9 @@ function filtrarBanheiras() {
 
   // Popular sistemas (Camboriu)
   if (modelo === 'CAMBORIU' && document.getElementById('banh-sistema')) {
-    const sistemas = [...new Set(dadosBanhCatalogo.filter(b => b.modelo===modelo && (!material || b.material===material)).map(b => b.sistema).filter(Boolean))].sort();
+    const sistemas = [...new Set(dadosBanhCatalogo
+      .filter(b => b.modelo?.trim().toUpperCase() === 'CAMBORIU' && b.sistema && b.sistema.trim())
+      .map(b => b.sistema.trim()))].sort();
     document.getElementById('banh-sistema').innerHTML = '<option value="">— Selecione o sistema —</option>' +
       sistemas.map(s => `<option value="${s}" ${s===sistema?'selected':''}>${s}</option>`).join('');
   }
@@ -575,11 +577,11 @@ function selecionarBanheira() {
   }
 
   let candidatos = dadosBanhCatalogo.filter(b =>
-    b.modelo === modelo && b.material === material &&
-    (!acabamento || b.acabamento === acabamento) &&
-    (!sifao || b.tipo_sifao === sifao) &&
-    (!lado || b.lado === lado || (!b.lado && !lado)) &&
-    (!sistema || b.sistema === sistema)
+    b.modelo?.trim() === modelo && b.material?.trim() === material &&
+    (!acabamento || b.acabamento?.trim() === acabamento) &&
+    (!sifao || b.tipo_sifao?.trim() === sifao) &&
+    (!lado || b.lado?.trim() === lado || (!b.lado?.trim() && !lado)) &&
+    (!sistema || b.sistema?.trim() === sistema)
   );
 
   const produto = candidatos[0] || null;
