@@ -3688,8 +3688,8 @@ async function apiPost(action, data) {
   const params = new URLSearchParams({ action, dados: JSON.stringify(data) });
   const result = await jsonp(SCRIPT_URL + '?' + params);
   if (result.error) throw new Error(result.error);
-  // Invalidar cache em memória para que a próxima troca de aba busque dados frescos
-  invalidarCacheDados();
+  // Invalidar cache em memória (exceto para addRevestimento que recarrega logo depois)
+  if (action !== 'addRevestimento') invalidarCacheDados();
   return result.data;
 }
 
@@ -5579,13 +5579,16 @@ function abrirModalRevExterno(selectId) {
   abrirModal('modal-rev-externo');
 }
 
+let _salvandoRevExterno = false;
 async function salvarRevExterno() {
+  if (_salvandoRevExterno) return;
+  _salvandoRevExterno = true;
   const nome = document.getElementById('rev-ext-nome').value.trim();
   const tamanho = document.getElementById('rev-ext-tamanho').value.trim();
   const preco = parseFloat(document.getElementById('rev-ext-preco').value) || 0;
   const codigo = document.getElementById('rev-ext-codigo').value.trim() || 'EXT-' + Date.now();
   
-  if (!nome) { showToast('Digite o nome do revestimento', 'error'); return; }
+  if (!nome) { _salvandoRevExterno = false; showToast('Digite o nome do revestimento', 'error'); return; }
   
   showToast('Cadastrando...', 'success');
   try {
@@ -5633,6 +5636,8 @@ async function salvarRevExterno() {
     }
   } catch(e) {
     showToast('Erro: ' + e.message, 'error');
+  } finally {
+    _salvandoRevExterno = false;
   }
 }
 
