@@ -5599,25 +5599,37 @@ async function salvarRevExterno() {
       obs: 'Revestimento externo',
       obra: 'Essence'
     };
-    await apiPost('addRevestimento', novoRev);
-    // Recarregar revestimentos
     const resultadoCad = await apiPost('addRevestimento', novoRev);
     const novoId = String(resultadoCad?.id || codigo);
     const novos = await lerDados();
     if (novos.revestimentos) dadosRevestimentos = novos.revestimentos;
+    if (novos.paredes) dadosParedes = novos.paredes;
     fecharModal('modal-rev-externo');
-    showToast('Revestimento cadastrado! Já disponível para seleção.', 'success');
+    showToast('Revestimento cadastrado!', 'success');
     // Adicionar novo revestimento em todos os selects e selecionar no alvo
-    document.querySelectorAll('.floor-select-row select').forEach(sel => {
-      const novoOpt = document.createElement('option');
-      novoOpt.value = novoId;
-      novoOpt.textContent = nome + (tamanho ? ' [' + tamanho + ']' : '');
-      sel.appendChild(novoOpt);
+    const nomeExibir = nome + (tamanho ? ' [' + tamanho + ']' : '');
+    document.querySelectorAll('.floor-select-row select, select[id^="fs-"]').forEach(sel => {
+      if (!sel.querySelector(`option[value="${novoId}"]`)) {
+        const novoOpt = document.createElement('option');
+        novoOpt.value = novoId;
+        novoOpt.textContent = nomeExibir;
+        sel.appendChild(novoOpt);
+      }
     });
     // Selecionar automaticamente no select da parede que abriu o modal
     if (_revExternoSelectId) {
       const sel = document.getElementById(_revExternoSelectId);
-      if (sel) { sel.value = novoId; atualizarResumo(); }
+      if (sel) {
+        // Garantir que a opção existe no select alvo
+        if (!sel.querySelector(`option[value="${novoId}"]`)) {
+          const opt = document.createElement('option');
+          opt.value = novoId;
+          opt.textContent = nomeExibir;
+          sel.appendChild(opt);
+        }
+        sel.value = novoId;
+        atualizarResumo();
+      }
     }
   } catch(e) {
     showToast('Erro: ' + e.message, 'error');
