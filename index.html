@@ -553,10 +553,16 @@ function filtrarBanheiras() {
   // Popular sistemas (Camboriu)
   if (modelo === 'CAMBORIU' && document.getElementById('banh-sistema')) {
     const todosCamboriu = dadosBanhCatalogo.filter(b => b.modelo?.trim().toUpperCase() === 'CAMBORIU');
-    console.log('Camboriu no catalogo:', todosCamboriu.length, todosCamboriu.map(b => b.sistema));
-    console.log('Keys do primeiro Camboriu:', todosCamboriu[0] ? Object.keys(todosCamboriu[0]) : 'nenhum');
-    console.log('Primeiro Camboriu completo:', todosCamboriu[0]);
-    const sistemas = [...new Set(todosCamboriu.filter(b => b.sistema && b.sistema.trim()).map(b => b.sistema.trim()))].sort();
+    // Extrair sistema do nome caso o campo sistema venha undefined
+    todosCamboriu.forEach(b => {
+      if (!b.sistema) {
+        const nome = (b.nome || '').toUpperCase();
+        if (nome.includes('SUPREME')) b.sistema = 'Air Therapy Supreme';
+        else if (nome.includes('PRIME')) b.sistema = 'Air Therapy Prime';
+        else if (nome.includes('ESSENTIAL')) b.sistema = 'Air Therapy Essential';
+      }
+    });
+    const sistemas = [...new Set(todosCamboriu.filter(b => b.sistema).map(b => b.sistema))].sort();
     console.log('Sistemas encontrados:', sistemas);
     document.getElementById('banh-sistema').innerHTML = '<option value="">— Selecione o sistema —</option>' +
       sistemas.map(s => `<option value="${s}" ${s===sistema?'selected':''}>${s}</option>`).join('');
@@ -579,12 +585,21 @@ function selecionarBanheira() {
     return;
   }
 
+  const getSistema = b => {
+    if (b.sistema && b.sistema.trim()) return b.sistema.trim();
+    const nome = (b.nome || '').toUpperCase();
+    if (nome.includes('SUPREME')) return 'Air Therapy Supreme';
+    if (nome.includes('PRIME')) return 'Air Therapy Prime';
+    if (nome.includes('ESSENTIAL')) return 'Air Therapy Essential';
+    return '';
+  };
+
   let candidatos = dadosBanhCatalogo.filter(b =>
     b.modelo?.trim() === modelo && b.material?.trim() === material &&
     (!acabamento || b.acabamento?.trim() === acabamento) &&
     (!sifao || b.tipo_sifao?.trim() === sifao) &&
     (!lado || b.lado?.trim() === lado || (!b.lado?.trim() && !lado)) &&
-    (!sistema || b.sistema?.trim() === sistema)
+    (!sistema || getSistema(b) === sistema)
   );
 
   const produto = candidatos[0] || null;
