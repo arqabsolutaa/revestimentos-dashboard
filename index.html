@@ -5604,13 +5604,21 @@ async function salvarRevExterno() {
     };
     const resultadoCad = await apiPost('addRevestimento', novoRev);
     const novoId = String(resultadoCad?.id || codigo);
-    // Inserir imediatamente em memória para que atualizarResumo encontre o nome e preço
-    dadosRevestimentos.push({
+    // Inserir imediatamente em memória
+    const revEmMemoria = {
       id: novoId, codigo: codigo, nome: nome,
       tamanho: tamanho, preco_m2: String(preco), perda_pct: '20', estoque_m2: '0'
-    });
+    };
+    dadosRevestimentos.push(revEmMemoria);
+    // Recarregar dados mas preservar o novo revestimento se ainda não vier no data.json
     const novos = await lerDados();
-    if (novos.revestimentos) dadosRevestimentos = novos.revestimentos;
+    if (novos.revestimentos) {
+      dadosRevestimentos = novos.revestimentos;
+      // Se o novo ainda não veio no data.json, garante que está em memória
+      if (!dadosRevestimentos.find(r => String(r.id) === novoId)) {
+        dadosRevestimentos.push(revEmMemoria);
+      }
+    }
     if (novos.paredes) dadosParedes = novos.paredes;
     fecharModal('modal-rev-externo');
     showToast('Revestimento cadastrado!', 'success');
