@@ -1079,6 +1079,26 @@
       "preco_m2": "156",
       "criado_em": "Wed Jul 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
+    },
+    {
+      "id": "id_1782914398185_m7xmo",
+      "codigo": "40911",
+      "nome": "Maaro",
+      "imagem": "",
+      "site": "",
+      "m2_por_caixa": "0",
+      "pecas_por_caixa": "0",
+      "qtd_caixas": "0",
+      "tamanho": "120x120",
+      "junta": "",
+      "espessura": "",
+      "data_fabricacao": "",
+      "lote": "",
+      "obra": "Essence",
+      "estoque_m2": "0",
+      "preco_m2": "156",
+      "criado_em": "Wed Jul 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "perda_pct": "20"
     }
   ],
   "paredes": [
