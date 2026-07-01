@@ -21747,7 +21747,7 @@
       "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "parcial",
       "obs_pgto": "",
-      "comprovante_url": "https://drive.google.com/file/d/1eVL-VnJqiwCyfRayJ5J_VnXH32TPgIJH/view?usp=drivesdk",
+      "comprovante_url": "",
       "total_m2": "380.20799999999986",
       "total_valor": "83022.8904"
     },
@@ -21761,7 +21761,7 @@
       "status": "pendente",
       "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "",
-      "obs_pgto": "Pagamento foi efetuado na conta do granito (50%",
+      "obs_pgto": "",
       "comprovante_url": "",
       "total_m2": "367.1879999999999",
       "total_valor": "83101.42103999999"
@@ -21851,7 +21851,7 @@
       "status": "pendente",
       "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "status_pgto": "parcial",
-      "obs_pgto": "Pagamento foi efetuado na conta do granito",
+      "obs_pgto": "Pagamento foi efetuado na conta do granito (50%)",
       "comprovante_url": "https://drive.google.com/file/d/1IZMQfzPiH4YfQqYaFPsujFBZjD8YlG2Q/view?usp=drivesdk",
       "total_m2": "",
       "total_valor": ""
