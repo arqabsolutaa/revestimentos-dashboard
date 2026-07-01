@@ -554,6 +554,8 @@ function filtrarBanheiras() {
   if (modelo === 'CAMBORIU' && document.getElementById('banh-sistema')) {
     const todosCamboriu = dadosBanhCatalogo.filter(b => b.modelo?.trim().toUpperCase() === 'CAMBORIU');
     console.log('Camboriu no catalogo:', todosCamboriu.length, todosCamboriu.map(b => b.sistema));
+    console.log('Keys do primeiro Camboriu:', todosCamboriu[0] ? Object.keys(todosCamboriu[0]) : 'nenhum');
+    console.log('Primeiro Camboriu completo:', todosCamboriu[0]);
     const sistemas = [...new Set(todosCamboriu.filter(b => b.sistema && b.sistema.trim()).map(b => b.sistema.trim()))].sort();
     console.log('Sistemas encontrados:', sistemas);
     document.getElementById('banh-sistema').innerHTML = '<option value="">— Selecione o sistema —</option>' +
