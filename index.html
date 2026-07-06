@@ -3688,8 +3688,8 @@ async function apiPost(action, data) {
   const params = new URLSearchParams({ action, dados: JSON.stringify(data) });
   const result = await jsonp(SCRIPT_URL + '?' + params);
   if (result.error) throw new Error(result.error);
-  // Invalidar cache em memória (exceto para addRevestimento que recarrega logo depois)
-  if (action !== 'addRevestimento') invalidarCacheDados();
+  // Invalidar cache em memória (exceto para ações que recarregam logo depois)
+  if (action !== 'addRevestimento' && action !== 'addParede') invalidarCacheDados();
   return result.data;
 }
 
