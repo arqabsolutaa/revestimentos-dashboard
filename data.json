@@ -1079,6 +1079,26 @@
       "preco_m2": "98.5",
       "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "perda_pct": "20"
+    },
+    {
+      "id": "id_1783367814492_tipnn",
+      "codigo": "40111",
+      "nome": "Aeterna Bianco",
+      "imagem": "",
+      "site": "",
+      "m2_por_caixa": "0",
+      "pecas_por_caixa": "0",
+      "qtd_caixas": "0",
+      "tamanho": "90x90",
+      "junta": "",
+      "espessura": "",
+      "data_fabricacao": "",
+      "lote": "",
+      "obra": "Essence",
+      "estoque_m2": "0",
+      "preco_m2": "156",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "perda_pct": "20"
     }
   ],
   "paredes": [
