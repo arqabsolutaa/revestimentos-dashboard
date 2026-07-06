@@ -19629,6 +19629,20 @@
       "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
+    },
+    {
+      "id": "id_1783369492472_205p9",
+      "apartamento": "111",
+      "cliente": "Carla e Marcos ",
+      "local": "Suíte 03",
+      "parede": "Piso",
+      "metro_linear": "17.4",
+      "altura": "1",
+      "imagem": "",
+      "obs": "",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "planta_img": "",
+      "nome_arquivo": ""
     }
   ],
   "saidas": [
