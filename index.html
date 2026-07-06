@@ -4229,14 +4229,16 @@ async function salvarNovaParede() {
       const cardDiv = document.createElement('div');
       cardDiv.className = 'wall-item';
       cardDiv.id = 'wi-' + key;
-      cardDiv.onclick = function() { toggleWall(key, m2, this); };
+      cardDiv.onclick = function(e) { if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'OPTION') return; toggleWall(key, m2, this); };
       cardDiv.innerHTML = '<div class="wall-check"></div><div class="wall-info"><p>' + parede + '</p><span>' + m2.toFixed(2) + ' m² · ' + linear + 'm × ' + altura + 'm</span>' +
         '<div class="floor-select-row" onclick="event.stopPropagation()"><select class="form-control" id="fs-' + key + '" onchange="atualizarResumo()" style="font-size:12px;padding:4px 8px;width:100%"><option value="">— Piso —</option>' +
         opcoes.map(r => '<option value="' + (r.id||r.codigo) + '">' + r.nome + ' [' + (r.tamanho||'') + ']</option>').join('') +
         '</select></div>' +
-        '<button onclick="event.stopPropagation();abrirModalRevExterno(\"fs-' + key + '\")" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:2px 0;text-align:left;width:100%">+ revestimento externo</button>' +
+        '<button onclick="event.stopPropagation();event.preventDefault();abrirModalRevExterno(\"fs-' + key + '\")" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:2px 0;text-align:left;width:100%">+ revestimento externo</button>' +
         '</div>';
       wgEl.appendChild(cardDiv);
+      // Marcar automaticamente como selecionada
+      toggleWall(key, m2, cardDiv);
     }
     atualizarResumo();
   } catch(e) {
