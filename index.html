@@ -4230,7 +4230,7 @@ async function salvarNovaParede() {
       cardDiv.className = 'wall-item';
       cardDiv.id = 'wi-' + key;
       cardDiv.onclick = function(e) { if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'OPTION') return; toggleWall(key, m2, this); };
-      cardDiv.innerHTML = '<div class="wall-check"></div><div class="wall-info"><p>' + parede + '</p><span>' + m2.toFixed(2) + ' m² · ' + linear + 'm × ' + altura + 'm</span>' +
+      cardDiv.innerHTML = '<div class="wall-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="wall-info"><p>' + parede + '</p><span>' + m2.toFixed(2) + ' m² · ' + linear + 'm × ' + altura + 'm</span>' +
         '<div class="floor-select-row" onclick="event.stopPropagation()"><select class="form-control" id="fs-' + key + '" onchange="atualizarResumo()" style="font-size:12px;padding:4px 8px;width:100%"><option value="">— Piso —</option>' +
         opcoes.map(r => '<option value="' + (r.id||r.codigo) + '">' + r.nome + ' [' + (r.tamanho||'') + ']</option>').join('') +
         '</select></div>' +
