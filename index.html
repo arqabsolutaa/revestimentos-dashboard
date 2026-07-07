@@ -3974,31 +3974,147 @@ function renderVagasDepResumo() {
 }
 
 async function gerarPDFVagasDep(ap) {
+  const jsPDF = getJsPDF();
+  if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
+
   const v = vagasDepVinculos.find(x => String(x.ap) === String(ap));
   const cliente = (v && v.cliente) ? v.cliente : (CLIENTES_POR_APARTAMENTO[ap] || '');
   const vagas = v ? String(v.vagas || '').split(',').map(s=>s.trim()).filter(Boolean) : [];
   const deposito = v ? String(v.deposito || '') : '';
 
-  // Separar vagas por subsolo (1-31 = 1º, 32-88 = 2º)
   const vagas1 = vagas.filter(n => parseInt(n) <= 31);
   const vagas2 = vagas.filter(n => parseInt(n) > 31);
   const dep1 = deposito && parseInt(deposito) <= 15 ? deposito : '';
   const dep2 = deposito && parseInt(deposito) > 15 ? deposito : '';
-
   const hoje = new Date().toLocaleDateString('pt-BR');
-  const logoUrl = 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/logo_18.png';
 
   showToast('Gerando PDF...', 'success');
-  try {
-    const res = await apiPost('gerarPDFVagasDeposito', { ap, cliente, vagas: vagas.join(', '), deposito, vagas1: vagas1.join(', '), vagas2: vagas2.join(', '), dep1, dep2, data: hoje, logoUrl });
-    if (res && res.url) {
-      window.open(res.url, '_blank');
-    } else {
-      showToast('Erro ao gerar PDF', 'error');
-    }
-  } catch(e) {
-    showToast('Erro: ' + e.message, 'error');
+
+  const logoUrl = 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/logo_18.png';
+  let logoData = null;
+  try { logoData = await carregarImagemPDF(logoUrl); } catch(e) {}
+
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const W = 210, ml = 18, mr = 18, cw = W - ml - mr;
+
+  // Cores
+  const COR_DOURADO = [176, 128, 64];
+  const COR_CINZA = [136, 136, 136];
+  const COR_TEXTO = [44, 44, 44];
+  const COR_BEGE_BG = [248, 245, 240];
+  const COR_BEGE_BD = [229, 224, 213];
+  const COR_DOURADO_BG = [253, 246, 232];
+  const COR_DOURADO_BD = [232, 213, 160];
+  const COR_VERDE_BG = [238, 245, 238];
+  const COR_VERDE_BD = [184, 216, 184];
+  const COR_VERDE = [45, 106, 79];
+  const COR_PILL_V = [250, 232, 176];
+  const COR_PILL_VT = [122, 92, 30];
+  const COR_PILL_D = [184, 224, 192];
+  const COR_PILL_DT = [26, 74, 42];
+
+  let y = 14;
+
+  // LOGO
+  if (logoData) {
+    doc.addImage(logoData, 'PNG', ml, y, 40, 13.1);
   }
+  // Linha separadora vertical
+  doc.setDrawColor(...COR_DOURADO); doc.setLineWidth(0.4);
+  doc.line(ml + 44, y, ml + 44, y + 16);
+  // Dados construtora
+  doc.setFontSize(7.5); doc.setFont('helvetica','bold');
+  doc.setTextColor(...COR_TEXTO);
+  doc.text('ABSOLUTA CONSTRUTORA E INCORPORADORA', ml + 48, y + 4);
+  doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
+  doc.text('Prime Business Center · Av. Kennedy, 27 – Salas 121, 122 e 123', ml + 48, y + 8);
+  doc.text('Jardim do Mar – São Bernardo do Campo/SP', ml + 48, y + 12);
+  doc.text('(11) 4123-6500 · falecom@absolutaconstrutora.com.br', ml + 48, y + 16);
+
+  y += 22;
+  doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
+  doc.line(ml, y, W - mr, y);
+
+  y += 10;
+  // TÍTULO
+  doc.setFontSize(17); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
+  doc.text('Comprovante de Vagas e Depósito', ml, y);
+  y += 5;
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
+  doc.text('Essence Residence · São Bernardo do Campo/SP', ml, y);
+
+  y += 8;
+  // CARD CLIENTE
+  const ch = 18;
+  doc.setFillColor(...COR_BEGE_BG); doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
+  doc.roundedRect(ml, y, cw, ch, 3, 3, 'FD');
+  doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_CINZA);
+  doc.text('PROPRIETÁRIO', ml+4, y+5);
+  doc.text('UNIDADE', ml+92, y+5);
+  doc.text('DATA', ml+138, y+5);
+  doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
+  doc.text(cliente, ml+4, y+13);
+  doc.text('Apto '+ap, ml+92, y+13);
+  doc.text(hoje, ml+138, y+13);
+
+  y += ch + 5;
+
+  // Função para desenhar card de subsolo
+  function drawCard(x, cardW, bgColor, bdColor, labelColor, labelTxt, items, pillBg, pillTxt) {
+    const linhas = Math.ceil(items.length / 3);
+    const cardH = 10 + 8 + linhas * 9 + 4;
+    doc.setFillColor(...bgColor); doc.setDrawColor(...bdColor); doc.setLineWidth(0.3);
+    doc.roundedRect(x, y, cardW, cardH, 3, 3, 'FD');
+    doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.setTextColor(...labelColor);
+    doc.text(labelTxt, x+4, y+7);
+    let px = x+4, py = y+14;
+    items.forEach((item, i) => {
+      const pw = doc.getTextWidth(item) + 8;
+      doc.setFillColor(...pillBg); doc.roundedRect(px, py-5, pw, 7, 3, 3, 'F');
+      doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...pillTxt);
+      doc.text(item, px+4, py);
+      px += pw + 3;
+      if ((i+1) % 4 === 0) { px = x+4; py += 9; }
+    });
+    return cardH;
+  }
+
+  // Montar blocos
+  const blocos = [];
+  if (vagas1.length) blocos.push({ label: '1º SUBSOLO · VAGAS', items: vagas1.map(n=>'Vaga '+n), bg: COR_DOURADO_BG, bd: COR_DOURADO_BD, lc: COR_DOURADO, pb: COR_PILL_V, pt: COR_PILL_VT, tipo: 'vaga' });
+  if (vagas2.length) blocos.push({ label: '2º SUBSOLO · VAGAS', items: vagas2.map(n=>'Vaga '+n), bg: COR_DOURADO_BG, bd: COR_DOURADO_BD, lc: COR_DOURADO, pb: COR_PILL_V, pt: COR_PILL_VT, tipo: 'vaga' });
+  if (dep1) blocos.push({ label: '1º SUBSOLO · DEPÓSITO', items: ['Depósito '+dep1], bg: COR_VERDE_BG, bd: COR_VERDE_BD, lc: COR_VERDE, pb: COR_PILL_D, pt: COR_PILL_DT, tipo: 'dep' });
+  if (dep2) blocos.push({ label: '2º SUBSOLO · DEPÓSITO', items: ['Depósito '+dep2], bg: COR_VERDE_BG, bd: COR_VERDE_BD, lc: COR_VERDE, pb: COR_PILL_D, pt: COR_PILL_DT, tipo: 'dep' });
+
+  // Dividir em pares lado a lado
+  for (let i = 0; i < blocos.length; i += 2) {
+    const b1 = blocos[i];
+    const b2 = blocos[i+1];
+    const cardW = b2 ? (cw/2 - 2) : cw;
+    const h1 = drawCard(ml, cardW, b1.bg, b1.bd, b1.lc, b1.label, b1.items, b1.pb, b1.pt);
+    if (b2) drawCard(ml + cardW + 4, cardW, b2.bg, b2.bd, b2.lc, b2.label, b2.items, b2.pb, b2.pt);
+    y += Math.max(h1, 28) + 4;
+  }
+
+  y += 4;
+  // TEXTO VINCULAÇÃO
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
+  const linhas = doc.splitTextToSize(
+    `As vagas de garagem e o depósito acima estão vinculados à unidade Apto ${ap} – Essence Residence, em nome de ${cliente}, conforme contrato de compra e venda firmado com a Absoluta Construtora e Incorporadora.`,
+    cw
+  );
+  doc.text(linhas, ml, y);
+  y += linhas.length * 5;
+
+  // RODAPÉ
+  const rodapeY = 285;
+  doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
+  doc.line(ml, rodapeY, W-mr, rodapeY);
+  doc.setFontSize(7); doc.setTextColor(...COR_CINZA);
+  doc.text('Absoluta Construtora e Incorporadora · Essence Residence · São Bernardo do Campo/SP', W/2, rodapeY+5, { align: 'center' });
+
+  doc.save(`Comprovante_Vagas_Apto${ap}.pdf`);
+  showToast('PDF gerado!', 'success');
 }
 
 async function loadPagamentos() {
