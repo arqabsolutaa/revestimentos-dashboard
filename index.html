@@ -3957,16 +3957,48 @@ function renderVagasDepResumo() {
     const cliente = (v && v.cliente) ? v.cliente : (CLIENTES_POR_APARTAMENTO[ap] || '');
     const vagas = v ? String(v.vagas || '').split(',').map(s=>s.trim()).filter(Boolean) : [];
     const deposito = v ? v.deposito : '';
+    const temDados = vagas.length || deposito;
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--surface2);border-radius:8px">
       <div>
         <strong style="font-size:13px">Apto ${ap}</strong>
         <span style="font-size:12px;color:var(--text3)"> · ${cliente || 'sem cliente'}</span>
       </div>
-      <div style="font-size:12px;color:var(--text2);text-align:right">
-        ${vagas.length ? 'Vagas: ' + vagas.join(', ') : 'Sem vagas'} ${deposito ? ' · Depósito ' + deposito : ''}
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="font-size:12px;color:var(--text2);text-align:right">
+          ${vagas.length ? 'Vagas: ' + vagas.join(', ') : 'Sem vagas'} ${deposito ? ' · Depósito ' + deposito : ''}
+        </div>
+        ${temDados ? `<button onclick="gerarPDFVagasDep('${ap}')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--accent);color:var(--accent);background:none;cursor:pointer;white-space:nowrap">📄 PDF</button>` : ''}
       </div>
     </div>`;
   }).join('');
+}
+
+async function gerarPDFVagasDep(ap) {
+  const v = vagasDepVinculos.find(x => String(x.ap) === String(ap));
+  const cliente = (v && v.cliente) ? v.cliente : (CLIENTES_POR_APARTAMENTO[ap] || '');
+  const vagas = v ? String(v.vagas || '').split(',').map(s=>s.trim()).filter(Boolean) : [];
+  const deposito = v ? String(v.deposito || '') : '';
+
+  // Separar vagas por subsolo (1-31 = 1º, 32-88 = 2º)
+  const vagas1 = vagas.filter(n => parseInt(n) <= 31);
+  const vagas2 = vagas.filter(n => parseInt(n) > 31);
+  const dep1 = deposito && parseInt(deposito) <= 15 ? deposito : '';
+  const dep2 = deposito && parseInt(deposito) > 15 ? deposito : '';
+
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  const logoUrl = 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/logo_18.png';
+
+  showToast('Gerando PDF...', 'success');
+  try {
+    const res = await apiPost('gerarPDFVagasDeposito', { ap, cliente, vagas: vagas.join(', '), deposito, vagas1: vagas1.join(', '), vagas2: vagas2.join(', '), dep1, dep2, data: hoje, logoUrl });
+    if (res && res.url) {
+      window.open(res.url, '_blank');
+    } else {
+      showToast('Erro ao gerar PDF', 'error');
+    }
+  } catch(e) {
+    showToast('Erro: ' + e.message, 'error');
+  }
 }
 
 async function loadPagamentos() {
