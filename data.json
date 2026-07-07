@@ -23028,6 +23028,18 @@
       "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
+      "id": "id_1780690241674_rze82",
+      "codigo_rev": "120604",
+      "nome": "Stratum Arena Ply Nat Ret",
+      "data_fab": "Wed Feb 05 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "qtd_caixas": "",
+      "m2_por_caixa": "",
+      "m2_total": "",
+      "localizacao": "",
+      "obs": "",
+      "criado_em": ""
+    },
+    {
       "id": "id_1780690250092_2e4i1",
       "codigo_rev": "120605",
       "nome": "Woody Maple Nat Ret ",
@@ -23098,6 +23110,18 @@
       "localizacao": "Vista Park",
       "obs": "",
       "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+    },
+    {
+      "id": "id_1780690241674_rze83",
+      "codigo_rev": "811",
+      "nome": "Gouache Brume - Br Bold",
+      "data_fab": "Mon Feb 03 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "qtd_caixas": "",
+      "m2_por_caixa": "",
+      "m2_total": "",
+      "localizacao": "",
+      "obs": "",
+      "criado_em": ""
     },
     {
       "id": "id_1780690252679_020kt",
