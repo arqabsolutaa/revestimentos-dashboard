@@ -19471,20 +19471,6 @@
       "nome_arquivo": ""
     },
     {
-      "id": "id_1783351919076_lsp61",
-      "apartamento": "81",
-      "cliente": "Fernanda e Bruno",
-      "local": "A.S",
-      "parede": "Paredes Complementares",
-      "metro_linear": "13",
-      "altura": "2.55",
-      "imagem": "",
-      "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "planta_img": "",
-      "nome_arquivo": ""
-    },
-    {
       "id": "id_1783352525144_meehv",
       "apartamento": "81",
       "cliente": "Fernanda e Bruno",
@@ -19649,34 +19635,6 @@
       "imagem": "",
       "obs": "",
       "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "planta_img": "",
-      "nome_arquivo": ""
-    },
-    {
-      "id": "id_1783422887215_ny4g0",
-      "apartamento": "11",
-      "cliente": "Disponível",
-      "local": "BUB",
-      "parede": "PISO",
-      "metro_linear": "2.55",
-      "altura": "1",
-      "imagem": "",
-      "obs": "",
-      "criado_em": "Tue Jul 07 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "planta_img": "",
-      "nome_arquivo": ""
-    },
-    {
-      "id": "id_1783426006751_j3y1s",
-      "apartamento": "11",
-      "cliente": "Disponível",
-      "local": "cx",
-      "parede": "xbf",
-      "metro_linear": "2.35",
-      "altura": "2.55",
-      "imagem": "",
-      "obs": "",
-      "criado_em": "Tue Jul 07 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
       "planta_img": "",
       "nome_arquivo": ""
     }
