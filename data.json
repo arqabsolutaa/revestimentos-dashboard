@@ -23112,7 +23112,7 @@
       "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     },
     {
-      "id": "id_1780690241674_rze83",
+      "id": "id_1780690241674_rze839",
       "codigo_rev": "811",
       "nome": "Gouache Brume - Br Bold",
       "data_fab": "Mon Feb 03 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
@@ -23182,6 +23182,18 @@
       "localizacao": "Vista Park",
       "obs": "",
       "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+    },
+    {
+      "id": "id_1780690241674_rze72",
+      "codigo_rev": "824",
+      "nome": "Gouache Mer - Br Bold",
+      "data_fab": "Mon Oct 28 2024 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "qtd_caixas": "54",
+      "m2_por_caixa": "0.87",
+      "m2_total": "",
+      "localizacao": "",
+      "obs": "",
+      "criado_em": ""
     },
     {
       "id": "id_1780690255175_k07x3",
