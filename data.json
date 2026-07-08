@@ -23747,6 +23747,21 @@
       "itens": "[]",
       "selecoes": "{}",
       "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
+    },
+    {
+      "id": "id_1783547372087_s51rd",
+      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "cliente": "",
+      "ap": "",
+      "empresa": "",
+      "totalM2": "0",
+      "totalValor": "0",
+      "pagamento": "avista",
+      "desconto": "0",
+      "itens": "[]",
+      "selecoes": "{}",
+      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "instalacoes": [],
