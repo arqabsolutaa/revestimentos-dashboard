@@ -4218,7 +4218,10 @@ function renderPagamentos(lista) {
           <button class="status-pgto-badge ${status === 'parcial' ? 'status-parcial' : 'status-parcial'}" onclick="alterarStatusPgto('${p.id}','parcial')" style="${status === 'parcial' ? '' : 'opacity:0.4'}">Parcial</button>
           <button class="status-pgto-badge ${status === 'pago' ? 'status-pago' : 'status-pago'}" onclick="alterarStatusPgto('${p.id}','pago')" style="${status === 'pago' ? '' : 'opacity:0.4'}">Pago</button>
         </div>
-        <input class="form-control" placeholder="Observação (parcelas, etc)" style="font-size:11px;padding:4px 8px;width:220px" value="${p.obs_pgto||''}" onblur="salvarObsPgto('${p.id}', this.value)">
+        <div style="display:flex;gap:4px;align-items:center">
+          <input class="form-control" placeholder="Observação (parcelas, etc)" id="obs-${p.id}" style="font-size:11px;padding:4px 8px;flex:1" value="${p.obs_pgto||''}">
+          <button onclick="salvarObsPgtoBtn('${p.id}')" style="padding:4px 8px;border-radius:6px;border:1px solid var(--accent);background:none;color:var(--accent);font-size:11px;cursor:pointer;white-space:nowrap">✓ Salvar</button>
+        </div>
         <div style="display:flex;gap:6px">
           <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
           <button class="btn btn-secondary" onclick="abrirModalOutraCondicao('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF outra condição</button>
@@ -4250,6 +4253,18 @@ async function alterarStatusPgto(id, status) {
 
 async function salvarObsPgto(id, obs) {
   try { await api('updateObsPgto', { id, obs }); } catch(e) {}
+}
+
+async function salvarObsPgtoBtn(id) {
+  const input = document.getElementById('obs-' + id);
+  if (!input) return;
+  const obs = input.value;
+  try {
+    await api('updateObsPgto', { id, obs });
+    showToast('Observação salva!', 'success');
+  } catch(e) {
+    showToast('Erro ao salvar', 'error');
+  }
 }
 
 function gerarPDFComValorPgto(id) {
