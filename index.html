@@ -338,8 +338,8 @@ function renderBancadasMarmoraria() {
           <label style="font-size:11px;color:var(--text3)">Pedra</label>
           <select class="form-control" style="font-size:12px" onchange="marmSelecoes[${idx}].pedra=this.value;atualizarResumoMarm()">
             <option value="">— Selecione —</option>
-            <optgroup label="Construtora (Incluso)">${dadosMarmCatalogo.filter(p=>p.categoria==='Construtora').map(p=>`<option value="${p.id}" ${b.pedra===String(p.id)?'selected':''}>${p.nome}</option>`).join('')}</optgroup>
-            <optgroup label="Sugestões Absoluta">${dadosMarmCatalogo.filter(p=>p.categoria==='Absoluta').map(p=>`<option value="${p.id}" ${b.pedra===String(p.id)?'selected':''}>${p.nome}</option>`).join('')}</optgroup>
+            <optgroup label="Construtora (Incluso)">${dadosMarmCatalogo.filter(p=>p.categoria==='Construtora').map(p=>{const est=parseFloat(p.estoque_m2)||0;return `<option value="${p.id}" ${b.pedra===String(p.id)?'selected':''}>${p.nome}${est>0?' ('+est.toFixed(1)+'m²)':''}</option>`;}).join('')}</optgroup>
+            <optgroup label="Sugestões Absoluta">${dadosMarmCatalogo.filter(p=>p.categoria==='Absoluta').map(p=>{const est=parseFloat(p.estoque_m2)||0;return `<option value="${p.id}" ${b.pedra===String(p.id)?'selected':''}>${p.nome}${est>0?' ('+est.toFixed(1)+'m²)':''}</option>`;}).join('')}</optgroup>
           </select>
         </div>
       </div>
