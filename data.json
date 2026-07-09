@@ -1159,6 +1159,26 @@
       "preco_m2": "98.5",
       "criado_em": "Thu Jul 09 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
+    },
+    {
+      "id": "id_1783620192057_9tq0j",
+      "codigo": "4081",
+      "nome": "Artematica Litchi",
+      "imagem": "",
+      "site": "",
+      "m2_por_caixa": "0",
+      "pecas_por_caixa": "0",
+      "qtd_caixas": "0",
+      "tamanho": "15,5x15,5",
+      "junta": "",
+      "espessura": "",
+      "data_fabricacao": "",
+      "lote": "",
+      "obra": "Essence",
+      "estoque_m2": "0",
+      "preco_m2": "98.5",
+      "criado_em": "Thu Jul 09 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "perda_pct": "20"
     }
   ],
   "paredes": [
