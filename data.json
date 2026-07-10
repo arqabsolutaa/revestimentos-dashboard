@@ -23811,6 +23811,21 @@
       "comprovante_url": "",
       "total_m2": "324.18",
       "total_valor": "46719.9852"
+    },
+    {
+      "id": "id_1783693984918_q7wqz",
+      "ap": "31",
+      "cliente": "Therezinha e Daniel",
+      "empresa": "Empresa",
+      "data": "Fri Jul 10 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "selecoes": "{\"31-A.S-Paredes Complementares-1783689718794\":{\"m2\":43.73,\"piso\":\"id_1783689824629_h3l0t\"},\"31-Piso geral (Exceto Hall)-Piso-1783690132256\":{\"m2\":128.25,\"piso\":\"41\"},\"31-Lavabo-Piso-0\":{\"m2\":1.8,\"piso\":\"43\"},\"31-A.S-A-0\":{\"m2\":4.67,\"piso\":\"id_1783689824629_h3l0t\"},\"31-A.S-B-1\":{\"m2\":2.24,\"piso\":\"id_1783689824629_h3l0t\"},\"31-Banho A.S-A-0\":{\"m2\":2.6,\"piso\":\"id_1783689824629_h3l0t\"},\"31-Banho A.S-B-1\":{\"m2\":1.89,\"piso\":\"id_1783689824629_h3l0t\"},\"31-Banho A.S-C-2\":{\"m2\":0.61,\"piso\":\"id_1783689824629_h3l0t\"},\"31-Banho A.S-D-3\":{\"m2\":2.32,\"piso\":\"id_1783689824629_h3l0t\"},\"31-Banho A.S-E-4\":{\"m2\":1.43,\"piso\":\"id_1783689824629_h3l0t\"},\"31-Banho A.S-F-5\":{\"m2\":2.04,\"piso\":\"id_1783689824629_h3l0t\"},\"31-Banho A.S-G-6\":{\"m2\":5.2,\"piso\":\"id_1783689824629_h3l0t\"},\"31-Banho A.S-Piso-7\":{\"m2\":2.62,\"piso\":\"41\"},\"31-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"10\"},\"31-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"10\"},\"31-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"10\"},\"31-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"10\"},\"31-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"37\"},\"31-Banho 02 (Master)-Parede Vaso-1783691893889\":{\"m2\":2.22,\"piso\":\"37\"},\"31-Banho 02 (Master)-Parede Bancada-1783691937448\":{\"m2\":4.41,\"piso\":\"37\"},\"31-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"10\"},\"31-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"10\"},\"31-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"10\"},\"31-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"10\"},\"31-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"10\"},\"31-Banho 03-Parede F (Box)-1783692210969\":{\"m2\":1.15,\"piso\":\"69\"},\"31-Banho 03-Parede F (Box)-1783692260982\":{\"m2\":1.15,\"piso\":\"68\"},\"31-Banho 03-Parede A (Bancada-1783692701517\":{\"m2\":1.99,\"piso\":\"68\"},\"31-Banho 03-Parede A (Bancada)-1783692847632\":{\"m2\":1.99,\"piso\":\"69\"},\"31-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"10\"},\"31-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"11\"},\"31-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"10\"},\"31-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"10\"},\"31-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"10\"},\"31-Banho 04-Parede F (Box)-1783692926826\":{\"m2\":1.15,\"piso\":\"68\"},\"31-Banho 04-Parede F (Box)-1783692958480\":{\"m2\":1.15,\"piso\":\"69\"},\"31-Banho 04-Parede A (Bancada)-1783692994415\":{\"m2\":1.99,\"piso\":\"68\"},\"31-Banho 04-Parede A (Bancada)-1783693079967\":{\"m2\":1.99,\"piso\":\"69\"},\"31-Banho 01-Parede F ( Fundo Box)-1783693610138\":{\"m2\":1.27,\"piso\":\"id_1783693700948_8gwqd\"},\"31-Banho 01-Parede F (Fundo Box)-1783693678598\":{\"m2\":1.27,\"piso\":\"81\"},\"31-Banho 01-Parede E (Frente Chuveiro)-1783693728910\":{\"m2\":1.27,\"piso\":\"id_1783693700948_8gwqd\"},\"31-Banho 01-Parede E (Fundo Box)-1783693831014\":{\"m2\":1.27,\"piso\":\"81\"},\"31-Banho 01-Parede D (Lateral Shaft)-1783693872534\":{\"m2\":0.31,\"piso\":\"81\"},\"31-Banho 01-Parede D (Lateral Shaft)-1783693918306\":{\"m2\":0.31,\"piso\":\"id_1783693700948_8gwqd\"}}",
+      "status": "pendente",
+      "criado_em": "Fri Jul 10 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "status_pgto": "",
+      "obs_pgto": "",
+      "comprovante_url": "",
+      "total_m2": "331.02000000000004",
+      "total_valor": "47393.72520000001"
     }
   ],
   "orcamentos": [
