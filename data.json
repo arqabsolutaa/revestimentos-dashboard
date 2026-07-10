@@ -897,7 +897,7 @@
       "obra": "Personalize Essence",
       "estoque_m2": "0",
       "preco_m2": "156",
-      "criado_em": "Sun Jun 28 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Sun Jun 28 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
     },
     {
@@ -937,7 +937,7 @@
       "obra": "Personalize Essence",
       "estoque_m2": "0",
       "preco_m2": "156",
-      "criado_em": "Mon Jun 29 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 29 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
     },
     {
@@ -997,7 +997,7 @@
       "obra": "Personalize Essence",
       "estoque_m2": "0",
       "preco_m2": "105.3",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
     },
     {
@@ -1017,7 +1017,7 @@
       "obra": "Personalize Essence",
       "estoque_m2": "0",
       "preco_m2": "98.5",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
     },
     {
@@ -1037,7 +1037,7 @@
       "obra": "Personalize Essence",
       "estoque_m2": "0",
       "preco_m2": "98.5",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
     },
     {
@@ -1057,7 +1057,7 @@
       "obra": "Personalize Essence",
       "estoque_m2": "0",
       "preco_m2": "98.5",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
     },
     {
@@ -1077,7 +1077,7 @@
       "obra": "Personalize Essence",
       "estoque_m2": "0",
       "preco_m2": "156",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
     },
     {
@@ -1097,7 +1097,7 @@
       "obra": "Essence",
       "estoque_m2": "0",
       "preco_m2": "98.5",
-      "criado_em": "Tue Jul 07 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Tue Jul 07 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
     },
     {
@@ -1117,7 +1117,7 @@
       "obra": "Essence",
       "estoque_m2": "0",
       "preco_m2": "156",
-      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
     },
     {
@@ -1137,7 +1137,27 @@
       "obra": "Essence",
       "estoque_m2": "0",
       "preco_m2": "98.5",
-      "criado_em": "Thu Jul 09 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jul 09 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "perda_pct": "20"
+    },
+    {
+      "id": "id_1783689824629_h3l0t",
+      "codigo": "4031",
+      "nome": "Qatari Desert Nat Ret",
+      "imagem": "",
+      "site": "",
+      "m2_por_caixa": "0",
+      "pecas_por_caixa": "0",
+      "qtd_caixas": "0",
+      "tamanho": "120x120",
+      "junta": "",
+      "espessura": "",
+      "data_fabricacao": "",
+      "lote": "",
+      "obra": "Essence",
+      "estoque_m2": "0",
+      "preco_m2": "0",
+      "criado_em": "Fri Jul 10 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "perda_pct": "20"
     }
   ],
@@ -1152,7 +1172,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Sat May 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/Apto%2011%20-%20Banho%2001.png",
       "nome_arquivo": "Apto 11 - Banho 01.png"
     },
@@ -19730,7 +19750,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19744,7 +19764,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19758,7 +19778,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19772,7 +19792,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19786,7 +19806,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19800,7 +19820,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19814,7 +19834,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19828,7 +19848,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19842,7 +19862,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19856,7 +19876,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19870,7 +19890,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19884,7 +19904,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19898,7 +19918,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19912,7 +19932,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19926,7 +19946,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19940,7 +19960,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19954,7 +19974,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19968,7 +19988,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19982,7 +20002,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -19996,7 +20016,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20010,7 +20030,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20024,7 +20044,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20038,7 +20058,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20052,7 +20072,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20066,7 +20086,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20080,7 +20100,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20094,7 +20114,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20108,7 +20128,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20122,7 +20142,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20136,7 +20156,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20150,7 +20170,7 @@
       "altura": "0",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20164,7 +20184,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20178,7 +20198,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20192,7 +20212,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20206,7 +20226,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20234,7 +20254,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20248,7 +20268,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20262,7 +20282,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20276,7 +20296,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20290,7 +20310,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20304,7 +20324,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20318,7 +20338,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20332,7 +20352,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20346,7 +20366,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20360,7 +20380,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20374,7 +20394,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20388,7 +20408,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20402,7 +20422,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20416,7 +20436,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20430,7 +20450,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20444,7 +20464,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20458,7 +20478,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20472,7 +20492,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20486,7 +20506,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20500,7 +20520,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20514,7 +20534,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20528,7 +20548,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20542,7 +20562,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20556,7 +20576,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20570,7 +20590,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20584,7 +20604,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20598,7 +20618,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20612,7 +20632,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20626,7 +20646,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20640,7 +20660,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20654,7 +20674,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20668,7 +20688,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20682,7 +20702,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20696,7 +20716,7 @@
       "altura": "1.25",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20710,7 +20730,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20724,7 +20744,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20738,7 +20758,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20752,7 +20772,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20766,7 +20786,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20780,7 +20800,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20794,7 +20814,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20808,7 +20828,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20822,7 +20842,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20836,7 +20856,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20850,7 +20870,7 @@
       "altura": "1",
       "imagem": "",
       "obs": "",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20864,7 +20884,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Tue Jul 07 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Tue Jul 07 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     },
@@ -20878,7 +20898,7 @@
       "altura": "2.55",
       "imagem": "",
       "obs": "",
-      "criado_em": "Fri Jul 10 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Fri Jul 10 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "planta_img": "",
       "nome_arquivo": ""
     }
@@ -20895,7 +20915,7 @@
       "quantidade_m2": "74.62",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760388700_4h8i5",
@@ -20908,7 +20928,7 @@
       "quantidade_m2": "99.44999999999999",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760388895_p1cjf",
@@ -20921,7 +20941,7 @@
       "quantidade_m2": "50.82",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760389097_o102k",
@@ -20934,7 +20954,7 @@
       "quantidade_m2": "23.799999999999997",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760389759_81nmn",
@@ -20947,7 +20967,7 @@
       "quantidade_m2": "26.619999999999997",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760390012_qv1zm",
@@ -20960,7 +20980,7 @@
       "quantidade_m2": "4.76",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760390210_kaz7o",
@@ -20973,7 +20993,7 @@
       "quantidade_m2": "172.20000000000002",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760390397_pr13v",
@@ -20986,7 +21006,7 @@
       "quantidade_m2": "53.239999999999995",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760390558_6wfwq",
@@ -20999,7 +21019,7 @@
       "quantidade_m2": "83.3",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760390748_3svqk",
@@ -21012,7 +21032,7 @@
       "quantidade_m2": "8.05",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760390925_921xh",
@@ -21025,7 +21045,7 @@
       "quantidade_m2": "31.46",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760391112_1ua3w",
@@ -21038,7 +21058,7 @@
       "quantidade_m2": "35.75",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760391297_hi71w",
@@ -21051,7 +21071,7 @@
       "quantidade_m2": "168.73999999999998",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760392167_ipdgv",
@@ -21064,7 +21084,7 @@
       "quantidade_m2": "53.239999999999995",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760392380_tom5o",
@@ -21077,7 +21097,7 @@
       "quantidade_m2": "83.3",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760392565_9vtb4",
@@ -21090,7 +21110,7 @@
       "quantidade_m2": "8.05",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760392750_lr174",
@@ -21103,7 +21123,7 @@
       "quantidade_m2": "31.46",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760392933_g3c8v",
@@ -21116,7 +21136,7 @@
       "quantidade_m2": "35.75",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760393101_9emd9",
@@ -21129,7 +21149,7 @@
       "quantidade_m2": "55.769999999999996",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760393284_j4iak",
@@ -21142,7 +21162,7 @@
       "quantidade_m2": "40.18",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760393450_ddn78",
@@ -21155,7 +21175,7 @@
       "quantidade_m2": "35.75",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760393635_hwb6q",
@@ -21168,7 +21188,7 @@
       "quantidade_m2": "26.619999999999997",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760393798_6yhcq",
@@ -21181,7 +21201,7 @@
       "quantidade_m2": "134.42",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760393996_yal0o",
@@ -21194,7 +21214,7 @@
       "quantidade_m2": "23.49",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760394278_ugq5h",
@@ -21207,7 +21227,7 @@
       "quantidade_m2": "186.14999999999998",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760394461_p95jr",
@@ -21220,7 +21240,7 @@
       "quantidade_m2": "4.35",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760394639_kjlfu",
@@ -21233,7 +21253,7 @@
       "quantidade_m2": "79.86",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760394809_hqx57",
@@ -21246,7 +21266,7 @@
       "quantidade_m2": "32.89",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760394978_fo4p3",
@@ -21259,7 +21279,7 @@
       "quantidade_m2": "92.82",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760395148_o18al",
@@ -21272,7 +21292,7 @@
       "quantidade_m2": "7.1499999999999995",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760395326_oa01f",
@@ -21285,7 +21305,7 @@
       "quantidade_m2": "183.6",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760395505_t2b6b",
@@ -21298,7 +21318,7 @@
       "quantidade_m2": "72.6",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760395694_nqglp",
@@ -21311,7 +21331,7 @@
       "quantidade_m2": "22.88",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760395994_3wlec",
@@ -21324,7 +21344,7 @@
       "quantidade_m2": "109.48",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760396581_g8kav",
@@ -21337,7 +21357,7 @@
       "quantidade_m2": "116.28",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760396759_13a6n",
@@ -21350,7 +21370,7 @@
       "quantidade_m2": "77.44",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760396944_j1h4s",
@@ -21363,7 +21383,7 @@
       "quantidade_m2": "63.14",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760397852_v108a",
@@ -21376,7 +21396,7 @@
       "quantidade_m2": "109.82",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760398038_a90xt",
@@ -21389,7 +21409,7 @@
       "quantidade_m2": "14.49",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760398216_8ztjt",
@@ -21402,7 +21422,7 @@
       "quantidade_m2": "22.88",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760398425_1tvq6",
@@ -21415,7 +21435,7 @@
       "quantidade_m2": "69.92",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760398609_bu85p",
@@ -21428,7 +21448,7 @@
       "quantidade_m2": "12.87",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760398886_h63up",
@@ -21441,7 +21461,7 @@
       "quantidade_m2": "70.07",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760399072_n0t4z",
@@ -21454,7 +21474,7 @@
       "quantidade_m2": "170.85",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760399251_xtnnn",
@@ -21467,7 +21487,7 @@
       "quantidade_m2": "58.08",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760399427_gbl89",
@@ -21480,7 +21500,7 @@
       "quantidade_m2": "29.04",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760399608_luq7x",
@@ -21493,7 +21513,7 @@
       "quantidade_m2": "4.35",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760399779_v4u17",
@@ -21506,7 +21526,7 @@
       "quantidade_m2": "16.1",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760399980_9hwtl",
@@ -21519,7 +21539,7 @@
       "quantidade_m2": "86.10000000000001",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760400157_ovbnz",
@@ -21532,7 +21552,7 @@
       "quantidade_m2": "70.17999999999999",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760400329_ujekb",
@@ -21545,7 +21565,7 @@
       "quantidade_m2": "38.72",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760400528_snh3i",
@@ -21558,7 +21578,7 @@
       "quantidade_m2": "14.52",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760400716_puz3d",
@@ -21571,7 +21591,7 @@
       "quantidade_m2": "26.619999999999997",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760400903_1qywm",
@@ -21584,7 +21604,7 @@
       "quantidade_m2": "60.5",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760401079_kvjmw",
@@ -21597,7 +21617,7 @@
       "quantidade_m2": "27",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760401263_hq1yn",
@@ -21610,7 +21630,7 @@
       "quantidade_m2": "153",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760401447_vtkqw",
@@ -21623,7 +21643,7 @@
       "quantidade_m2": "24.2",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760401628_gpi1g",
@@ -21636,7 +21656,7 @@
       "quantidade_m2": "59.57",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760401819_hn1gh",
@@ -21649,7 +21669,7 @@
       "quantidade_m2": "3.48",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760401986_qvpzs",
@@ -21662,7 +21682,7 @@
       "quantidade_m2": "3.48",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760402152_u0gtu",
@@ -21675,7 +21695,7 @@
       "quantidade_m2": "36.3",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760402353_6jpsj",
@@ -21688,7 +21708,7 @@
       "quantidade_m2": "180.88",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760402532_ezsl1",
@@ -21701,7 +21721,7 @@
       "quantidade_m2": "28.599999999999998",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760402738_ip2oh",
@@ -21714,7 +21734,7 @@
       "quantidade_m2": "21.78",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760402913_ywctw",
@@ -21727,7 +21747,7 @@
       "quantidade_m2": "7.26",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760403103_nqa75",
@@ -21740,7 +21760,7 @@
       "quantidade_m2": "33.81",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760403303_t3gu4",
@@ -21753,7 +21773,7 @@
       "quantidade_m2": "3.48",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760403491_1nwrx",
@@ -21766,7 +21786,7 @@
       "quantidade_m2": "124.94999999999999",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760403869_8mwjn",
@@ -21779,7 +21799,7 @@
       "quantidade_m2": "31.57",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760404076_1agv1",
@@ -21792,7 +21812,7 @@
       "quantidade_m2": "48.4",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760404325_28ifn",
@@ -21805,7 +21825,7 @@
       "quantidade_m2": "26.619999999999997",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760404570_xud05",
@@ -21818,7 +21838,7 @@
       "quantidade_m2": "0.87",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760404763_858s0",
@@ -21831,7 +21851,7 @@
       "quantidade_m2": "71.5",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760404970_d090u",
@@ -21844,7 +21864,7 @@
       "quantidade_m2": "9.69",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760405183_5fuyw",
@@ -21857,7 +21877,7 @@
       "quantidade_m2": "7.83",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760405453_82juf",
@@ -21870,7 +21890,7 @@
       "quantidade_m2": "31.46",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760405740_f97b0",
@@ -21883,7 +21903,7 @@
       "quantidade_m2": "33.81",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760405949_6nn39",
@@ -21896,7 +21916,7 @@
       "quantidade_m2": "31.46",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760406144_adl4d",
@@ -21909,7 +21929,7 @@
       "quantidade_m2": "12.88",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760406368_av363",
@@ -21922,7 +21942,7 @@
       "quantidade_m2": "5.1",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760406594_3chad",
@@ -21935,7 +21955,7 @@
       "quantidade_m2": "11.899999999999999",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760406823_ct61d",
@@ -21948,7 +21968,7 @@
       "quantidade_m2": "226.95",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760407050_k0vdu",
@@ -21961,7 +21981,7 @@
       "quantidade_m2": "50.82",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760407262_n9ehq",
@@ -21974,7 +21994,7 @@
       "quantidade_m2": "43.56",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760407485_phg4v",
@@ -21987,7 +22007,7 @@
       "quantidade_m2": "11.44",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760407683_enqi9",
@@ -22000,7 +22020,7 @@
       "quantidade_m2": "8.05",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760408523_qfiv2",
@@ -22013,7 +22033,7 @@
       "quantidade_m2": "168.73999999999998",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760408744_ugovr",
@@ -22026,7 +22046,7 @@
       "quantidade_m2": "53.239999999999995",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760408925_4ldtq",
@@ -22039,7 +22059,7 @@
       "quantidade_m2": "83.3",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760409104_u4ik5",
@@ -22052,7 +22072,7 @@
       "quantidade_m2": "8.05",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760409290_ln1gq",
@@ -22065,7 +22085,7 @@
       "quantidade_m2": "31.46",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760409497_nlb6q",
@@ -22078,7 +22098,7 @@
       "quantidade_m2": "35.75",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760409697_koihy",
@@ -22091,7 +22111,7 @@
       "quantidade_m2": "157.29999999999998",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760409894_n16jv",
@@ -22104,7 +22124,7 @@
       "quantidade_m2": "23.799999999999997",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760410067_yh6jf",
@@ -22117,7 +22137,7 @@
       "quantidade_m2": "50.82",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760410249_duio4",
@@ -22130,7 +22150,7 @@
       "quantidade_m2": "43.56",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760410442_adq79",
@@ -22143,7 +22163,7 @@
       "quantidade_m2": "3.48",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760410617_3031n",
@@ -22156,7 +22176,7 @@
       "quantidade_m2": "3.48",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760410797_daatg",
@@ -22169,7 +22189,7 @@
       "quantidade_m2": "62.92",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760410979_jj6qe",
@@ -22182,7 +22202,7 @@
       "quantidade_m2": "51.660000000000004",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760411166_q77kk",
@@ -22195,7 +22215,7 @@
       "quantidade_m2": "4.84",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760411352_099va",
@@ -22208,7 +22228,7 @@
       "quantidade_m2": "4.84",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760411711_dgn5z",
@@ -22221,7 +22241,7 @@
       "quantidade_m2": "287.85",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760411907_l0ib2",
@@ -22234,7 +22254,7 @@
       "quantidade_m2": "29.04",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760412149_05sl4",
@@ -22247,7 +22267,7 @@
       "quantidade_m2": "46.690000000000005",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760412364_y44yp",
@@ -22260,7 +22280,7 @@
       "quantidade_m2": "14.52",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760412548_fpxt5",
@@ -22273,7 +22293,7 @@
       "quantidade_m2": "9.68",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760412768_emdju",
@@ -22286,7 +22306,7 @@
       "quantidade_m2": "183.92",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760412943_anyzu",
@@ -22299,7 +22319,7 @@
       "quantidade_m2": "55.66",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760413165_5anqx",
@@ -22312,7 +22332,7 @@
       "quantidade_m2": "96.8",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760413344_d3jnz",
@@ -22325,7 +22345,7 @@
       "quantidade_m2": "48.4",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760413564_7x0m7",
@@ -22338,7 +22358,7 @@
       "quantidade_m2": "48.62",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760413755_l1zzx",
@@ -22351,7 +22371,7 @@
       "quantidade_m2": "111.53999999999999",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760413938_kpn3d",
@@ -22364,7 +22384,7 @@
       "quantidade_m2": "169.33",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760414131_35t9z",
@@ -22377,7 +22397,7 @@
       "quantidade_m2": "129.15",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760414315_5dgu4",
@@ -22390,7 +22410,7 @@
       "quantidade_m2": "292.74",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760414490_gxilm",
@@ -22403,7 +22423,7 @@
       "quantidade_m2": "206.64000000000001",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760414668_ggi6t",
@@ -22416,7 +22436,7 @@
       "quantidade_m2": "332.92",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760414850_kom4j",
@@ -22429,7 +22449,7 @@
       "quantidade_m2": "173.39999999999998",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760415034_dl2ng",
@@ -22442,7 +22462,7 @@
       "quantidade_m2": "226.1",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760415243_l07wj",
@@ -22455,7 +22475,7 @@
       "quantidade_m2": "34.32",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760415424_xkgu3",
@@ -22468,7 +22488,7 @@
       "quantidade_m2": "20.02",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760415620_rcna6",
@@ -22481,7 +22501,7 @@
       "quantidade_m2": "31.459999999999997",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760415782_apvoj",
@@ -22494,7 +22514,7 @@
       "quantidade_m2": "11.44",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760416014_h9fx5",
@@ -22507,7 +22527,7 @@
       "quantidade_m2": "26.1",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760416197_sldhj",
@@ -22520,7 +22540,7 @@
       "quantidade_m2": "29.58",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760416367_l1wvb",
@@ -22533,7 +22553,7 @@
       "quantidade_m2": "20.88",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760416530_4mva0",
@@ -22546,7 +22566,7 @@
       "quantidade_m2": "27.84",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760416717_x61tn",
@@ -22559,7 +22579,7 @@
       "quantidade_m2": "11.899999999999999",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760416890_7jax3",
@@ -22572,7 +22592,7 @@
       "quantidade_m2": "18",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760417048_9sira",
@@ -22585,7 +22605,7 @@
       "quantidade_m2": "25.76",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760417226_kn0ef",
@@ -22598,7 +22618,7 @@
       "quantidade_m2": "119",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760417398_9bglj",
@@ -22611,7 +22631,7 @@
       "quantidade_m2": "320.32",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780760417615_8l9q6",
@@ -22624,11 +22644,11 @@
       "quantidade_m2": "6.48",
       "destino": "uso",
       "obs": "Migrado - Vista Park",
-      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sat Jun 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096135809_0rlw9",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22637,11 +22657,11 @@
       "quantidade_m2": "5.05",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096136883_h9fqp",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22650,11 +22670,11 @@
       "quantidade_m2": "3.91",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096137519_wm2lv",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22663,11 +22683,11 @@
       "quantidade_m2": "7.9",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096138793_3c274",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Gouache Brume - Br Bold",
       "codigo_rev": "68",
       "obra": "Essence Residence · Apto 42",
@@ -22676,11 +22696,11 @@
       "quantidade_m2": "3.22",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096139419_hlbiy",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22689,11 +22709,11 @@
       "quantidade_m2": "2.9",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096140113_g8bkp",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22702,11 +22722,11 @@
       "quantidade_m2": "0.71",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096140944_h9sjz",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22715,11 +22735,11 @@
       "quantidade_m2": "3.7",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096141506_90ir7",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22728,11 +22748,11 @@
       "quantidade_m2": "11.72",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096142062_ktgug",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22741,11 +22761,11 @@
       "quantidade_m2": "5.78",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096142754_rmwpc",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Gouache Brume - Br Bold",
       "codigo_rev": "68",
       "obra": "Essence Residence · Apto 42",
@@ -22754,11 +22774,11 @@
       "quantidade_m2": "5.78",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096143321_5n2am",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22767,11 +22787,11 @@
       "quantidade_m2": "7.22",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096143873_x1zm5",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22780,11 +22800,11 @@
       "quantidade_m2": "8.63",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096144459_hhqk1",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22793,11 +22813,11 @@
       "quantidade_m2": "4.78",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096145402_29y33",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22806,11 +22826,11 @@
       "quantidade_m2": "2.45",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096146048_4iqnz",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22819,11 +22839,11 @@
       "quantidade_m2": "5.14",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096146745_ozn35",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22832,11 +22852,11 @@
       "quantidade_m2": "5.14",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096147640_8fcaq",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22845,11 +22865,11 @@
       "quantidade_m2": "0.37",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096148227_37zr9",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22858,11 +22878,11 @@
       "quantidade_m2": "3.25",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096148797_wh7kg",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22871,11 +22891,11 @@
       "quantidade_m2": "4.78",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096149380_a0xv2",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22884,11 +22904,11 @@
       "quantidade_m2": "5.14",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096150038_r3gnv",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22897,11 +22917,11 @@
       "quantidade_m2": "2.45",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096150586_o9lv8",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22910,11 +22930,11 @@
       "quantidade_m2": "5.14",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096151132_iw2i2",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22923,11 +22943,11 @@
       "quantidade_m2": "0.37",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096151665_zdw8i",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Gouache Brume - Br Bold",
       "codigo_rev": "68",
       "obra": "Essence Residence · Apto 42",
@@ -22936,11 +22956,11 @@
       "quantidade_m2": "2.72",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096152217_g6ugk",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Gouache Brume - Br Bold",
       "codigo_rev": "68",
       "obra": "Essence Residence · Apto 42",
@@ -22949,11 +22969,11 @@
       "quantidade_m2": "2.72",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096152898_y5sdb",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "M.S. Barcelona Cristal Nat Ret",
       "codigo_rev": "35",
       "obra": "Essence Residence · Apto 42",
@@ -22962,11 +22982,11 @@
       "quantidade_m2": "2.92",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096153494_gt5lr",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "M.S. Barcelona Cristal Nat Ret",
       "codigo_rev": "35",
       "obra": "Essence Residence · Apto 42",
@@ -22975,11 +22995,11 @@
       "quantidade_m2": "156.24",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096154139_wwnyx",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -22988,11 +23008,11 @@
       "quantidade_m2": "1.74",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096154726_70is2",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "M.S. Barcelona Cristal Nat Ret",
       "codigo_rev": "35",
       "obra": "Essence Residence · Apto 42",
@@ -23001,11 +23021,11 @@
       "quantidade_m2": "49.88",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096155668_sme2u",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "M.S. Barcelona Cristal Nat Ret",
       "codigo_rev": "35",
       "obra": "Essence Residence · Apto 42",
@@ -23014,11 +23034,11 @@
       "quantidade_m2": "6.43",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096156345_nhm2g",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "M.S. Barcelona Cristal Nat Ret",
       "codigo_rev": "35",
       "obra": "Essence Residence · Apto 42",
@@ -23027,11 +23047,11 @@
       "quantidade_m2": "5.94",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096156851_mo5uc",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "M.S. Barcelona Cristal Nat Ret",
       "codigo_rev": "35",
       "obra": "Essence Residence · Apto 42",
@@ -23040,11 +23060,11 @@
       "quantidade_m2": "22.06",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096157632_zbvg4",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "M.S. Barcelona Cristal Nat Ret",
       "codigo_rev": "35",
       "obra": "Essence Residence · Apto 42",
@@ -23053,11 +23073,11 @@
       "quantidade_m2": "15.89",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096158304_19nk9",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -23066,11 +23086,11 @@
       "quantidade_m2": "3.25",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096158995_sajgp",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -23079,11 +23099,11 @@
       "quantidade_m2": "5.84",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096159550_w67rk",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -23092,11 +23112,11 @@
       "quantidade_m2": "1.84",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096160122_iopqe",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -23105,11 +23125,11 @@
       "quantidade_m2": "3.71",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096161025_qcqkd",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Sintese Off White Nat Ret",
       "codigo_rev": "13",
       "obra": "Essence Residence · Apto 42",
@@ -23118,11 +23138,11 @@
       "quantidade_m2": "5.27",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096161699_r9lgq",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Aeterna Bianco Cesellato ",
       "codigo_rev": "58",
       "obra": "Essence Residence · Apto 42",
@@ -23131,11 +23151,11 @@
       "quantidade_m2": "5.51",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096162220_yrept",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Aeterna Bianco Cesellato ",
       "codigo_rev": "58",
       "obra": "Essence Residence · Apto 42",
@@ -23144,11 +23164,11 @@
       "quantidade_m2": "4.01",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096162753_34in3",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Aeterna Bianco Cesellato ",
       "codigo_rev": "58",
       "obra": "Essence Residence · Apto 42",
@@ -23157,11 +23177,11 @@
       "quantidade_m2": "4.01",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782096163315_00ekd",
-      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Aeterna Bianco Cesellato ",
       "codigo_rev": "58",
       "obra": "Essence Residence · Apto 42",
@@ -23170,11 +23190,11 @@
       "quantidade_m2": "5.51",
       "destino": "uso",
       "obs": "Via Personalizar - Claudia e Caio",
-      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 21 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782494542052_voggk",
-      "data": "Fri Jun 19 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Fri Jun 19 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Oh!Take Moutain Nat Ret",
       "codigo_rev": "12011",
       "obra": "Vista Park",
@@ -23183,11 +23203,11 @@
       "quantidade_m2": "57.4",
       "destino": "uso",
       "obs": "",
-      "criado_em": "Fri Jun 26 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 26 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782494608308_8j4xw",
-      "data": "Fri Jun 19 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Fri Jun 19 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Oh!Take Moutain Nat Ret",
       "codigo_rev": "12011",
       "obra": "Belize",
@@ -23196,11 +23216,11 @@
       "quantidade_m2": "91.84",
       "destino": "uso",
       "obs": "Instalação Nova",
-      "criado_em": "Fri Jun 26 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 26 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782494646983_cuzp5",
-      "data": "Tue Jun 23 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 23 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Oh!Take Moutain Nat Ret",
       "codigo_rev": "12011",
       "obra": "Belize",
@@ -23209,11 +23229,11 @@
       "quantidade_m2": "68.88",
       "destino": "uso",
       "obs": "Instalação Nova",
-      "criado_em": "Fri Jun 26 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 26 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782831058608_3imdq",
-      "data": "Fri Jun 26 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Fri Jun 26 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Avantgarde Clair St",
       "codigo_rev": "804",
       "obra": "Vista Park",
@@ -23222,11 +23242,11 @@
       "quantidade_m2": "107.1",
       "destino": "uso",
       "obs": "",
-      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782907531400_wfxig",
-      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Avantgarde Clair St",
       "codigo_rev": "804",
       "obra": "Vista Park",
@@ -23235,11 +23255,11 @@
       "quantidade_m2": "11.9",
       "destino": "uso",
       "obs": "",
-      "criado_em": "Wed Jul 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Wed Jul 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782907695838_qmzrf",
-      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Milos ESM Acet.",
       "codigo_rev": "817",
       "obra": "Vista Park",
@@ -23248,11 +23268,11 @@
       "quantidade_m2": "7.2",
       "destino": "uso",
       "obs": "",
-      "criado_em": "Wed Jul 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Wed Jul 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782907954753_47a2h",
-      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "revestimento": "Aeterna Bianco Cesellato ",
       "codigo_rev": "801",
       "obra": "Vista Park",
@@ -23261,7 +23281,7 @@
       "quantidade_m2": "9.66",
       "destino": "uso",
       "obs": "",
-      "criado_em": "Wed Jul 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Wed Jul 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "personalizar": [
@@ -23270,10 +23290,10 @@
       "ap": "42",
       "cliente": "Claudia e Caio",
       "empresa": "Empresa",
-      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"42-Banho 01 (Master)-A-0\":{\"m2\":4.21,\"piso\":\"13\"},\"42-Banho 01 (Master)-B-1\":{\"m2\":3.26,\"piso\":\"13\"},\"42-Banho 01 (Master)-C-2\":{\"m2\":6.58,\"piso\":\"13\"},\"42-Banho 01 (Master)-D-3\":{\"m2\":2.68,\"piso\":\"68\"},\"42-Banho 01 (Master)-E-4\":{\"m2\":2.42,\"piso\":\"13\"},\"42-Banho 01 (Master)-F-5\":{\"m2\":0.59,\"piso\":\"13\"},\"42-Banho 01 (Master)-Piso-6\":{\"m2\":3.08,\"piso\":\"13\"},\"42-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"13\"},\"42-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"13\"},\"42-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"68\"},\"42-Banho 02 (Master)-C-2\":{\"m2\":6.02,\"piso\":\"13\"},\"42-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"13\"},\"42-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"13\"},\"42-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"13\"},\"42-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"13\"},\"42-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"13\"},\"42-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"13\"},\"42-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"13\"},\"42-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"13\"},\"42-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"13\"},\"42-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"13\"},\"42-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"13\"},\"42-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"13\"},\"42-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"68\"},\"42-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"68\"},\"42-Lavabo-Piso-0\":{\"m2\":2.43,\"piso\":\"35\"},\"42-Living/ Coz. / A.S-Piso Total-0\":{\"m2\":130.2,\"piso\":\"35\"},\"42-Banho A.S-Piso-4\":{\"m2\":1.45,\"piso\":\"13\"},\"42-Suíte Master-Piso-0\":{\"m2\":41.57,\"piso\":\"35\"},\"42-Circulação-Piso-0\":{\"m2\":5.36,\"piso\":\"35\"},\"42-Escritório-Piso-0\":{\"m2\":4.95,\"piso\":\"35\"},\"42-Suíte Filha-Piso-0\":{\"m2\":18.38,\"piso\":\"35\"},\"42-Suíte Hóspedes-Piso-0\":{\"m2\":13.24,\"piso\":\"35\"},\"42-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"13\"},\"42-Banho A.S-A-0\":{\"m2\":4.87,\"piso\":\"13\"},\"42-Banho A.S-C-2\":{\"m2\":1.53,\"piso\":\"13\"},\"42-Banho A.S-D-3\":{\"m2\":3.09,\"piso\":\"13\"},\"42-Banho A.S-B-1\":{\"m2\":4.39,\"piso\":\"13\"},\"42-Lavabo-Fundo-1781556826308\":{\"m2\":4.59,\"piso\":\"58\"},\"42-Lavabo-Lateral 1-1781556863538\":{\"m2\":3.34,\"piso\":\"58\"},\"42-Lavabo-Lateral 2-1781556896581\":{\"m2\":3.34,\"piso\":\"58\"},\"42-Lavabo-Porta-1781557048092\":{\"m2\":4.59,\"piso\":\"58\"}}",
       "status": "confirmado",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "pago",
       "obs_pgto": "Pagamento foi efetuado na conta do granito",
       "comprovante_url": "https://drive.google.com/file/d/1_qXTG9RkFab4zfitjNWxNFV7XU9wcSHt/view?usp=drivesdk",
@@ -23285,10 +23305,10 @@
       "ap": "12",
       "cliente": "Suzana e Junior ",
       "empresa": "Empresa",
-      "data": "Mon Jun 29 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 29 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"12-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"11\"},\"12-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"11\"},\"12-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"11\"},\"12-Banho 01-D-3\":{\"m2\":2.68,\"piso\":\"58\"},\"12-Banho 01-E-4\":{\"m2\":2.42,\"piso\":\"11\"},\"12-Banho 01-F-5\":{\"m2\":0.59,\"piso\":\"11\"},\"12-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"11\"},\"12-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"11\"},\"12-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"11\"},\"12-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"11\"},\"12-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"58\"},\"12-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"11\"},\"12-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"12\"},\"12-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"12\"},\"12-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"12\"},\"12-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"12\"},\"12-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"68\"},\"12-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"11\"},\"12-Banho 03-Parede Janela Decorativa-7\":{\"m2\":2.04,\"piso\":\"68\"},\"12-Banho 03-Parede Janela Padrão-8\":{\"m2\":2.17,\"piso\":\"12\"},\"12-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"12\"},\"12-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"12\"},\"12-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"12\"},\"12-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"12\"},\"12-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"68\"},\"12-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"11\"},\"12-Banho 04-Parede Janela Decorativa-7\":{\"m2\":2.04,\"piso\":\"80\"},\"12-Banho 04-Parede Janela Padrão-8\":{\"m2\":2.17,\"piso\":\"12\"},\"12-Lavabo-Piso-0\":{\"m2\":1.8,\"piso\":\"49\"},\"12-Cozinha-A-0\":{\"m2\":6.55,\"piso\":\"49\"},\"12-Cozinha-B-1\":{\"m2\":11.47,\"piso\":\"49\"},\"12-Cozinha-C-2\":{\"m2\":2.24,\"piso\":\"49\"},\"12-Cozinha-D-3\":{\"m2\":0.99,\"piso\":\"49\"},\"12-Cozinha-Parede porta-4\":{\"m2\":2.63,\"piso\":\"49\"},\"12-A.S-A-0\":{\"m2\":4.67,\"piso\":\"49\"},\"12-A.S-B-1\":{\"m2\":2.24,\"piso\":\"49\"},\"12-A.S-Parede fundo-2\":{\"m2\":12.47,\"piso\":\"49\"},\"12-A.S-Parede lateral porta-3\":{\"m2\":2.83,\"piso\":\"49\"},\"12-A.S-Parede divisória A.S-4\":{\"m2\":6.58,\"piso\":\"49\"},\"12-A.S-Parede: Shaft / Porta serviço / Paredes complementares-5\":{\"m2\":14.41,\"piso\":\"49\"},\"12-Living-Piso geral -0\":{\"m2\":130.2,\"piso\":\"49\"}}",
       "status": "pendente",
-      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 18 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23300,10 +23320,10 @@
       "ap": "51",
       "cliente": "Danilo",
       "empresa": "Empresa",
-      "data": "Mon Jun 29 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 29 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"51-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"14\"},\"51-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"14\"},\"51-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"14\"},\"51-Banho 01-D-3\":{\"m2\":2.68,\"piso\":\"166\"},\"51-Banho 01-E-4\":{\"m2\":2.42,\"piso\":\"166\"},\"51-Banho 01-F-5\":{\"m2\":0.59,\"piso\":\"166\"},\"51-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"14\"},\"51-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"15\"},\"51-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"15\"},\"51-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"15\"},\"51-Banho 02 (Master)-Piso-5\":{\"m2\":7.19,\"piso\":\"15\"},\"51-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"166\"},\"51-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"14\"},\"51-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"14\"},\"51-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"14\"},\"51-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"166\"},\"51-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"166\"},\"51-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"14\"},\"51-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"166\"},\"51-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"14\"},\"51-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"14\"},\"51-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"14\"},\"51-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"166\"},\"51-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"166\"},\"51-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"14\"},\"51-Lavabo-Piso-0\":{\"m2\":1.8,\"piso\":\"52\"},\"51-Cozinha-A-0\":{\"m2\":6.55,\"piso\":\"52\"},\"51-A.S-A-0\":{\"m2\":4.67,\"piso\":\"52\"},\"51-A.S-B-1\":{\"m2\":2.24,\"piso\":\"52\"},\"51-A.S-Parede Fundo-2\":{\"m2\":6.22,\"piso\":\"52\"},\"51-A.S-Parede fundo diagonal-3\":{\"m2\":6.22,\"piso\":\"52\"},\"51-Banho A.S-A-0\":{\"m2\":2.6,\"piso\":\"52\"},\"51-Banho A.S-B-1\":{\"m2\":1.89,\"piso\":\"52\"},\"51-Banho A.S-C-2\":{\"m2\":0.61,\"piso\":\"52\"},\"51-Banho A.S-D-3\":{\"m2\":2.32,\"piso\":\"52\"},\"51-Banho A.S-E-4\":{\"m2\":1.43,\"piso\":\"52\"},\"51-Banho A.S-F-5\":{\"m2\":2.04,\"piso\":\"52\"},\"51-Banho A.S-G-6\":{\"m2\":5.2,\"piso\":\"52\"},\"51-Banho A.S-Piso-7\":{\"m2\":2.62,\"piso\":\"52\"},\"51-Living-Piso geral -0\":{\"m2\":130.2,\"piso\":\"43\"}}",
       "status": "pendente",
-      "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Fri Jun 19 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23315,10 +23335,10 @@
       "ap": "142",
       "cliente": "Alexandre e Ivana",
       "empresa": "Empresa",
-      "data": "Mon Jun 29 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 29 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"142-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"14\"},\"142-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"14\"},\"142-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"14\"},\"142-Banho 01-D-3\":{\"m2\":2.68,\"piso\":\"166\"},\"142-Banho 01-E-4\":{\"m2\":2.42,\"piso\":\"166\"},\"142-Banho 01-F-5\":{\"m2\":0.59,\"piso\":\"14\"},\"142-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"14\"},\"142-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"11\"},\"142-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"11\"},\"142-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"11\"},\"142-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"58\"},\"142-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"11\"},\"142-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"58\"},\"142-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"11\"},\"142-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"11\"},\"142-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"11\"},\"142-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"11\"},\"142-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"11\"},\"142-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"68\"},\"142-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"13\"},\"142-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"13\"},\"142-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"13\"},\"142-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"13\"},\"142-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"13\"},\"142-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"13\"},\"142-Lavabo-Piso-0\":{\"m2\":2.4,\"piso\":\"49\"},\"142-Cozinha-A-0\":{\"m2\":6.55,\"piso\":\"17\"},\"142-Cozinha-B-1\":{\"m2\":11.47,\"piso\":\"17\"},\"142-Cozinha-C-2\":{\"m2\":2.24,\"piso\":\"17\"},\"142-Cozinha-D-3\":{\"m2\":0.99,\"piso\":\"17\"},\"142-A.S-A-0\":{\"m2\":4.41,\"piso\":\"17\"},\"142-A.S-B-1\":{\"m2\":2.24,\"piso\":\"17\"},\"142-A.S-Parede fundo diagonal-2\":{\"m2\":12.7,\"piso\":\"17\"},\"142-A.S-Parede Gerais A.S (sem diagonal e shaft)-3\":{\"m2\":31.06,\"piso\":\"17\"},\"142-Banho A.S-A-0\":{\"m2\":2.65,\"piso\":\"11\"},\"142-Banho A.S-B-1\":{\"m2\":4.74,\"piso\":\"11\"},\"142-Banho A.S-C-2\":{\"m2\":2.29,\"piso\":\"11\"},\"142-Banho A.S-E-4\":{\"m2\":4.33,\"piso\":\"11\"},\"142-Banho A.S-Piso-5\":{\"m2\":1.91,\"piso\":\"11\"},\"142-Living/ Coz. / A.S-Piso Total-0\":{\"m2\":130.2,\"piso\":\"49\"}}",
       "status": "pendente",
-      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "pendente",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23330,10 +23350,10 @@
       "ap": "92",
       "cliente": "Fabricia e Anderson",
       "empresa": "Empresa",
-      "data": "Mon Jun 29 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 29 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"92-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"32\"},\"92-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"32\"},\"92-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"32\"},\"92-Banho 01-D-3\":{\"m2\":2.68,\"piso\":\"32\"},\"92-Banho 01-E-4\":{\"m2\":2.42,\"piso\":\"32\"},\"92-Banho 01-F-5\":{\"m2\":0.59,\"piso\":\"32\"},\"92-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"32\"},\"92-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"11\"},\"92-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"11\"},\"92-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"11\"},\"92-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"11\"},\"92-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"12\"},\"92-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"11\"},\"92-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"11\"},\"92-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"11\"},\"92-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"11\"},\"92-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"11\"},\"92-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"12\"},\"92-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"12\"},\"92-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"11\"},\"92-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"11\"},\"92-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"11\"},\"92-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"11\"},\"92-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"11\"},\"92-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"12\"},\"92-Lavabo-Piso-0\":{\"m2\":2.4,\"piso\":\"51\"},\"92-Cozinha-Parede Elevador-4\":{\"m2\":7.11,\"piso\":\"58\"},\"92-Cozinha-Parede Lateral Elevador-5\":{\"m2\":5.28,\"piso\":\"58\"},\"92-A.S-A-0\":{\"m2\":4.41,\"piso\":\"58\"},\"92-A.S-B-1\":{\"m2\":2.24,\"piso\":\"11\"},\"92-A.S-Parede Fundo diagonal-2\":{\"m2\":12.7,\"piso\":\"58\"},\"92-A.S-Parede: Paredes Complementares-3\":{\"m2\":31.06,\"piso\":\"58\"},\"92-Banho A.S-A-0\":{\"m2\":2.65,\"piso\":\"11\"},\"92-Banho A.S-B-1\":{\"m2\":4.74,\"piso\":\"11\"},\"92-Banho A.S-C-2\":{\"m2\":2.29,\"piso\":\"11\"},\"92-Banho A.S-D-3\":{\"m2\":0.56,\"piso\":\"11\"},\"92-Banho A.S-E-4\":{\"m2\":4.33,\"piso\":\"11\"},\"92-Banho A.S-Piso-5\":{\"m2\":1.91,\"piso\":\"11\"},\"92-Living/ Coz. / A.S-Piso Total-0\":{\"m2\":130.2,\"piso\":\"51\"}}",
       "status": "pendente",
-      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jun 22 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23345,10 +23365,10 @@
       "ap": "61",
       "cliente": "Patricia e Edson ",
       "empresa": "Empresa",
-      "data": "Wed Jun 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed Jun 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"61-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"7\"},\"61-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"7\"},\"61-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"7\"},\"61-Banho 01-D-3\":{\"m2\":2.68,\"piso\":\"7\"},\"61-Banho 01-E-4\":{\"m2\":2.42,\"piso\":\"74\"},\"61-Banho 01-F-5\":{\"m2\":0.59,\"piso\":\"7\"},\"61-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"7\"},\"61-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"11\"},\"61-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"11\"},\"61-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"11\"},\"61-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"12\"},\"61-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"12\"},\"61-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"6\"},\"61-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"6\"},\"61-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"6\"},\"61-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"6\"},\"61-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"6\"},\"61-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"58\"},\"61-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"6\"},\"61-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"10\"},\"61-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"10\"},\"61-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"10\"},\"61-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"10\"},\"61-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"10\"},\"61-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"56\"},\"61-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"10\"},\"61-Lavabo-Piso-0\":{\"m2\":1.8,\"piso\":\"41\"},\"61-Cozinha-A-0\":{\"m2\":6.55,\"piso\":\"38\"},\"61-Cozinha-B-1\":{\"m2\":11.47,\"piso\":\"38\"},\"61-Cozinha-C-2\":{\"m2\":2.24,\"piso\":\"38\"},\"61-Cozinha-D-3\":{\"m2\":0.99,\"piso\":\"38\"},\"61-A.S-A-0\":{\"m2\":4.67,\"piso\":\"38\"},\"61-A.S-B-1\":{\"m2\":2.24,\"piso\":\"38\"},\"61-A.S-Parede Fundo diagonal-1782309869042\":{\"m2\":12.7,\"piso\":\"38\"},\"61-A.S-Paredes complementares-1782310877634\":{\"m2\":33.28,\"piso\":\"38\"},\"61-Banho A.S-A-0\":{\"m2\":3.44,\"piso\":\"38\"},\"61-Banho A.S-B-1\":{\"m2\":3.9,\"piso\":\"38\"},\"61-Banho A.S-C-2\":{\"m2\":1.91,\"piso\":\"38\"},\"61-Banho A.S-D-3\":{\"m2\":2.04,\"piso\":\"38\"},\"61-Banho A.S-E-4\":{\"m2\":5.23,\"piso\":\"38\"},\"61-Banho A.S-Piso-5\":{\"m2\":2.62,\"piso\":\"38\"},\"61-Living-Piso geral -0\":{\"m2\":130.2,\"piso\":\"38\"},\"61-Despensa-Ambiente Completo-1782311113365\":{\"m2\":18.26,\"piso\":\"38\"},\"61-Gourmet-A-0\":{\"m2\":11.93,\"piso\":\"48\"}}",
       "status": "pendente",
-      "criado_em": "Wed Jun 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Wed Jun 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23360,10 +23380,10 @@
       "ap": "151B",
       "cliente": "—",
       "empresa": "Empresa",
-      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"151B-Banho Master-Paredes Gerais-0\":{\"m2\":0,\"piso\":\"12\"},\"151B-Piso Geral-Living-0\":{\"m2\":0,\"piso\":\"51\"},\"151B-Banho Nenem-Paredes gerais (exceto decorativa)-0\":{\"m2\":0,\"piso\":\"14\"},\"151B-Lavabo-Piso-0\":{\"m2\":0,\"piso\":\"\"},\"151B-Piso Externo-Geral (Kit Rio de Janeiro)-0\":{\"m2\":0,\"piso\":\"\"},\"151B-Piso Externo-À definir-1\":{\"m2\":0,\"piso\":\"\"},\"151B-Área de Serviço-Sintese Platina 120x270-0\":{\"m2\":0,\"piso\":\"\"}}",
       "status": "pendente",
-      "criado_em": "Wed Jun 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Wed Jun 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23375,10 +23395,10 @@
       "ap": "112",
       "cliente": "Valquíria e Mauricio",
       "empresa": "Empresa",
-      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"112-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"14\"},\"112-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"14\"},\"112-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"14\"},\"112-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"14\"},\"112-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"166\"},\"112-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"14\"},\"112-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"14\"},\"112-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"14\"},\"112-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"14\"},\"112-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"14\"},\"112-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"14\"},\"112-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"34\"},\"112-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"11\"},\"112-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"11\"},\"112-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"11\"},\"112-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"11\"},\"112-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"11\"},\"112-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"11\"},\"112-Lavabo-Piso-0\":{\"m2\":1.8,\"piso\":\"50\"},\"112-Banho A.S-A-0\":{\"m2\":2.6,\"piso\":\"82\"},\"112-Banho A.S-B-1\":{\"m2\":1.89,\"piso\":\"82\"},\"112-Banho A.S-C-2\":{\"m2\":0.61,\"piso\":\"82\"},\"112-Banho A.S-D-3\":{\"m2\":2.32,\"piso\":\"82\"},\"112-Banho A.S-E-4\":{\"m2\":1.43,\"piso\":\"82\"},\"112-Banho A.S-Piso-6\":{\"m2\":2.62,\"piso\":\"82\"},\"112-Banho Master-Parede fundo box-0\":{\"m2\":4.79,\"piso\":\"58\"},\"112-Piso Living-Piso geral (Exceto A.S)-0\":{\"m2\":117.75,\"piso\":\"50\"},\"112-Piso A.S-Piso geral A.S (despensa e banho serviço)-0\":{\"m2\":12.27,\"piso\":\"82\"},\"112-Cozinha e A.S-Paredes-0\":{\"m2\":58.62,\"piso\":\"82\"}}",
       "status": "pendente",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23390,10 +23410,10 @@
       "ap": "91",
       "cliente": "Ana Paula e Alexandre Tarifa",
       "empresa": "Empresa",
-      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"91-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"3\"},\"91-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"3\"},\"91-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"3\"},\"91-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"3\"},\"91-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"34\"},\"91-Banho 03-A-7\":{\"m2\":2.1,\"piso\":\"68\"},\"91-Banho 03-B-8\":{\"m2\":1.95,\"piso\":\"68\"},\"91-Banho 03-C-9\":{\"m2\":2.1,\"piso\":\"68\"},\"91-Banho 03-D-10\":{\"m2\":0.15,\"piso\":\"68\"},\"91-Banho 03-E-11\":{\"m2\":0.99,\"piso\":\"68\"},\"91-Banho 03-F-12\":{\"m2\":1.1,\"piso\":\"68\"},\"91-Banho 03-A-13\":{\"m2\":2.1,\"piso\":\"34\"},\"91-Banho 03-B-14\":{\"m2\":1.95,\"piso\":\"34\"},\"91-Banho 03-C-15\":{\"m2\":2.1,\"piso\":\"34\"},\"91-Banho 03-D-16\":{\"m2\":0.15,\"piso\":\"34\"},\"91-Banho 03-E-17\":{\"m2\":0.99,\"piso\":\"34\"},\"91-Banho 03-F-18\":{\"m2\":1.1,\"piso\":\"34\"},\"91-Banho 04-B-8\":{\"m2\":1.95,\"piso\":\"12\"},\"91-Banho 04-C-9\":{\"m2\":0.99,\"piso\":\"12\"},\"91-Banho 04-E-11\":{\"m2\":0.15,\"piso\":\"12\"},\"91-Banho 04-F-12\":{\"m2\":1.1,\"piso\":\"12\"},\"91-Banho 04-A-13\":{\"m2\":2.1,\"piso\":\"85\"},\"91-Banho 04-B-14\":{\"m2\":1.95,\"piso\":\"68\"},\"91-Banho 04-C-15\":{\"m2\":0.99,\"piso\":\"85\"},\"91-Banho 04-D-16\":{\"m2\":2.1,\"piso\":\"12\"},\"91-Banho 04-E-17\":{\"m2\":0.15,\"piso\":\"68\"},\"91-Banho 04-F-18\":{\"m2\":1.1,\"piso\":\"68\"},\"91-Lavabo-Piso-0\":{\"m2\":1.8,\"piso\":\"id_1783535775573_tr6rz\"},\"91-Lavabo-Parede decorativa-1\":{\"m2\":3.06,\"piso\":\"46\"},\"91-Cozinha-Piso Cozinha-4\":{\"m2\":27.51,\"piso\":\"86\"},\"91-A.S-Paredes bancada-2\":{\"m2\":8.98,\"piso\":\"68\"},\"91-Banho A.S-A-0\":{\"m2\":3.44,\"piso\":\"17\"},\"91-Banho A.S-B-1\":{\"m2\":3.9,\"piso\":\"17\"},\"91-Banho A.S-C-2\":{\"m2\":1.91,\"piso\":\"17\"},\"91-Banho A.S-D-3\":{\"m2\":2.04,\"piso\":\"17\"},\"91-Banho A.S-E-4\":{\"m2\":5.23,\"piso\":\"17\"},\"91-Banho A.S-Piso-5\":{\"m2\":2.62,\"piso\":\"17\"},\"91-Banho A.S-Parede shaft-6\":{\"m2\":0.64,\"piso\":\"17\"},\"91-Banho A.S-Parede lateral shaft-7\":{\"m2\":2.01,\"piso\":\"17\"},\"91-Living-Piso geral-1\":{\"m2\":102.69,\"piso\":\"37\"}}",
       "status": "pendente",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23405,10 +23425,10 @@
       "ap": "142",
       "cliente": "Alexandre e Ivana (Alexandre e Ivana - R01)",
       "empresa": "Empresa",
-      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"142-Lavabo-Piso-0\":{\"m2\":2.4,\"piso\":\"49\"},\"142-Cozinha-A-0\":{\"m2\":6.55,\"piso\":\"17\"},\"142-Cozinha-B-1\":{\"m2\":11.47,\"piso\":\"17\"},\"142-Cozinha-C-2\":{\"m2\":2.24,\"piso\":\"17\"},\"142-Cozinha-D-3\":{\"m2\":0.99,\"piso\":\"17\"},\"142-A.S-A-0\":{\"m2\":4.41,\"piso\":\"17\"},\"142-A.S-B-1\":{\"m2\":2.24,\"piso\":\"17\"},\"142-A.S-Parede fundo diagonal-2\":{\"m2\":12.7,\"piso\":\"17\"},\"142-A.S-Parede Gerais A.S (sem diagonal e shaft)-3\":{\"m2\":31.06,\"piso\":\"17\"},\"142-Banho A.S-A-0\":{\"m2\":2.65,\"piso\":\"11\"},\"142-Banho A.S-B-1\":{\"m2\":4.74,\"piso\":\"11\"},\"142-Banho A.S-C-2\":{\"m2\":2.29,\"piso\":\"11\"},\"142-Banho A.S-E-4\":{\"m2\":4.33,\"piso\":\"11\"},\"142-Banho A.S-Piso-5\":{\"m2\":1.91,\"piso\":\"11\"},\"142-Living/ Coz. / A.S-Piso Total-0\":{\"m2\":130.2,\"piso\":\"49\"}}",
       "status": "pendente",
-      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "264.216",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23420,10 +23440,10 @@
       "ap": "142",
       "cliente": "Alexandre e Ivana (R01)",
       "empresa": "Empresa",
-      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"142-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"11\"},\"142-Lavabo-Piso-0\":{\"m2\":2.4,\"piso\":\"49\"},\"142-Cozinha-A-0\":{\"m2\":6.55,\"piso\":\"17\"},\"142-Cozinha-B-1\":{\"m2\":11.47,\"piso\":\"17\"},\"142-Cozinha-C-2\":{\"m2\":2.24,\"piso\":\"17\"},\"142-Cozinha-D-3\":{\"m2\":0.99,\"piso\":\"17\"},\"142-A.S-A-0\":{\"m2\":4.41,\"piso\":\"17\"},\"142-A.S-B-1\":{\"m2\":2.24,\"piso\":\"17\"},\"142-A.S-Parede fundo diagonal-2\":{\"m2\":12.7,\"piso\":\"17\"},\"142-A.S-Parede Gerais A.S (sem diagonal e shaft)-3\":{\"m2\":31.06,\"piso\":\"17\"},\"142-Banho A.S-A-0\":{\"m2\":2.65,\"piso\":\"11\"},\"142-Banho A.S-B-1\":{\"m2\":4.74,\"piso\":\"11\"},\"142-Banho A.S-C-2\":{\"m2\":2.29,\"piso\":\"11\"},\"142-Banho A.S-E-4\":{\"m2\":4.33,\"piso\":\"11\"},\"142-Banho A.S-Piso-5\":{\"m2\":1.91,\"piso\":\"11\"},\"142-Living/ Coz. / A.S-Piso Total-0\":{\"m2\":130.2,\"piso\":\"49\"}}",
       "status": "pendente",
-      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "parcial",
       "obs_pgto": "Pagamento foi efetuado na conta do granito (50%)",
       "comprovante_url": "https://drive.google.com/file/d/1IZMQfzPiH4YfQqYaFPsujFBZjD8YlG2Q/view?usp=drivesdk",
@@ -23435,10 +23455,10 @@
       "ap": "81",
       "cliente": "Fernanda e Bruno",
       "empresa": "Empresa",
-      "data": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"81-Cozinha-Meia parede (bancadas)-4\":{\"m2\":6.27,\"piso\":\"id_1783353761796_4qp20\"},\"81-Lavabo-Piso-0\":{\"m2\":2.43,\"piso\":\"50\"},\"81-Living (Exceto A.S)-Piso-0\":{\"m2\":113,\"piso\":\"50\"},\"81-Piso A.S-Piso-0\":{\"m2\":17.29,\"piso\":\"41\"},\"81-A.S-Paredes complementares-4\":{\"m2\":40.8,\"piso\":\"41\"},\"81-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"32\"},\"81-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"32\"},\"81-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"32\"},\"81-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"32\"},\"81-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"32\"},\"81-Banho 01-D-3\":{\"m2\":2.68,\"piso\":\"id_1783352956890_z3h83\"},\"81-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 01-E-4\":{\"m2\":2.42,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 01-F-5\":{\"m2\":0.59,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"id_1783353853911_65xym\"},\"81-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"id_1783353934833_zyvht\"},\"81-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"id_1783353161480_1rxdy\"},\"81-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"id_1783353161480_1rxdy\"},\"81-A.S-A-0\":{\"m2\":4.41,\"piso\":\"41\"},\"81-A.S-B-1\":{\"m2\":2.24,\"piso\":\"41\"}}",
       "status": "pendente",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "342.4440000000001",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23450,10 +23470,10 @@
       "ap": "111",
       "cliente": "Carla e Marcos ",
       "empresa": "Empresa",
-      "data": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"111-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"12\"},\"111-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"12\"},\"111-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"12\"},\"111-Banho 01-D-3\":{\"m2\":2.68,\"piso\":\"12\"},\"111-Banho 01-E-4\":{\"m2\":2.42,\"piso\":\"12\"},\"111-Banho 01-F-5\":{\"m2\":0.59,\"piso\":\"12\"},\"111-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"12\"},\"111-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"id_1783367826706_5xw6n\"},\"111-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"id_1783367826706_5xw6n\"},\"111-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"id_1783367826706_5xw6n\"},\"111-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"id_1783367826706_5xw6n\"},\"111-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"id_1783367826706_5xw6n\"},\"111-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"14\"},\"111-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"14\"},\"111-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"14\"},\"111-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"14\"},\"111-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"14\"},\"111-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"14\"},\"111-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"14\"},\"111-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"14\"},\"111-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"14\"},\"111-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"14\"},\"111-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"14\"},\"111-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"14\"},\"111-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"14\"},\"111-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"14\"},\"111-Lavabo-Piso-0\":{\"m2\":2.4,\"piso\":\"37\"},\"111-Cozinha-A-0\":{\"m2\":6.55,\"piso\":\"58\"},\"111-Cozinha-B-1\":{\"m2\":11.47,\"piso\":\"58\"},\"111-Cozinha-C-2\":{\"m2\":2.24,\"piso\":\"58\"},\"111-A.S-A-0\":{\"m2\":4.41,\"piso\":\"80\"},\"111-A.S-B-1\":{\"m2\":2.24,\"piso\":\"80\"},\"111-Banho A.S-Piso-5\":{\"m2\":1.91,\"piso\":\"37\"},\"111-Living/ Coz. / A.S-Piso Total-0\":{\"m2\":130.2,\"piso\":\"37\"},\"111-Suíte 04-Piso-1783368906280\":{\"m2\":15.7,\"piso\":\"37\"},\"111-Circulação-Piso-1783368957993\":{\"m2\":4.19,\"piso\":\"37\"},\"111-Suíte 02-Piso-1783368547883\":{\"m2\":25.33,\"piso\":\"37\"},\"111-Suíte 03-Piso-1783368764253\":{\"m2\":17.4,\"piso\":\"37\"},\"111-Suíte 01-Piso-1783368478457\":{\"m2\":21.59,\"piso\":\"37\"},\"111-Suíte 01-Piso-1783369293659\":{\"m2\":21.59,\"piso\":\"17\"},\"111-Suíte 02-Piso-1783369412389\":{\"m2\":25.33,\"piso\":\"17\"},\"111-Suíte 03-Piso-1783369443062\":{\"m2\":17.4,\"piso\":\"17\"},\"111-Suíte 04-Piso-1783369493459\":{\"m2\":15.7,\"piso\":\"17\"},\"111-Circulação-Piso-1783369520678\":{\"m2\":4.19,\"piso\":\"17\"}}",
       "status": "pendente",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "pendente",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23465,10 +23485,10 @@
       "ap": "152",
       "cliente": "Luiz Roberto e Cristiane",
       "empresa": "Empresa",
-      "data": "Tue Jul 07 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jul 07 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"152-Hall / Living/ Coz. / A.S/ Adega / Desp. / Louc.-Piso -0\":{\"m2\":173.85,\"piso\":\"37\"},\"152-Lavabo-Piso -0\":{\"m2\":1.8,\"piso\":\"37\"},\"152-Sala Cinema-Piso-0\":{\"m2\":29.54,\"piso\":\"37\"},\"152-Banho 01-A-0\":{\"m2\":5.25,\"piso\":\"58\"},\"152-Banho 01-B-1\":{\"m2\":4.21,\"piso\":\"58\"},\"152-Banho 01-C-2\":{\"m2\":7.52,\"piso\":\"13\"},\"152-Banho 01-D-3\":{\"m2\":3.57,\"piso\":\"13\"},\"152-Banho 01-E-4\":{\"m2\":2.5,\"piso\":\"13\"},\"152-Banho 01-F-5\":{\"m2\":0.66,\"piso\":\"13\"},\"152-Banho 01-Piso-6\":{\"m2\":4.66,\"piso\":\"13\"},\"152-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"58\"},\"152-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"58\"},\"152-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"13\"},\"152-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"13\"},\"152-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"13\"},\"152-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"id_1783447963049_gp4eh\"},\"152-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"53\"},\"152-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"53\"},\"152-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"53\"},\"152-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"53\"},\"152-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"53\"},\"152-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"53\"},\"152-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"id_1783447963049_gp4eh\"},\"152-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"53\"},\"152-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"53\"},\"152-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"53\"},\"152-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"53\"},\"152-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"53\"},\"152-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"53\"},\"152-Banho 05-A-0\":{\"m2\":3.62,\"piso\":\"53\"},\"152-Banho 05-B-1\":{\"m2\":7.06,\"piso\":\"id_1783447963049_gp4eh\"},\"152-Banho 05-C-2\":{\"m2\":4.62,\"piso\":\"53\"},\"152-Banho 05-D-3\":{\"m2\":3.24,\"piso\":\"53\"},\"152-Banho 05-E-4\":{\"m2\":3.31,\"piso\":\"53\"},\"152-Banho 05-F-5\":{\"m2\":4.79,\"piso\":\"53\"},\"152-Banho 05-Piso-6\":{\"m2\":4.73,\"piso\":\"53\"},\"152-A.S-Paredes Laterais-1783448394536\":{\"m2\":37.2,\"piso\":\"13\"},\"152-A.S-A-0\":{\"m2\":4.72,\"piso\":\"13\"},\"152-A.S-B-1\":{\"m2\":8.75,\"piso\":\"13\"},\"152-Banho A.S-A-0\":{\"m2\":1.58,\"piso\":\"13\"},\"152-Banho A.S-B-1\":{\"m2\":2.22,\"piso\":\"13\"},\"152-Banho A.S-C-2\":{\"m2\":1.89,\"piso\":\"13\"},\"152-Banho A.S-D-3\":{\"m2\":0.61,\"piso\":\"13\"},\"152-Banho A.S-E-4\":{\"m2\":2.14,\"piso\":\"13\"},\"152-Banho A.S-F-5\":{\"m2\":2.83,\"piso\":\"13\"},\"152-Banho A.S-Piso -6\":{\"m2\":1.58,\"piso\":\"13\"},\"152-Banho Gourmet-C-2\":{\"m2\":6.58,\"piso\":\"55\"},\"152-Banho Gourmet-D-3\":{\"m2\":2.68,\"piso\":\"55\"},\"152-Banho Gourmet-A-0\":{\"m2\":4.21,\"piso\":\"13\"},\"152-Banho Gourmet-B-1\":{\"m2\":3.26,\"piso\":\"13\"},\"152-Banho Gourmet-E-4\":{\"m2\":2.42,\"piso\":\"13\"},\"152-Banho Gourmet-F-5\":{\"m2\":0.59,\"piso\":\"13\"},\"152-Banho Gourmet-Piso-6\":{\"m2\":3.08,\"piso\":\"13\"},\"152-Lavabo Cinema-Piso-6\":{\"m2\":2.71,\"piso\":\"13\"},\"152-Copa Cinema-Piso-6\":{\"m2\":2.71,\"piso\":\"13\"}}",
       "status": "pendente",
-      "criado_em": "Tue Jul 07 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Tue Jul 07 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23480,10 +23500,10 @@
       "ap": "112",
       "cliente": "Valquíria e Mauricio",
       "empresa": "Empresa",
-      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"112-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"14\"},\"112-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"14\"},\"112-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"14\"},\"112-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"14\"},\"112-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"166\"},\"112-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"14\"},\"112-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"14\"},\"112-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"14\"},\"112-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"14\"},\"112-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"14\"},\"112-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"14\"},\"112-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"34\"},\"112-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"11\"},\"112-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"11\"},\"112-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"11\"},\"112-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"11\"},\"112-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"11\"},\"112-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"11\"},\"112-Lavabo-Piso-0\":{\"m2\":1.8,\"piso\":\"50\"},\"112-Banho A.S-A-0\":{\"m2\":2.6,\"piso\":\"82\"},\"112-Banho A.S-B-1\":{\"m2\":1.89,\"piso\":\"82\"},\"112-Banho A.S-C-2\":{\"m2\":0.61,\"piso\":\"82\"},\"112-Banho A.S-D-3\":{\"m2\":2.32,\"piso\":\"82\"},\"112-Banho A.S-E-4\":{\"m2\":1.43,\"piso\":\"82\"},\"112-Banho A.S-Piso-6\":{\"m2\":2.62,\"piso\":\"82\"},\"112-Banho Master-Parede fundo box-0\":{\"m2\":4.79,\"piso\":\"58\"},\"112-Piso Living-Piso geral (Exceto A.S)-0\":{\"m2\":117.75,\"piso\":\"50\"},\"112-Piso A.S-Piso geral A.S (despensa e banho serviço)-0\":{\"m2\":12.27,\"piso\":\"82\"},\"112-Cozinha e A.S-Paredes-0\":{\"m2\":58.62,\"piso\":\"82\"}}",
       "status": "pendente",
-      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "pendente",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23495,10 +23515,10 @@
       "ap": "81",
       "cliente": "Fernanda e Bruno (R01)",
       "empresa": "Empresa",
-      "data": "Thu Jul 09 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Thu Jul 09 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "selecoes": "{\"81-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"3\"},\"81-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"3\"},\"81-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"3\"},\"81-Banho 01-D-3\":{\"m2\":2.68,\"piso\":\"id_1783620192057_9tq0j\"},\"81-Banho 01-E-4\":{\"m2\":2.42,\"piso\":\"3\"},\"81-Banho 01-F-5\":{\"m2\":0.59,\"piso\":\"3\"},\"81-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"3\"},\"81-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"3\"},\"81-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"3\"},\"81-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"3\"},\"81-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"3\"},\"81-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"3\"},\"81-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"3\"},\"81-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"3\"},\"81-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"3\"},\"81-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"3\"},\"81-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"3\"},\"81-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"id_1783353853911_65xym\"},\"81-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"3\"},\"81-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"3\"},\"81-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"3\"},\"81-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"3\"},\"81-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"3\"},\"81-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"3\"},\"81-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"id_1783353934833_zyvht\"},\"81-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"3\"},\"81-Lavabo-Piso-0\":{\"m2\":2.43,\"piso\":\"50\"},\"81-Cozinha-Meia parede (bancadas)-4\":{\"m2\":6.27,\"piso\":\"id_1783353761796_4qp20\"},\"81-A.S-A-0\":{\"m2\":4.41,\"piso\":\"41\"},\"81-A.S-B-1\":{\"m2\":2.24,\"piso\":\"41\"},\"81-A.S-Paredes complementares-4\":{\"m2\":40.8,\"piso\":\"41\"},\"81-Piso A.S-Piso-0\":{\"m2\":17.29,\"piso\":\"41\"},\"81-Living (Exceto A.S)-Piso-0\":{\"m2\":113,\"piso\":\"50\"}}",
       "status": "pendente",
-      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "status_pgto": "pendente",
       "obs_pgto": "",
       "comprovante_url": "",
@@ -23509,8 +23529,8 @@
   "orcamentos": [
     {
       "id": "id_1781493555725_9tvk0",
-      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23520,12 +23540,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1781493824119_o0h9s",
-      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23535,12 +23555,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1781528820111_0fwk3",
-      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23550,12 +23570,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1781528845333_zlmve",
-      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23565,12 +23585,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1781530609593_2ihjt",
-      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23580,12 +23600,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1781554305158_7awdv",
-      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23595,12 +23615,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jun 15 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782321309302_nx912",
-      "data": "Wed Jun 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Wed Jun 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed Jun 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Wed Jun 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23610,12 +23630,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Wed Jun 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Wed Jun 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782408353857_xzgxs",
-      "data": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23625,12 +23645,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Thu Jun 25 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782700012352_trvck",
-      "data": "Sun Jun 28 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jun 29 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Sun Jun 28 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jun 29 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23640,12 +23660,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Sun Jun 28 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Sun Jun 28 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782823135548_n4u9c",
-      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23655,12 +23675,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782823166729_5an4n",
-      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23670,12 +23690,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782823779043_u7yax",
-      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23685,12 +23705,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782823820933_wz9sa",
-      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23700,12 +23720,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782853667019_fcawc",
-      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23715,12 +23735,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Tue Jun 30 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1782902841170_bbl4y",
-      "data": "Wed Jul 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Wed Jul 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed Jul 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Wed Jul 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23730,12 +23750,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Wed Jul 01 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Wed Jul 01 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1783354261161_uszf5",
-      "data": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23745,12 +23765,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1783513802550_nkek1",
-      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23760,12 +23780,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1783547372087_s51rd",
-      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23775,12 +23795,12 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1783547386677_x4a1o",
-      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "dataISO": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
+      "dataISO": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "cliente": "",
       "ap": "",
       "empresa": "",
@@ -23790,7 +23810,7 @@
       "desconto": "0",
       "itens": "[]",
       "selecoes": "{}",
-      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "instalacoes": [],
@@ -23805,7 +23825,7 @@
       "m2_total": "217.79999999999998",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690236689_7rr4l",
@@ -23817,7 +23837,7 @@
       "m2_total": "145.2",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690236962_wmod8",
@@ -23829,7 +23849,7 @@
       "m2_total": "193.6",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690237245_bexg6",
@@ -23841,7 +23861,7 @@
       "m2_total": "193.6",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690237541_bocmm",
@@ -23853,7 +23873,7 @@
       "m2_total": "193.6",
       "localizacao": "Terreno",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690237869_gxlyu",
@@ -23865,7 +23885,7 @@
       "m2_total": "958.3199999999999",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690238176_kpec3",
@@ -23877,7 +23897,7 @@
       "m2_total": "958.3199999999999",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690238466_5akw4",
@@ -23889,7 +23909,7 @@
       "m2_total": "348.48",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690238751_5r6px",
@@ -23901,7 +23921,7 @@
       "m2_total": "261.36",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690239061_ea91d",
@@ -23913,7 +23933,7 @@
       "m2_total": "348.48",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690239373_7utp0",
@@ -23925,7 +23945,7 @@
       "m2_total": "229.60000000000002",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690239712_4nhnv",
@@ -23937,91 +23957,91 @@
       "m2_total": "258.3",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690240006_x1fvn",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Thu Nov 27 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Thu Nov 27 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "48",
       "m2_por_caixa": "2.87",
       "m2_total": "137.76",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690240337_tza4e",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Fri Nov 28 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Fri Nov 28 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "21",
       "m2_por_caixa": "2.87",
       "m2_total": "60.27",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690240670_i9lli",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Sat Nov 29 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Sat Nov 29 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "24",
       "m2_por_caixa": "2.87",
       "m2_total": "68.88",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690241023_ya0dj",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Mon Dec 01 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Mon Dec 01 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "92",
       "m2_por_caixa": "2.87",
       "m2_total": "264.04",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690241674_rze83",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Tue Dec 02 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Tue Dec 02 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "24",
       "m2_por_caixa": "2.87",
       "m2_total": "68.88",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690241958_i8gdp",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Wed Jan 07 2026 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Wed Jan 07 2026 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "45",
       "m2_por_caixa": "2.87",
       "m2_total": "129.15",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690242244_qxtvf",
       "codigo_rev": "12011",
       "nome": "Oh!Take Moutain Nat Ret",
-      "data_fab": "Tue Jan 20 2026 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Tue Jan 20 2026 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "45",
       "m2_por_caixa": "2.87",
       "m2_total": "129.15",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690242527_bjmdi",
@@ -24033,7 +24053,7 @@
       "m2_total": "275.52",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690242821_5z9bt",
@@ -24045,7 +24065,7 @@
       "m2_total": "68.88",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690243112_twl9h",
@@ -24057,7 +24077,7 @@
       "m2_total": "206.64000000000001",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690243399_8ky1o",
@@ -24069,25 +24089,25 @@
       "m2_total": "38.25",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690243847_sal7f",
       "codigo_rev": "16003",
       "nome": "Sintese Off White St",
-      "data_fab": "Fri Feb 21 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Fri Feb 21 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "23",
       "m2_por_caixa": "2.55",
       "m2_total": "58.65",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780778090521_3f950",
       "codigo_rev": "16003",
       "nome": "Sintese Off White St",
-      "data_fab": "Sat Feb 22 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Sat Feb 22 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "161",
       "m2_por_caixa": "2.55",
       "m2_total": "410.54999999999995",
@@ -24099,7 +24119,7 @@
       "id": "id_1780778090551_rx8jn",
       "codigo_rev": "16003",
       "nome": "Sintese Off White St",
-      "data_fab": "Fri May 30 2025 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Fri May 30 2025 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "46",
       "m2_por_caixa": "2.55",
       "m2_total": "117.3",
@@ -24117,7 +24137,7 @@
       "m2_total": "318.75",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690244491_v2ggy",
@@ -24129,7 +24149,7 @@
       "m2_total": "1231.6499999999999",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690245020_ojx60",
@@ -24141,7 +24161,7 @@
       "m2_total": "453.9",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690245746_shjp2",
@@ -24153,7 +24173,7 @@
       "m2_total": "979.1999999999999",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690246029_8ljhf",
@@ -24165,7 +24185,7 @@
       "m2_total": "443.7",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690246331_f9bgj",
@@ -24177,7 +24197,7 @@
       "m2_total": "1453.5",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690246635_yjnqr",
@@ -24189,7 +24209,7 @@
       "m2_total": "22.61",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690246912_jlzmr",
@@ -24201,7 +24221,7 @@
       "m2_total": "268.09",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690247199_ba891",
@@ -24213,7 +24233,7 @@
       "m2_total": "64.6",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690247496_8uykx",
@@ -24225,7 +24245,7 @@
       "m2_total": "839.8",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690247771_mws8k",
@@ -24237,7 +24257,7 @@
       "m2_total": "516.8",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690248294_qjqmn",
@@ -24249,7 +24269,7 @@
       "m2_total": "516.8",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690248579_a28b4",
@@ -24261,7 +24281,7 @@
       "m2_total": "257.4",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690249199_zmw8c",
@@ -24273,7 +24293,7 @@
       "m2_total": "45.76",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690249488_y9cak",
@@ -24285,7 +24305,7 @@
       "m2_total": "411.84",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690249793_7whul",
@@ -24297,13 +24317,13 @@
       "m2_total": "32.89",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690241674_rze82",
       "codigo_rev": "120604",
       "nome": "Stratum Arena Ply Nat Ret",
-      "data_fab": "Wed Feb 05 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Wed Feb 05 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "12",
       "m2_por_caixa": "1.43",
       "m2_total": "17.16",
@@ -24321,7 +24341,7 @@
       "m2_total": "328.9",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690250402_dnmxj",
@@ -24333,7 +24353,7 @@
       "m2_total": "45.76",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690250702_72ujh",
@@ -24345,7 +24365,7 @@
       "m2_total": "128.8",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690250984_v33yn",
@@ -24357,7 +24377,7 @@
       "m2_total": "173.28",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690251443_g0qu3",
@@ -24369,25 +24389,25 @@
       "m2_total": "952",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690252015_c4035",
       "codigo_rev": "811",
       "nome": "Gouache Brume - Br Bold",
-      "data_fab": "Sat Feb 01 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Sat Feb 01 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "72",
       "m2_por_caixa": "0.87",
       "m2_total": "62.64",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690241674_rze839",
       "codigo_rev": "811",
       "nome": "Gouache Brume - Br Bold",
-      "data_fab": "Mon Feb 03 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Mon Feb 03 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "46",
       "m2_por_caixa": "0.87",
       "m2_total": "40.02",
@@ -24399,13 +24419,13 @@
       "id": "id_1780690252679_020kt",
       "codigo_rev": "812",
       "nome": "Gouache Flamant - Br Bold",
-      "data_fab": "Tue Feb 06 2024 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Tue Feb 06 2024 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "108",
       "m2_por_caixa": "0.87",
       "m2_total": "93.96",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690253117_3x44s",
@@ -24417,7 +24437,7 @@
       "m2_total": "95.19999999999999",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690254215_jutt5",
@@ -24429,37 +24449,37 @@
       "m2_total": "270",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690254506_oswkj",
       "codigo_rev": "823",
       "nome": "Gouache Nuage - Br Bold",
-      "data_fab": "Sun Oct 20 2024 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Sun Oct 20 2024 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "275",
       "m2_por_caixa": "0.87",
       "m2_total": "239.25",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690254804_lfujq",
       "codigo_rev": "824",
       "nome": "Gouache Mer - Br Bold",
-      "data_fab": "Wed Feb 05 2025 05:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Wed Feb 05 2025 05:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "72",
       "m2_por_caixa": "0.87",
       "m2_total": "62.64",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1780690241674_rze72",
       "codigo_rev": "824",
       "nome": "Gouache Mer - Br Bold",
-      "data_fab": "Mon Oct 28 2024 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "data_fab": "Mon Oct 28 2024 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
       "qtd_caixas": "54",
       "m2_por_caixa": "0.87",
       "m2_total": "46.98",
@@ -24477,7 +24497,7 @@
       "m2_total": "231.84",
       "localizacao": "Essence",
       "obs": "",
-      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Fri Jun 05 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     },
     {
       "id": "id_1781180720175_gxa6m",
@@ -24489,7 +24509,7 @@
       "m2_total": "128.8",
       "localizacao": "Vista Park",
       "obs": "",
-      "criado_em": "Thu Jun 11 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+      "criado_em": "Thu Jun 11 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ]
 }
