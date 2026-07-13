@@ -777,6 +777,12 @@ function _pdfCapa(doc, imgData, subtitulo) {
     doc.setFillColor(...ESSENCE_CORES.marrom);
     doc.rect(0, 0, 210, 48, 'F');
   }
+  if (subtitulo) {
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica','bold');
+    doc.text(String(subtitulo), 8, 43);
+  }
 }
 
 // Bloco info cliente
@@ -1173,7 +1179,7 @@ async function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
   try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa-marmoraria.png'); } catch(e) {}
 
   const doc = new jsPDF();
-  _pdfCapa(doc, imgData);
+  _pdfCapa(doc, imgData, 'PERSONALIZE — MARMORARIA');
   _pdfInfoCliente(doc, ap, cliente, null, 50, ESSENCE_CORES);
 
   let y = 88;
@@ -1247,7 +1253,7 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
 
   const doc = new jsPDF();
   try {
-  _pdfCapa(doc, imgData);
+  _pdfCapa(doc, imgData, 'PERSONALIZE — BANHEIRAS');
   _pdfInfoCliente(doc, ap, cliente, null, 50, ESSENCE_CORES);
 
   let y = 88;
