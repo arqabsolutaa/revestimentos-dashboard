@@ -2360,42 +2360,25 @@ body.mobile-mode #main{padding-bottom:72px}
     </div>
     <div class="page-content">
       <div class="card" style="margin-bottom:16px">
+        <label style="margin-bottom:8px;display:block">Prédio</label>
+        <div id="vagasdep-predio-toggle" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
         <div class="form-grid">
           <div class="form-group span-2">
             <label>Apartamento</label>
             <select class="form-control" id="vagasdep-ap-select" onchange="selecionarApVagasDep()">
               <option value="">— Selecione o apartamento —</option>
-              <option value="11">Apto 11</option>
-              <option value="12">Apto 12</option>
-              <option value="21">Apto 21</option>
-              <option value="22">Apto 22</option>
-              <option value="31">Apto 31</option>
-              <option value="32">Apto 32</option>
-              <option value="41">Apto 41</option>
-              <option value="42">Apto 42</option>
-              <option value="51">Apto 51</option>
-              <option value="52">Apto 52</option>
-              <option value="61">Apto 61</option>
-              <option value="62">Apto 62</option>
-              <option value="71">Apto 71</option>
-              <option value="72">Apto 72</option>
-              <option value="81">Apto 81</option>
-              <option value="82">Apto 82</option>
-              <option value="91">Apto 91</option>
-              <option value="92">Apto 92</option>
-              <option value="101">Apto 101</option>
-              <option value="102">Apto 102</option>
-              <option value="111">Apto 111</option>
-              <option value="112">Apto 112</option>
-              <option value="121">Apto 121</option>
-              <option value="122">Apto 122</option>
-              <option value="131">Apto 131</option>
-              <option value="132">Apto 132</option>
-              <option value="141">Apto 141</option>
-              <option value="142">Apto 142</option>
-              <option value="151">Apto 151</option>
-              <option value="152">Apto 152</option>
             </select>
+          </div>
+        </div>
+        <div id="vagasdep-novo-ap" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+          <label style="font-size:12px;margin-bottom:6px;display:block">+ Cadastrar novo apartamento neste prédio</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input class="form-control" id="vagasdep-novo-ap-numero" placeholder="Nº do apto" style="max-width:120px">
+            <input class="form-control" id="vagasdep-novo-ap-cliente" placeholder="Cliente (opcional)" style="max-width:240px">
+            <button class="btn btn-secondary" onclick="adicionarApVagasDep()">Adicionar</button>
           </div>
         </div>
       </div>
@@ -3789,6 +3772,66 @@ let vagasDepCatalogo = [];
 let vagasDepVinculos = [];
 let vagasDepApAtual = '';
 let vagasDepSelecionadas = [];
+let vagasDepPredioAtual = 'Essence';
+let vagasDepPredios = ['Essence', 'Vista Park'];
+let vagasDepApartamentosExtra = []; // apartamentos de prédios além do Essence, vindos da aba Predios_Apartamentos
+
+function renderPredioToggleVagasDep() {
+  const el = document.getElementById('vagasdep-predio-toggle');
+  if (!el) return;
+  el.innerHTML = vagasDepPredios.map(p => `
+    <button type="button" onclick="trocarPredioVagasDep('${p}')"
+      style="padding:8px 16px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:13px;font-weight:600;
+      background:${p===vagasDepPredioAtual?'var(--accent)':'var(--surface2)'};color:${p===vagasDepPredioAtual?'#fff':'var(--text)'}">${p}</button>
+  `).join('');
+}
+
+function trocarPredioVagasDep(predio) {
+  vagasDepPredioAtual = predio;
+  vagasDepApAtual = '';
+  document.getElementById('vagasdep-detalhe').style.display = 'none';
+  document.getElementById('vagasdep-novo-ap').style.display = predio === 'Essence' ? 'none' : 'block';
+  renderPredioToggleVagasDep();
+  popularSelectApVagasDep();
+  renderVagasDepResumo();
+}
+
+function getApartamentosDoPredio(predio) {
+  if (predio === 'Essence') return TODOS_APARTAMENTOS_PREDIO.slice();
+  return vagasDepApartamentosExtra
+    .filter(a => a.predio === predio)
+    .map(a => a.apartamento)
+    .sort((a,b) => Number(a)-Number(b));
+}
+
+function getClienteApNoPredio(predio, ap) {
+  if (predio === 'Essence') return CLIENTES_POR_APARTAMENTO[ap] || '';
+  const a = vagasDepApartamentosExtra.find(x => x.predio === predio && String(x.apartamento) === String(ap));
+  return a ? (a.cliente || '') : '';
+}
+
+function popularSelectApVagasDep() {
+  const sel = document.getElementById('vagasdep-ap-select');
+  const aps = getApartamentosDoPredio(vagasDepPredioAtual);
+  sel.innerHTML = '<option value="">— Selecione o apartamento —</option>' +
+    aps.map(ap => `<option value="${ap}">Apto ${ap}</option>`).join('');
+}
+
+async function adicionarApVagasDep() {
+  const numero = document.getElementById('vagasdep-novo-ap-numero').value.trim();
+  const cliente = document.getElementById('vagasdep-novo-ap-cliente').value.trim();
+  if (!numero) { showToast('Digite o número do apartamento', 'error'); return; }
+  showToast('Cadastrando...', 'success');
+  try {
+    await apiPost('addPredioApartamento', { predio: vagasDepPredioAtual, apartamento: numero, cliente });
+    document.getElementById('vagasdep-novo-ap-numero').value = '';
+    document.getElementById('vagasdep-novo-ap-cliente').value = '';
+    showToast('Apartamento cadastrado!', 'success');
+    await loadVagasDep(true);
+  } catch(e) {
+    showToast('Erro: ' + e.message, 'error');
+  }
+}
 
 function verificarSenhaVagasDep() {
   const senha = document.getElementById('vagasdep-senha-input').value;
@@ -3815,10 +3858,14 @@ async function loadVagasDep(forcar) {
     const dados = await lerDadosExtra('vagas', forcar);
     vagasDepCatalogo = dados.catalogo || [];
     vagasDepVinculos = dados.vinculos || [];
+    vagasDepApartamentosExtra = dados.apartamentos || [];
     if (!dadosParedes.length) {
       const principal = await lerDados();
       if (principal && principal.paredes) dadosParedes = principal.paredes;
     }
+    renderPredioToggleVagasDep();
+    document.getElementById('vagasdep-novo-ap').style.display = vagasDepPredioAtual === 'Essence' ? 'none' : 'block';
+    popularSelectApVagasDep();
     renderVagasDepResumo();
     if (vagasDepApAtual) selecionarApVagasDep();
   } catch(e) {
@@ -3832,7 +3879,7 @@ function nomeClienteAp(ap) {
 }
 
 function renderGridVagasAgrupado() {
-  const vagas = vagasDepCatalogo.filter(c => c.tipo === 'vaga').sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
+  const vagas = vagasDepCatalogo.filter(c => c.tipo === 'vaga' && (c.predio || 'Essence') === vagasDepPredioAtual).sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
   const grid = document.getElementById('vagasdep-vagas-grid');
 
   const renderBotao = v => {
@@ -3874,24 +3921,37 @@ function selecionarApVagasDep() {
   if (!ap) { detalhe.style.display = 'none'; return; }
   detalhe.style.display = 'block';
 
-  const vinculo = vagasDepVinculos.find(v => String(v.ap) === String(ap));
+  const predio = vagasDepPredioAtual;
+  const vinculo = vagasDepVinculos.find(v => String(v.ap) === String(ap) && (v.predio || 'Essence') === predio);
   vagasDepSelecionadas = vinculo ? String(vinculo.vagas || '').split(',').map(v=>v.trim()).filter(Boolean) : [];
   const depositoAtual = vinculo ? String(vinculo.deposito || '') : '';
 
-  // Cliente: prioriza o que já está salvo no vínculo; senão usa o mapa fixo do prédio
+  // Cliente: prioriza o que já está salvo no vínculo; senão usa o cadastro do prédio
   const clienteInput = document.getElementById('vagasdep-cliente-input');
-  clienteInput.value = (vinculo && vinculo.cliente) ? vinculo.cliente : (CLIENTES_POR_APARTAMENTO[ap] || '');
+  clienteInput.value = (vinculo && vinculo.cliente) ? vinculo.cliente : getClienteApNoPredio(predio, ap);
 
   // Montar select de depósitos: livres + o que já está vinculado a este apto, agrupado por subsolo
   const depSelect = document.getElementById('vagasdep-deposito-select');
-  const depositosLivres = vagasDepCatalogo.filter(c => c.tipo === 'deposito' && (c.status === 'livre' || String(c.numero) === depositoAtual));
+  const depositosLivres = vagasDepCatalogo.filter(c => c.tipo === 'deposito' && (c.predio || 'Essence') === predio && (c.status === 'livre' || String(c.numero) === depositoAtual));
   depositosLivres.sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
-  const sub1Dep = depositosLivres.filter(d => parseInt(d.numero) <= 15);
-  const sub2Dep = depositosLivres.filter(d => parseInt(d.numero) > 15);
   const optDep = d => `<option value="${d.numero}" ${String(d.numero)===depositoAtual?'selected':''}>Depósito ${d.numero}</option>`;
-  depSelect.innerHTML = '<option value="">— Nenhum depósito —</option>' +
-    (sub1Dep.length ? `<optgroup label="1º Subsolo">${sub1Dep.map(optDep).join('')}</optgroup>` : '') +
-    (sub2Dep.length ? `<optgroup label="2º Subsolo">${sub2Dep.map(optDep).join('')}</optgroup>` : '');
+
+  if (predio === 'Essence') {
+    // Mantém o agrupamento original do Essence (1-15 / 16-30)
+    const sub1Dep = depositosLivres.filter(d => parseInt(d.numero) <= 15);
+    const sub2Dep = depositosLivres.filter(d => parseInt(d.numero) > 15);
+    depSelect.innerHTML = '<option value="">— Nenhum depósito —</option>' +
+      (sub1Dep.length ? `<optgroup label="1º Subsolo">${sub1Dep.map(optDep).join('')}</optgroup>` : '') +
+      (sub2Dep.length ? `<optgroup label="2º Subsolo">${sub2Dep.map(optDep).join('')}</optgroup>` : '');
+  } else if (depositosLivres.some(d => d.subsolo)) {
+    // Outros prédios: agrupa pelo campo subsolo salvo no catálogo, se existir
+    const grupos = {};
+    depositosLivres.forEach(d => { const k = d.subsolo || 'Sem subsolo'; (grupos[k] = grupos[k]||[]).push(d); });
+    depSelect.innerHTML = '<option value="">— Nenhum depósito —</option>' +
+      Object.keys(grupos).sort().map(g => `<optgroup label="${g}">${grupos[g].map(optDep).join('')}</optgroup>`).join('');
+  } else {
+    depSelect.innerHTML = '<option value="">— Nenhum depósito —</option>' + depositosLivres.map(optDep).join('');
+  }
 
   renderGridVagasAgrupado();
 
@@ -3912,7 +3972,7 @@ async function salvarVagasDepAtual() {
   const cliente = document.getElementById('vagasdep-cliente-input').value.trim();
   showToast('Salvando...', 'success');
   try {
-    await apiPost('salvarVinculoVagas', { ap: vagasDepApAtual, cliente, vagas: vagasDepSelecionadas, deposito, obs });
+    await apiPost('salvarVinculoVagas', { ap: vagasDepApAtual, predio: vagasDepPredioAtual, cliente, vagas: vagasDepSelecionadas, deposito, obs });
     showToast('Vínculo salvo!', 'success');
     await loadVagasDep(true);
     selecionarApVagasDep();
@@ -3958,9 +4018,15 @@ const CLIENTES_POR_APARTAMENTO = {
 
 function renderVagasDepResumo() {
   const lista = document.getElementById('vagasdep-resumo-lista');
-  lista.innerHTML = TODOS_APARTAMENTOS_PREDIO.map(ap => {
-    const v = vagasDepVinculos.find(x => String(x.ap) === String(ap));
-    const cliente = (v && v.cliente) ? v.cliente : (CLIENTES_POR_APARTAMENTO[ap] || '');
+  const predio = vagasDepPredioAtual;
+  const aps = getApartamentosDoPredio(predio);
+  if (!aps.length) {
+    lista.innerHTML = `<div class="empty-state"><strong>Nenhum apartamento cadastrado para ${predio}</strong>${predio!=='Essence' ? '<p style="font-size:12px;margin-top:6px">Use o campo "+ Cadastrar novo apartamento" acima.</p>' : ''}</div>`;
+    return;
+  }
+  lista.innerHTML = aps.map(ap => {
+    const v = vagasDepVinculos.find(x => String(x.ap) === String(ap) && (x.predio || 'Essence') === predio);
+    const cliente = (v && v.cliente) ? v.cliente : getClienteApNoPredio(predio, ap);
     const vagas = v ? String(v.vagas || '').split(',').map(s=>s.trim()).filter(Boolean) : [];
     const deposito = v ? v.deposito : '';
     const temDados = vagas.length || deposito;
@@ -3983,15 +4049,24 @@ async function gerarPDFVagasDep(ap) {
   const jsPDF = getJsPDF();
   if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
 
-  const v = vagasDepVinculos.find(x => String(x.ap) === String(ap));
-  const cliente = (v && v.cliente) ? v.cliente : (CLIENTES_POR_APARTAMENTO[ap] || '');
+  const predio = vagasDepPredioAtual;
+  const nomeEmpreendimento = predio === 'Essence' ? 'Essence Residence' : predio;
+  const v = vagasDepVinculos.find(x => String(x.ap) === String(ap) && (x.predio || 'Essence') === predio);
+  const cliente = (v && v.cliente) ? v.cliente : getClienteApNoPredio(predio, ap);
   const vagas = v ? String(v.vagas || '').split(',').map(s=>s.trim()).filter(Boolean) : [];
   const deposito = v ? String(v.deposito || '') : '';
 
-  const vagas1 = vagas.filter(n => parseInt(n) <= 31);
-  const vagas2 = vagas.filter(n => parseInt(n) > 31);
-  const dep1 = deposito && parseInt(deposito) <= 15 ? deposito : '';
-  const dep2 = deposito && parseInt(deposito) > 15 ? deposito : '';
+  let vagas1 = [], vagas2 = [], dep1 = '', dep2 = '';
+  if (predio === 'Essence') {
+    vagas1 = vagas.filter(n => parseInt(n) <= 31);
+    vagas2 = vagas.filter(n => parseInt(n) > 31);
+    dep1 = deposito && parseInt(deposito) <= 15 ? deposito : '';
+    dep2 = deposito && parseInt(deposito) > 15 ? deposito : '';
+  } else {
+    // Outros prédios: sem divisão de subsolo pré-definida, tudo num bloco só
+    vagas1 = vagas;
+    dep1 = deposito;
+  }
   const hoje = new Date().toLocaleDateString('pt-BR');
 
   showToast('Gerando PDF...', 'success');
@@ -4047,7 +4122,7 @@ async function gerarPDFVagasDep(ap) {
   doc.text('Comprovante de Vagas e Depósito', ml, y);
   y += 5;
   doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
-  doc.text('Essence Residence · São Bernardo do Campo/SP', ml, y);
+  doc.text(nomeEmpreendimento + ' · São Bernardo do Campo/SP', ml, y);
 
   y += 8;
   // CARD CLIENTE
@@ -4087,10 +4162,14 @@ async function gerarPDFVagasDep(ap) {
 
   // Montar blocos
   const blocos = [];
-  if (vagas1.length) blocos.push({ label: '1º SUBSOLO · VAGAS', items: vagas1.map(n=>'Vaga '+n), bg: COR_DOURADO_BG, bd: COR_DOURADO_BD, lc: COR_DOURADO, pb: COR_PILL_V, pt: COR_PILL_VT, tipo: 'vaga' });
-  if (vagas2.length) blocos.push({ label: '2º SUBSOLO · VAGAS', items: vagas2.map(n=>'Vaga '+n), bg: COR_DOURADO_BG, bd: COR_DOURADO_BD, lc: COR_DOURADO, pb: COR_PILL_V, pt: COR_PILL_VT, tipo: 'vaga' });
-  if (dep1) blocos.push({ label: '1º SUBSOLO · DEPÓSITO', items: ['Depósito '+dep1], bg: COR_VERDE_BG, bd: COR_VERDE_BD, lc: COR_VERDE, pb: COR_PILL_D, pt: COR_PILL_DT, tipo: 'dep' });
-  if (dep2) blocos.push({ label: '2º SUBSOLO · DEPÓSITO', items: ['Depósito '+dep2], bg: COR_VERDE_BG, bd: COR_VERDE_BD, lc: COR_VERDE, pb: COR_PILL_D, pt: COR_PILL_DT, tipo: 'dep' });
+  const labelVaga1 = predio === 'Essence' ? '1º SUBSOLO · VAGAS' : 'VAGAS';
+  const labelVaga2 = '2º SUBSOLO · VAGAS';
+  const labelDep1 = predio === 'Essence' ? '1º SUBSOLO · DEPÓSITO' : 'DEPÓSITO';
+  const labelDep2 = '2º SUBSOLO · DEPÓSITO';
+  if (vagas1.length) blocos.push({ label: labelVaga1, items: vagas1.map(n=>'Vaga '+n), bg: COR_DOURADO_BG, bd: COR_DOURADO_BD, lc: COR_DOURADO, pb: COR_PILL_V, pt: COR_PILL_VT, tipo: 'vaga' });
+  if (vagas2.length) blocos.push({ label: labelVaga2, items: vagas2.map(n=>'Vaga '+n), bg: COR_DOURADO_BG, bd: COR_DOURADO_BD, lc: COR_DOURADO, pb: COR_PILL_V, pt: COR_PILL_VT, tipo: 'vaga' });
+  if (dep1) blocos.push({ label: labelDep1, items: ['Depósito '+dep1], bg: COR_VERDE_BG, bd: COR_VERDE_BD, lc: COR_VERDE, pb: COR_PILL_D, pt: COR_PILL_DT, tipo: 'dep' });
+  if (dep2) blocos.push({ label: labelDep2, items: ['Depósito '+dep2], bg: COR_VERDE_BG, bd: COR_VERDE_BD, lc: COR_VERDE, pb: COR_PILL_D, pt: COR_PILL_DT, tipo: 'dep' });
 
   // Dividir em pares lado a lado
   for (let i = 0; i < blocos.length; i += 2) {
@@ -4106,7 +4185,7 @@ async function gerarPDFVagasDep(ap) {
   // TEXTO VINCULAÇÃO
   doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
   const linhas = doc.splitTextToSize(
-    `As vagas de garagem e o depósito acima estão vinculados à unidade Apto ${ap} – Essence Residence, em nome de ${cliente}, conforme contrato de compra e venda firmado com a Absoluta Construtora e Incorporadora.`,
+    `As vagas de garagem e o depósito acima estão vinculados à unidade Apto ${ap} – ${nomeEmpreendimento}, em nome de ${cliente}, conforme contrato de compra e venda firmado com a Absoluta Construtora e Incorporadora.`,
     cw
   );
   doc.text(linhas, ml, y);
@@ -4117,7 +4196,7 @@ async function gerarPDFVagasDep(ap) {
   doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
   doc.line(ml, rodapeY, W-mr, rodapeY);
   doc.setFontSize(7); doc.setTextColor(...COR_CINZA);
-  doc.text('Absoluta Construtora e Incorporadora · Essence Residence · São Bernardo do Campo/SP', W/2, rodapeY+5, { align: 'center' });
+  doc.text('Absoluta Construtora e Incorporadora · ' + nomeEmpreendimento + ' · São Bernardo do Campo/SP', W/2, rodapeY+5, { align: 'center' });
 
   doc.save(`Comprovante_Vagas_Apto${ap}.pdf`);
   showToast('PDF gerado!', 'success');
