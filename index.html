@@ -1838,6 +1838,10 @@ body.mobile-mode #main{padding-bottom:72px}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
           Controle de Pagamentos
         </button>
+        <button class="nav-btn" onclick="showScreen('margemlucro')" id="nav-margemlucro" style="padding-left:20px;font-size:11px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          Margem de Lucro
+        </button>
         <button class="nav-btn" onclick="showScreen('vagasdep')" id="nav-vagasdep" style="padding-left:20px;font-size:11px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><rect x="1" y="3" width="22" height="13" rx="2"/><circle cx="6" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
           Vagas e Depósitos
@@ -2417,7 +2421,41 @@ body.mobile-mode #main{padding-bottom:72px}
   </div>
 </div>
 
-
+<div id="margemlucro-screen" class="screen">
+  <div id="margemlucro-lock" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:20px;padding:40px;text-align:center">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="color:var(--text3)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    <p style="font-size:18px;font-weight:600;color:var(--text)">Área Restrita</p>
+    <p style="font-size:13px;color:var(--text3)">Margem de Lucro</p>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="password" id="margemlucro-senha-input" placeholder="Digite a senha" class="form-control" style="width:220px;text-align:center" onkeydown="if(event.key==='Enter')verificarSenhaMargemLucro()">
+      <button class="btn btn-primary" onclick="verificarSenhaMargemLucro()">Entrar</button>
+    </div>
+    <p id="margemlucro-senha-erro" style="font-size:12px;color:var(--danger);display:none">Senha incorreta</p>
+  </div>
+  <div id="margemlucro-conteudo" style="display:none;width:100%">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Margem de Lucro</h1>
+        <p>Venda x custo dos revestimentos usados nas personalizações</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="loadMargemLucro()">Atualizar</button>
+        <button class="btn btn-secondary" onclick="sairMargemLucro()" style="margin-left:4px">Sair</button>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="card" style="margin-bottom:16px;display:flex;align-items:center;gap:10px">
+        <label style="margin:0">Incluir personalizações pendentes?</label>
+        <input type="checkbox" id="margemlucro-incluir-pendentes" checked onchange="loadMargemLucro()">
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <h3 style="font-size:14px;margin-bottom:4px">Total geral</h3>
+        <div id="margemlucro-total-geral" style="font-size:13px;color:var(--text2)">Aguardando o backend (Code.gs) ser atualizado...</div>
+      </div>
+      <div id="margemlucro-lista"></div>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL LOTE -->
 <div id="modal-lote" class="modal-overlay">
@@ -3632,6 +3670,7 @@ function showScreen(name) {
   if (name === 'marmoraria') loadMarmoraria();
   if (name === 'banheiras') loadBanheiras();
   if (name === 'vagasdep') { if (!vagasDepDesbloqueado) { document.getElementById('vagasdep-lock').style.display = 'flex'; document.getElementById('vagasdep-conteudo').style.display = 'none'; } else loadVagasDep(); }
+  if (name === 'margemlucro') { if (!margemLucroDesbloqueado) { document.getElementById('margemlucro-lock').style.display = 'flex'; document.getElementById('margemlucro-conteudo').style.display = 'none'; } else loadMargemLucro(); }
 }
 
 
@@ -3851,6 +3890,102 @@ function sairVagasDep() {
   document.getElementById('vagasdep-conteudo').style.display = 'none';
   document.getElementById('vagasdep-senha-input').value = '';
   document.getElementById('vagasdep-senha-erro').style.display = 'none';
+}
+
+// ===================== MARGEM DE LUCRO =====================
+const SENHA_MARGEMLUCRO = SENHA_PGTO; // mesma senha do Controle de Pagamentos
+let margemLucroDesbloqueado = false;
+let margemLucroDados = [];
+let margemLucroAbertos = {};
+
+function verificarSenhaMargemLucro() {
+  const senha = document.getElementById('margemlucro-senha-input').value;
+  if (senha === SENHA_MARGEMLUCRO) {
+    margemLucroDesbloqueado = true;
+    document.getElementById('margemlucro-lock').style.display = 'none';
+    document.getElementById('margemlucro-conteudo').style.display = 'block';
+    loadMargemLucro();
+  } else {
+    document.getElementById('margemlucro-senha-erro').style.display = 'block';
+  }
+}
+
+function sairMargemLucro() {
+  margemLucroDesbloqueado = false;
+  document.getElementById('margemlucro-lock').style.display = 'flex';
+  document.getElementById('margemlucro-conteudo').style.display = 'none';
+  document.getElementById('margemlucro-senha-input').value = '';
+  document.getElementById('margemlucro-senha-erro').style.display = 'none';
+}
+
+async function loadMargemLucro() {
+  try {
+    const incluirPendentes = document.getElementById('margemlucro-incluir-pendentes').checked;
+    const result = await apiPost('getMargemLucro', { incluirPendentes });
+    margemLucroDados = result.linhas || [];
+    renderMargemLucro();
+  } catch(e) {
+    document.getElementById('margemlucro-total-geral').innerHTML =
+      '<span style="color:var(--danger)">Ainda não consegui carregar — provavelmente o Code.gs ainda não tem a função getMargemLucro. Erro: ' + e.message + '</span>';
+  }
+}
+
+function renderMargemLucro() {
+  const porApto = {};
+  margemLucroDados.forEach(l => {
+    if (!porApto[l.apto]) porApto[l.apto] = { cliente: l.cliente, status: l.status, itens: [] };
+    porApto[l.apto].itens.push(l);
+  });
+
+  let m2G=0, vendaG=0, custoG=0, lucroG=0;
+  const lista = document.getElementById('margemlucro-lista');
+  lista.innerHTML = Object.keys(porApto).map(apto => {
+    const grupo = porApto[apto];
+    const m2 = grupo.itens.reduce((s,i)=>s+i.m2,0);
+    const venda = grupo.itens.reduce((s,i)=>s+(i.valorVenda||0),0);
+    const custo = grupo.itens.reduce((s,i)=>s+(i.valorCusto||0),0);
+    const lucro = grupo.itens.reduce((s,i)=>s+(i.lucro||0),0);
+    m2G+=m2; vendaG+=venda; custoG+=custo; lucroG+=lucro;
+    const margem = venda ? (lucro/venda*100).toFixed(1) : '0.0';
+    const aberto = margemLucroAbertos[apto];
+    return `<div class="card" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleDetalheApto('${apto}')">
+        <div><strong>Apto ${apto}</strong> <span style="font-size:12px;color:var(--text3)">· ${grupo.cliente} · ${grupo.status}</span></div>
+        <div style="font-size:12px;text-align:right">
+          ${m2.toFixed(2)} m² · Venda R$ ${venda.toFixed(2)} · Custo R$ ${custo.toFixed(2)} · <strong>Lucro R$ ${lucro.toFixed(2)} (${margem}%)</strong>
+        </div>
+      </div>
+      ${aberto ? `<div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
+        ${grupo.itens.map(i => `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12px;${i.custo==null?'background:#F8D7DA':''}">
+          <span>${i.ambiente} — ${i.nome} (${i.codigo}) — ${i.m2} m²</span>
+          ${i.custo==null
+            ? `<span>Sem custo: <input type="number" step="0.01" style="width:80px" id="custo-${i.idRev}" placeholder="R$/m²"> <button class="btn btn-secondary" style="padding:2px 8px;font-size:11px" onclick="salvarCustoRevestimento('${i.idRev}')">Salvar</button></span>`
+            : `<span>Lucro R$ ${i.lucro.toFixed(2)}</span>`}
+        </div>`).join('')}
+      </div>` : ''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('margemlucro-total-geral').innerHTML =
+    `${m2G.toFixed(2)} m² · Venda R$ ${vendaG.toFixed(2)} · Custo R$ ${custoG.toFixed(2)} · <strong>Lucro R$ ${lucroG.toFixed(2)} (${(vendaG?lucroG/vendaG*100:0).toFixed(1)}%)</strong>`;
+}
+
+function toggleDetalheApto(apto) {
+  margemLucroAbertos[apto] = !margemLucroAbertos[apto];
+  renderMargemLucro();
+}
+
+async function salvarCustoRevestimento(idRev) {
+  const input = document.getElementById('custo-' + idRev);
+  const custo = parseFloat(input.value);
+  if (!custo) { showToast('Digite um valor de custo', 'error'); return; }
+  try {
+    await apiPost('updateCustoRevestimento', { id: idRev, custo });
+    showToast('Custo salvo!', 'success');
+    await loadMargemLucro();
+  } catch(e) {
+    showToast('Erro: ' + e.message, 'error');
+  }
 }
 
 async function loadVagasDep(forcar) {
@@ -6217,6 +6352,10 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
   <button class="mobile-nav-btn" style="flex-direction:row;justify-content:flex-start;gap:12px;width:100%;padding:12px 16px;font-size:11px" onclick="showScreen('pagamentos');setMobileNav('pagamentos');toggleMobileMenu()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
     Pagamentos
+  </button>
+  <button class="mobile-nav-btn" style="flex-direction:row;justify-content:flex-start;gap:12px;width:100%;padding:12px 16px;font-size:11px" onclick="showScreen('margemlucro');setMobileNav('margemlucro');toggleMobileMenu()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    Margem de Lucro
   </button>
   <button class="mobile-nav-btn" style="flex-direction:row;justify-content:flex-start;gap:12px;width:100%;padding:12px 16px;font-size:11px" onclick="showScreen('vagasdep');setMobileNav('vagasdep');toggleMobileMenu()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><rect x="1" y="3" width="22" height="13" rx="2"/><circle cx="6" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
