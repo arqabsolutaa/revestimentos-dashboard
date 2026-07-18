@@ -2132,7 +2132,8 @@ body.mobile-mode #main{padding-bottom:72px}
     </div>
     <div class="page-content">
       <!-- CARDS TOPO -->
-      <div id="vg-cards" class="stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px"></div>
+      <div id="vg-cards" class="stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:12px"></div>
+      <div id="vg-cards-financeiro" class="stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px"></div>
       <!-- GRÁFICOS -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
         <!-- Donut conclusão -->
@@ -4898,6 +4899,7 @@ async function loadVisaoGeral() {
     const aps = [...new Set(personalizacoes.map(p => p.ap).filter(Boolean))];
     const totalAps = aps.length;
     let totalM2 = 0, concluidos = 0, emAndamento = 0, naoIniciados = 0;
+    let valorConfirmado = 0, valorPendente = 0, custoConfirmado = 0, custoPendente = 0;
     const contagemRevs = {}, m2PorAmbiente = {};
 
     // Calcular % por ap
@@ -4912,15 +4914,27 @@ async function loadVisaoGeral() {
         Object.entries(sel).forEach(([k, v]) => {
           if (v.piso && v.m2 > 0) {
             selecionadas++;
-            totalM2 += parseFloat(v.m2)||0;
+            const m2raw = parseFloat(v.m2)||0;
+            const m2comPerda = m2raw * 1.2;
+            totalM2 += m2raw;
             // contar revestimento
             const rev = revestimentos.find(r => r.id === v.piso || r.codigo === v.piso);
             const nomeRev = rev ? rev.nome : v.piso;
-            contagemRevs[nomeRev] = (contagemRevs[nomeRev]||0) + (parseFloat(v.m2)||0);
+            contagemRevs[nomeRev] = (contagemRevs[nomeRev]||0) + m2raw;
+            // valores (venda e custo, com 20% de perda, igual ao restante do dashboard)
+            const precoVenda = rev && rev.preco_m2 ? parseFloat(rev.preco_m2)||0 : 0;
+            const custoM2 = rev && rev.custo_m2 ? parseFloat(rev.custo_m2)||0 : 0;
+            if (p.status === 'confirmado') {
+              valorConfirmado += m2comPerda * precoVenda;
+              custoConfirmado += m2comPerda * custoM2;
+            } else {
+              valorPendente += m2comPerda * precoVenda;
+              custoPendente += m2comPerda * custoM2;
+            }
             // ambiente da parede
             const parede = paredesAp.find(pw => pw.id === k || (pw.apartamento+'-'+pw.local+'-'+pw.parede) === k);
             const amb = parede ? parede.local : 'Outros';
-            m2PorAmbiente[amb] = (m2PorAmbiente[amb]||0) + (parseFloat(v.m2)||0);
+            m2PorAmbiente[amb] = (m2PorAmbiente[amb]||0) + m2raw;
           }
         });
       });
@@ -4931,6 +4945,9 @@ async function loadVisaoGeral() {
     });
 
     const pctGeral = totalAps > 0 ? Math.round((concluidos / totalAps) * 100) : 0;
+    const valorTotalGeral = valorConfirmado + valorPendente;
+    const lucroConfirmado = valorConfirmado - custoConfirmado;
+    const fmtR$ = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0});
 
     // --- CARDS ---
     document.getElementById('vg-cards').innerHTML = `
@@ -4938,6 +4955,13 @@ async function loadVisaoGeral() {
       <div class="stat-card"><div class="stat-label">m² Total</div><div class="stat-value">${totalM2.toFixed(0)}</div><div class="stat-sub">calculados</div></div>
       <div class="stat-card"><div class="stat-label">Concluídos</div><div class="stat-value">${pctGeral}%</div><div class="stat-sub">${concluidos} de ${totalAps} aps</div></div>
       <div class="stat-card"><div class="stat-label">Pendentes</div><div class="stat-value">${naoIniciados + emAndamento}</div><div class="stat-sub">sem personalização completa</div></div>
+    `;
+
+    document.getElementById('vg-cards-financeiro').innerHTML = `
+      <div class="stat-card"><div class="stat-label">Já Vendido (Confirmado)</div><div class="stat-value" style="font-size:22px">${fmtR$(valorConfirmado)}</div><div class="stat-sub">${lucroConfirmado ? 'lucro ' + fmtR$(lucroConfirmado) : ''}</div></div>
+      <div class="stat-card"><div class="stat-label">Pendente de Confirmar</div><div class="stat-value" style="font-size:22px">${fmtR$(valorPendente)}</div><div class="stat-sub">ainda não fechado</div></div>
+      <div class="stat-card"><div class="stat-label">Total Personalizado</div><div class="stat-value" style="font-size:22px">${fmtR$(valorTotalGeral)}</div><div class="stat-sub">confirmado + pendente</div></div>
+      <div class="stat-card"><div class="stat-label">Ticket Médio</div><div class="stat-value" style="font-size:22px">${fmtR$(totalAps ? valorTotalGeral/totalAps : 0)}</div><div class="stat-sub">por apartamento</div></div>
     `;
 
     // --- DONUT CONCLUSÃO ---
