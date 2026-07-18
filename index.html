@@ -2173,6 +2173,11 @@ body.mobile-mode #main{padding-bottom:72px}
           <div id="vg-status-legend" style="display:flex;gap:16px;justify-content:center;margin-top:16px;font-size:12px"></div>
         </div>
       </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-top:16px">
+        <p style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Personalizações Pendentes</p>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Aguardando confirmação, da mais antiga pra mais recente</p>
+        <div id="vg-pendencias" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
     </div>
   </div>
 
@@ -4964,6 +4969,8 @@ async function loadVisaoGeral() {
       <div class="stat-card"><div class="stat-label">Ticket Médio</div><div class="stat-value" style="font-size:22px">${fmtR$(totalAps ? valorTotalGeral/totalAps : 0)}</div><div class="stat-sub">por apartamento</div></div>
     `;
 
+    renderVgPendencias(personalizacoes);
+
     // --- DONUT CONCLUSÃO ---
     document.getElementById('vg-pct-center').querySelector('p').textContent = pctGeral + '%';
     if (chartConclusao) chartConclusao.destroy();
@@ -5041,6 +5048,50 @@ async function loadVisaoGeral() {
   }
 }
 
+function parseDataPtBr(str) {
+  if (!str) return null;
+  const m = String(str).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (!m) return null;
+  return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
+}
+
+function renderVgPendencias(personalizacoes) {
+  // pegar a versão mais recente de cada apartamento (mesmo critério usado nas outras telas)
+  const latestByAp = {};
+  personalizacoes.forEach(p => {
+    if (!p.ap) return;
+    const m = String(p.id||'').match(/^id_(\d+)_/);
+    const ts = m ? parseInt(m[1]) : 0;
+    if (!latestByAp[p.ap] || ts > latestByAp[p.ap]._ts) {
+      latestByAp[p.ap] = Object.assign({}, p, { _ts: ts });
+    }
+  });
+
+  const hoje = new Date();
+  const pendentes = Object.values(latestByAp)
+    .filter(p => p.status !== 'confirmado')
+    .map(p => {
+      const dataCriacao = parseDataPtBr(p.criado_em) || (p._ts ? new Date(p._ts) : null);
+      const dias = dataCriacao ? Math.floor((hoje - dataCriacao) / 86400000) : null;
+      return { ap: p.ap, cliente: p.cliente || '', dias: dias };
+    })
+    .sort((a,b) => (b.dias||0) - (a.dias||0));
+
+  const el = document.getElementById('vg-pendencias');
+  if (!el) return;
+  if (!pendentes.length) {
+    el.innerHTML = '<p style="font-size:13px;color:var(--text3);text-align:center;padding:20px 0">Nenhuma pendência — tudo confirmado!</p>';
+    return;
+  }
+  el.innerHTML = pendentes.map(p => {
+    const cor = p.dias == null ? 'var(--text3)' : (p.dias >= 14 ? '#C0392B' : (p.dias >= 7 ? '#C9A84C' : 'var(--text3)'));
+    const diasTexto = p.dias == null ? 'data desconhecida' : (p.dias === 0 ? 'hoje' : ('há ' + p.dias + ' dia' + (p.dias>1?'s':'')));
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:13px;color:var(--text)">Apto ${p.ap} <span style="color:var(--text3)">· ${p.cliente}</span></span>
+      <span style="font-size:12px;font-weight:600;color:${cor}">${diasTexto}</span>
+    </div>`;
+  }).join('');
+}
 
 async function loadEstoque() {
   if (dadosRevestimentos.length) {
@@ -5571,7 +5622,21 @@ async function salvarRevestimento() {
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 async function excluirRevestimento(id) {
-  if (!confirm('Confirma excluir este revestimento?')) return;
+  try {
+    const uso = await apiAction('verificarUsoRevestimento', id);
+    if (uso && uso.emUso) {
+      const lista = uso.usos.map(u => 'Apto ' + u.ap + (u.cliente ? ' (' + u.cliente + ')' : '')).join(', ');
+      const confirmarMesmoAssim = confirm(
+        'ATENÇÃO: esse revestimento está usado em ' + uso.quantidade + ' personalização(ões): ' + lista +
+        '.\n\nSe excluir, essas personalizações vão ficar com um item "não encontrado". Excluir mesmo assim?'
+      );
+      if (!confirmarMesmoAssim) return;
+    } else {
+      if (!confirm('Confirma excluir este revestimento?')) return;
+    }
+  } catch(e) {
+    if (!confirm('Não consegui checar o uso deste revestimento. Confirma excluir mesmo assim?')) return;
+  }
   const backup = [...dadosEstoque];
   dadosEstoque = dadosEstoque.filter(r => r.id !== id);
   renderEstoque(dadosEstoque);
