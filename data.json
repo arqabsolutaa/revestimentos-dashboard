@@ -18,7 +18,8 @@
       "estoque_m2": "174.24",
       "preco_m2": "105.3",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "3",
@@ -38,7 +39,8 @@
       "estoque_m2": "96.06",
       "preco_m2": "105.3",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "6",
@@ -58,7 +60,8 @@
       "estoque_m2": "60.39999999999999",
       "preco_m2": "105.3",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "7",
@@ -78,7 +81,8 @@
       "estoque_m2": "79.86",
       "preco_m2": "105.3",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "9",
@@ -98,7 +102,8 @@
       "estoque_m2": "193.6",
       "preco_m2": "105.3",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "10",
@@ -118,7 +123,8 @@
       "estoque_m2": "958.3199999999999",
       "preco_m2": "105.3",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "11",
@@ -138,7 +144,8 @@
       "estoque_m2": "958.3199999999999",
       "preco_m2": "105.3",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "12",
@@ -158,7 +165,8 @@
       "estoque_m2": "285.56",
       "preco_m2": "105.3",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "13",
@@ -178,7 +186,8 @@
       "estoque_m2": "143.18",
       "preco_m2": "105.3",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "14",
@@ -198,7 +207,8 @@
       "estoque_m2": "348.48",
       "preco_m2": "105.3",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "15",
@@ -218,7 +228,8 @@
       "estoque_m2": "229.60000000000002",
       "preco_m2": "156",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "23",
@@ -238,7 +249,8 @@
       "estoque_m2": "309.96000000000004",
       "preco_m2": "156",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "17",
@@ -258,7 +270,8 @@
       "estoque_m2": "545.3",
       "preco_m2": "156",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "32",
@@ -278,7 +291,8 @@
       "estoque_m2": "275.52",
       "preco_m2": "156",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "33",
@@ -298,7 +312,8 @@
       "estoque_m2": "68.88",
       "preco_m2": "156",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "34",
@@ -318,7 +333,8 @@
       "estoque_m2": "206.64000000000001",
       "preco_m2": "156",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "35",
@@ -338,7 +354,8 @@
       "estoque_m2": "1181.0324999999998",
       "preco_m2": "224",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "37",
@@ -358,7 +375,8 @@
       "estoque_m2": "535.5",
       "preco_m2": "224",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "38",
@@ -378,7 +396,8 @@
       "estoque_m2": "318.75",
       "preco_m2": "224",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "40",
@@ -398,7 +417,8 @@
       "estoque_m2": "453.9",
       "preco_m2": "224",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "41",
@@ -418,7 +438,8 @@
       "estoque_m2": "979.1999999999999",
       "preco_m2": "224",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "42",
@@ -438,7 +459,8 @@
       "estoque_m2": "443.7",
       "preco_m2": "224",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "43",
@@ -458,7 +480,8 @@
       "estoque_m2": "1453.5",
       "preco_m2": "340.8",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "45",
@@ -478,7 +501,8 @@
       "estoque_m2": "22.61",
       "preco_m2": "340.8",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "46",
@@ -498,7 +522,8 @@
       "estoque_m2": "268.09",
       "preco_m2": "340.8",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "48",
@@ -518,7 +543,8 @@
       "estoque_m2": "64.6",
       "preco_m2": "340.8",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "49",
@@ -538,7 +564,8 @@
       "estoque_m2": "839.8",
       "preco_m2": "340.8",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "50",
@@ -558,7 +585,8 @@
       "estoque_m2": "516.8",
       "preco_m2": "340.8",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "51",
@@ -578,7 +606,8 @@
       "estoque_m2": "516.8",
       "preco_m2": "340.8",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "52",
@@ -598,7 +627,8 @@
       "estoque_m2": "180.17999999999995",
       "preco_m2": "160",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "53",
@@ -618,7 +648,8 @@
       "estoque_m2": "45.76",
       "preco_m2": "160",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "54",
@@ -638,7 +669,8 @@
       "estoque_m2": "457.59999999999997",
       "preco_m2": "160",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "55",
@@ -658,7 +690,8 @@
       "estoque_m2": "50.05",
       "preco_m2": "160",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "56",
@@ -678,7 +711,8 @@
       "estoque_m2": "297.44",
       "preco_m2": "160",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "57",
@@ -698,7 +732,8 @@
       "estoque_m2": "45.76",
       "preco_m2": "160",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "58",
@@ -718,7 +753,8 @@
       "estoque_m2": "331.9337",
       "preco_m2": "182.02",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "59",
@@ -738,7 +774,8 @@
       "estoque_m2": "173.28",
       "preco_m2": "162.22",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "61",
@@ -758,7 +795,8 @@
       "estoque_m2": "833",
       "preco_m2": "142",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "68",
@@ -778,7 +816,8 @@
       "estoque_m2": "89.61",
       "preco_m2": "98.5",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "69",
@@ -798,7 +837,8 @@
       "estoque_m2": "93.96",
       "preco_m2": "98.5",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "166",
@@ -818,7 +858,8 @@
       "estoque_m2": "95.19999999999999",
       "preco_m2": "166.86",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "74",
@@ -838,7 +879,8 @@
       "estoque_m2": "262.8",
       "preco_m2": "98.5",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "80",
@@ -858,7 +900,8 @@
       "estoque_m2": "265.35",
       "preco_m2": "98.5",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "81",
@@ -878,7 +921,8 @@
       "estoque_m2": "109.62",
       "preco_m2": "98.5",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "82",
@@ -898,7 +942,8 @@
       "estoque_m2": "0",
       "preco_m2": "156",
       "criado_em": "Sun Jun 28 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "83",
@@ -918,7 +963,8 @@
       "estoque_m2": "0",
       "preco_m2": "98.5",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "84",
@@ -938,7 +984,8 @@
       "estoque_m2": "0",
       "preco_m2": "156",
       "criado_em": "Mon Jun 29 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "85",
@@ -958,7 +1005,8 @@
       "estoque_m2": "0",
       "preco_m2": "98.5",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "86",
@@ -978,7 +1026,8 @@
       "estoque_m2": "0",
       "preco_m2": "156",
       "criado_em": "",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "id_1783353161480_1rxdy",
@@ -998,7 +1047,8 @@
       "estoque_m2": "0",
       "preco_m2": "105.3",
       "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "id_1783353761796_4qp20",
@@ -1018,7 +1068,8 @@
       "estoque_m2": "0",
       "preco_m2": "98.5",
       "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "id_1783353853911_65xym",
@@ -1038,7 +1089,8 @@
       "estoque_m2": "0",
       "preco_m2": "98.5",
       "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "id_1783353934833_zyvht",
@@ -1058,7 +1110,8 @@
       "estoque_m2": "0",
       "preco_m2": "98.5",
       "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "id_1783367814492_tipnn",
@@ -1078,7 +1131,8 @@
       "estoque_m2": "0",
       "preco_m2": "156",
       "criado_em": "Mon Jul 06 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "id_1783447963049_gp4eh",
@@ -1098,7 +1152,8 @@
       "estoque_m2": "0",
       "preco_m2": "98.5",
       "criado_em": "Tue Jul 07 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "id_1783535775573_tr6rz",
@@ -1118,7 +1173,8 @@
       "estoque_m2": "0",
       "preco_m2": "156",
       "criado_em": "Wed Jul 08 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "id_1783620192057_9tq0j",
@@ -1138,7 +1194,8 @@
       "estoque_m2": "0",
       "preco_m2": "369.99",
       "criado_em": "Thu Jul 09 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "id_1783689824629_h3l0t",
@@ -1158,7 +1215,8 @@
       "estoque_m2": "0",
       "preco_m2": "0",
       "criado_em": "Fri Jul 10 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     },
     {
       "id": "id_1783693700948_8gwqd",
@@ -1178,7 +1236,8 @@
       "estoque_m2": "0",
       "preco_m2": "98.5",
       "criado_em": "Fri Jul 10 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
-      "perda_pct": "20"
+      "perda_pct": "20",
+      "custo_m2": ""
     }
   ],
   "paredes": [
