@@ -219,6 +219,7 @@ async function salvarVinilico() {
 
 // ===================== MARMORARIA =====================
 let dadosMarmoraria = [], dadosBancadas = [], marmSelecoes = [], marmApAtual = '';
+let dadosMetais = [], metaisItens = [], metaisApAtual = '', metaisPdfOriginalUrl = '';
 let dadosMarmCatalogo = [];
 
 async function loadMarmoraria() {
@@ -1796,6 +1797,10 @@ body.mobile-mode #main{padding-bottom:72px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.683 3 4 3.683 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><line x1="10" x2="8" y1="5" y2="7"/><line x1="2" x2="22" y1="12" y2="12"/></svg>
       Banheiras
     </button>
+    <button class="nav-btn" onclick="showScreen('metais')" id="nav-metais">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6 7 17l-5-5"/><path d="M22 10 12 20l-2-2"/></svg>
+      Metais
+    </button>
     <div class="nav-label">Dados</div>
     <button class="nav-btn" onclick="showScreen('estoque')" id="nav-estoque">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
@@ -2342,6 +2347,24 @@ body.mobile-mode #main{padding-bottom:72px}
 </div>
 </div>
 
+<!-- METAIS -->
+<div id="metais-screen" class="screen" style="display:none">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Metais</h1>
+      <p>Cotação de metais (torneiras, registros, louças) por apartamento</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="abrirModalMetais()">+ Nova Cotação de Metais</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div id="metais-lista" style="display:flex;flex-direction:column;gap:12px">
+      <div class="empty-state"><strong>Carregando...</strong></div>
+    </div>
+  </div>
+</div>
+
 <!-- VAGAS E DEPÓSITOS -->
 <div id="vagasdep-screen" class="screen">
   <div id="vagasdep-lock" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:20px;padding:40px;text-align:center">
@@ -2459,6 +2482,51 @@ body.mobile-mode #main{padding-bottom:72px}
         <div id="margemlucro-total-geral" style="font-size:13px;color:var(--text2)">Aguardando o backend (Code.gs) ser atualizado...</div>
       </div>
       <div id="margemlucro-lista"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL METAIS -->
+<div id="modal-metais" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Cotação de Metais</h2>
+      <button class="modal-close" onclick="fecharModal('modal-metais')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Apartamento</label>
+        <select class="form-control" id="metais-ap-select" onchange="atualizarClienteMetais()">
+          <option value="">— Selecione —</option>
+        </select>
+      </div>
+      <div id="metais-cliente-card" style="display:none;margin-top:12px;padding:12px 16px;background:var(--accent-bg);border-radius:var(--radius-sm);border:1px solid #b8d4c0">
+        <p style="font-size:13px;font-weight:500;color:var(--accent)" id="metais-cliente-card-nome"></p>
+        <p style="font-size:12px;color:var(--text2)" id="metais-cliente-card-info"></p>
+      </div>
+
+      <div class="form-group" style="margin-top:16px">
+        <label class="form-label">PDF original do fornecedor <span style="font-weight:400;color:var(--text3)">(ex: cotação da Deca)</span></label>
+        <input type="file" class="form-control" id="metais-pdf-input" accept="application/pdf">
+        <p id="metais-pdf-status" style="font-size:12px;color:var(--text3);margin-top:4px"></p>
+      </div>
+
+      <div style="margin-top:20px">
+        <label class="form-label">Itens da cotação</label>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:8px">Copie o nome e o valor de cada item do PDF original (torneira, registro, louça, etc.)</p>
+        <div id="metais-itens-lista" style="display:flex;flex-direction:column;gap:8px"></div>
+        <button class="btn btn-secondary" style="margin-top:10px;font-size:12px" onclick="adicionarItemMetais()">+ Adicionar item</button>
+      </div>
+
+      <div style="margin-top:16px;padding:12px 16px;background:var(--surface2);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;color:var(--text2)">Total</span>
+        <strong id="metais-total" style="font-size:18px;color:var(--text)">R$ 0,00</strong>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-metais')">Cancelar</button>
+      <button class="btn btn-secondary" onclick="salvarMetais(false)">Salvar</button>
+      <button class="btn btn-primary" onclick="salvarMetais(true)">Salvar e Gerar PDF</button>
     </div>
   </div>
 </div>
@@ -3675,6 +3743,7 @@ function showScreen(name) {
   if (name === 'vinilico') loadVinilico();
   if (name === 'marmoraria') loadMarmoraria();
   if (name === 'banheiras') loadBanheiras();
+  if (name === 'metais') loadMetais();
   if (name === 'vagasdep') { if (!vagasDepDesbloqueado) { document.getElementById('vagasdep-lock').style.display = 'flex'; document.getElementById('vagasdep-conteudo').style.display = 'none'; } else loadVagasDep(); }
   if (name === 'margemlucro') { if (!margemLucroDesbloqueado) { document.getElementById('margemlucro-lock').style.display = 'flex'; document.getElementById('margemlucro-conteudo').style.display = 'none'; } else loadMargemLucro(); }
 }
@@ -6404,6 +6473,169 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
     doc.text('Pág. ' + page + ' / ' + pages, 198, 292, { align: 'right' });
   }
 }
+
+// ===================== METAIS =====================
+async function loadMetais() {
+  try {
+    const d = await lerDadosExtra('metais');
+    dadosMetais = d.personalizar || [];
+  } catch(e) {
+    console.log('Metais:', e.message);
+    dadosMetais = [];
+  }
+  renderMetais();
+}
+
+function renderMetais() {
+  const el = document.getElementById('metais-lista');
+  if (!dadosMetais.length) {
+    el.innerHTML = '<div class="empty-state"><strong>Nenhuma cotação de metais ainda</strong></div>';
+    return;
+  }
+  el.innerHTML = dadosMetais.map(p => {
+    let itens = [];
+    try { itens = typeof p.itens === 'string' ? JSON.parse(p.itens||'[]') : (p.itens||[]); } catch(e) {}
+    const total = itens.reduce((s,it) => s + (parseFloat(it.valor)||0), 0);
+    return `<div class="card" style="padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <strong>Apto ${p.ap}</strong> <span style="color:var(--text3);font-size:12px">· ${p.cliente||''} · ${itens.length} item(ns)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <strong style="font-size:14px">R$ ${total.toFixed(2)}</strong>
+          ${p.pdf_original_url ? `<a href="${p.pdf_original_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px">PDF original</a>` : ''}
+          ${p.pdf_gerado_url ? `<a href="${p.pdf_gerado_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px">PDF Absoluta</a>` : `<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="gerarPDFMetaisId('${p.id}')">Gerar PDF</button>`}
+          <button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="excluirMetais('${p.id}')">Excluir</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function abrirModalMetais() {
+  metaisItens = [];
+  metaisApAtual = '';
+  metaisPdfOriginalUrl = '';
+  document.getElementById('metais-pdf-input').value = '';
+  document.getElementById('metais-pdf-status').textContent = '';
+  const sel = document.getElementById('metais-ap-select');
+  sel.innerHTML = '<option value="">— Selecione —</option>' +
+    [...new Set(dadosParedes.map(p => p.apartamento))].sort((a,b) => Number(a)-Number(b))
+    .map(ap => {
+      const cli = dadosParedes.find(p => p.apartamento === ap)?.cliente || '';
+      return `<option value="${ap}">Apto ${ap} - ${cli}</option>`;
+    }).join('');
+  document.getElementById('metais-cliente-card').style.display = 'none';
+  adicionarItemMetais();
+  adicionarItemMetais();
+  abrirModal('modal-metais');
+
+  document.getElementById('metais-pdf-input').onchange = async function() {
+    const file = this.files[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) { showToast('Arquivo muito grande (máx 10MB)', 'error'); return; }
+    document.getElementById('metais-pdf-status').textContent = 'Enviando...';
+    try {
+      const base64data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'uploadPdfOriginalMetais', dados: { filename: file.name, mimeType: file.type, base64data } })
+      });
+      const result = await response.json();
+      if (result.error) throw new Error(result.error);
+      metaisPdfOriginalUrl = result.data.url;
+      document.getElementById('metais-pdf-status').textContent = 'Anexado: ' + file.name;
+    } catch(e) {
+      document.getElementById('metais-pdf-status').textContent = '';
+      showToast('Erro ao enviar PDF: ' + e.message, 'error');
+    }
+  };
+}
+
+function atualizarClienteMetais() {
+  metaisApAtual = document.getElementById('metais-ap-select').value;
+  mostrarCardCliente('metais-cliente-card', metaisApAtual, dadosParedes);
+}
+
+function adicionarItemMetais() {
+  metaisItens.push({ nome: '', valor: 0 });
+  renderItensMetais();
+}
+
+function removerItemMetais(idx) {
+  metaisItens.splice(idx, 1);
+  renderItensMetais();
+}
+
+function atualizarItemMetais(idx, campo, valor) {
+  metaisItens[idx][campo] = campo === 'valor' ? (parseFloat(valor)||0) : valor;
+  if (campo === 'valor') recalcularTotalMetais();
+}
+
+function renderItensMetais() {
+  const el = document.getElementById('metais-itens-lista');
+  el.innerHTML = metaisItens.map((it, idx) => `
+    <div style="display:flex;gap:8px;align-items:center">
+      <input class="form-control" placeholder="Nome do item (ex: Torneira Deca Lift)" value="${it.nome}" oninput="atualizarItemMetais(${idx},'nome',this.value)" style="flex:2">
+      <input class="form-control" type="number" step="0.01" placeholder="Valor" value="${it.valor||''}" oninput="atualizarItemMetais(${idx},'valor',this.value)" style="flex:1">
+      <button onclick="removerItemMetais(${idx})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px">×</button>
+    </div>
+  `).join('');
+  recalcularTotalMetais();
+}
+
+function recalcularTotalMetais() {
+  const total = metaisItens.reduce((s,it) => s + (parseFloat(it.valor)||0), 0);
+  document.getElementById('metais-total').textContent = 'R$ ' + total.toFixed(2);
+}
+
+async function salvarMetais(gerarPdf) {
+  if (!metaisApAtual) { showToast('Selecione o apartamento', 'error'); return; }
+  const itensValidos = metaisItens.filter(it => it.nome && it.valor > 0);
+  if (!itensValidos.length) { showToast('Adicione pelo menos um item com nome e valor', 'error'); return; }
+  const cliente = dadosParedes.find(p => p.apartamento === metaisApAtual)?.cliente || '';
+  try {
+    const result = await api('addMetaisPersonalizar', { ap: metaisApAtual, cliente, itens: itensValidos, pdfOriginalUrl: metaisPdfOriginalUrl });
+    showToast('Cotação de metais salva!', 'success');
+    if (gerarPdf) {
+      const pdfResult = await api('gerarPDFMetais', { id: result.id, ap: metaisApAtual, cliente, itens: itensValidos });
+      window.open(pdfResult.url, '_blank');
+    }
+    fecharModal('modal-metais');
+    invalidarCacheExtra('metais');
+    loadMetais();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function gerarPDFMetaisId(id) {
+  const item = dadosMetais.find(p => p.id === id);
+  if (!item) return;
+  let itens = [];
+  try { itens = typeof item.itens === 'string' ? JSON.parse(item.itens||'[]') : (item.itens||[]); } catch(e) {}
+  try {
+    const result = await api('gerarPDFMetais', { id: item.id, ap: item.ap, cliente: item.cliente, itens });
+    showToast('PDF gerado!', 'success');
+    window.open(result.url, '_blank');
+    invalidarCacheExtra('metais');
+    loadMetais();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function excluirMetais(id) {
+  if (!confirm('Excluir esta cotação de metais?')) return;
+  try {
+    await apiAction('deleteMetaisPersonalizar', id);
+    showToast('Excluído!', 'success');
+    invalidarCacheExtra('metais');
+    loadMetais();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
 </script>
 
 <nav class="mobile-nav">
@@ -6477,6 +6709,10 @@ function _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, page, pages) {
   <button class="mobile-nav-btn" style="flex-direction:row;justify-content:flex-start;gap:12px;width:100%;padding:12px 16px;font-size:11px" onclick="showScreen('banheiras');setMobileNav('banheiras');toggleMobileMenu()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M4 12h16M4 16h16M6 12V8a2 2 0 012-2h8a2 2 0 012 2v4"/></svg>
     Banheiras
+  </button>
+  <button class="mobile-nav-btn" style="flex-direction:row;justify-content:flex-start;gap:12px;width:100%;padding:12px 16px;font-size:11px" onclick="showScreen('metais');setMobileNav('metais');toggleMobileMenu()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M18 6 7 17l-5-5"/><path d="M22 10 12 20l-2-2"/></svg>
+    Metais
   </button>
   <button class="mobile-nav-btn" style="flex-direction:row;justify-content:flex-start;gap:12px;width:100%;padding:12px 16px;font-size:11px" onclick="showScreen('config');setMobileNav('config');toggleMobileMenu()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
