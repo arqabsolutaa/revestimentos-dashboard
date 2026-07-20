@@ -6550,7 +6550,28 @@ function abrirModalMetais() {
       const result = await response.json();
       if (result.error) throw new Error(result.error);
       metaisPdfOriginalUrl = result.data.url;
-      document.getElementById('metais-pdf-status').textContent = 'Anexado: ' + file.name;
+      document.getElementById('metais-pdf-status').textContent = 'Anexado: ' + file.name + ' — lendo os itens...';
+
+      // Extração automática dos itens via OCR
+      try {
+        const respExtrair = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'extrairItensCotacaoPdf', dados: { filename: file.name, mimeType: file.type, base64data } })
+        });
+        const resultExtrair = await respExtrair.json();
+        if (resultExtrair.error) throw new Error(resultExtrair.error);
+        if (resultExtrair.data.itens && resultExtrair.data.itens.length) {
+          metaisItens = resultExtrair.data.itens;
+          renderItensMetais();
+          document.getElementById('metais-pdf-status').textContent = 'Anexado: ' + file.name + ' — ' + metaisItens.length + ' item(ns) identificado(s) automaticamente. Confira os valores antes de gerar.';
+          showToast(metaisItens.length + ' itens identificados — confira antes de gerar o PDF', 'success');
+        } else {
+          document.getElementById('metais-pdf-status').textContent = 'Anexado: ' + file.name + ' — não consegui identificar os itens automaticamente, preencha manualmente.';
+        }
+      } catch(e) {
+        document.getElementById('metais-pdf-status').textContent = 'Anexado: ' + file.name + ' (leitura automática falhou: ' + e.message + ' — preencha manualmente)';
+      }
     } catch(e) {
       document.getElementById('metais-pdf-status').textContent = '';
       showToast('Erro ao enviar PDF: ' + e.message, 'error');
