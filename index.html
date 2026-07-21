@@ -6504,7 +6504,8 @@ function renderMetais() {
         <div style="display:flex;align-items:center;gap:10px">
           <strong style="font-size:14px">R$ ${total.toFixed(2)}</strong>
           ${p.pdf_original_url ? `<a href="${p.pdf_original_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px">PDF original</a>` : ''}
-          ${p.pdf_gerado_url ? `<a href="${p.pdf_gerado_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px">PDF Absoluta</a>` : `<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="gerarPDFMetaisId('${p.id}')">Gerar PDF</button>`}
+          ${p.pdf_gerado_url ? `<a href="${p.pdf_gerado_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px">Ver PDF</a>` : ''}
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="gerarPDFMetaisId('${p.id}')">${p.pdf_gerado_url ? 'Gerar de novo' : 'Gerar PDF'}</button>
           <button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="excluirMetais('${p.id}')">Excluir</button>
         </div>
       </div>
