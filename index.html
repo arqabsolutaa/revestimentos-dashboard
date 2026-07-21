@@ -754,6 +754,19 @@ const ESSENCE_PALETAS = {
     preto:      [14, 14, 14],
     rodape:     [180, 175, 165],
   },
+  metais: {
+    primaria:   [67, 51, 30],      // #43331e marrom escuro
+    secundaria: [140, 132, 103],   // #8c8467 dourado
+    dourado:    [140, 132, 103],
+    marrom:     [67, 51, 30],
+    fundo:      [240, 238, 232],   // #f0eee8 bege claro
+    texto:      [67, 51, 30],
+    cinza:      [120, 118, 112],
+    cinzaClaro: [220, 218, 212],
+    branco:     [255, 255, 255],
+    preto:      [14, 14, 14],
+    rodape:     [200, 195, 180],
+  },
 };
 const ESSENCE_CORES = ESSENCE_PALETAS.vinilico; // fallback
 const ESSENCE_ASSETS = 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/assets/';
@@ -6504,8 +6517,7 @@ function renderMetais() {
         <div style="display:flex;align-items:center;gap:10px">
           <strong style="font-size:14px">R$ ${total.toFixed(2)}</strong>
           ${p.pdf_original_url ? `<a href="${p.pdf_original_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px">PDF original</a>` : ''}
-          ${p.pdf_gerado_url ? `<a href="${p.pdf_gerado_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px">Ver PDF</a>` : ''}
-          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="gerarPDFMetaisId('${p.id}')">${p.pdf_gerado_url ? 'Gerar de novo' : 'Gerar PDF'}</button>
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="gerarPDFMetaisId('${p.id}')">Gerar PDF</button>
           <button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="excluirMetais('${p.id}')">Excluir</button>
         </div>
       </div>
@@ -6623,11 +6635,10 @@ async function salvarMetais(gerarPdf) {
   if (!itensValidos.length) { showToast('Adicione pelo menos um item com nome e valor', 'error'); return; }
   const cliente = dadosParedes.find(p => p.apartamento === metaisApAtual)?.cliente || '';
   try {
-    const result = await apiPost('addMetaisPersonalizar', { ap: metaisApAtual, cliente, itens: itensValidos, pdfOriginalUrl: metaisPdfOriginalUrl });
+    await apiPost('addMetaisPersonalizar', { ap: metaisApAtual, cliente, itens: itensValidos, pdfOriginalUrl: metaisPdfOriginalUrl });
     showToast('Cotação de metais salva!', 'success');
     if (gerarPdf) {
-      const pdfResult = await apiPost('gerarPDFMetais', { id: result.id, ap: metaisApAtual, cliente, itens: itensValidos });
-      window.open(pdfResult.url, '_blank');
+      await _gerarPDFMetaisInterno(metaisApAtual, cliente, itensValidos);
     }
     fecharModal('modal-metais');
     invalidarCacheExtra('metais');
@@ -6640,13 +6651,60 @@ async function gerarPDFMetaisId(id) {
   if (!item) return;
   let itens = [];
   try { itens = typeof item.itens === 'string' ? JSON.parse(item.itens||'[]') : (item.itens||[]); } catch(e) {}
+  await _gerarPDFMetaisInterno(item.ap, item.cliente, itens);
+}
+
+async function _gerarPDFMetaisInterno(ap, cliente, itens) {
+  const ESSENCE_CORES = ESSENCE_PALETAS.metais;
+  const jsPDF = getJsPDF();
+  if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
+  if (!itens || !itens.length) { showToast('Não há itens nessa cotação', 'error'); return; }
+  showToast('Gerando PDF...', 'success');
+  let imgData = null;
+  try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa_metais.png'); } catch(e) { console.log('Capa nao carregada:', e.message); }
+
+  const doc = new jsPDF();
   try {
-    const result = await apiPost('gerarPDFMetais', { id: item.id, ap: item.ap, cliente: item.cliente, itens });
+    _pdfCapa(doc, imgData, 'PERSONALIZE — LOUÇAS E METAIS');
+    _pdfInfoCliente(doc, ap, cliente, null, 50, ESSENCE_CORES);
+
+    let y = 88;
+    _pdfTabelaHeader(doc, y, [
+      {label:'I T E M', x:8},
+      {label:'V A L O R', x:202, align:'right'},
+    ], ESSENCE_CORES);
+    y += 12;
+
+    let total = 0, alt = false;
+    itens.forEach(it => {
+      const preco = parseFloat(it.valor) || 0;
+      total += preco;
+      const nome = it.nome || '—';
+      if (y > 260) { doc.addPage(); y = 15; }
+      const nomeLinhas = doc.splitTextToSize ? doc.splitTextToSize(nome, 180) : [nome];
+      const linhaAltura = nomeLinhas.length > 1 ? 16 : 12;
+      const bg2 = alt ? [245,244,240] : [255,255,255];
+      doc.setFillColor(...bg2); doc.rect(0, y, 210, linhaAltura, 'F');
+      doc.setFillColor(...ESSENCE_CORES.secundaria); doc.rect(0, y, 2.5, linhaAltura, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...ESSENCE_CORES.preto);
+      nomeLinhas.forEach((linha, li) => doc.text(linha, 8, y + 8 + (li * 6)));
+      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...ESSENCE_CORES.dourado);
+      doc.text('R$ ' + preco.toLocaleString('pt-BR', {minimumFractionDigits:2}), 202, y + (linhaAltura/2) + 2, {align:'right'});
+      doc.setDrawColor(...ESSENCE_CORES.cinzaClaro); doc.setLineWidth(0.2);
+      doc.line(0, y+linhaAltura, 210, y+linhaAltura);
+      alt = !alt; y += linhaAltura + 2;
+    });
+    y += 6;
+    _pdfTotal(doc, y, null, total, 'Apto '+ap, ESSENCE_CORES);
+    const totalPag = doc.getNumberOfPages();
+    for (let i=1; i<=totalPag; i++) {
+      doc.setPage(i);
+      doc.setTextColor(...ESSENCE_CORES.cinza); doc.setFontSize(7);
+      doc.text('Pág. '+i+' / '+totalPag, 202, 292, {align:'right'});
+    }
+    doc.save('Absoluta-Metais-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
     showToast('PDF gerado!', 'success');
-    window.open(result.url, '_blank');
-    invalidarCacheExtra('metais');
-    loadMetais();
-  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+  } catch(pdfErr) { showToast('Erro ao gerar PDF: ' + pdfErr.message, 'error'); console.error(pdfErr); }
 }
 
 async function excluirMetais(id) {
