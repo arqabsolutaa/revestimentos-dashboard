@@ -6686,7 +6686,7 @@ async function _gerarPDFMetaisInterno(ap, cliente, itens) {
       const bg2 = alt ? [245,244,240] : [255,255,255];
       doc.setFillColor(...bg2); doc.rect(0, y, 210, linhaAltura, 'F');
       doc.setFillColor(...ESSENCE_CORES.secundaria); doc.rect(0, y, 2.5, linhaAltura, 'F');
-      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...ESSENCE_CORES.preto);
+      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(110,110,110);
       nomeLinhas.forEach((linha, li) => doc.text(linha, 8, y + 8 + (li * 6)));
       doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...ESSENCE_CORES.dourado);
       doc.text('R$ ' + preco.toLocaleString('pt-BR', {minimumFractionDigits:2}), 202, y + (linhaAltura/2) + 2, {align:'right'});
