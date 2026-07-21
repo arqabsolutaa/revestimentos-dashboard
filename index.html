@@ -924,11 +924,11 @@ let pgtoTabAtiva = 'revestimentos';
 function trocarTabPgto(tab) {
   pgtoTabAtiva = tab;
   // Atualizar visual das tabs
-  ['rev','vin','marm','banh'].forEach(t => {
+  ['rev','vin','marm','banh','arq'].forEach(t => {
     const el = document.getElementById('pgto-tab-' + t);
     if (el) el.classList.remove('pgto-tab-ativo');
   });
-  const map = {revestimentos:'rev', vinilico:'vin', marmoraria:'marm', banheiras:'banh'};
+  const map = {revestimentos:'rev', vinilico:'vin', marmoraria:'marm', banheiras:'banh', arquivados:'arq'};
   const tabEl = document.getElementById('pgto-tab-' + map[tab]);
   if (tabEl) tabEl.classList.add('pgto-tab-ativo');
   // Mostrar/ocultar listas
@@ -936,6 +936,7 @@ function trocarTabPgto(tab) {
   document.getElementById('pgto-lista-vin').style.display = tab === 'vinilico' ? 'block' : 'none';
   document.getElementById('pgto-lista-marm').style.display = tab === 'marmoraria' ? 'block' : 'none';
   document.getElementById('pgto-lista-banh').style.display = tab === 'banheiras' ? 'block' : 'none';
+  document.getElementById('pgto-lista-arq').style.display = tab === 'arquivados' ? 'block' : 'none';
   loadPagamentosAtivo();
 }
 
@@ -949,6 +950,8 @@ async function loadPagamentosAtivo() {
     loadPagamentosMarmoraria();
   } else if (pgtoTabAtiva === 'banheiras') {
     loadPagamentosBanheiras();
+  } else if (pgtoTabAtiva === 'arquivados') {
+    loadPagamentosArquivados();
   }
 }
 
@@ -2269,12 +2272,14 @@ body.mobile-mode #main{padding-bottom:72px}
         <button id="pgto-tab-vin" class="pgto-tab" onclick="trocarTabPgto('vinilico')">Vinílico</button>
         <button id="pgto-tab-marm" class="pgto-tab" onclick="trocarTabPgto('marmoraria')">Marmoraria</button>
         <button id="pgto-tab-banh" class="pgto-tab" onclick="trocarTabPgto('banheiras')">Banheiras</button>
+        <button id="pgto-tab-arq" class="pgto-tab" onclick="trocarTabPgto('arquivados')">Arquivados</button>
       </div>
       <div class="page-content">
         <div id="pgto-lista"></div>
         <div id="pgto-lista-vin" style="display:none"></div>
         <div id="pgto-lista-marm" style="display:none"></div>
         <div id="pgto-lista-banh" style="display:none"></div>
+        <div id="pgto-lista-arq" style="display:none"></div>
       </div>
     </div>
   </div>
@@ -4427,11 +4432,56 @@ async function loadPagamentos() {
   document.getElementById('pgto-lista').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
   try {
     const dados = await lerDados();
-    const pers = dados.personalizar || [];
+    const pers = (dados.personalizar || []).filter(p => p.arquivado !== 'true');
     renderPagamentos(pers);
   } catch(e) {
     document.getElementById('pgto-lista').innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
   }
+}
+
+async function loadPagamentosArquivados() {
+  if (!pgtoDesbloqueado) return;
+  document.getElementById('pgto-lista-arq').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  try {
+    const dados = await lerDados();
+    const pers = (dados.personalizar || []).filter(p => p.arquivado === 'true');
+    renderPagamentosArquivados(pers);
+  } catch(e) {
+    document.getElementById('pgto-lista-arq').innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
+  }
+}
+
+function renderPagamentosArquivados(lista) {
+  const el = document.getElementById('pgto-lista-arq');
+  if (!lista.length) {
+    el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento arquivado</strong></div>';
+    return;
+  }
+  el.innerHTML = lista.map(p => `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;opacity:0.75">
+      <div>
+        <p style="font-weight:600;font-size:14px">${p.cliente||'—'}</p>
+        <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'} · arquivado</p>
+      </div>
+      <button class="btn btn-secondary" onclick="desarquivarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">↩ Desarquivar</button>
+    </div>`).join('');
+}
+
+async function arquivarPersonalizacao(id) {
+  if (!confirm('Arquivar este orçamento? Ele sai da lista principal, mas fica salvo e pode ser recuperado depois.')) return;
+  try {
+    await apiPost('arquivarPersonalizacao', { id, arquivado: 'true' });
+    showToast('Orçamento arquivado!', 'success');
+    loadPagamentos();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function desarquivarPersonalizacao(id) {
+  try {
+    await apiPost('arquivarPersonalizacao', { id, arquivado: 'false' });
+    showToast('Orçamento restaurado!', 'success');
+    loadPagamentosArquivados();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
 
@@ -4580,6 +4630,7 @@ function renderPagamentos(lista) {
           <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
           <button class="btn btn-secondary" onclick="abrirModalOutraCondicao('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF outra condição</button>
           <button class="btn btn-secondary" onclick="editarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
+          <button class="btn btn-secondary" onclick="arquivarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">🗄 Arquivar</button>
           ${renderComprovantesHTML(p.comprovante_url, p.id, null, `document.getElementById('file-comprovante-${p.id}').click()`)}
           <input type="file" id="file-comprovante-${p.id}" accept="image/*,.pdf" style="display:none" onchange="uploadComprovante('${p.id}', this)">
         </div>
