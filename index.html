@@ -1052,10 +1052,7 @@ function _renderCardPgto(p, totalValor, extra, status, prefixo, modulo) {
       <input class="form-control" placeholder="Observação" style="font-size:11px;padding:4px 8px;width:220px" value="${p.obs_pgto||''}" onblur="salvarObsPgtoModulo('${p.id}', this.value, '${modulo}')">
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn btn-secondary" onclick="gerarPDFModulo('${p.id}','${modulo}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
-        ${p.comprovante_url 
-          ? `<a href="${p.comprovante_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px;text-decoration:none">📎 Ver comprovante</a>`
-          : `<button class="btn btn-secondary" onclick="document.getElementById('file-comp-${prefixo}-${p.id}').click()" style="font-size:11px;padding:4px 10px">📎 Anexar comprovante</button>`
-        }
+        ${renderComprovantesHTML(p.comprovante_url, p.id, modulo, `document.getElementById('file-comp-${prefixo}-${p.id}').click()`)}
         <input type="file" id="file-comp-${prefixo}-${p.id}" accept="image/*,.pdf" style="display:none" onchange="uploadComprovanteModulo('${p.id}', this, '${modulo}')">
       </div>
     </div>
@@ -4438,6 +4435,34 @@ async function loadPagamentos() {
 }
 
 
+function parseComprovantes(raw) {
+  if (!raw) return [];
+  const s = String(raw).trim();
+  if (!s) return [];
+  try {
+    const parsed = JSON.parse(s);
+    if (Array.isArray(parsed)) return parsed;
+    return [{ url: s, filename: '', data: '' }];
+  } catch(e) {
+    return [{ url: s, filename: '', data: '' }]; // formato antigo: só uma URL em texto puro
+  }
+}
+
+function renderComprovantesHTML(raw, id, modulo, onClickAnexarInline) {
+  const lista = parseComprovantes(raw);
+  const nomeFunc = modulo ? 'excluirComprovanteModulo' : 'excluirComprovante';
+  const links = lista.map((c, i) => {
+    const urlEsc = (c.url || '').replace(/'/g, "\\'");
+    const chamada = modulo ? `'${id}', '${urlEsc}', '${modulo}'` : `'${id}', '${urlEsc}'`;
+    return `<span style="display:inline-flex;align-items:center;gap:2px">
+      <a href="${c.url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 8px;text-decoration:none">📎 ${c.data ? c.data : ('Comprovante ' + (i+1))}</a>
+      <button onclick="${nomeFunc}(${chamada})" title="Remover" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:2px 4px">×</button>
+    </span>`;
+  }).join('');
+  const botaoAdicionar = `<button class="btn btn-secondary" onclick="${onClickAnexarInline}" style="font-size:11px;padding:4px 10px">📎 ${lista.length ? 'Anexar outro' : 'Anexar comprovante'}</button>`;
+  return links + botaoAdicionar;
+}
+
 async function uploadComprovante(id, inputEl) {
   const file = inputEl.files[0];
   if (!file) return;
@@ -4463,14 +4488,35 @@ async function uploadComprovante(id, inputEl) {
     });
     const result = await response.json();
     if (result.error) throw new Error(result.error);
-    // Atualizar memória local
+    // Atualizar memória local com a lista completa (não só a última URL)
     const item = dadosPersonalizar.find(p => p.id === id);
-    if (item) item.comprovante_url = result.data.url;
+    if (item) item.comprovante_url = JSON.stringify(result.data.comprovantes || []);
     renderPagamentos(dadosPersonalizar);
     showToast('Comprovante anexado!', 'success');
   } catch(e) {
     showToast('Erro ao enviar: ' + e.message, 'error');
   }
+}
+
+async function excluirComprovante(id, url) {
+  if (!confirm('Remover este comprovante?')) return;
+  try {
+    const result = await apiPost('deleteComprovante', { id, url });
+    const item = dadosPersonalizar.find(p => p.id === id);
+    if (item) item.comprovante_url = JSON.stringify(result.comprovantes || []);
+    renderPagamentos(dadosPersonalizar);
+    showToast('Comprovante removido!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function excluirComprovanteModulo(id, url, modulo) {
+  if (!confirm('Remover este comprovante?')) return;
+  try {
+    await apiPost('deleteComprovante', { id, url, modulo });
+    invalidarCacheExtra(modulo);
+    loadPagamentosAtivo();
+    showToast('Comprovante removido!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
 
@@ -4534,10 +4580,7 @@ function renderPagamentos(lista) {
           <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
           <button class="btn btn-secondary" onclick="abrirModalOutraCondicao('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF outra condição</button>
           <button class="btn btn-secondary" onclick="editarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
-          ${p.comprovante_url 
-            ? `<a href="${p.comprovante_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px;text-decoration:none">📎 Ver comprovante</a>`
-            : `<button class="btn btn-secondary" onclick="document.getElementById('file-comprovante-${p.id}').click()" style="font-size:11px;padding:4px 10px">📎 Anexar comprovante</button>`
-          }
+          ${renderComprovantesHTML(p.comprovante_url, p.id, null, `document.getElementById('file-comprovante-${p.id}').click()`)}
           <input type="file" id="file-comprovante-${p.id}" accept="image/*,.pdf" style="display:none" onchange="uploadComprovante('${p.id}', this)">
         </div>
       </div>
