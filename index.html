@@ -6622,10 +6622,10 @@ async function salvarMetais(gerarPdf) {
   if (!itensValidos.length) { showToast('Adicione pelo menos um item com nome e valor', 'error'); return; }
   const cliente = dadosParedes.find(p => p.apartamento === metaisApAtual)?.cliente || '';
   try {
-    const result = await api('addMetaisPersonalizar', { ap: metaisApAtual, cliente, itens: itensValidos, pdfOriginalUrl: metaisPdfOriginalUrl });
+    const result = await apiPost('addMetaisPersonalizar', { ap: metaisApAtual, cliente, itens: itensValidos, pdfOriginalUrl: metaisPdfOriginalUrl });
     showToast('Cotação de metais salva!', 'success');
     if (gerarPdf) {
-      const pdfResult = await api('gerarPDFMetais', { id: result.id, ap: metaisApAtual, cliente, itens: itensValidos });
+      const pdfResult = await apiPost('gerarPDFMetais', { id: result.id, ap: metaisApAtual, cliente, itens: itensValidos });
       window.open(pdfResult.url, '_blank');
     }
     fecharModal('modal-metais');
@@ -6640,7 +6640,7 @@ async function gerarPDFMetaisId(id) {
   let itens = [];
   try { itens = typeof item.itens === 'string' ? JSON.parse(item.itens||'[]') : (item.itens||[]); } catch(e) {}
   try {
-    const result = await api('gerarPDFMetais', { id: item.id, ap: item.ap, cliente: item.cliente, itens });
+    const result = await apiPost('gerarPDFMetais', { id: item.id, ap: item.ap, cliente: item.cliente, itens });
     showToast('PDF gerado!', 'success');
     window.open(result.url, '_blank');
     invalidarCacheExtra('metais');
