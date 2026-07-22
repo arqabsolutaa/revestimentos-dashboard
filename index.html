@@ -3686,21 +3686,28 @@ async function forcarAtualizarDados() {
 }
 
 
+// Detecta celular/tablet de forma confiável, mesmo em iPads novos que se identificam como "Mac"
+function isMobileDevice() {
+  const ua = navigator.userAgent;
+  const larguraPequena = window.innerWidth <= 1024;
+  const temToque = ('ontouchstart' in window) || (navigator.maxTouchPoints > 1);
+  const uaMobile = /iPhone|iPad|Android|Mobile/i.test(ua);
+  // iPad novo: UA de Mac mas com tela de toque -> conta como mobile
+  const macComToque = /Macintosh/i.test(ua) && navigator.maxTouchPoints > 1;
+  return uaMobile || macComToque || (larguraPequena && temToque);
+}
+
 function entrarSistema() {
   const capa = document.getElementById('capa-entrada');
   capa.style.transition = 'opacity 0.8s ease';
   capa.style.opacity = '0';
   setTimeout(() => { capa.style.display = 'none'; }, 800);
-  // Detectar mobile e aplicar modo correto
-  if (window.innerWidth <= 768 || /iPhone|iPad|Android/i.test(navigator.userAgent)) {
-    setMode('mobile');
-  } else {
-    setMode('desktop');
-  }
+  // Detectar mobile/tablet e aplicar modo correto
+  setMode(isMobileDevice() ? 'mobile' : 'desktop');
 }
 
 function detectarCapaMobile() {
-  const isMobile = window.innerWidth <= 768 || /iPhone|iPad|Android/i.test(navigator.userAgent);
+  const isMobile = isMobileDevice();
   const desktop = document.getElementById('capa-img-desktop');
   const mobile = document.getElementById('capa-img-mobile');
   if (desktop && mobile) {
