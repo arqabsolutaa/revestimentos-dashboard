@@ -704,6 +704,15 @@ function invalidarCacheExtra(tipo) {
 }
 
 // Helper para obter jsPDF de forma segura
+// Limpa nome de arquivo: remove acentos, espaços e caracteres especiais, evitando
+// que o Windows mostre nomes truncados tipo "ABSOLU~2.PDF" em telas de impressão/visualização.
+function nomeArquivoLimpo(str) {
+  return String(str || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
+    .replace(/[^a-zA-Z0-9\s-]/g, '')                   // remove caracteres especiais
+    .trim().replace(/\s+/g, '-');
+}
+
 function getJsPDF() {
   if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
   if (window.jsPDF) return window.jsPDF;
@@ -1168,7 +1177,7 @@ async function _gerarPDFVinilicoInterno(ap, cliente, selecoes) {
     doc.setTextColor(...ESSENCE_CORES.cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
     doc.text('Pág. '+i+' / '+total, 202, 292, {align:'right'});
   }
-  doc.save('Vinilico-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
+  doc.save('Vinilico-Ap'+ap+'-'+nomeArquivoLimpo(cliente)+'.pdf');
   showToast('PDF gerado!', 'success');
 }
 
@@ -1235,7 +1244,7 @@ async function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
     doc.setTextColor(...ESSENCE_CORES.cinza); doc.setFontSize(7);
     doc.text('Pág. '+i+' / '+total, 202, 292, {align:'right'});
   }
-  doc.save('Marmoraria-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
+  doc.save('Marmoraria-Ap'+ap+'-'+nomeArquivoLimpo(cliente)+'.pdf');
   showToast('PDF gerado!', 'success');
 }
 function editarMarmoraria(id) { showToast('Em desenvolvimento', 'success'); }
@@ -1317,7 +1326,7 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
     doc.setTextColor(...ESSENCE_CORES.cinza); doc.setFontSize(7);
     doc.text('Pág. '+i+' / '+totalPag, 202, 292, {align:'right'});
   }
-  doc.save('Banheiras-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
+  doc.save('Banheiras-Ap'+ap+'-'+nomeArquivoLimpo(cliente)+'.pdf');
   showToast('PDF gerado!', 'success');
   } catch(pdfErr) { showToast('Erro ao gerar PDF: ' + pdfErr.message, 'error'); console.error(pdfErr); }
 }
@@ -6572,7 +6581,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     _pdfFooter(doc, verdeEscuro, dourado, empresa, ap, i, pages);
   }
 
-  doc.save('Absoluta-Ap' + ap + '-' + (cliente || '').replace(/\s+/g, '-') + '.pdf');
+  doc.save('Absoluta-Ap' + ap + '-' + nomeArquivoLimpo(cliente) + '.pdf');
   showToast('PDF gerado!', 'success');
 }
 
@@ -6803,7 +6812,7 @@ async function _gerarPDFMetaisInterno(ap, cliente, itens) {
       doc.setTextColor(...ESSENCE_CORES.cinza); doc.setFontSize(7);
       doc.text('Pág. '+i+' / '+totalPag, 202, 292, {align:'right'});
     }
-    doc.save('Absoluta-Metais-Ap'+ap+'-'+(cliente||'').replace(/\s+/g,'-')+'.pdf');
+    doc.save('Absoluta-Metais-Ap'+ap+'-'+nomeArquivoLimpo(cliente)+'.pdf');
     showToast('PDF gerado!', 'success');
   } catch(pdfErr) { showToast('Erro ao gerar PDF: ' + pdfErr.message, 'error'); console.error(pdfErr); }
 }
