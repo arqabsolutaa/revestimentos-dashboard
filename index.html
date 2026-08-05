@@ -391,6 +391,7 @@ async function salvarMarmoraria() {
 // ===================== BANHEIRAS =====================
 let dadosBanheiras = [], dadosBanhCatalogo = [], banhItens = [], banhApAtual = '';
 let banhProdutoAtual = null;
+let banhPagamento = 'avista';
 
 async function loadBanheiras() {
   try {
@@ -443,7 +444,7 @@ function renderBanheiras() {
 }
 
 async function abrirModalCalcBanheira() {
-  banhItens = []; banhApAtual = ''; banhProdutoAtual = null;
+  banhItens = []; banhApAtual = ''; banhProdutoAtual = null; banhPagamento = 'avista';
   try {
     const d = await lerDadosExtra('banheiras', true); // sempre buscar fresco
     // Normalizar colunas — planilha da Sabbia pode ter nomes diferentes
@@ -640,6 +641,28 @@ function renderItensBanheira() {
   const lista = document.getElementById('banh-itens-lista');
   if (!banhItens.length) { lista.innerHTML = ''; return; }
   const total = banhItens.reduce((a, b) => a + (parseFloat(b.preco_venda)||0), 0);
+
+  const fmtBanh = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2});
+
+  const pagOpcoesHTML = [['avista','À Vista'],['pix','PIX'],['debito','Débito']]
+    .map(([tipo,label]) => `<button class="pgto-btn ${banhPagamento===tipo?'active':''}" onclick="selecionarPagamentoBanh(this,'${tipo}')">${label}</button>`).join('')
+    + `<button class="pgto-btn ${banhPagamento.startsWith('pixparc')?'active':''}" id="banh-btn-pix-parc" onclick="togglePixParceladoBanh(this)">PIX Parcelado ▾</button>`
+    + [2,3,4,5,6,7,8,9,10].map(n => `<button class="pgto-btn ${banhPagamento==='credito'+n?'active':''}" onclick="selecionarPagamentoBanh(this,'credito${n}')">Crédito ${n}x (+${n}%)</button>`).join('');
+
+  const pixParcAberto = banhPagamento.startsWith('pixparc');
+  const pixParcBtnsHTML = [2,3,4,5,6,7,8,9,10,11,12].map(n => `<button class="pgto-btn ${banhPagamento==='pixparc'+n?'active':''}" onclick="selecionarPixParceladoBanh(this,${n})">${n}x</button>`).join('');
+
+  const pgInfo = calcularTotalComPagamento(total, banhPagamento);
+  let parcelaTexto;
+  if (banhPagamento === 'avista') parcelaTexto = 'À vista: ' + fmtBanh(total);
+  else if (banhPagamento === 'pix') parcelaTexto = 'PIX: ' + fmtBanh(total);
+  else if (banhPagamento === 'debito') parcelaTexto = 'Cartão Débito: ' + fmtBanh(total);
+  else {
+    const vp = pgInfo.parcela || (pgInfo.total / pgInfo.parcelas);
+    const label = pgInfo.pixParcelado ? 'PIX ' : 'Crédito ';
+    parcelaTexto = label + pgInfo.parcelas + 'x de ' + fmtBanh(vp) + ' (total ' + fmtBanh(pgInfo.total) + ')';
+  }
+
   lista.innerHTML = `<div style="margin-top:12px">
     <p style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">Itens adicionados:</p>
     ${banhItens.map((b, idx) => `
@@ -656,9 +679,38 @@ function renderItensBanheira() {
     `).join('')}
     <div class="result-summary" style="margin-top:8px">
       <span style="font-size:13px;color:var(--accent)">Total</span>
-      <span style="font-size:18px;font-weight:600;color:var(--accent)">R$ ${total.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
+      <span style="font-size:18px;font-weight:600;color:var(--accent)">${fmtBanh(total)}</span>
+    </div>
+    <div style="margin-top:14px;padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
+      <p style="font-size:11px;font-weight:500;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">Forma de Pagamento</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="banh-pagamento-opcoes">${pagOpcoesHTML}</div>
+      <div id="banh-pix-parcelado-menu" style="display:${pixParcAberto?'block':'none'};margin-bottom:12px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)">
+        <p style="font-size:11px;color:var(--text3);margin-bottom:8px">Escolha as parcelas (sem juros):</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="banh-pix-parc-btns">${pixParcBtnsHTML}</div>
+      </div>
+      <p style="font-size:12px;color:var(--accent2);font-weight:500;margin:0" id="banh-valor-parcela">${parcelaTexto}</p>
     </div>
   </div>`;
+}
+
+function selecionarPagamentoBanh(btn, tipo) {
+  banhPagamento = tipo;
+  renderItensBanheira();
+}
+
+function togglePixParceladoBanh(btn) {
+  // Se já está em modo PIX parcelado, alterna a visibilidade do menu; senão, abre e seleciona 2x por padrão
+  if (banhPagamento.startsWith('pixparc')) {
+    banhPagamento = 'avista';
+  } else {
+    banhPagamento = 'pixparc2';
+  }
+  renderItensBanheira();
+}
+
+function selecionarPixParceladoBanh(btn, parcelas) {
+  banhPagamento = 'pixparc' + parcelas;
+  renderItensBanheira();
 }
 
 async function salvarBanheira() {
@@ -666,7 +718,7 @@ async function salvarBanheira() {
   if (sel && sel.value) banhApAtual = sel.value;
   if (!banhApAtual || !banhItens.length) { showToast('Selecione o apartamento e adicione pelo menos uma banheira', 'error'); return; }
   const cliente = dadosParedes.find(p => p.apartamento === banhApAtual)?.cliente || '—';
-  const dados = { ap: banhApAtual, cliente, data: new Date().toLocaleDateString('pt-BR'), selecoes: banhItens, tipo: 'banheiras' };
+  const dados = { ap: banhApAtual, cliente, data: new Date().toLocaleDateString('pt-BR'), selecoes: banhItens, tipo: 'banheiras', pagamento: banhPagamento };
   showToast('Salvando...', 'success');
   try {
     await apiPost('addBanhPersonalizar', dados);
@@ -865,7 +917,7 @@ function _pdfLinha(doc, y, colunas, alt, cores, imgUrl) {
 }
 
 // Rodapé total geral
-function _pdfTotal(doc, y, totalM2, totalValor, label, cores) {
+function _pdfTotal(doc, y, totalM2, totalValor, label, cores, pagamentoTexto) {
   const C = cores || ESSENCE_CORES;
   const fundo = C.fundo || [240,238,232];
   const cinza = C.cinza || [120,118,112];
@@ -876,8 +928,8 @@ function _pdfTotal(doc, y, totalM2, totalValor, label, cores) {
   doc.setFillColor(...fundo); doc.rect(0, y, 210, 20, 'F');
   doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
   doc.text('F O R M A   D E   P A G A M E N T O', 8, y+10);
-  doc.setTextColor(...preto); doc.setFontSize(10); doc.setFont('helvetica','bold');
-  doc.text('À Vista', 8, y+18);
+  doc.setTextColor(...preto); doc.setFontSize(9.5); doc.setFont('helvetica','bold');
+  doc.text(pagamentoTexto || 'À Vista', 8, y+18);
   y += 26;
   // Total geral
   doc.setFillColor(...primaria); doc.rect(0, y, 210, 28, 'F');
@@ -1258,15 +1310,15 @@ function gerarPDFBanheira() {
   const clienteTexto = sel ? sel.options[sel.selectedIndex]?.text || '' : '';
   const cliente = dadosParedes.find(p => p.apartamento === banhApAtual)?.cliente || 
     clienteTexto.split(' - ').slice(1).join(' - ') || '—';
-  _gerarPDFBanheiraInterno(banhApAtual, cliente, banhItens);
+  _gerarPDFBanheiraInterno(banhApAtual, cliente, banhItens, banhPagamento);
 }
 function gerarPDFBanheiraId(id) {
   const p = dadosBanheiras.find(x => x.id === id);
   if (!p) { showToast('Orçamento não encontrado', 'error'); return; }
   const itens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
-  _gerarPDFBanheiraInterno(p.ap, p.cliente, itens);
+  _gerarPDFBanheiraInterno(p.ap, p.cliente, itens, p.pagamento || 'avista');
 }
-async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
+async function _gerarPDFBanheiraInterno(ap, cliente, itens, pagamento) {
   const ESSENCE_CORES = ESSENCE_PALETAS.banheiras;
   const jsPDF = getJsPDF();
   if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
@@ -1319,7 +1371,27 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens) {
     alt=!alt; y+=linhaAltura+2;
   });
   y += 6;
-  _pdfTotal(doc, y, null, total, 'Apto '+ap, ESSENCE_CORES);
+
+  // ===== FORMA DE PAGAMENTO =====
+  const pgLabelsBanh = { avista: 'À Vista', pix: 'PIX', debito: 'Cartão Débito',
+    credito2: 'Crédito 2x (+2%)', credito3: 'Crédito 3x (+3%)', credito4: 'Crédito 4x (+4%)',
+    credito5: 'Crédito 5x (+5%)', credito6: 'Crédito 6x (+6%)', credito7: 'Crédito 7x (+7%)',
+    credito8: 'Crédito 8x (+8%)', credito9: 'Crédito 9x (+9%)', credito10: 'Crédito 10x (+10%)' };
+  const pagamentoBanh = pagamento || 'avista';
+  if (pagamentoBanh.startsWith('pixparc')) {
+    const n = pagamentoBanh.replace('pixparc', '');
+    pgLabelsBanh[pagamentoBanh] = 'PIX ' + n + 'x (sem juros)';
+  }
+  const pgInfoBanh = calcularTotalComPagamento(total, pagamentoBanh);
+  let totalFinalBanh = total;
+  let pgTextoBanh = pgLabelsBanh[pagamentoBanh] || pagamentoBanh;
+  if (pgInfoBanh.parcelas > 1) {
+    const vpBanh = pgInfoBanh.parcela || (pgInfoBanh.total / pgInfoBanh.parcelas);
+    pgTextoBanh += ' · ' + pgInfoBanh.parcelas + 'x de R$ ' + vpBanh.toLocaleString('pt-BR',{minimumFractionDigits:2}) + ' (total R$ ' + pgInfoBanh.total.toLocaleString('pt-BR',{minimumFractionDigits:2}) + ')';
+    totalFinalBanh = pgInfoBanh.total;
+  }
+
+  _pdfTotal(doc, y, null, totalFinalBanh, 'Apto '+ap, ESSENCE_CORES, pgTextoBanh);
   const totalPag = doc.getNumberOfPages();
   for (let i=1;i<=totalPag;i++) {
     doc.setPage(i);
