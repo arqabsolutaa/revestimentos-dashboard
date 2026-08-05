@@ -392,6 +392,7 @@ async function salvarMarmoraria() {
 let dadosBanheiras = [], dadosBanhCatalogo = [], banhItens = [], banhApAtual = '';
 let banhProdutoAtual = null;
 let banhPagamento = 'avista';
+let banhEditId = null;
 
 async function loadBanheiras() {
   try {
@@ -435,6 +436,7 @@ function renderBanheiras() {
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-secondary" onclick="editarBanheira('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
         <button class="btn btn-secondary" onclick="gerarPDFBanheiraId('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
       </div>
       </div>
@@ -444,7 +446,9 @@ function renderBanheiras() {
 }
 
 async function abrirModalCalcBanheira() {
-  banhItens = []; banhApAtual = ''; banhProdutoAtual = null; banhPagamento = 'avista';
+  banhItens = []; banhApAtual = ''; banhProdutoAtual = null; banhPagamento = 'avista'; banhEditId = null;
+  const tituloEl = document.getElementById('banh-modal-title');
+  if (tituloEl) tituloEl.textContent = 'Orçamento Banheiras';
   try {
     const d = await lerDadosExtra('banheiras', true); // sempre buscar fresco
     // Normalizar colunas — planilha da Sabbia pode ter nomes diferentes
@@ -719,14 +723,20 @@ async function salvarBanheira() {
   if (!banhApAtual || !banhItens.length) { showToast('Selecione o apartamento e adicione pelo menos uma banheira', 'error'); return; }
   const cliente = dadosParedes.find(p => p.apartamento === banhApAtual)?.cliente || '—';
   const dados = { ap: banhApAtual, cliente, data: new Date().toLocaleDateString('pt-BR'), selecoes: banhItens, tipo: 'banheiras', pagamento: banhPagamento };
-  showToast('Salvando...', 'success');
+  const editandoId = banhEditId;
+  showToast(editandoId ? 'Salvando alterações...' : 'Salvando...', 'success');
   try {
+    if (editandoId) {
+      await apiPost('deletePersonalizarExtra', { id: editandoId, modulo: 'banheiras' });
+    }
     await apiPost('addBanhPersonalizar', dados);
-    showToast('Salvo!', 'success');
+    showToast(editandoId ? 'Orçamento atualizado!' : 'Salvo!', 'success');
+    banhEditId = null;
     invalidarCacheExtra('banheiras');
     const d = await lerDadosExtra('banheiras');
     dadosBanheiras = d.personalizar || [];
     renderBanheiras();
+    fecharModal('modal-calc-banheira');
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -1402,7 +1412,40 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens, pagamento) {
   showToast('PDF gerado!', 'success');
   } catch(pdfErr) { showToast('Erro ao gerar PDF: ' + pdfErr.message, 'error'); console.error(pdfErr); }
 }
-function editarBanheira(id) { showToast('Em desenvolvimento', 'success'); }
+async function editarBanheira(id) {
+  const p = dadosBanheiras.find(x => x.id === id);
+  if (!p) { showToast('Orçamento não encontrado', 'error'); return; }
+
+  await abrirModalCalcBanheira(); // popula selects, catálogo, apartamentos, e já reseta tudo
+
+  banhEditId = id;
+  banhApAtual = p.ap || '';
+  banhItens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes || '[]') : (p.selecoes || []);
+  banhPagamento = p.pagamento || 'avista';
+
+  const tituloEl = document.getElementById('banh-modal-title');
+  if (tituloEl) tituloEl.textContent = 'Editar Orçamento — Apto ' + banhApAtual;
+
+  const sel = document.getElementById('banh-ap-select');
+  if (sel) sel.value = banhApAtual;
+  atualizarClienteBanheira();
+
+  renderItensBanheira();
+
+  if (banhItens.length) {
+    ['banh-btn-salvar','banh-btn-pdf','banh-btn-salvar2','banh-btn-pdf2'].forEach(elId => {
+      const el = document.getElementById(elId);
+      if (el) { el.style.display = 'inline-flex'; el.style.visibility = 'visible'; el.removeAttribute('hidden'); }
+    });
+    const acoes = document.getElementById('banh-acoes');
+    if (acoes) acoes.style.display = 'flex';
+  }
+
+  const btnSalvar = document.getElementById('banh-btn-salvar');
+  const btnSalvar2 = document.getElementById('banh-btn-salvar2');
+  if (btnSalvar) btnSalvar.textContent = 'Salvar alterações';
+  if (btnSalvar2) btnSalvar2.textContent = 'Salvar alterações';
+}
 function editarVinilico(id) { showToast('Em desenvolvimento', 'success'); }
 
 
@@ -7052,7 +7095,7 @@ async function excluirMetais(id) {
 <div id="modal-calc-banheira" class="modal-overlay">
   <div class="modal" style="max-width:680px">
     <div class="modal-header">
-      <h2>Orçamento Banheiras</h2>
+      <h2 id="banh-modal-title">Orçamento Banheiras</h2>
       <button class="modal-close" onclick="fecharModal('modal-calc-banheira')">×</button>
     </div>
     <div class="modal-body">
