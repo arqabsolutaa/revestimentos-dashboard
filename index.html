@@ -1984,10 +1984,6 @@ body.mobile-mode #main{padding-bottom:72px}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
           Margem de Lucro
         </button>
-        <button class="nav-btn" onclick="showScreen('vagasdep')" id="nav-vagasdep" style="padding-left:20px;font-size:11px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><rect x="1" y="3" width="22" height="13" rx="2"/><circle cx="6" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
-          Vagas e Depósitos
-        </button>
         <button class="nav-btn" onclick="showScreen('config');document.getElementById('nav-config').classList.add('active')" id="nav-config" style="padding-left:20px;font-size:11px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
           Configurações do Sistema
@@ -2008,6 +2004,24 @@ body.mobile-mode #main{padding-bottom:72px}
     </button>
   </div>
 </div>
+
+<!-- ESCOLHA DE MÓDULO (pós-login) -->
+<div id="escolha-modulo" style="position:fixed;top:0;left:0;width:100%;height:100%;height:100dvh;z-index:9998;display:none;align-items:center;justify-content:center;background:#1a1712;overflow:hidden">
+  <div style="position:relative;z-index:2;text-align:center;padding:24px">
+    <p style="color:#e8dfc4;opacity:0.6;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin:0 0 28px;font-family:'Inter',sans-serif">O que você deseja fazer?</p>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center">
+      <button onclick="escolherModulo('personalizar')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="display:block;margin:0 auto 12px;pointer-events:none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Personalizar
+      </button>
+      <button onclick="escolherModulo('vagasdep')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="display:block;margin:0 auto 12px;pointer-events:none"><rect x="1" y="3" width="22" height="13" rx="2"/><circle cx="6" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
+        Vagas e Depósitos
+      </button>
+    </div>
+  </div>
+</div>
+
 <main id="main">
 
   <!-- HOME -->
@@ -2531,10 +2545,7 @@ body.mobile-mode #main{padding-bottom:72px}
       </div>
     </div>
     <div class="page-content">
-      <div class="card" style="margin-bottom:16px">
-        <label style="margin-bottom:8px;display:block">Prédio</label>
-        <div id="vagasdep-predio-toggle" style="display:flex;gap:8px;flex-wrap:wrap"></div>
-      </div>
+      <div id="vagasdep-predio-toggle" style="display:none"></div>
 
       <div class="card" style="margin-bottom:16px">
         <div class="form-grid">
@@ -3828,6 +3839,22 @@ function entrarSistema() {
   setTimeout(() => { capa.style.display = 'none'; }, 800);
   // Detectar mobile/tablet e aplicar modo correto
   setMode(isMobileDevice() ? 'mobile' : 'desktop');
+  const escolha = document.getElementById('escolha-modulo');
+  if (escolha) { escolha.style.opacity = '1'; escolha.style.display = 'flex'; }
+}
+
+function escolherModulo(tipo) {
+  const escolha = document.getElementById('escolha-modulo');
+  if (escolha) {
+    escolha.style.transition = 'opacity 0.4s ease';
+    escolha.style.opacity = '0';
+    setTimeout(() => { escolha.style.display = 'none'; }, 400);
+  }
+  if (tipo === 'vagasdep') {
+    showScreen('vagasdep');
+  } else {
+    showScreen('home');
+  }
 }
 
 function detectarCapaMobile() {
@@ -4033,7 +4060,7 @@ let vagasDepVinculos = [];
 let vagasDepApAtual = '';
 let vagasDepSelecionadas = [];
 let vagasDepPredioAtual = 'Essence';
-let vagasDepPredios = ['Essence', 'Vista Park'];
+let vagasDepPredios = ['Essence']; // Vista Park agora tem dashboard próprio, separado do Essence
 let vagasDepApartamentosExtra = []; // apartamentos de prédios além do Essence, vindos da aba Predios_Apartamentos
 
 function renderPredioToggleVagasDep() {
