@@ -4699,7 +4699,7 @@ async function uploadComprovante(id, inputEl) {
     const result = await response.json();
     if (result.error) throw new Error(result.error);
     // Atualizar memória local com a lista completa (não só a última URL)
-    const item = dadosPersonalizar.find(p => p.id === id);
+    const item = dadosPersonalizar.find(p => String(p.id) === String(id));
     if (item) item.comprovante_url = JSON.stringify(result.data.comprovantes || []);
     renderPagamentos(dadosPersonalizar);
     showToast('Comprovante anexado!', 'success');
@@ -4712,7 +4712,7 @@ async function excluirComprovante(id, url) {
   if (!confirm('Remover este comprovante?')) return;
   try {
     const result = await apiPost('deleteComprovante', { id, url });
-    const item = dadosPersonalizar.find(p => p.id === id);
+    const item = dadosPersonalizar.find(p => String(p.id) === String(id));
     if (item) item.comprovante_url = JSON.stringify(result.comprovantes || []);
     renderPagamentos(dadosPersonalizar);
     showToast('Comprovante removido!', 'success');
@@ -4740,7 +4740,7 @@ function abrirModalOutraCondicao(id) {
 function selecionarCondicaoModal(pagamento) {
   fecharModal('modal-outra-condicao');
   if (!_outraCondicaoId) return;
-  const p = dadosPersonalizar.find(x => x.id === _outraCondicaoId);
+  const p = dadosPersonalizar.find(x => String(x.id) === String(_outraCondicaoId));
   if (!p) return;
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
   gerarPDFDados({ 
@@ -4801,7 +4801,7 @@ function renderPagamentos(lista) {
 
 async function alterarStatusPgto(id, status) {
   // Atualizar imediatamente na memória (sem aguardar API)
-  const item = dadosPersonalizar.find(p => p.id === id);
+  const item = dadosPersonalizar.find(p => String(p.id) === String(id));
   if (item) item.status_pgto = status;
   renderPagamentos(dadosPersonalizar);
   renderPersonalizar(dadosPersonalizar);
@@ -4830,7 +4830,7 @@ async function salvarObsPgtoBtn(id) {
 }
 
 function gerarPDFComValorPgto(id) {
-  const p = dadosPersonalizar.find(x => x.id === id);
+  const p = dadosPersonalizar.find(x => String(x.id) === String(id));
   if (!p) { showToast('Carregue o Personalizar primeiro', 'error'); return; }
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
   // Com valor, usa pagamento já salvo no orçamento
@@ -6317,7 +6317,7 @@ async function excluirPersonalizarSelecionadas() {
 async function confirmarSaidaPersonalizar(id) {
   if (!confirm('Confirma baixar estes materiais do estoque?')) return;
   // Atualizar imediatamente na memória
-  const item = dadosPersonalizar.find(p => p.id === id);
+  const item = dadosPersonalizar.find(p => String(p.id) === String(id));
   if (item) item.status = 'confirmado';
   renderPersonalizar(dadosPersonalizar);
   try {
@@ -6337,7 +6337,7 @@ async function confirmarSaidaPersonalizar(id) {
     if (dadosNovos.personalizar) dadosPersonalizar = dadosNovos.personalizar;
     if (dadosNovos.revestimentos) dadosRevestimentos = dadosNovos.revestimentos;
     // Garantir que o item aparece como confirmado mesmo se data.json ainda não atualizou
-    const itemAtualizado = dadosPersonalizar.find(p => p.id === idReal || p.id === id);
+    const itemAtualizado = dadosPersonalizar.find(p => String(p.id) === String(idReal) || String(p.id) === String(id));
     if (itemAtualizado) itemAtualizado.status = 'confirmado';
     renderPersonalizar(dadosPersonalizar);
   } catch(e) {
@@ -6348,7 +6348,7 @@ async function confirmarSaidaPersonalizar(id) {
 }
 
 async function editarPersonalizacao(id) {
-  const p = dadosPersonalizar.find(x => x.id === id);
+  const p = dadosPersonalizar.find(x => String(x.id) === String(id));
   if (!p) { showToast('Orçamento não encontrado', 'error'); return; }
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
 
@@ -6499,7 +6499,7 @@ async function gerarPDF() {
   gerarPDFDados({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual, comValor: true });
 }
 function gerarPDFPersonalizar(id) {
-  const p = dadosPersonalizar.find(x => x.id === id);
+  const p = dadosPersonalizar.find(x => String(x.id) === String(id));
   if (!p) { showToast('Item não encontrado', 'error'); return; }
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
   gerarPDFDados({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Absoluta', selecoes, data: p.data, comValor: false, pagamento: 'avista', desconto: 0 });
