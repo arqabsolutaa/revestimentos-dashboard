@@ -3898,7 +3898,7 @@ window.onload = async () => {
 // ===================== NAVEGAÇÃO =====================
 function showScreen(name) {
   if (name === 'instalacoes') loadInstalacoes();
-  document.querySelectorAll('.screen:not(.modal-overlay)').forEach(s => { s.classList.remove('active'); if (!s.id.includes('home')) s.style.display='none'; });
+  document.querySelectorAll('.screen:not(.modal-overlay)').forEach(s => { s.classList.remove('active'); s.style.display='none'; });
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   const screenEl = document.getElementById(name + '-screen');
   if (screenEl) { 
