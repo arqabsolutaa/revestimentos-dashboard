@@ -3834,21 +3834,23 @@ function isMobileDevice() {
 
 function entrarSistema() {
   const capa = document.getElementById('capa-entrada');
-  capa.style.transition = 'opacity 0.8s ease';
+  capa.style.pointerEvents = 'none';
+  capa.style.transition = 'opacity 0.3s ease';
   capa.style.opacity = '0';
-  setTimeout(() => { capa.style.display = 'none'; }, 800);
+  capa.style.display = 'none';
   // Detectar mobile/tablet e aplicar modo correto
   setMode(isMobileDevice() ? 'mobile' : 'desktop');
   const escolha = document.getElementById('escolha-modulo');
-  if (escolha) { escolha.style.opacity = '1'; escolha.style.display = 'flex'; }
+  if (escolha) { escolha.style.pointerEvents = 'auto'; escolha.style.opacity = '1'; escolha.style.display = 'flex'; }
 }
 
 function escolherModulo(tipo) {
   const escolha = document.getElementById('escolha-modulo');
   if (escolha) {
-    escolha.style.transition = 'opacity 0.4s ease';
+    escolha.style.pointerEvents = 'none';
+    escolha.style.transition = 'opacity 0.3s ease';
     escolha.style.opacity = '0';
-    setTimeout(() => { escolha.style.display = 'none'; }, 400);
+    escolha.style.display = 'none';
   }
   if (tipo === 'vagasdep') {
     showScreen('vagasdep');
