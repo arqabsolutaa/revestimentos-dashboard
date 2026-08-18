@@ -2239,35 +2239,22 @@ body.mobile-mode #main{padding-bottom:72px}
   <div id="orcamentos-screen" class="screen">
     <div class="page-header">
       <div class="page-header-left">
-        <h1>Orçamentos</h1>
-        <p>Histórico de orçamentos gerados</p>
+        <h1>Materiais por Apartamento</h1>
+        <p>Metragem para passar pra obra — por unidade, ambiente e parede</p>
       </div>
       <div class="header-actions">
-        <button class="btn btn-danger" onclick="excluirOrcamentosSelecionados()" style="margin-right:4px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
-          Excluir Selecionados
+        <button class="btn btn-primary" onclick="exportarMateriaisExcel()" style="margin-right:4px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Exportar Excel
         </button>
       </div>
     </div>
     <div class="page-content">
       <div class="filter-bar">
         <input class="filter-input" placeholder="Buscar cliente ou apartamento..." id="filtro-orc" oninput="filtrarOrcamentos()" style="width:280px">
-        <input class="filter-input" type="date" id="filtro-orc-data" onchange="filtrarOrcamentos()">
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr>
-            <th style="width:36px"><input type="checkbox" id="select-all-orc" onchange="toggleAllOrcamentos(this)" style="cursor:pointer"></th>
-            <th>Data</th>
-            <th>Cliente</th>
-            <th>Apartamento</th>
-            <th>Revestimentos</th>
-            <th>Total m²</th>
-            <th>Valor Total</th>
-            <th>Ações</th>
-          </tr></thead>
-          <tbody id="orcamentos-tbody"><tr><td colspan="8"><div class="empty-state"><strong>Nenhum orçamento gerado ainda</strong></div></td></tr></tbody>
-        </table>
+      <div id="orcamentos-cards" style="display:flex;flex-direction:column;gap:12px;margin-top:16px">
+        <div class="empty-state"><strong>Carregando...</strong></div>
       </div>
     </div>
   </div>
@@ -5143,85 +5130,131 @@ async function salvarOrcamentoHistorico({ ap, cliente, empresa, selecoes, data, 
 
 let dadosOrcamentos = [];
 
-async function loadOrcamentos() {
-  if (dadosOrcamentos.length) { renderOrcamentos(dadosOrcamentos); return; }
-  document.getElementById('orcamentos-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
-  try {
-    const dados = await lerDados();
-    dadosOrcamentos = (dados.orcamentos || []).reverse();
-    renderOrcamentos(dadosOrcamentos);
-  } catch(e) {
-    dadosOrcamentos = [];
-    renderOrcamentos([]);
-  }
+// ===================== MATERIAIS POR APARTAMENTO (ex-Orçamentos) =====================
+
+// Quebra a chave de uma selecao (ex: "111-Banho 01-A-0") em {ambiente, item}
+function _quebrarChaveSelecao(chave, ap) {
+  let resto = chave.startsWith(ap + '-') ? chave.slice(ap.length + 1) : chave;
+  const partes = resto.split('-');
+  partes.pop(); // remove o indice numerico final
+  const item = partes.pop() || '';
+  const ambiente = partes.join('-') || '—';
+  return { ambiente, item };
 }
 
-function renderOrcamentos(d) {
-  if (!d.length) {
-    document.getElementById('orcamentos-tbody').innerHTML = '<tr><td colspan="8"><div class="empty-state"><strong>Nenhum orçamento gerado ainda</strong><p>Gere um PDF na aba Personalizar ou na tela Início</p></div></td></tr>';
+function _materiaisAgrupados() {
+  const lista = (dadosPersonalizar || []).filter(p => String(p.arquivado||'').toLowerCase() !== 'true');
+  return lista.map(p => {
+    let sel = {};
+    try { sel = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{}); } catch(e) {}
+    const ap = String(p.ap||'').trim();
+    const linhas = Object.entries(sel).map(([chave, v]) => {
+      const { ambiente, item } = _quebrarChaveSelecao(chave, ap);
+      const rev = dadosRevestimentos.find(r => String(r.id) === String(v.piso) || String(r.codigo) === String(v.piso));
+      return {
+        ambiente, item,
+        material: rev ? rev.nome : (v.piso ? '(revestimento não encontrado: ' + v.piso + ')' : '—'),
+        tamanho: rev ? rev.tamanho : '',
+        m2: parseFloat(v.m2)||0
+      };
+    }).sort((a,b) => a.ambiente.localeCompare(b.ambiente) || a.item.localeCompare(b.item));
+    const totalM2 = linhas.reduce((s,l) => s + l.m2, 0);
+    return { id: p.id, ap, cliente: p.cliente || '—', linhas, totalM2 };
+  }).sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
+}
+
+function loadOrcamentos() {
+  renderOrcamentos(_materiaisAgrupados());
+}
+
+function renderOrcamentos(grupos) {
+  const cont = document.getElementById('orcamentos-cards');
+  if (!grupos.length) {
+    cont.innerHTML = '<div class="empty-state"><strong>Nenhum apartamento personalizado ainda</strong><p>As personalizações aparecem aqui automaticamente</p></div>';
     return;
   }
-  document.getElementById('orcamentos-tbody').innerHTML = d.map(o => {
-    const dataExib = o.data && o.data.includes('GMT') ? new Date(o.data).toLocaleDateString('pt-BR') : (o.data||'—');
-    const nomesItens = (o.itens||[]).filter(i => i.nome && i.nome !== '—').map(i => i.nome);
-    const itensTexto = nomesItens.length ? nomesItens.slice(0,2).join(', ') + (nomesItens.length > 2 ? ` +${nomesItens.length-2}` : '') : '—';
-    const valorFmt = parseFloat(o.totalValor||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
-    return `<tr>
-      <td><input type="checkbox" class="orc-cb" data-id="${o.id}" style="cursor:pointer"></td>
-      <td style="white-space:nowrap;font-size:13px">${dataExib}</td>
-      <td style="font-weight:500">${o.cliente||'—'}</td>
-      <td><span class="badge badge-info">Apto ${o.ap||'—'}</span></td>
-      <td style="font-size:12px;color:var(--text2);max-width:200px">${itensTexto}</td>
-      <td><span class="badge badge-green">${o.totalM2||'0'} m²</span></td>
-      <td style="font-weight:500;color:var(--accent2)">R$ ${valorFmt}</td>
-      <td style="display:flex;gap:6px">
-        <button class="btn btn-secondary" onclick="regeararOrcamentoPDF('${o.id}')" style="padding:4px 8px;font-size:11px">PDF</button>
-        <button class="btn btn-danger" onclick="excluirOrcamento('${o.id}')" style="padding:4px 8px;font-size:11px">Excluir</button>
-      </td>
-    </tr>`;
-  }).join('');
+  cont.innerHTML = grupos.map(g => `
+    <div class="card" style="padding:0;overflow:hidden">
+      <div onclick="_toggleCardApto('${g.id}')" style="cursor:pointer;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;background:var(--accent-bg)">
+        <div>
+          <strong style="font-size:15px">Apto ${g.ap || '—'}</strong>
+          <span style="color:var(--text2);margin-left:8px">${g.cliente}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <span class="badge badge-green">${g.totalM2.toFixed(2)} m² total</span>
+          <span id="seta-${g.id}" style="transition:transform 0.2s;display:inline-block">▾</span>
+        </div>
+      </div>
+      <div id="corpo-${g.id}" style="display:none">
+        <table style="width:100%">
+          <thead><tr>
+            <th style="padding:8px 20px">Ambiente</th>
+            <th style="padding:8px 20px">Item</th>
+            <th style="padding:8px 20px">Material</th>
+            <th style="padding:8px 20px">Tamanho</th>
+            <th style="padding:8px 20px;text-align:right">m²</th>
+          </tr></thead>
+          <tbody>
+            ${g.linhas.map(l => `<tr>
+              <td style="padding:6px 20px;font-size:13px">${l.ambiente}</td>
+              <td style="padding:6px 20px;font-size:13px;color:var(--text2)">${l.item}</td>
+              <td style="padding:6px 20px;font-size:13px">${l.material}</td>
+              <td style="padding:6px 20px;font-size:13px;color:var(--text2)">${l.tamanho}</td>
+              <td style="padding:6px 20px;font-size:13px;text-align:right">${l.m2.toFixed(2)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `).join('');
+}
+
+function _toggleCardApto(id) {
+  const corpo = document.getElementById('corpo-' + id);
+  const seta = document.getElementById('seta-' + id);
+  const aberto = corpo.style.display !== 'none';
+  corpo.style.display = aberto ? 'none' : 'block';
+  seta.style.transform = aberto ? 'rotate(0deg)' : 'rotate(180deg)';
 }
 
 function filtrarOrcamentos() {
   const busca = document.getElementById('filtro-orc').value.toLowerCase();
-  const data = document.getElementById('filtro-orc-data').value;
-  const f = dadosOrcamentos.filter(o =>
-    (!busca || (o.cliente||'').toLowerCase().includes(busca) || (o.ap||'').includes(busca)) &&
-    (!data || o.dataISO === data)
+  const todos = _materiaisAgrupados();
+  const f = !busca ? todos : todos.filter(g =>
+    g.cliente.toLowerCase().includes(busca) || String(g.ap).toLowerCase().includes(busca)
   );
   renderOrcamentos(f);
 }
 
-function toggleAllOrcamentos(cb) {
-  document.querySelectorAll('.orc-cb').forEach(c => c.checked = cb.checked);
-}
+async function exportarMateriaisExcel() {
+  const grupos = _materiaisAgrupados();
+  if (!grupos.length) { showToast('Nenhum dado para exportar', 'error'); return; }
+  showToast('Gerando Excel...', 'success');
 
-async function excluirOrcamento(id) {
-  if (!confirm('Excluir este orçamento do histórico?')) return;
-  try {
-    await apiAction('deleteOrcamento', id);
-    showToast('Orçamento excluído!', 'success');
-    loadOrcamentos();
-  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
-}
+  if (!window.XLSX) {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
 
-async function excluirOrcamentosSelecionados() {
-  const ids = [...document.querySelectorAll('.orc-cb:checked')].map(c => c.dataset.id);
-  if (!ids.length) { showToast('Selecione ao menos um', 'error'); return; }
-  if (!confirm(`Excluir ${ids.length} orçamento(s)?`)) return;
-  try {
-    for (const id of ids) await apiAction('deleteOrcamento', id);
-    showToast(`${ids.length} orçamento(s) excluído(s)!`, 'success');
-    loadOrcamentos();
-  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
-}
+  const linhas = [['Apartamento','Cliente','Ambiente','Item','Material','Tamanho','m²']];
+  grupos.forEach(g => {
+    g.linhas.forEach(l => {
+      linhas.push([g.ap, g.cliente, l.ambiente, l.item, l.material, l.tamanho, Number(l.m2.toFixed(2))]);
+    });
+    linhas.push([g.ap, g.cliente, '', '', 'TOTAL DO APARTAMENTO', '', Number(g.totalM2.toFixed(2))]);
+    linhas.push([]);
+  });
 
-function regeararOrcamentoPDF(id) {
-  const o = dadosOrcamentos.find(x => x.id === id);
-  if (!o) return;
-  const selecoes = typeof o.selecoes === 'string' ? JSON.parse(o.selecoes||'{}') : (o.selecoes||{});
-  // Sem valor (histórico de orçamentos)
-  gerarPDFDados({ ap: o.ap, cliente: o.cliente, empresa: o.empresa||'Absoluta', selecoes, data: o.data, comValor: false, pagamento: o.pagamento||'avista' });
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(linhas);
+  ws['!cols'] = [{wch:12},{wch:24},{wch:22},{wch:16},{wch:32},{wch:14},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Materiais por Apto');
+  const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
+  XLSX.writeFile(wb, 'Essence-Materiais-Obra-' + dataHoje + '.xlsx');
 }
 
 
