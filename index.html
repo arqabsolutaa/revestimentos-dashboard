@@ -1625,6 +1625,7 @@ tr:hover td{background:var(--surface2)}
 .badge-gray{background:var(--surface2);color:var(--text2)}
 
 /* MODAL */
+.modal-overlay.blur-bg{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:rgba(20,20,15,0.45)}
 .modal-overlay{
   position:fixed;inset:0;
   background:rgba(0,0,0,0.35);
@@ -3145,6 +3146,18 @@ body.mobile-mode #main{padding-bottom:72px}
       <button class="btn btn-secondary" onclick="fecharModal('modal-pgto-pdf')">Cancelar</button>
       <button class="btn btn-primary" onclick="confirmarPgtoPDF()">Gerar PDF</button>
     </div>
+  </div>
+</div>
+
+
+<!-- MODAL MATERIAIS POR APARTAMENTO -->
+<div class="modal-overlay blur-bg" id="modal-material-apto">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h2 id="modal-material-apto-titulo">Apto —</h2>
+      <button class="modal-close" onclick="fecharModal('modal-material-apto')">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-material-apto-corpo"></div>
   </div>
 </div>
 
@@ -5173,39 +5186,40 @@ function renderOrcamentos(grupos) {
     cont.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><strong>Nenhum apartamento personalizado ainda</strong><p>As personalizações aparecem aqui automaticamente</p></div>';
     return;
   }
+  window._materiaisGrupos = grupos;
   cont.innerHTML = grupos.map(g => `
-    <div class="card" style="padding:0;overflow:hidden;align-self:start">
-      <div onclick="_toggleCardApto('${g.id}')" style="cursor:pointer;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;background:var(--accent-bg);gap:8px">
+    <div class="card" style="padding:0;overflow:hidden;cursor:pointer" onclick="_abrirModalMaterialApto('${g.id}')">
+      <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;background:var(--accent-bg);gap:8px">
         <div style="min-width:0">
           <strong style="font-size:14px">Apto ${g.ap || '—'}</strong>
           <div style="color:var(--text2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.cliente}</div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
-          <span class="badge badge-green" style="font-size:11px">${g.totalM2.toFixed(2)} m²</span>
-          <span id="seta-${g.id}" style="transition:transform 0.2s;display:inline-block">▾</span>
-        </div>
-      </div>
-      <div id="corpo-${g.id}" style="display:none;padding:4px 16px 12px">
-        ${g.linhas.map(l => `
-          <div style="padding:8px 0;border-bottom:1px solid var(--border)">
-            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:2px">
-              <span>${l.ambiente} · ${l.item}</span>
-              <span style="font-weight:600;color:var(--text)">${l.m2.toFixed(2)} m²</span>
-            </div>
-            <div style="font-size:13px">${l.material}${l.tamanho ? ' <span style="color:var(--text2)">('+l.tamanho+')</span>' : ''}</div>
-          </div>
-        `).join('')}
+        <span class="badge badge-green" style="font-size:11px;flex-shrink:0">${g.totalM2.toFixed(2)} m²</span>
       </div>
     </div>
   `).join('');
 }
 
-function _toggleCardApto(id) {
-  const corpo = document.getElementById('corpo-' + id);
-  const seta = document.getElementById('seta-' + id);
-  const aberto = corpo.style.display !== 'none';
-  corpo.style.display = aberto ? 'none' : 'block';
-  seta.style.transform = aberto ? 'rotate(0deg)' : 'rotate(180deg)';
+function _abrirModalMaterialApto(id) {
+  const g = (window._materiaisGrupos || []).find(x => x.id === id);
+  if (!g) return;
+  document.getElementById('modal-material-apto-titulo').textContent = `Apto ${g.ap || '—'} — ${g.cliente}`;
+  document.getElementById('modal-material-apto-corpo').innerHTML = `
+    <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+      <span style="color:var(--text2);font-size:13px">Total do apartamento</span>
+      <span class="badge badge-green">${g.totalM2.toFixed(2)} m²</span>
+    </div>
+    ${g.linhas.map(l => `
+      <div style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:2px">
+          <span>${l.ambiente} · ${l.item}</span>
+          <span style="font-weight:600;color:var(--text)">${l.m2.toFixed(2)} m²</span>
+        </div>
+        <div style="font-size:13px">${l.material}${l.tamanho ? ' <span style="color:var(--text2)">('+l.tamanho+')</span>' : ''}</div>
+      </div>
+    `).join('')}
+  `;
+  document.getElementById('modal-material-apto').classList.add('open');
 }
 
 function filtrarOrcamentos() {
