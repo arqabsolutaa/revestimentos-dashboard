@@ -2009,19 +2009,29 @@ body.mobile-mode #main{padding-bottom:72px}
 <div id="escolha-modulo" style="position:fixed;top:0;left:0;width:100%;height:100%;height:100dvh;z-index:9998;display:none;align-items:center;justify-content:center;background:#1a1712;overflow:hidden">
   <div style="position:relative;z-index:2;text-align:center;padding:24px">
     <p style="color:#e8dfc4;opacity:0.6;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin:0 0 28px;font-family:'Inter',sans-serif">O que você deseja fazer?</p>
-    <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center">
-      <button onclick="escolherModulo('personalizar')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
+    <div id="escolha-botoes" style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center">
+      <button onclick="pedirSenhaModulo('personalizar')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="display:block;margin:0 auto 12px;pointer-events:none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         Personalizar
       </button>
-      <button onclick="escolherModulo('vagasdep')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
+      <button onclick="pedirSenhaModulo('vagasdep')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="display:block;margin:0 auto 12px;pointer-events:none"><rect x="1" y="3" width="22" height="13" rx="2"/><circle cx="6" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
         Vagas e Depósitos
       </button>
-      <button onclick="escolherModulo('controle')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
+      <button onclick="pedirSenhaModulo('controle')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="display:block;margin:0 auto 12px;pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
         Controle
       </button>
+    </div>
+
+    <div id="escolha-senha-bloco" style="display:none;margin-top:32px;flex-direction:column;align-items:center;gap:14px">
+      <p id="escolha-senha-titulo" style="color:#e8dfc4;opacity:0.7;font-size:12px;letter-spacing:1px;font-family:'Inter',sans-serif;margin:0"></p>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="password" id="escolha-senha-input" placeholder="Digite a senha" style="background:rgba(245,240,228,0.08);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:11px 16px;border-radius:10px;font-size:13px;font-family:'Inter',sans-serif;width:200px;text-align:center;outline:none" onkeydown="if(event.key==='Enter')confirmarSenhaModulo()">
+        <button onclick="confirmarSenhaModulo()" style="background:rgba(178,152,89,0.25);border:1px solid rgba(178,152,89,0.8);color:#e8dfc4;padding:11px 20px;border-radius:10px;font-size:12px;letter-spacing:1px;cursor:pointer;font-family:'Inter',sans-serif;text-transform:uppercase">Entrar</button>
+      </div>
+      <p id="escolha-senha-erro" style="display:none;color:#e0958a;font-size:12px;font-family:'Inter',sans-serif;margin:0">Senha incorreta</p>
+      <button onclick="cancelarSenhaModulo()" style="background:none;border:none;color:rgba(232,223,196,0.5);font-size:11px;font-family:'Inter',sans-serif;cursor:pointer;text-decoration:underline;margin-top:4px">Voltar</button>
     </div>
   </div>
 </div>
@@ -4043,6 +4053,47 @@ function entrarSistema() {
   if (escolha) { escolha.style.pointerEvents = 'auto'; escolha.style.opacity = '1'; escolha.style.display = 'flex'; }
 }
 
+const SENHAS_MODULO = {
+  personalizar: 'ABS4027@',
+  vagasdep: 'ABS4002@',
+  controle: '4003@'
+};
+const NOMES_MODULO = {
+  personalizar: 'Personalizar',
+  vagasdep: 'Vagas e Depósitos',
+  controle: 'Controle'
+};
+
+function pedirSenhaModulo(tipo) {
+  window._senhaModuloPendente = tipo;
+  document.getElementById('escolha-botoes').style.display = 'none';
+  document.getElementById('escolha-senha-bloco').style.display = 'flex';
+  document.getElementById('escolha-senha-titulo').textContent = 'Senha — ' + NOMES_MODULO[tipo];
+  document.getElementById('escolha-senha-erro').style.display = 'none';
+  const input = document.getElementById('escolha-senha-input');
+  input.value = '';
+  input.focus();
+}
+
+function confirmarSenhaModulo() {
+  const tipo = window._senhaModuloPendente;
+  const senha = document.getElementById('escolha-senha-input').value;
+  if (senha === SENHAS_MODULO[tipo]) {
+    cancelarSenhaModulo();
+    escolherModulo(tipo);
+  } else {
+    document.getElementById('escolha-senha-erro').style.display = 'block';
+  }
+}
+
+function cancelarSenhaModulo() {
+  document.getElementById('escolha-botoes').style.display = 'flex';
+  document.getElementById('escolha-senha-bloco').style.display = 'none';
+  document.getElementById('escolha-senha-input').value = '';
+  document.getElementById('escolha-senha-erro').style.display = 'none';
+  window._senhaModuloPendente = null;
+}
+
 function escolherModulo(tipo) {
   const escolha = document.getElementById('escolha-modulo');
   if (escolha) {
@@ -4073,6 +4124,7 @@ function sairParaEscolha() {
     escolha.style.pointerEvents = 'auto';
     escolha.style.opacity = '1';
   }
+  cancelarSenhaModulo();
 }
 
 function detectarCapaMobile() {
