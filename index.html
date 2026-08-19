@@ -7320,7 +7320,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.setFontSize(9); doc.setTextColor(...preto);
     doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
     doc.setTextColor(preco > 0 ? dourado[0] : cinza[0], preco > 0 ? dourado[1] : cinza[1], preco > 0 ? dourado[2] : cinza[2]);
-    doc.text(preco > 0 ? 'R$ ' + valorItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '—', 200, y + 7, { align: 'right' });
+    doc.text(preco > 0 ? 'R$ ' + valorItem.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—', 200, y + 7, { align: 'right' });
 
     doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2);
     doc.line(0, y + 18, 210, y + 18);
@@ -7344,7 +7344,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.setTextColor(...cinza); doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
     doc.text('DESCONTO APLICADO (' + descontoPct + '%)', 8, y + 5);
     doc.setTextColor(176, 58, 46); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-    doc.text('- R$ ' + descontoVal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), 200, y + 9, { align: 'right' });
+    doc.text('- R$ ' + descontoVal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 200, y + 9, { align: 'right' });
     y += 17;
   }
 
@@ -7361,11 +7361,11 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
   if (pagamento && pagamento.startsWith('credito')) {
     totalValorFinalPDF = calcularTotalComPagamento(totalFinal, pagamento).total;
   }
-  if (pagamento) {
+  if (pagamento && !quitado) {
     y += 2;
     if (y > 258) { _pdfFooter(doc, verdeEscuro, dourado, empresa, ap); doc.addPage(); y = 20; }
     const pgInfo = calcularTotalComPagamento(totalFinal, pagamento);
-    const fmtPDF = val => 'R$ ' + val.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    const fmtPDF = val => 'R$ ' + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     let pgTexto = pgLabels[pagamento] || pagamento;
     if (pgInfo.parcelas > 1) {
       const vp = pgInfo.parcela || (pgInfo.total / pgInfo.parcelas);
@@ -7383,6 +7383,10 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.text(pgTexto, 8, y + 11);
     y += 18;
   }
+  // Se for quitado, o total ainda precisa refletir o parcelamento (caso tenha sido informado)
+  if (quitado && pagamento && pagamento.startsWith('credito')) {
+    totalValorFinalPDF = calcularTotalComPagamento(totalFinal, pagamento).total;
+  }
 
   // ===== STATUS: QUITADO/PAGO =====
   if (quitado) {
@@ -7394,28 +7398,50 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.setCharSpace(1);
     doc.text('STATUS DO PAGAMENTO', 8, y + 5);
     doc.setCharSpace(0);
+    // Desenha o check manualmente (evita glifo de fonte quebrado)
+    doc.setDrawColor(255, 255, 255); doc.setLineWidth(1.1);
+    doc.line(8.5, y + 9.3, 10, y + 11); doc.line(10, y + 11, 13.5, y + 6.5);
     doc.setFontSize(9.5); doc.setFont('helvetica', 'bold');
-    doc.text('\u2713 PAGO' + (formaPagamentoReal ? ' \u2014 ' + formaPagamentoReal : ''), 8, y + 11);
+    doc.text('PAGO' + (formaPagamentoReal ? ' \u2014 ' + formaPagamentoReal : ''), 17, y + 11);
     y += 18;
   }
 
   // ===== TOTAL GERAL =====
   y += 4;
   if (y > 262) { _pdfFooter(doc, verdeEscuro, dourado, empresa, ap); doc.addPage(); y = 20; }
-  doc.setFillColor(...verdeEscuro);
-  doc.rect(0, y, 210, 22, 'F');
-  doc.setFillColor(...dourado); doc.rect(0, y, 3, 22, 'F');
-  doc.setTextColor(180, 210, 190); doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
-  doc.setCharSpace(1.5);
-  doc.text('TOTAL GERAL', 8, y + 8);
-  doc.setCharSpace(0);
-  doc.setTextColor(160, 195, 175); doc.setFontSize(7);
-  doc.text('Empreendimento Essence Residence · Apto ' + ap, 8, y + 15);
-  doc.setTextColor(180, 210, 190); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
-  doc.text(totalM2.toFixed(2) + ' m²', 152, y + 14, { align: 'right' });
-  if (comValor) {
-    doc.setTextColor(...dourado); doc.setFontSize(15); doc.setFont('helvetica', 'bold');
-    doc.text('R$ ' + totalValorFinalPDF.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), 200, y + 15, { align: 'right' });
+  if (quitado) {
+    const claro = [214, 229, 217], textoEscuro = [40, 74, 52], textoMedio = [76, 110, 88];
+    doc.setFillColor(...claro);
+    doc.rect(0, y, 210, 22, 'F');
+    doc.setFillColor(46, 125, 63); doc.rect(0, y, 3, 22, 'F');
+    doc.setTextColor(...textoMedio); doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
+    doc.setCharSpace(1.5);
+    doc.text('TOTAL GERAL', 8, y + 8);
+    doc.setCharSpace(0);
+    doc.setTextColor(...textoMedio); doc.setFontSize(7);
+    doc.text('Empreendimento Essence Residence · Apto ' + ap, 8, y + 15);
+    doc.setTextColor(...textoMedio); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+    doc.text(totalM2.toFixed(2) + ' m²', 152, y + 14, { align: 'right' });
+    if (comValor) {
+      doc.setTextColor(...textoEscuro); doc.setFontSize(15); doc.setFont('helvetica', 'bold');
+      doc.text('R$ ' + totalValorFinalPDF.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 200, y + 15, { align: 'right' });
+    }
+  } else {
+    doc.setFillColor(...verdeEscuro);
+    doc.rect(0, y, 210, 22, 'F');
+    doc.setFillColor(...dourado); doc.rect(0, y, 3, 22, 'F');
+    doc.setTextColor(180, 210, 190); doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
+    doc.setCharSpace(1.5);
+    doc.text('TOTAL GERAL', 8, y + 8);
+    doc.setCharSpace(0);
+    doc.setTextColor(160, 195, 175); doc.setFontSize(7);
+    doc.text('Empreendimento Essence Residence · Apto ' + ap, 8, y + 15);
+    doc.setTextColor(180, 210, 190); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+    doc.text(totalM2.toFixed(2) + ' m²', 152, y + 14, { align: 'right' });
+    if (comValor) {
+      doc.setTextColor(...dourado); doc.setFontSize(15); doc.setFont('helvetica', 'bold');
+      doc.text('R$ ' + totalValorFinalPDF.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 200, y + 15, { align: 'right' });
+    }
   }
 
   // ===== FOOTER =====
