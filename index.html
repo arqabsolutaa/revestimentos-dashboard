@@ -2738,8 +2738,8 @@ body.mobile-mode #main{padding-bottom:72px}
       </div>
       <div class="form-grid">
         <div class="form-group">
-          <label class="form-label">Valor (R$)</label>
-          <input class="form-control" type="number" step="0.01" id="entrada-pers-valor" placeholder="0,00">
+          <label class="form-label">Valor à Vista (R$)</label>
+          <input class="form-control" type="number" step="0.01" id="entrada-pers-valor" placeholder="0,00" oninput="atualizarCalculoJurosEntrada()">
         </div>
         <div class="form-group">
           <label class="form-label">Data</label>
@@ -2747,9 +2747,25 @@ body.mobile-mode #main{padding-bottom:72px}
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Forma de pagamento</label>
-        <input class="form-control" id="entrada-pers-forma" placeholder="Ex: Cartão 6x, Pix, Boleto...">
+        <label class="form-label">Condição de pagamento</label>
+        <select class="form-control" id="entrada-pers-condicao" onchange="atualizarCalculoJurosEntrada()">
+          <option value="avista">À Vista</option>
+          <option value="pix">PIX</option>
+          <option value="debito">Cartão Débito</option>
+          <option value="credito2">Crédito 2x (+2%)</option>
+          <option value="credito3">Crédito 3x (+3%)</option>
+          <option value="credito4">Crédito 4x (+4%)</option>
+          <option value="credito5">Crédito 5x (+5%)</option>
+          <option value="credito6">Crédito 6x (+6%)</option>
+          <option value="credito7">Crédito 7x (+7%)</option>
+          <option value="credito8">Crédito 8x (+8%)</option>
+          <option value="credito9">Crédito 9x (+9%)</option>
+          <option value="credito10">Crédito 10x (+10%)</option>
+          <option value="credito11">Crédito 11x (+11%)</option>
+          <option value="credito12">Crédito 12x (+12%)</option>
+        </select>
       </div>
+      <div id="entrada-pers-juros-resumo" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:12px"></div>
       <div class="form-group">
         <label class="form-label">Observação</label>
         <textarea class="form-control" id="entrada-pers-obs" rows="2"></textarea>
@@ -4595,14 +4611,18 @@ function renderCustoPersonalizacoes() {
     dadosEntradasPers.map(en => {
       const vinc = _valorVinculadoEntrada(en.id);
       const total = parseFloat(en.valor)||0;
+      const jurosVal = parseFloat(en.valor_juros)||0;
+      const avistaVal = parseFloat(en.valor_avista)||0;
+      const temJuros = jurosVal > 0.005;
       return `<div class="card" style="padding:14px 16px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
           <div>
             <strong style="font-size:13px">Apto ${en.apartamento||'—'} — ${en.cliente||'—'}</strong>
-            <div style="font-size:12px;color:var(--text2);margin-top:2px">${en.categoria||''} · ${en.data||''}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${en.categoria||''} · ${en.data||''}${en.condicao_pagamento && en.condicao_pagamento !== 'avista' ? ' · ' + en.condicao_pagamento.replace('credito','Crédito ').replace('pix','PIX ') : ''}</div>
           </div>
           <strong style="font-size:15px;color:var(--accent2)">${_fmtR$(total)}</strong>
         </div>
+        ${temJuros ? `<div style="font-size:11px;color:var(--text3);margin-top:4px">à vista seria ${_fmtR$(avistaVal)} · <span style="color:var(--warn)">juros ${_fmtR$(jurosVal)}</span></div>` : ''}
         <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
           ${_badgeSaldo(total, vinc)}
           <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('entrada','${en.id}')">Vincular a saída</button>
@@ -4631,22 +4651,46 @@ function renderCustoPersonalizacoes() {
 }
 
 function abrirModalNovaEntradaPers() {
-  ['entrada-pers-apto','entrada-pers-cliente','entrada-pers-valor','entrada-pers-forma','entrada-pers-obs'].forEach(id => document.getElementById(id).value = '');
+  ['entrada-pers-apto','entrada-pers-cliente','entrada-pers-valor','entrada-pers-obs'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('entrada-pers-condicao').value = 'avista';
   document.getElementById('entrada-pers-data').value = new Date().toISOString().split('T')[0];
+  document.getElementById('entrada-pers-juros-resumo').style.display = 'none';
   abrirModal('modal-nova-entrada-pers');
 }
 
+function atualizarCalculoJurosEntrada() {
+  const valorAvista = parseFloat(document.getElementById('entrada-pers-valor').value) || 0;
+  const condicao = document.getElementById('entrada-pers-condicao').value;
+  const resumo = document.getElementById('entrada-pers-juros-resumo');
+  if (!valorAvista) { resumo.style.display = 'none'; return; }
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const { total, parcelas, juros } = calcularTotalComPagamento(valorAvista, condicao);
+  if (condicao === 'avista' || condicao === 'pix' || condicao === 'debito') {
+    resumo.style.display = 'block';
+    resumo.innerHTML = `Valor recebido: <strong>${fmt(valorAvista)}</strong> · sem juros`;
+  } else {
+    resumo.style.display = 'block';
+    const vp = total / parcelas;
+    resumo.innerHTML = `${parcelas}x de ${fmt(vp)} · Total recebido: <strong>${fmt(total)}</strong> · Juros: <strong style="color:var(--warn)">${fmt(juros)}</strong>`;
+  }
+}
+
 async function salvarNovaEntradaPers() {
+  const valorAvista = parseFloat(document.getElementById('entrada-pers-valor').value) || 0;
+  const condicao = document.getElementById('entrada-pers-condicao').value;
+  const { total, juros } = calcularTotalComPagamento(valorAvista, condicao);
   const dados = {
     apartamento: document.getElementById('entrada-pers-apto').value.trim(),
     cliente: document.getElementById('entrada-pers-cliente').value.trim(),
     categoria: document.getElementById('entrada-pers-categoria').value,
-    valor: document.getElementById('entrada-pers-valor').value,
+    valor: total,
+    valor_avista: valorAvista,
+    condicao_pagamento: condicao,
+    valor_juros: juros,
     data: document.getElementById('entrada-pers-data').value,
-    forma_pagamento: document.getElementById('entrada-pers-forma').value.trim(),
     observacao: document.getElementById('entrada-pers-obs').value.trim(),
   };
-  if (!dados.apartamento || !dados.valor) { showToast('Preencha ao menos apartamento e valor', 'error'); return; }
+  if (!dados.apartamento || !valorAvista) { showToast('Preencha ao menos apartamento e valor', 'error'); return; }
   try {
     await apiPost('addEntradaPersonalizacao', dados);
     showToast('Entrada salva!', 'success');
