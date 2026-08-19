@@ -1985,6 +1985,10 @@ body.mobile-mode #main{padding-bottom:72px}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
           Margem de Lucro
         </button>
+        <button class="nav-btn" onclick="showScreen('custopersonalizacoes')" id="nav-custopersonalizacoes" style="padding-left:20px;font-size:11px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+          Custo Personalizações
+        </button>
         <button class="nav-btn" onclick="showScreen('config');document.getElementById('nav-config').classList.add('active')" id="nav-config" style="padding-left:20px;font-size:11px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
           Configurações do Sistema
@@ -2620,6 +2624,171 @@ body.mobile-mode #main{padding-bottom:72px}
         <div id="margemlucro-total-geral" style="font-size:13px;color:var(--text2)">Aguardando o backend (Code.gs) ser atualizado...</div>
       </div>
       <div id="margemlucro-lista"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTO PERSONALIZAÇÕES -->
+<div id="custopersonalizacoes-screen" class="screen">
+  <div id="custopers-lock" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:20px;padding:40px;text-align:center">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="color:var(--text3)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    <p style="font-size:18px;font-weight:600;color:var(--text)">Área Restrita</p>
+    <p style="font-size:13px;color:var(--text3)">Custo Personalizações</p>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="password" id="custopers-senha-input" placeholder="Digite a senha" class="form-control" style="width:220px;text-align:center" onkeydown="if(event.key==='Enter')verificarSenhaCustoPers()">
+      <button class="btn btn-primary" onclick="verificarSenhaCustoPers()">Entrar</button>
+    </div>
+    <p id="custopers-senha-erro" style="font-size:12px;color:var(--danger);display:none">Senha incorreta</p>
+  </div>
+  <div id="custopers-conteudo" style="display:none;width:100%">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Custo Personalizações</h1>
+        <p>Pagamentos recebidos, gastos da obra, e o vínculo entre eles</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="abrirModalNovaEntradaPers()" style="margin-right:4px">+ Nova Entrada</button>
+        <button class="btn btn-secondary" onclick="abrirModalNovaSaidaObra()" style="margin-right:4px">+ Nova Saída</button>
+        <button class="btn btn-secondary" onclick="sairCustoPers()">Sair</button>
+      </div>
+    </div>
+    <div class="page-content">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+        <div>
+          <h3 style="font-size:14px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Entradas — pagamentos recebidos</h3>
+          <div id="custopers-entradas-lista" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+        <div>
+          <h3 style="font-size:14px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Saídas — gastos da obra</h3>
+          <div id="custopers-saidas-lista" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NOVA ENTRADA PERSONALIZACAO -->
+<div class="modal-overlay" id="modal-nova-entrada-pers">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <h2>Nova Entrada</h2>
+      <button class="modal-close" onclick="fecharModal('modal-nova-entrada-pers')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Apartamento</label>
+        <input class="form-control" id="entrada-pers-apto" placeholder="Ex: 111">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cliente</label>
+        <input class="form-control" id="entrada-pers-cliente" placeholder="Nome do cliente">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Categoria</label>
+        <select class="form-control" id="entrada-pers-categoria">
+          <option>Revestimento</option>
+          <option>Banheira</option>
+          <option>Metal</option>
+          <option>Marmoraria</option>
+          <option>Duchinha Adicional</option>
+          <option>Retrabalho</option>
+          <option>Promoção</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Valor (R$)</label>
+          <input class="form-control" type="number" step="0.01" id="entrada-pers-valor" placeholder="0,00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data</label>
+          <input class="form-control" type="date" id="entrada-pers-data">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Forma de pagamento</label>
+        <input class="form-control" id="entrada-pers-forma" placeholder="Ex: Cartão 6x, Pix, Boleto...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observação</label>
+        <textarea class="form-control" id="entrada-pers-obs" rows="2"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="salvarNovaEntradaPers()" style="width:100%;justify-content:center">Salvar Entrada</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NOVA SAIDA OBRA -->
+<div class="modal-overlay" id="modal-nova-saida-obra">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <h2>Nova Saída</h2>
+      <button class="modal-close" onclick="fecharModal('modal-nova-saida-obra')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <input class="form-control" id="saida-obra-descricao" placeholder="Ex: Pedra Onyx Unique — fornecedor X">
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Categoria</label>
+          <input class="form-control" id="saida-obra-categoria" placeholder="Ex: Revestimento">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fornecedor</label>
+          <input class="form-control" id="saida-obra-fornecedor" placeholder="Ex: Portobello">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Valor (R$)</label>
+          <input class="form-control" type="number" step="0.01" id="saida-obra-valor" placeholder="0,00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data</label>
+          <input class="form-control" type="date" id="saida-obra-data">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Projeto</label>
+        <select class="form-control" id="saida-obra-projeto">
+          <option>Essence</option>
+          <option>Vista Park</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observação</label>
+        <textarea class="form-control" id="saida-obra-obs" rows="2"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="salvarNovaSaidaObra()" style="width:100%;justify-content:center">Salvar Saída</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VINCULAR ENTRADA/SAIDA -->
+<div class="modal-overlay" id="modal-vincular-custopers">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <h2 id="vincular-custopers-titulo">Vincular</h2>
+      <button class="modal-close" onclick="fecharModal('modal-vincular-custopers')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="vincular-custopers-origem" style="margin-bottom:14px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:13px"></div>
+      <div class="form-group">
+        <label class="form-label" id="vincular-custopers-label-lista">Vincular a qual saída?</label>
+        <select class="form-control" id="vincular-custopers-select"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Valor a vincular (R$)</label>
+        <input class="form-control" type="number" step="0.01" id="vincular-custopers-valor">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observação</label>
+        <input class="form-control" id="vincular-custopers-obs" placeholder="Opcional">
+      </div>
+      <button class="btn btn-primary" onclick="salvarVinculoCustoPers()" style="width:100%;justify-content:center">Salvar Vínculo</button>
     </div>
   </div>
 </div>
@@ -3921,6 +4090,7 @@ function showScreen(name) {
   if (name === 'metais') loadMetais();
   if (name === 'vagasdep') { if (!vagasDepDesbloqueado) { document.getElementById('vagasdep-lock').style.display = 'flex'; document.getElementById('vagasdep-conteudo').style.display = 'none'; } else loadVagasDep(); }
   if (name === 'margemlucro') { if (!margemLucroDesbloqueado) { document.getElementById('margemlucro-lock').style.display = 'flex'; document.getElementById('margemlucro-conteudo').style.display = 'none'; } else loadMargemLucro(); }
+  if (name === 'custopersonalizacoes') { if (!custoPersDesbloqueado) { document.getElementById('custopers-lock').style.display = 'flex'; document.getElementById('custopers-conteudo').style.display = 'none'; } else loadCustoPersonalizacoes(); }
 }
 
 
@@ -4167,6 +4337,202 @@ function sairMargemLucro() {
   document.getElementById('margemlucro-senha-input').value = '';
   document.getElementById('margemlucro-senha-erro').style.display = 'none';
 }
+
+// ===================== CUSTO PERSONALIZAÇÕES =====================
+const SENHA_CUSTOPERS = SENHA_PGTO; // mesma senha do Controle de Pagamentos
+let custoPersDesbloqueado = false;
+let dadosEntradasPers = [], dadosSaidasObra = [], dadosVinculosPers = [];
+
+function verificarSenhaCustoPers() {
+  const senha = document.getElementById('custopers-senha-input').value;
+  if (senha === SENHA_CUSTOPERS) {
+    custoPersDesbloqueado = true;
+    document.getElementById('custopers-lock').style.display = 'none';
+    document.getElementById('custopers-conteudo').style.display = 'block';
+    loadCustoPersonalizacoes();
+  } else {
+    document.getElementById('custopers-senha-erro').style.display = 'block';
+  }
+}
+
+function sairCustoPers() {
+  custoPersDesbloqueado = false;
+  document.getElementById('custopers-lock').style.display = 'flex';
+  document.getElementById('custopers-conteudo').style.display = 'none';
+  document.getElementById('custopers-senha-input').value = '';
+  document.getElementById('custopers-senha-erro').style.display = 'none';
+}
+
+async function loadCustoPersonalizacoes() {
+  if (!custoPersDesbloqueado) return;
+  try {
+    const dados = await lerDados();
+    dadosEntradasPers = dados.entradasPersonalizacao || [];
+    dadosSaidasObra = dados.saidasObra || [];
+    dadosVinculosPers = dados.vinculos || [];
+  } catch(e) {
+    dadosEntradasPers = []; dadosSaidasObra = []; dadosVinculosPers = [];
+  }
+  renderCustoPersonalizacoes();
+}
+
+function _valorVinculadoEntrada(id) {
+  return dadosVinculosPers.filter(v => v.entrada_id === id).reduce((s,v) => s + (parseFloat(v.valor)||0), 0);
+}
+function _valorVinculadoSaida(id) {
+  return dadosVinculosPers.filter(v => v.saida_id === id).reduce((s,v) => s + (parseFloat(v.valor)||0), 0);
+}
+function _fmtR$(v) { return 'R$ ' + (parseFloat(v)||0).toLocaleString('pt-BR', {minimumFractionDigits:2}); }
+
+function _badgeSaldo(total, vinculado) {
+  const restante = total - vinculado;
+  if (restante <= 0.005) return '<span class="badge badge-green">100% vinculado</span>';
+  if (vinculado > 0) return `<span class="badge" style="background:#FFF2CC;color:#8a6d00">Parcial · falta ${_fmtR$(restante)}</span>`;
+  return `<span class="badge" style="background:#F4CCCC;color:#B03A2E">Sem vínculo</span>`;
+}
+
+function renderCustoPersonalizacoes() {
+  const contE = document.getElementById('custopers-entradas-lista');
+  const contS = document.getElementById('custopers-saidas-lista');
+
+  contE.innerHTML = !dadosEntradasPers.length ? '<div class="empty-state"><strong>Nenhuma entrada lançada</strong></div>' :
+    dadosEntradasPers.map(en => {
+      const vinc = _valorVinculadoEntrada(en.id);
+      const total = parseFloat(en.valor)||0;
+      return `<div class="card" style="padding:14px 16px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+          <div>
+            <strong style="font-size:13px">Apto ${en.apartamento||'—'} — ${en.cliente||'—'}</strong>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${en.categoria||''} · ${en.data||''}</div>
+          </div>
+          <strong style="font-size:15px;color:var(--accent2)">${_fmtR$(total)}</strong>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+          ${_badgeSaldo(total, vinc)}
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('entrada','${en.id}')">Vincular a saída</button>
+        </div>
+      </div>`;
+    }).join('');
+
+  contS.innerHTML = !dadosSaidasObra.length ? '<div class="empty-state"><strong>Nenhuma saída lançada</strong></div>' :
+    dadosSaidasObra.map(sa => {
+      const vinc = _valorVinculadoSaida(sa.id);
+      const total = parseFloat(sa.valor)||0;
+      return `<div class="card" style="padding:14px 16px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+          <div>
+            <strong style="font-size:13px">${sa.descricao||'—'}</strong>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${sa.categoria||''} · ${sa.data||''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''}</div>
+          </div>
+          <strong style="font-size:15px;color:#8c6f3f">${_fmtR$(total)}</strong>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+          ${_badgeSaldo(total, vinc)}
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('saida','${sa.id}')">Vincular a entrada</button>
+        </div>
+      </div>`;
+    }).join('');
+}
+
+function abrirModalNovaEntradaPers() {
+  ['entrada-pers-apto','entrada-pers-cliente','entrada-pers-valor','entrada-pers-forma','entrada-pers-obs'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('entrada-pers-data').value = new Date().toISOString().split('T')[0];
+  abrirModal('modal-nova-entrada-pers');
+}
+
+async function salvarNovaEntradaPers() {
+  const dados = {
+    apartamento: document.getElementById('entrada-pers-apto').value.trim(),
+    cliente: document.getElementById('entrada-pers-cliente').value.trim(),
+    categoria: document.getElementById('entrada-pers-categoria').value,
+    valor: document.getElementById('entrada-pers-valor').value,
+    data: document.getElementById('entrada-pers-data').value,
+    forma_pagamento: document.getElementById('entrada-pers-forma').value.trim(),
+    observacao: document.getElementById('entrada-pers-obs').value.trim(),
+  };
+  if (!dados.apartamento || !dados.valor) { showToast('Preencha ao menos apartamento e valor', 'error'); return; }
+  try {
+    await apiPost('addEntradaPersonalizacao', dados);
+    showToast('Entrada salva!', 'success');
+    fecharModal('modal-nova-entrada-pers');
+    loadCustoPersonalizacoes();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+function abrirModalNovaSaidaObra() {
+  ['saida-obra-descricao','saida-obra-categoria','saida-obra-fornecedor','saida-obra-valor','saida-obra-obs'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('saida-obra-data').value = new Date().toISOString().split('T')[0];
+  abrirModal('modal-nova-saida-obra');
+}
+
+async function salvarNovaSaidaObra() {
+  const dados = {
+    descricao: document.getElementById('saida-obra-descricao').value.trim(),
+    categoria: document.getElementById('saida-obra-categoria').value.trim(),
+    fornecedor: document.getElementById('saida-obra-fornecedor').value.trim(),
+    valor: document.getElementById('saida-obra-valor').value,
+    data: document.getElementById('saida-obra-data').value,
+    projeto: document.getElementById('saida-obra-projeto').value,
+    observacao: document.getElementById('saida-obra-obs').value.trim(),
+  };
+  if (!dados.descricao || !dados.valor) { showToast('Preencha ao menos descrição e valor', 'error'); return; }
+  try {
+    await apiPost('addSaidaObra', dados);
+    showToast('Saída salva!', 'success');
+    fecharModal('modal-nova-saida-obra');
+    loadCustoPersonalizacoes();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+let _vincularOrigem = null; // {tipo: 'entrada'|'saida', id}
+
+function abrirModalVincular(tipo, id) {
+  _vincularOrigem = { tipo, id };
+  const origem = tipo === 'entrada' ? dadosEntradasPers.find(x => x.id === id) : dadosSaidasObra.find(x => x.id === id);
+  if (!origem) return;
+  const totalOrigem = parseFloat(origem.valor)||0;
+  const vincOrigem = tipo === 'entrada' ? _valorVinculadoEntrada(id) : _valorVinculadoSaida(id);
+  const restante = totalOrigem - vincOrigem;
+
+  document.getElementById('vincular-custopers-titulo').textContent = tipo === 'entrada' ? 'Vincular Entrada a uma Saída' : 'Vincular Saída a uma Entrada';
+  document.getElementById('vincular-custopers-label-lista').textContent = tipo === 'entrada' ? 'Vincular a qual saída?' : 'Vincular a qual entrada?';
+  document.getElementById('vincular-custopers-origem').innerHTML = tipo === 'entrada'
+    ? `<strong>Apto ${origem.apartamento} — ${origem.cliente}</strong><br>Total: ${_fmtR$(totalOrigem)} · Ainda livre: <strong>${_fmtR$(restante)}</strong>`
+    : `<strong>${origem.descricao}</strong><br>Total: ${_fmtR$(totalOrigem)} · Ainda livre: <strong>${_fmtR$(restante)}</strong>`;
+
+  const lista = tipo === 'entrada' ? dadosSaidasObra : dadosEntradasPers;
+  const select = document.getElementById('vincular-custopers-select');
+  select.innerHTML = lista.map(item => {
+    const label = tipo === 'entrada'
+      ? `${item.descricao} — ${_fmtR$(item.valor)} (${item.projeto})`
+      : `Apto ${item.apartamento} — ${item.cliente} — ${_fmtR$(item.valor)}`;
+    return `<option value="${item.id}">${label}</option>`;
+  }).join('');
+
+  document.getElementById('vincular-custopers-valor').value = restante > 0 ? restante.toFixed(2) : '';
+  document.getElementById('vincular-custopers-obs').value = '';
+  abrirModal('modal-vincular-custopers');
+}
+
+async function salvarVinculoCustoPers() {
+  if (!_vincularOrigem) return;
+  const destinoId = document.getElementById('vincular-custopers-select').value;
+  const valor = document.getElementById('vincular-custopers-valor').value;
+  const obs = document.getElementById('vincular-custopers-obs').value.trim();
+  if (!destinoId || !valor) { showToast('Selecione o destino e o valor', 'error'); return; }
+
+  const dados = _vincularOrigem.tipo === 'entrada'
+    ? { entrada_id: _vincularOrigem.id, saida_id: destinoId, valor, observacao: obs }
+    : { entrada_id: destinoId, saida_id: _vincularOrigem.id, valor, observacao: obs };
+
+  try {
+    await apiPost('addVinculo', dados);
+    showToast('Vínculo salvo!', 'success');
+    fecharModal('modal-vincular-custopers');
+    loadCustoPersonalizacoes();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
 
 async function loadMargemLucro() {
   try {
