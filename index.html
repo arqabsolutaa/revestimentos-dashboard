@@ -2960,6 +2960,23 @@ body.mobile-mode #main{padding-bottom:72px}
 </div>
 
 <!-- MODAL OUTRA CONDIÇÃO DE PAGAMENTO -->
+<div id="modal-pdf-quitado" class="modal-overlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h2>Gerar PDF Quitado</h2>
+      <button class="modal-close" onclick="fecharModal('modal-pdf-quitado')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Gera o PDF com um carimbo verde "✓ PAGO" e a forma de pagamento informada abaixo. Não altera o status do card.</p>
+      <div class="form-group">
+        <label class="form-label">Forma de pagamento</label>
+        <input class="form-control" id="pdf-quitado-forma" placeholder="Ex: Pix, Cartão 3x, Boleto..." onkeydown="if(event.key==='Enter')confirmarGerarPDFQuitado()">
+      </div>
+      <button class="btn btn-primary" onclick="confirmarGerarPDFQuitado()" style="width:100%;justify-content:center">✓ Gerar PDF Quitado</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-outra-condicao" class="modal-overlay">
   <div class="modal" style="max-width:420px">
     <div class="modal-header">
@@ -5334,6 +5351,7 @@ function renderPagamentos(lista) {
         <div style="display:flex;gap:6px">
           <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
           <button class="btn btn-secondary" onclick="abrirModalOutraCondicao('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF outra condição</button>
+          <button class="btn btn-secondary" onclick="abrirModalPdfQuitado('${p.id}')" style="font-size:11px;padding:4px 10px;color:#2e7d3f;border-color:#2e7d3f">✓ Gerar PDF Quitado</button>
           <button class="btn btn-secondary" onclick="editarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
           <button class="btn btn-secondary" onclick="arquivarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">🗄 Arquivar</button>
           ${renderComprovantesHTML(p.comprovante_url, p.id, null, `document.getElementById('file-comprovante-${p.id}').click()`)}
@@ -5380,6 +5398,27 @@ function gerarPDFComValorPgto(id) {
   const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
   // Com valor, usa pagamento já salvo no orçamento
   gerarPDFDados({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||'Absoluta', selecoes, data: p.data, comValor: true, pagamento: p.pagamento||'avista' });
+}
+
+let _idPdfQuitadoPendente = null;
+
+function abrirModalPdfQuitado(id) {
+  const p = dadosPersonalizar.find(x => String(x.id) === String(id));
+  if (!p) { showToast('Carregue o Personalizar primeiro', 'error'); return; }
+  _idPdfQuitadoPendente = id;
+  document.getElementById('pdf-quitado-forma').value = p.obs_pgto || '';
+  abrirModal('modal-pdf-quitado');
+}
+
+function confirmarGerarPDFQuitado() {
+  const id = _idPdfQuitadoPendente;
+  const p = dadosPersonalizar.find(x => String(x.id) === String(id));
+  if (!p) return;
+  const formaPagamentoReal = document.getElementById('pdf-quitado-forma').value.trim();
+  if (!formaPagamentoReal) { showToast('Informe a forma de pagamento', 'error'); return; }
+  const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+  gerarPDFDados({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||'Absoluta', selecoes, data: p.data, comValor: true, pagamento: p.pagamento||'avista', quitado: true, formaPagamentoReal });
+  fecharModal('modal-pdf-quitado');
 }
 
 function togglePixParcelado(btn) {
@@ -7107,7 +7146,7 @@ function gerarPDFPersonalizar(id) {
   gerarPDFDados({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Absoluta', selecoes, data: p.data, comValor: false, pagamento: 'avista', desconto: 0 });
 }
 
-function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, desconto, comValor = true }) {
+function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, desconto, comValor = true, quitado = false, formaPagamentoReal = '' }) {
   const jsPDF = getJsPDF();
   const doc = new jsPDF();
   const preto = [14, 14, 14];
@@ -7298,6 +7337,21 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.setCharSpace(0);
     doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
     doc.text(pgTexto, 8, y + 11);
+    y += 18;
+  }
+
+  // ===== STATUS: QUITADO/PAGO =====
+  if (quitado) {
+    y += 2;
+    if (y > 258) { _pdfFooter(doc, verdeEscuro, dourado, empresa, ap); doc.addPage(); y = 20; }
+    doc.setFillColor(46, 125, 63);
+    doc.rect(0, y, 210, 14, 'F');
+    doc.setTextColor(255, 255, 255); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+    doc.setCharSpace(1);
+    doc.text('STATUS DO PAGAMENTO', 8, y + 5);
+    doc.setCharSpace(0);
+    doc.setFontSize(9.5); doc.setFont('helvetica', 'bold');
+    doc.text('\u2713 PAGO' + (formaPagamentoReal ? ' \u2014 ' + formaPagamentoReal : ''), 8, y + 11);
     y += 18;
   }
 
