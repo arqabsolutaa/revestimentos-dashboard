@@ -4559,13 +4559,9 @@ async function loadVisaoGeralValores() {
       else { valorPendente += totalAp; }
       const ap = p.ap || '—';
       const dataRef = p.data || p.criado_em || '';
-      porApto[ap] = porApto[ap] || { cliente: p.cliente || '', valor: 0, status: p.status || 'pendente', dataRef };
-      porApto[ap].valor += totalAp;
-      porApto[ap].cliente = p.cliente || porApto[ap].cliente;
-      // guarda a atualizacao mais recente pra esse apto
-      if (dataRef && (!porApto[ap].dataRef || new Date(dataRef) > new Date(porApto[ap].dataRef))) {
-        porApto[ap].dataRef = dataRef;
-      }
+      // Cada personalizacao (inclusive revisoes) conta como uma linha independente, sem somar com outras do mesmo apto
+      const chave = p.id || (ap + '_' + Math.random());
+      porApto[chave] = { ap, cliente: p.cliente || '', valor: totalAp, status: p.status || 'pendente', dataRef };
     });
 
     const totalGeral = valorConfirmado + valorPendente;
@@ -4606,7 +4602,7 @@ async function loadVisaoGeralValores() {
 
     // --- GRAFICO: VALOR POR APARTAMENTO ---
     const aptosOrdenados = Object.entries(porApto).sort((a,b) => b[1].valor - a[1].valor);
-    const aptLabels = aptosOrdenados.map(([ap]) => 'Apto '+ap);
+    const aptLabels = aptosOrdenados.map(([,d]) => 'Apto '+d.ap);
     const aptValores = aptosOrdenados.map(([,d]) => Math.round(d.valor));
     const aptCores = aptosOrdenados.map(([,d]) => d.status === 'confirmado' ? '#2C4034' : '#E8C97A');
     if (_chartsVgValores.apto) _chartsVgValores.apto.destroy();
@@ -4618,11 +4614,11 @@ async function loadVisaoGeralValores() {
 
     const lista = aptosOrdenados;
     document.getElementById('vgvalores-por-apto').innerHTML = !lista.length ? '' : `
-      <h3 style="font-size:14px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Por apartamento</h3>
+      <h3 style="font-size:14px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Por apartamento (cada revisão conta separada)</h3>
       <div class="table-wrap"><table>
         <thead><tr><th>Apartamento</th><th>Cliente</th><th>Status</th><th>Feito há</th><th style="text-align:right">Valor</th></tr></thead>
-        <tbody>${lista.map(([ap,d]) => `<tr>
-          <td><span class="badge badge-info">Apto ${ap}</span></td>
+        <tbody>${lista.map(([,d]) => `<tr>
+          <td><span class="badge badge-info">Apto ${d.ap}</span></td>
           <td>${d.cliente||'—'}</td>
           <td>${d.status === 'confirmado' ? '<span class="badge badge-green">Confirmado</span>' : '<span class="badge" style="background:#FFF2CC;color:#8a6d00">Pendente</span>'}</td>
           <td style="color:var(--text2)">${_tempoDecorrido(d.dataRef)}</td>
