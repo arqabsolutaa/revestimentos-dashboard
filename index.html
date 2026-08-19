@@ -33,6 +33,14 @@
 .status-pago{background:#E8F5E9;color:#22863A;border-color:#22863A}
 .status-parcial{background:#E3F2FD;color:#1976D2;border-color:#1976D2}
 .pgto-btn-modal{width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:left;cursor:pointer;font-size:13px;color:var(--text);transition:all 0.15s}.pgto-btn-modal:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.calc-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 0;font-size:17px;font-family:'Inter',sans-serif;cursor:pointer;transition:background 0.12s;color:var(--text)}
+.calc-btn:hover{background:var(--surface2)}
+.calc-btn:active{background:var(--border)}
+.calc-btn-op{background:var(--surface2);color:var(--accent2);font-weight:600}
+.calc-btn-op:hover{background:var(--accent-bg)}
+.calc-btn-fn{color:var(--text2);font-size:14px}
+.calc-btn-eq{background:var(--accent2);color:#fff;font-weight:700;grid-column:span 1}
+.calc-btn-eq:hover{opacity:0.9;background:var(--accent2)}
 
 .pgto-tab{padding:10px 20px;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;margin-bottom:-1px;font-family:"Cormorant Garamond",serif}
 .pgto-tab:hover{color:var(--text)}
@@ -2806,12 +2814,30 @@ body.mobile-mode #main{padding-bottom:72px}
           <span id="calc-entrada-seta" style="font-size:11px;color:var(--text3)">mostrar ▾</span>
         </div>
         <div id="calc-entrada-corpo" style="display:none;margin-top:6px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
-          <input class="form-control" id="calc-entrada-expr" placeholder="Ex: 16000 - 3000*0.05" onkeydown="if(event.key==='Enter'){event.preventDefault();calcularExpressao('entrada')}" style="margin-bottom:8px">
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <button type="button" class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="calcularExpressao('entrada')">= Calcular</button>
-            <span id="calc-entrada-resultado" style="font-weight:600;font-size:13px"></span>
+          <div id="calc-entrada-display" style="background:#1A1814;color:#fff;border-radius:8px;padding:16px 14px;text-align:right;font-size:26px;font-weight:600;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0.5px">0</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+            <button type="button" class="calc-btn calc-btn-fn" onclick="calcBotao('entrada','C')">C</button>
+            <button type="button" class="calc-btn calc-btn-fn" onclick="calcBotao('entrada','CE')">CE</button>
+            <button type="button" class="calc-btn calc-btn-fn" onclick="calcBotao('entrada','back')">⌫</button>
+            <button type="button" class="calc-btn calc-btn-op" onclick="calcBotao('entrada','/')">÷</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada','7')">7</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada','8')">8</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada','9')">9</button>
+            <button type="button" class="calc-btn calc-btn-op" onclick="calcBotao('entrada','*')">×</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada','4')">4</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada','5')">5</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada','6')">6</button>
+            <button type="button" class="calc-btn calc-btn-op" onclick="calcBotao('entrada','-')">−</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada','1')">1</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada','2')">2</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada','3')">3</button>
+            <button type="button" class="calc-btn calc-btn-op" onclick="calcBotao('entrada','+')">+</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada','+/-')">+/−</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada','0')">0</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('entrada',',')">,</button>
+            <button type="button" class="calc-btn calc-btn-eq" onclick="calcBotao('entrada','=')">=</button>
           </div>
-          <div id="calc-entrada-acoes" style="display:none;margin-top:8px;gap:6px;flex-wrap:wrap">
+          <div id="calc-entrada-acoes" style="display:none;margin-top:10px;gap:6px;flex-wrap:wrap">
             <button type="button" class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="usarResultadoCalc('entrada','valor')">Usar no Valor à Vista</button>
             <button type="button" class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="usarResultadoCalc('entrada','obs')">Adicionar à Observação</button>
           </div>
@@ -2871,12 +2897,30 @@ body.mobile-mode #main{padding-bottom:72px}
           <span id="calc-saida-seta" style="font-size:11px;color:var(--text3)">mostrar ▾</span>
         </div>
         <div id="calc-saida-corpo" style="display:none;margin-top:6px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
-          <input class="form-control" id="calc-saida-expr" placeholder="Ex: 400*12 + 350" onkeydown="if(event.key==='Enter'){event.preventDefault();calcularExpressao('saida')}" style="margin-bottom:8px">
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <button type="button" class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="calcularExpressao('saida')">= Calcular</button>
-            <span id="calc-saida-resultado" style="font-weight:600;font-size:13px"></span>
+          <div id="calc-saida-display" style="background:#1A1814;color:#fff;border-radius:8px;padding:16px 14px;text-align:right;font-size:26px;font-weight:600;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0.5px">0</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+            <button type="button" class="calc-btn calc-btn-fn" onclick="calcBotao('saida','C')">C</button>
+            <button type="button" class="calc-btn calc-btn-fn" onclick="calcBotao('saida','CE')">CE</button>
+            <button type="button" class="calc-btn calc-btn-fn" onclick="calcBotao('saida','back')">⌫</button>
+            <button type="button" class="calc-btn calc-btn-op" onclick="calcBotao('saida','/')">÷</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida','7')">7</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida','8')">8</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida','9')">9</button>
+            <button type="button" class="calc-btn calc-btn-op" onclick="calcBotao('saida','*')">×</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida','4')">4</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida','5')">5</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida','6')">6</button>
+            <button type="button" class="calc-btn calc-btn-op" onclick="calcBotao('saida','-')">−</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida','1')">1</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida','2')">2</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida','3')">3</button>
+            <button type="button" class="calc-btn calc-btn-op" onclick="calcBotao('saida','+')">+</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida','+/-')">+/−</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida','0')">0</button>
+            <button type="button" class="calc-btn" onclick="calcBotao('saida',',')">,</button>
+            <button type="button" class="calc-btn calc-btn-eq" onclick="calcBotao('saida','=')">=</button>
           </div>
-          <div id="calc-saida-acoes" style="display:none;margin-top:8px;gap:6px;flex-wrap:wrap">
+          <div id="calc-saida-acoes" style="display:none;margin-top:10px;gap:6px;flex-wrap:wrap">
             <button type="button" class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="usarResultadoCalc('saida','valor')">Usar no Valor</button>
             <button type="button" class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="usarResultadoCalc('saida','obs')">Adicionar à Observação</button>
           </div>
@@ -4869,44 +4913,74 @@ function toggleCalculadora(tipo) {
 }
 
 function _resetarCalculadora(tipo) {
-  document.getElementById('calc-'+tipo+'-expr').value = '';
-  document.getElementById('calc-'+tipo+'-resultado').textContent = '';
+  window['_calcState_'+tipo] = { display: '0', prev: null, op: null, resetOnNextDigit: false, ultimaConta: '' };
+  document.getElementById('calc-'+tipo+'-display').textContent = '0';
   document.getElementById('calc-'+tipo+'-acoes').style.display = 'none';
   document.getElementById('calc-'+tipo+'-corpo').style.display = 'none';
   document.getElementById('calc-'+tipo+'-seta').textContent = 'mostrar ▾';
-  window['_calcResultado_'+tipo] = undefined;
 }
 
-function calcularExpressao(tipo) {
-  const expr = document.getElementById('calc-'+tipo+'-expr').value.trim();
-  const resultEl = document.getElementById('calc-'+tipo+'-resultado');
-  const acoesEl = document.getElementById('calc-'+tipo+'-acoes');
-  if (!expr) { resultEl.textContent = ''; acoesEl.style.display = 'none'; return; }
-  const limpo = expr.replace(/,/g, '.');
-  if (!/^[0-9+\-*/(). ]+$/.test(limpo)) {
-    resultEl.textContent = 'Expressão inválida (use só números e + - * / ( ))';
-    resultEl.style.color = 'var(--danger)';
-    acoesEl.style.display = 'none';
-    return;
+function _calcOperar(a, op, b) {
+  if (op === '+') return a + b;
+  if (op === '-') return a - b;
+  if (op === '*') return a * b;
+  if (op === '/') return b === 0 ? NaN : a / b;
+  return b;
+}
+
+const _calcSimbolo = { '+':'+', '-':'−', '*':'×', '/':'÷' };
+
+function calcBotao(tipo, val) {
+  const key = '_calcState_' + tipo;
+  let st = window[key] || (window[key] = { display: '0', prev: null, op: null, resetOnNextDigit: false, ultimaConta: '' });
+
+  if (val >= '0' && val <= '9') {
+    if (st.display === '0' || st.resetOnNextDigit) { st.display = val; st.resetOnNextDigit = false; }
+    else if (st.display.replace('-','').replace(',','').length < 12) { st.display += val; }
+  } else if (val === ',') {
+    if (st.resetOnNextDigit) { st.display = '0,'; st.resetOnNextDigit = false; }
+    else if (!st.display.includes(',')) { st.display += ','; }
+  } else if (val === '+/-') {
+    if (st.display !== '0') st.display = st.display.startsWith('-') ? st.display.slice(1) : '-' + st.display;
+  } else if (val === 'back') {
+    st.display = st.display.length > 1 ? st.display.slice(0,-1) : '0';
+  } else if (val === 'CE') {
+    st.display = '0';
+  } else if (val === 'C') {
+    window[key] = { display: '0', prev: null, op: null, resetOnNextDigit: false, ultimaConta: '' };
+    st = window[key];
+  } else if (['+','-','*','/'].includes(val)) {
+    const atual = parseFloat(st.display.replace(',','.'))||0;
+    if (st.prev !== null && st.op && !st.resetOnNextDigit) {
+      st.prev = _calcOperar(st.prev, st.op, atual);
+      st.display = String(st.prev).replace('.',',');
+    } else {
+      st.prev = atual;
+    }
+    st.op = val;
+    st.resetOnNextDigit = true;
+  } else if (val === '=') {
+    const atual = parseFloat(st.display.replace(',','.'))||0;
+    if (st.prev !== null && st.op) {
+      const resultado = _calcOperar(st.prev, st.op, atual);
+      st.ultimaConta = st.prev.toLocaleString('pt-BR') + ' ' + _calcSimbolo[st.op] + ' ' + atual.toLocaleString('pt-BR');
+      st.display = String(resultado).replace('.',',');
+      st.prev = null;
+      st.op = null;
+      st.resetOnNextDigit = true;
+    }
   }
-  try {
-    const valor = Function('"use strict"; return (' + limpo + ')')();
-    if (typeof valor !== 'number' || !isFinite(valor)) throw new Error('invalido');
-    window['_calcResultado_'+tipo] = valor;
-    resultEl.textContent = '= R$ ' + valor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
-    resultEl.style.color = 'var(--accent2)';
-    acoesEl.style.display = 'flex';
-  } catch(e) {
-    resultEl.textContent = 'Expressão inválida';
-    resultEl.style.color = 'var(--danger)';
-    acoesEl.style.display = 'none';
-  }
+
+  document.getElementById('calc-'+tipo+'-display').textContent = st.display;
+  const valorNumerico = parseFloat(st.display.replace(',','.'));
+  document.getElementById('calc-'+tipo+'-acoes').style.display = (!isNaN(valorNumerico) && st.display !== '0') ? 'flex' : 'none';
 }
 
 function usarResultadoCalc(tipo, destino) {
-  const valor = window['_calcResultado_'+tipo];
-  if (valor === undefined) return;
-  const expr = document.getElementById('calc-'+tipo+'-expr').value.trim();
+  const st = window['_calcState_'+tipo];
+  if (!st) return;
+  const valor = parseFloat(st.display.replace(',','.'));
+  if (isNaN(valor)) return;
   if (destino === 'valor') {
     const campoValor = tipo === 'entrada' ? 'entrada-pers-valor' : 'saida-obra-valor';
     document.getElementById(campoValor).value = valor.toFixed(2);
@@ -4915,7 +4989,7 @@ function usarResultadoCalc(tipo, destino) {
   } else {
     const campoObs = tipo === 'entrada' ? 'entrada-pers-obs' : 'saida-obra-obs';
     const obsEl = document.getElementById(campoObs);
-    const linha = 'Cálculo: ' + expr + ' = R$ ' + valor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const linha = 'Cálculo' + (st.ultimaConta ? ' (' + st.ultimaConta + ')' : '') + ' = R$ ' + valor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
     obsEl.value = obsEl.value ? obsEl.value + '\n' + linha : linha;
     showToast('Adicionado à observação!', 'success');
   }
