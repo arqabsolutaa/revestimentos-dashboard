@@ -1944,7 +1944,7 @@ body.mobile-mode #main{padding-bottom:72px}
     <div id="nav-group-controle" style="display:none">
     <button class="nav-btn active" onclick="showScreen('visaogeralvalores')" id="nav-visaogeralvalores">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-      Visão Geral (Valores)
+      Visão Geral
     </button>
     <button class="nav-btn" onclick="showScreen('estoque')" id="nav-estoque">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
@@ -2663,6 +2663,25 @@ body.mobile-mode #main{padding-bottom:72px}
     </div>
     <div class="page-content">
       <div id="vgvalores-cards" class="stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+        <div class="card">
+          <h3 style="font-size:13px;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px">Confirmado × Pendente</h3>
+          <div style="display:flex;align-items:center;gap:20px">
+            <div style="position:relative;width:130px;height:130px;flex-shrink:0">
+              <canvas id="vgvalores-chart-status"></canvas>
+            </div>
+            <div id="vgvalores-status-legend" style="display:flex;flex-direction:column;gap:8px;font-size:12px"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="font-size:13px;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px">Valor por material</h3>
+          <canvas id="vgvalores-chart-categoria" style="max-height:170px"></canvas>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:24px">
+        <h3 style="font-size:13px;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px">Valor por apartamento</h3>
+        <canvas id="vgvalores-chart-apto" style="max-height:220px"></canvas>
+      </div>
       <div id="vgvalores-por-apto"></div>
     </div>
   </div>
@@ -4486,6 +4505,25 @@ function verificarSenhaVgValores() {
   }
 }
 
+let _chartsVgValores = {};
+
+function _tempoDecorrido(dataStr) {
+  if (!dataStr) return '—';
+  let d;
+  try { d = new Date(dataStr); if (isNaN(d.getTime())) return '—'; } catch(e) { return '—'; }
+  const diffMs = Date.now() - d.getTime();
+  const dias = Math.floor(diffMs / 86400000);
+  if (dias < 0) return '—';
+  if (dias === 0) return 'hoje';
+  if (dias === 1) return '1 dia';
+  if (dias < 30) return dias + ' dias';
+  const meses = Math.floor(dias / 30);
+  if (meses === 1) return '1 mês';
+  if (meses < 12) return meses + ' meses';
+  const anos = Math.floor(meses / 12);
+  return anos === 1 ? '1 ano' : anos + ' anos';
+}
+
 async function loadVisaoGeralValores() {
   if (!vgValoresDesbloqueado) return;
   try {
@@ -4496,6 +4534,7 @@ async function loadVisaoGeralValores() {
 
     const fmtR$ = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0});
     const porApto = {};
+    const porMaterial = {};
     let valorConfirmado = 0, valorPendente = 0, custoConfirmado = 0;
 
     personalizacoes.forEach(p => {
@@ -4509,16 +4548,24 @@ async function loadVisaoGeralValores() {
         const m2comPerda = (parseFloat(v.m2)||0) * 1.2;
         const preco = rev && rev.preco_m2 ? parseFloat(rev.preco_m2)||0 : 0;
         const custo = rev && rev.custo_m2 ? parseFloat(rev.custo_m2)||0 : 0;
-        totalAp += m2comPerda * preco;
+        const valorItem = m2comPerda * preco;
+        totalAp += valorItem;
         custoAp += m2comPerda * custo;
+        const nomeMat = rev ? rev.nome : 'Não definido';
+        porMaterial[nomeMat] = (porMaterial[nomeMat] || 0) + valorItem;
       });
       if (!totalAp) return;
       if (p.status === 'confirmado') { valorConfirmado += totalAp; custoConfirmado += custoAp; }
       else { valorPendente += totalAp; }
       const ap = p.ap || '—';
-      porApto[ap] = porApto[ap] || { cliente: p.cliente || '', valor: 0, status: p.status || 'pendente' };
+      const dataRef = p.data || p.criado_em || '';
+      porApto[ap] = porApto[ap] || { cliente: p.cliente || '', valor: 0, status: p.status || 'pendente', dataRef };
       porApto[ap].valor += totalAp;
       porApto[ap].cliente = p.cliente || porApto[ap].cliente;
+      // guarda a atualizacao mais recente pra esse apto
+      if (dataRef && (!porApto[ap].dataRef || new Date(dataRef) > new Date(porApto[ap].dataRef))) {
+        porApto[ap].dataRef = dataRef;
+      }
     });
 
     const totalGeral = valorConfirmado + valorPendente;
@@ -4532,15 +4579,53 @@ async function loadVisaoGeralValores() {
       <div class="stat-card"><div class="stat-label">Ticket Médio</div><div class="stat-value" style="font-size:22px">${fmtR$(totalAps ? totalGeral/totalAps : 0)}</div><div class="stat-sub">por apartamento</div></div>
     `;
 
-    const lista = Object.entries(porApto).sort((a,b) => b[1].valor - a[1].valor);
+    // --- GRAFICO: CONFIRMADO x PENDENTE ---
+    if (_chartsVgValores.status) _chartsVgValores.status.destroy();
+    _chartsVgValores.status = new Chart(document.getElementById('vgvalores-chart-status'), {
+      type: 'doughnut',
+      data: { labels: ['Confirmado','Pendente'], datasets: [{ data: [valorConfirmado, valorPendente||0.0001], backgroundColor: ['#2C4034','#E8C97A'], borderWidth: 0, hoverOffset: 4 }] },
+      options: { cutout: '70%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + fmtR$(ctx.raw) } } } }
+    });
+    document.getElementById('vgvalores-status-legend').innerHTML = [
+      ['#2C4034','Confirmado',valorConfirmado],
+      ['#E8C97A','Pendente',valorPendente]
+    ].map(([c,l,v]) => `<span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;background:${c};flex-shrink:0"></span><span style="color:var(--text2)">${l}<br><strong style="color:var(--text)">${fmtR$(v)}</strong></span></span>`).join('');
+
+    // --- GRAFICO: VALOR POR MATERIAL (top 6) ---
+    const materiaisOrdenados = Object.entries(porMaterial).sort((a,b) => b[1]-a[1]);
+    const top6 = materiaisOrdenados.slice(0,6);
+    const restoMat = materiaisOrdenados.slice(6).reduce((s,[,v]) => s+v, 0);
+    const matLabels = top6.map(([n]) => n.length > 18 ? n.slice(0,16)+'…' : n).concat(restoMat > 0 ? ['Outros'] : []);
+    const matValores = top6.map(([,v]) => Math.round(v)).concat(restoMat > 0 ? [Math.round(restoMat)] : []);
+    if (_chartsVgValores.material) _chartsVgValores.material.destroy();
+    _chartsVgValores.material = new Chart(document.getElementById('vgvalores-chart-categoria'), {
+      type: 'bar',
+      data: { labels: matLabels, datasets: [{ data: matValores, backgroundColor: '#8c8467', borderRadius: 4 }] },
+      options: { indexAxis: 'y', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmtR$(ctx.raw) } } }, scales: { x: { ticks: { callback: v => fmtR$(v) } } } }
+    });
+
+    // --- GRAFICO: VALOR POR APARTAMENTO ---
+    const aptosOrdenados = Object.entries(porApto).sort((a,b) => b[1].valor - a[1].valor);
+    const aptLabels = aptosOrdenados.map(([ap]) => 'Apto '+ap);
+    const aptValores = aptosOrdenados.map(([,d]) => Math.round(d.valor));
+    const aptCores = aptosOrdenados.map(([,d]) => d.status === 'confirmado' ? '#2C4034' : '#E8C97A');
+    if (_chartsVgValores.apto) _chartsVgValores.apto.destroy();
+    _chartsVgValores.apto = new Chart(document.getElementById('vgvalores-chart-apto'), {
+      type: 'bar',
+      data: { labels: aptLabels, datasets: [{ data: aptValores, backgroundColor: aptCores, borderRadius: 4 }] },
+      options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmtR$(ctx.raw) } } }, scales: { y: { ticks: { callback: v => fmtR$(v) } } } }
+    });
+
+    const lista = aptosOrdenados;
     document.getElementById('vgvalores-por-apto').innerHTML = !lista.length ? '' : `
       <h3 style="font-size:14px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Por apartamento</h3>
       <div class="table-wrap"><table>
-        <thead><tr><th>Apartamento</th><th>Cliente</th><th>Status</th><th style="text-align:right">Valor</th></tr></thead>
+        <thead><tr><th>Apartamento</th><th>Cliente</th><th>Status</th><th>Feito há</th><th style="text-align:right">Valor</th></tr></thead>
         <tbody>${lista.map(([ap,d]) => `<tr>
           <td><span class="badge badge-info">Apto ${ap}</span></td>
           <td>${d.cliente||'—'}</td>
           <td>${d.status === 'confirmado' ? '<span class="badge badge-green">Confirmado</span>' : '<span class="badge" style="background:#FFF2CC;color:#8a6d00">Pendente</span>'}</td>
+          <td style="color:var(--text2)">${_tempoDecorrido(d.dataRef)}</td>
           <td style="text-align:right;font-weight:600">${fmtR$(d.valor)}</td>
         </tr>`).join('')}</tbody>
       </table></div>
