@@ -92,7 +92,7 @@ function renderVinilico() {
             </div>
             <div style="text-align:right">
               <span style="font-size:13px;font-weight:600;color:#8c8467">${totalM2.toFixed(2)} m²</span>
-              ${totalValor > 0 ? `<p style="font-size:12px;color:var(--accent)">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})}</p>` : ''}
+              ${totalValor > 0 ? `<p style="font-size:12px;color:var(--accent)">R$ ${totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</p>` : ''}
             </div>
           </div>
           <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
@@ -195,7 +195,7 @@ function atualizarResumoVin() {
     resumo.style.display = 'block';
     resumo.innerHTML = `<div class="result-summary"><span style="font-size:13px;color:var(--accent);font-weight:500">Total</span>
       <div style="display:flex;gap:20px"><span style="font-size:18px;font-weight:600;color:#8c8467">${totalM2.toFixed(2)} m²</span>
-      ${totalValor > 0 ? `<span style="font-size:16px;font-weight:500;color:var(--text2)">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>` : ''}</div></div>`;
+      ${totalValor > 0 ? `<span style="font-size:16px;font-weight:500;color:var(--text2)">R$ ${totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</span>` : ''}</div></div>`;
   } else {
     resumo.style.display = 'none';
   }
@@ -265,7 +265,7 @@ function renderMarmoraria() {
         </div>
         <div style="text-align:right">
           <span style="font-size:13px;font-weight:600;color:#8c8467">${totalM2.toFixed(2)} m²</span>
-          ${totalValor > 0 ? `<p style="font-size:12px;color:var(--accent)">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})}</p>` : '<p style="font-size:12px;color:var(--text3)">Valor mediante orçamento</p>'}
+          ${totalValor > 0 ? `<p style="font-size:12px;color:var(--accent)">R$ ${totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</p>` : '<p style="font-size:12px;color:var(--text3)">Valor mediante orçamento</p>'}
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
@@ -368,7 +368,7 @@ function atualizarResumoMarm() {
     resumo.style.display = 'block';
     resumo.innerHTML = `<div class="result-summary"><span style="font-size:13px;color:var(--accent);font-weight:500">Total</span>
       <div style="display:flex;gap:20px"><span style="font-size:18px;font-weight:600;color:#8c8467">${totalM2.toFixed(2)} m²</span>
-      ${totalValor > 0 ? `<span style="font-size:16px;color:var(--text2)">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>` : ''}
+      ${totalValor > 0 ? `<span style="font-size:16px;color:var(--text2)">R$ ${totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</span>` : ''}
       ${temOrcamento ? '<span style="font-size:12px;color:var(--text3)">+ valores mediante orçamento</span>' : ''}</div></div>`;
   }
 }
@@ -432,7 +432,7 @@ function renderBanheiras() {
           <p style="font-size:12px;color:var(--text3);margin-top:4px">${itens.length} banheira(s)</p>
         </div>
         <div style="text-align:right">
-          <span style="font-size:13px;font-weight:600;color:var(--accent)">R$ ${total.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
+          <span style="font-size:13px;font-weight:600;color:var(--accent)">R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
@@ -621,7 +621,7 @@ function selecionarBanheira() {
   if (produto) {
     document.getElementById('banh-produto-selecionado').style.display = 'block';
     document.getElementById('banh-produto-nome').textContent = produto.nome;
-    document.getElementById('banh-produto-preco').textContent = 'R$ ' + parseFloat(produto.preco_venda||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
+    document.getElementById('banh-produto-preco').textContent = 'R$ ' + parseFloat(produto.preco_venda||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
     document.getElementById('banh-btn-adicionar').style.display = 'block';
   } else {
     document.getElementById('banh-produto-selecionado').style.display = 'none';
@@ -646,7 +646,7 @@ function renderItensBanheira() {
   if (!banhItens.length) { lista.innerHTML = ''; return; }
   const total = banhItens.reduce((a, b) => a + (parseFloat(b.preco_venda)||0), 0);
 
-  const fmtBanh = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  const fmtBanh = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 
   const pagOpcoesHTML = [['avista','À Vista'],['pix','PIX'],['debito','Débito']]
     .map(([tipo,label]) => `<button class="pgto-btn ${banhPagamento===tipo?'active':''}" onclick="selecionarPagamentoBanh(this,'${tipo}')">${label}</button>`).join('')
@@ -676,7 +676,7 @@ function renderItensBanheira() {
           <p style="font-size:11px;color:var(--text3)">${b.acabamento} · ${b.tipo_sifao}${b.lado?' · '+b.lado:''}</p>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:12px;font-weight:600;color:var(--accent)">R$ ${parseFloat(b.preco_venda||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
+          <span style="font-size:12px;font-weight:600;color:var(--accent)">R$ ${parseFloat(b.preco_venda||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
           <button onclick="banhItens.splice(${idx},1);renderItensBanheira()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px">×</button>
         </div>
       </div>
@@ -950,7 +950,7 @@ function _pdfTotal(doc, y, totalM2, totalValor, label, cores, pagamentoTexto) {
   if (totalM2) doc.text(totalM2.toFixed(2)+' m²', 8, y+22);
   if (totalValor > 0) {
     doc.setTextColor(...secundaria); doc.setFontSize(16); doc.setFont('helvetica','bold');
-    doc.text('R$ '+totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2}), 200, y+22, {align:'right'});
+    doc.text('R$ '+totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}), 200, y+22, {align:'right'});
   }
   doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
   doc.text('Empreendimento Essence Residence · '+label, 8, y+34);
@@ -1108,7 +1108,7 @@ function renderPagamentosBanheiras(lista) {
 
 // ---- CARD GENÉRICO ----
 function _renderCardPgto(p, totalValor, extra, status, prefixo, modulo) {
-  const valorStr = totalValor > 0 ? 'R$ ' + totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2}) : '—';
+  const valorStr = totalValor > 0 ? 'R$ ' + totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
   const extraStr = extra ? ' · ' + extra : '';
   return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
     <div>
@@ -1226,7 +1226,7 @@ async function _gerarPDFVinilicoInterno(ap, cliente, selecoes) {
       {valor: nome, x:xVin, bold:true, dy:8},
       {valor: (preco>0?'R$ '+preco.toFixed(2)+'/m²  ·  ':'')+ambiente, x:xVin, bold:false, size:7.5, cor:ESSENCE_CORES.cinza, dy:15},
       {valor: m2Com.toFixed(2)+' m²', x:162, dy:10, cor:ESSENCE_CORES.preto},
-      {valor: preco>0?'R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—', x:202, align:'right', bold:true, dy:10, cor:ESSENCE_CORES.dourado},
+      {valor: preco>0?'R$ '+valor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}):'—', x:202, align:'right', bold:true, dy:10, cor:ESSENCE_CORES.dourado},
     ], alt, ESSENCE_CORES, imgVin);
     alt=!alt; y+=20;
   }
@@ -1285,7 +1285,7 @@ async function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
     totalM2 += m2; totalValor += valor;
     if (ped?.categoria === 'Absoluta') temOrcamento = true;
     if (y > 248) { doc.addPage(); y = 15; }
-    const valorStr = preco>0 ? 'R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2}) : ped?.categoria==='Construtora' ? 'Incluso' : 'Sob orçamento';
+    const valorStr = preco>0 ? 'R$ '+valor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : ped?.categoria==='Construtora' ? 'Incluso' : 'Sob orçamento';
     _pdfLinha(doc, y, [
       {valor: b.ambiente||'—', x:8, bold:true, dy:8},
       {valor: (b.descricao||'')+'  ·  '+nomePedra, x:8, bold:false, size:7.5, cor:ESSENCE_CORES.cinza, dy:15},
@@ -1375,7 +1375,7 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens, pagamento) {
     doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...ESSENCE_CORES.cinza);
     if (spec) doc.text(spec, 100, y+(linhaAltura/2)+2);
     doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...ESSENCE_CORES.dourado);
-    doc.text('R$ '+preco.toLocaleString('pt-BR',{minimumFractionDigits:2}), 202, y+(linhaAltura/2)+2, {align:'right'});
+    doc.text('R$ '+preco.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}), 202, y+(linhaAltura/2)+2, {align:'right'});
     doc.setDrawColor(...ESSENCE_CORES.cinzaClaro); doc.setLineWidth(0.2);
     doc.line(0, y+linhaAltura, 210, y+linhaAltura);
     alt=!alt; y+=linhaAltura+2;
@@ -1397,7 +1397,7 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens, pagamento) {
   let pgTextoBanh = pgLabelsBanh[pagamentoBanh] || pagamentoBanh;
   if (pgInfoBanh.parcelas > 1) {
     const vpBanh = pgInfoBanh.parcela || (pgInfoBanh.total / pgInfoBanh.parcelas);
-    pgTextoBanh += ' · ' + pgInfoBanh.parcelas + 'x de R$ ' + vpBanh.toLocaleString('pt-BR',{minimumFractionDigits:2}) + ' (total R$ ' + pgInfoBanh.total.toLocaleString('pt-BR',{minimumFractionDigits:2}) + ')';
+    pgTextoBanh += ' · ' + pgInfoBanh.parcelas + 'x de R$ ' + vpBanh.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' (total R$ ' + pgInfoBanh.total.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ')';
     totalFinalBanh = pgInfoBanh.total;
   }
 
@@ -3533,8 +3533,8 @@ function atualizarDesconto() {
   const totalFinal = totalValor - descVal;
   const el = document.getElementById('calc-desconto-val');
   const elFinal = document.getElementById('calc-total-final');
-  if (el) el.textContent = pct > 0 ? '- R$ ' + descVal.toLocaleString('pt-BR',{minimumFractionDigits:2}) : '';
-  if (elFinal) elFinal.textContent = pct > 0 ? 'Total: R$ ' + totalFinal.toLocaleString('pt-BR',{minimumFractionDigits:2}) : '';
+  if (el) el.textContent = pct > 0 ? '- R$ ' + descVal.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '';
+  if (elFinal) elFinal.textContent = pct > 0 ? 'Total: R$ ' + totalFinal.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '';
 }
 
 let calcPagamento = 'avista';
@@ -3578,7 +3578,7 @@ function atualizarParcela() {
   if (!el) return;
   const totalValor = calcularTotalValor();
   if (totalValor === 0) { el.textContent = ''; return; }
-  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   if (calcPagamento === 'avista') { el.textContent = 'À vista: ' + fmt(totalValor); return; }
   if (calcPagamento === 'pix') { el.textContent = 'PIX: ' + fmt(totalValor); return; }
   if (calcPagamento === 'debito') { el.textContent = 'Cartão Débito: ' + fmt(totalValor); return; }
@@ -4594,7 +4594,7 @@ function _valorVinculadoEntrada(id) {
 function _valorVinculadoSaida(id) {
   return dadosVinculosPers.filter(v => v.saida_id === id).reduce((s,v) => s + (parseFloat(v.valor)||0), 0);
 }
-function _fmtR$(v) { return 'R$ ' + (parseFloat(v)||0).toLocaleString('pt-BR', {minimumFractionDigits:2}); }
+function _fmtR$(v) { return 'R$ ' + (parseFloat(v)||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 
 function _badgeSaldo(total, vinculado) {
   const restante = total - vinculado;
@@ -5379,7 +5379,7 @@ function renderPagamentos(lista) {
       <div>
         <p style="font-weight:600;font-size:14px">${p.cliente||'—'}</p>
         <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
-        <p style="font-size:13px;font-weight:500;color:var(--accent2);margin-top:4px">R$ ${totalValor.toLocaleString('pt-BR',{minimumFractionDigits:2})} · ${totalM2.toFixed(2)} m²</p>
+        <p style="font-size:13px;font-weight:500;color:var(--accent2);margin-top:4px">R$ ${totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})} · ${totalM2.toFixed(2)} m²</p>
         ${p.obs_pgto ? `<p style="font-size:12px;color:var(--text2);margin-top:4px">Obs: ${p.obs_pgto}</p>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
@@ -6602,7 +6602,7 @@ function abrirDetalheRevestimento(idOuCodigo) {
           </div>
           <div>
             <p style="font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Preço de venda</p>
-            <p style="font-size:18px;font-weight:600;color:var(--accent2)">${preco > 0 ? 'R$ ' + preco.toLocaleString('pt-BR',{minimumFractionDigits:2}) + '/m²' : '—'}</p>
+            <p style="font-size:18px;font-weight:600;color:var(--accent2)">${preco > 0 ? 'R$ ' + preco.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) + '/m²' : '—'}</p>
           </div>
         </div>
       </div>
@@ -6834,7 +6834,7 @@ function atualizarResumo() {
   window._calcTotalValor = totalValor;
   document.getElementById('calc-total-val').textContent = total.toFixed(2) + ' m²';
   const totalValEl = document.getElementById('calc-total-valor');
-  if (totalValEl) totalValEl.textContent = 'R$ ' + totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2});
+  if (totalValEl) totalValEl.textContent = 'R$ ' + totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   const resumo = Object.entries(calcSelecoes).map(([key, v]) => {
     const wi = document.getElementById('wi-' + key);
     const nomePar = wi?.querySelector('.wall-info p')?.textContent || key;
@@ -6858,7 +6858,7 @@ function atualizarResumo() {
       </div>
       <div style="text-align:right">
         <span class="badge badge-green">${m2comPerda.toFixed(2)} m²</span>
-        ${preco > 0 ? `<p style="font-size:11px;color:var(--accent2);margin-top:2px;font-weight:500">R$ ${valorItem.toLocaleString('pt-BR',{minimumFractionDigits:2})}</p>` : ''}
+        ${preco > 0 ? `<p style="font-size:11px;color:var(--accent2);margin-top:2px;font-weight:500">R$ ${valorItem.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</p>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -7669,7 +7669,7 @@ async function _gerarPDFMetaisInterno(ap, cliente, itens) {
       doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(110,110,110);
       nomeLinhas.forEach((linha, li) => doc.text(linha, 8, y + 8 + (li * 6)));
       doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...ESSENCE_CORES.dourado);
-      doc.text('R$ ' + preco.toLocaleString('pt-BR', {minimumFractionDigits:2}), 202, y + (linhaAltura/2) + 2, {align:'right'});
+      doc.text('R$ ' + preco.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}), 202, y + (linhaAltura/2) + 2, {align:'right'});
       doc.setDrawColor(...ESSENCE_CORES.cinzaClaro); doc.setLineWidth(0.2);
       doc.line(0, y+linhaAltura, 210, y+linhaAltura);
       alt = !alt; y += linhaAltura + 2;
