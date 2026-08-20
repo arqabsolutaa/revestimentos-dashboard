@@ -2843,6 +2843,10 @@ body.mobile-mode #main{padding-bottom:72px}
           </div>
         </div>
       </div>
+      <div class="form-group">
+        <label class="form-label">Comprovante (opcional)</label>
+        <input class="form-control" type="file" id="entrada-pers-arquivo" accept="image/*,.pdf">
+      </div>
       <button class="btn btn-primary" onclick="salvarNovaEntradaPers()" style="width:100%;justify-content:center">Salvar Entrada</button>
     </div>
   </div>
@@ -2925,6 +2929,10 @@ body.mobile-mode #main{padding-bottom:72px}
             <button type="button" class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="usarResultadoCalc('saida','obs')">Adicionar à Observação</button>
           </div>
         </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Comprovante (opcional)</label>
+        <input class="form-control" type="file" id="saida-obra-arquivo" accept="image/*,.pdf">
       </div>
       <button class="btn btn-primary" onclick="salvarNovaSaidaObra()" style="width:100%;justify-content:center">Salvar Saída</button>
     </div>
@@ -4773,6 +4781,14 @@ function _badgeSaldo(total, vinculado) {
   return `<span class="badge" style="background:#F4CCCC;color:#B03A2E">Sem vínculo</span>`;
 }
 
+function _comprovantesLinksHTML(raw) {
+  const lista = parseComprovantes(raw);
+  if (!lista.length) return '';
+  return `<div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">${lista.map((c,i) =>
+    `<a href="${c.url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:3px 8px;text-decoration:none">📎 ${c.data ? c.data : ('Comprovante '+(i+1))}</a>`
+  ).join('')}</div>`;
+}
+
 function renderCustoPersonalizacoes() {
   const contE = document.getElementById('custopers-entradas-lista');
   const contS = document.getElementById('custopers-saidas-lista');
@@ -4793,6 +4809,7 @@ function renderCustoPersonalizacoes() {
           <strong style="font-size:15px;color:var(--accent2)">${_fmtR$(total)}</strong>
         </div>
         ${temJuros ? `<div style="font-size:11px;color:var(--text3);margin-top:4px">à vista seria ${_fmtR$(avistaVal)} · <span style="color:var(--warn)">juros ${_fmtR$(jurosVal)}</span></div>` : ''}
+        ${_comprovantesLinksHTML(en.comprovante_url)}
         <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
           ${_badgeSaldo(total, vinc)}
           <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('entrada','${en.id}')">Vincular a saída</button>
@@ -4812,6 +4829,7 @@ function renderCustoPersonalizacoes() {
           </div>
           <strong style="font-size:15px;color:#8c6f3f">${_fmtR$(total)}</strong>
         </div>
+        ${_comprovantesLinksHTML(sa.comprovante_url)}
         <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
           ${_badgeSaldo(total, vinc)}
           <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('saida','${sa.id}')">Vincular a entrada</button>
@@ -4834,6 +4852,7 @@ function abrirModalNovaEntradaPers() {
   document.getElementById('entrada-pers-condicao').value = 'avista';
   document.getElementById('entrada-pers-data').value = new Date().toISOString().split('T')[0];
   document.getElementById('entrada-pers-juros-resumo').style.display = 'none';
+  document.getElementById('entrada-pers-arquivo').value = '';
   const sel = document.getElementById('entrada-pers-apto');
   sel.innerHTML = '<option value="">— Selecione o apartamento —</option>' +
     _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('') +
@@ -4879,6 +4898,15 @@ function atualizarCalculoJurosEntrada() {
   }
 }
 
+function _lerArquivoBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 async function salvarNovaEntradaPers() {
   const valorAvista = parseFloat(document.getElementById('entrada-pers-valor').value) || 0;
   const condicao = document.getElementById('entrada-pers-condicao').value;
@@ -4895,9 +4923,18 @@ async function salvarNovaEntradaPers() {
     observacao: document.getElementById('entrada-pers-obs').value.trim(),
   };
   if (!dados.apartamento || !valorAvista) { showToast('Preencha ao menos apartamento e valor', 'error'); return; }
+  const arquivo = document.getElementById('entrada-pers-arquivo').files[0];
+  if (arquivo && arquivo.size > 10 * 1024 * 1024) { showToast('Arquivo muito grande (máx 10MB)', 'error'); return; }
   try {
-    await apiPost('addEntradaPersonalizacao', dados);
-    showToast('Entrada salva!', 'success');
+    const resultado = await apiPost('addEntradaPersonalizacao', dados);
+    if (arquivo) {
+      showToast('Entrada salva! Enviando comprovante...', 'success');
+      const base64data = await _lerArquivoBase64(arquivo);
+      await apiPost('uploadComprovanteEntradaPersonalizacao', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
+      showToast('Comprovante anexado!', 'success');
+    } else {
+      showToast('Entrada salva!', 'success');
+    }
     fecharModal('modal-nova-entrada-pers');
     loadCustoPersonalizacoes();
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
@@ -4998,6 +5035,7 @@ function usarResultadoCalc(tipo, destino) {
 function abrirModalNovaSaidaObra() {
   ['saida-obra-descricao','saida-obra-categoria','saida-obra-fornecedor','saida-obra-valor','saida-obra-obs'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('saida-obra-data').value = new Date().toISOString().split('T')[0];
+  document.getElementById('saida-obra-arquivo').value = '';
   _resetarCalculadora('saida');
   abrirModal('modal-nova-saida-obra');
 }
@@ -5013,9 +5051,18 @@ async function salvarNovaSaidaObra() {
     observacao: document.getElementById('saida-obra-obs').value.trim(),
   };
   if (!dados.descricao || !dados.valor) { showToast('Preencha ao menos descrição e valor', 'error'); return; }
+  const arquivo = document.getElementById('saida-obra-arquivo').files[0];
+  if (arquivo && arquivo.size > 10 * 1024 * 1024) { showToast('Arquivo muito grande (máx 10MB)', 'error'); return; }
   try {
-    await apiPost('addSaidaObra', dados);
-    showToast('Saída salva!', 'success');
+    const resultado = await apiPost('addSaidaObra', dados);
+    if (arquivo) {
+      showToast('Saída salva! Enviando comprovante...', 'success');
+      const base64data = await _lerArquivoBase64(arquivo);
+      await apiPost('uploadComprovanteSaidaObra', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
+      showToast('Comprovante anexado!', 'success');
+    } else {
+      showToast('Saída salva!', 'success');
+    }
     fecharModal('modal-nova-saida-obra');
     loadCustoPersonalizacoes();
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
