@@ -2790,6 +2790,18 @@ body.mobile-mode #main{padding-bottom:72px}
           <option value="avista">À Vista</option>
           <option value="pix">PIX</option>
           <option value="debito">Cartão Débito</option>
+          <option value="boleto1">Boleto à Vista</option>
+          <option value="boleto2">Boleto 2x</option>
+          <option value="boleto3">Boleto 3x</option>
+          <option value="boleto4">Boleto 4x</option>
+          <option value="boleto5">Boleto 5x</option>
+          <option value="boleto6">Boleto 6x</option>
+          <option value="boleto7">Boleto 7x</option>
+          <option value="boleto8">Boleto 8x</option>
+          <option value="boleto9">Boleto 9x</option>
+          <option value="boleto10">Boleto 10x</option>
+          <option value="boleto11">Boleto 11x</option>
+          <option value="boleto12">Boleto 12x</option>
           <option value="credito2">Crédito 2x (+2%)</option>
           <option value="credito3">Crédito 3x (+3%)</option>
           <option value="credito4">Crédito 4x (+4%)</option>
@@ -3679,6 +3691,11 @@ function calcularTotalComPagamento(totalValor, tipo) {
     const parcelas = parseInt(tipo.replace('pixparc',''));
     const parcela = totalValor / parcelas;
     return { total: totalValor, parcelas, juros: 0, parcela, pixParcelado: true };
+  }
+  if (tipo.startsWith('boleto')) {
+    const parcelas = parseInt(tipo.replace('boleto','')) || 1;
+    const parcela = totalValor / parcelas;
+    return { total: totalValor, parcelas, juros: 0, parcela, boleto: true };
   }
   if (tipo.startsWith('credito')) {
     const n = parseInt(tipo.replace('credito',''));
@@ -4804,7 +4821,7 @@ function renderCustoPersonalizacoes() {
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
           <div>
             <strong style="font-size:13px">Apto ${en.apartamento||'—'} — ${en.cliente||'—'}</strong>
-            <div style="font-size:12px;color:var(--text2);margin-top:2px">${en.categoria||''} · ${en.data||''}${en.condicao_pagamento && en.condicao_pagamento !== 'avista' ? ' · ' + en.condicao_pagamento.replace('credito','Crédito ').replace('pix','PIX ') : ''}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${en.categoria||''} · ${en.data||''}${en.condicao_pagamento && en.condicao_pagamento !== 'avista' ? ' · ' + en.condicao_pagamento.replace('credito','Crédito ').replace('boleto1','Boleto à Vista').replace('boleto','Boleto ').replace('pix','PIX ') : ''}</div>
           </div>
           <strong style="font-size:15px;color:var(--accent2)">${_fmtR$(total)}</strong>
         </div>
@@ -4887,10 +4904,16 @@ function atualizarCalculoJurosEntrada() {
   const resumo = document.getElementById('entrada-pers-juros-resumo');
   if (!valorAvista) { resumo.style.display = 'none'; return; }
   const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
-  const { total, parcelas, juros } = calcularTotalComPagamento(valorAvista, condicao);
+  const { total, parcelas, juros, boleto } = calcularTotalComPagamento(valorAvista, condicao);
   if (condicao === 'avista' || condicao === 'pix' || condicao === 'debito') {
     resumo.style.display = 'block';
     resumo.innerHTML = `Valor recebido: <strong>${fmt(valorAvista)}</strong> · sem juros`;
+  } else if (boleto) {
+    resumo.style.display = 'block';
+    const vp = total / parcelas;
+    resumo.innerHTML = parcelas > 1
+      ? `${parcelas}x de ${fmt(vp)} no boleto · Total: <strong>${fmt(total)}</strong> <span style="color:var(--text3)">(o valor digitado já é o que vai no boleto, com seu acréscimo — não calculamos juros aqui)</span>`
+      : `Valor no boleto: <strong>${fmt(total)}</strong> <span style="color:var(--text3)">(já com seu acréscimo)</span>`;
   } else {
     resumo.style.display = 'block';
     const vp = total / parcelas;
