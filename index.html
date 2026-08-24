@@ -4870,6 +4870,40 @@ function _valorVinculadoSaida(id) {
 }
 function _fmtR$(v) { return 'R$ ' + (parseFloat(v)||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 
+// Gera "saidas automaticas" a partir do custo de revestimento de cada personalizacao ativa,
+// sem gravar nada na planilha — e so um calculo pra exibir junto com as saidas manuais.
+function _saidasAutomaticasRevestimento() {
+  return (dadosPersonalizar || [])
+    .filter(p => String(p.arquivado||'').toLowerCase() !== 'true')
+    .map(p => {
+      let sel = {};
+      try { sel = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{}); } catch(e) {}
+      let custoTotal = 0;
+      let temAlgumCusto = false;
+      Object.values(sel).forEach(v => {
+        if (!v.piso || !(parseFloat(v.m2) > 0)) return;
+        const rev = dadosRevestimentos.find(r => r.id === v.piso || r.codigo === v.piso || String(r.id) === String(v.piso));
+        if (!rev || rev.custo_m2 === '' || rev.custo_m2 == null) return;
+        const perda = (parseFloat(rev.perda_pct) > 0 ? parseFloat(rev.perda_pct) : 20) / 100;
+        const m2ComPerda = (parseFloat(v.m2)||0) * (1 + perda);
+        custoTotal += m2ComPerda * parseFloat(rev.custo_m2);
+        temAlgumCusto = true;
+      });
+      if (!temAlgumCusto || custoTotal <= 0) return null;
+      return {
+        id: 'auto_rev_' + p.id,
+        descricao: 'Revestimento — Apto ' + (p.ap||'—') + ' — ' + (p.cliente||'—'),
+        categoria: 'Revestimento',
+        valor: Math.round(custoTotal * 100) / 100,
+        data: p.data || '',
+        apartamento: p.ap || '',
+        projeto: 'Essence',
+        automatica: true
+      };
+    })
+    .filter(Boolean);
+}
+
 function _badgeSaldo(total, vinculado) {
   const restante = total - vinculado;
   if (restante <= 0.005) return '<span class="badge badge-green">100% vinculado</span>';
@@ -4916,15 +4950,18 @@ function renderCustoPersonalizacoes() {
       </div>`;
     }).join('');
 
-  contS.innerHTML = !dadosSaidasObra.length ? '<div class="empty-state"><strong>Nenhuma saída lançada</strong></div>' :
-    dadosSaidasObra.map(sa => {
+  const saidasParaExibir = [...dadosSaidasObra, ..._saidasAutomaticasRevestimento()];
+  window._saidasParaExibir = saidasParaExibir;
+
+  contS.innerHTML = !saidasParaExibir.length ? '<div class="empty-state"><strong>Nenhuma saída lançada</strong></div>' :
+    saidasParaExibir.map(sa => {
       const vinc = _valorVinculadoSaida(sa.id);
       const total = parseFloat(sa.valor)||0;
-      return `<div class="card" style="padding:14px 16px">
+      return `<div class="card" style="padding:14px 16px${sa.automatica ? ';background:var(--surface2)' : ''}">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
           <div>
             <strong style="font-size:13px">${sa.descricao||'—'}</strong>
-            <div style="font-size:12px;color:var(--text2);margin-top:2px">${sa.categoria||''} · ${sa.data||''} ${sa.apartamento ? '<span class="badge badge-info" style="margin-left:4px">Apto '+sa.apartamento+'</span>' : ''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${sa.categoria||''} · ${sa.data||''} ${sa.apartamento ? '<span class="badge badge-info" style="margin-left:4px">Apto '+sa.apartamento+'</span>' : ''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''} ${sa.automatica ? '<span class="badge" style="background:#E8E4DE;color:#555;margin-left:4px">⚙ Automático (revestimento)</span>' : ''}</div>
           </div>
           <strong style="font-size:15px;color:#8c6f3f">${_fmtR$(total)}</strong>
         </div>
@@ -4933,7 +4970,7 @@ function renderCustoPersonalizacoes() {
           ${_badgeSaldo(total, vinc)}
           <div style="display:flex;gap:6px">
             <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('saida','${sa.id}')">Vincular a entrada</button>
-            <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirSaidaObra('${sa.id}')" title="Excluir saída">🗑️</button>
+            ${sa.automatica ? '' : `<button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirSaidaObra('${sa.id}')" title="Excluir saída">🗑️</button>`}
           </div>
         </div>
       </div>`;
@@ -5214,7 +5251,8 @@ async function excluirSaidaObra(id) {
 
 function abrirModalVincular(tipo, id) {
   _vincularOrigem = { tipo, id };
-  const origem = tipo === 'entrada' ? dadosEntradasPers.find(x => x.id === id) : dadosSaidasObra.find(x => x.id === id);
+  const listaSaidas = window._saidasParaExibir || dadosSaidasObra;
+  const origem = tipo === 'entrada' ? dadosEntradasPers.find(x => x.id === id) : listaSaidas.find(x => x.id === id);
   if (!origem) return;
   const totalOrigem = parseFloat(origem.valor)||0;
   const vincOrigem = tipo === 'entrada' ? _valorVinculadoEntrada(id) : _valorVinculadoSaida(id);
@@ -5226,11 +5264,11 @@ function abrirModalVincular(tipo, id) {
     ? `<strong>Apto ${origem.apartamento} — ${origem.cliente}</strong><br>Total: ${_fmtR$(totalOrigem)} · Ainda livre: <strong>${_fmtR$(restante)}</strong>`
     : `<strong>${origem.descricao}</strong><br>Total: ${_fmtR$(totalOrigem)} · Ainda livre: <strong>${_fmtR$(restante)}</strong>`;
 
-  const lista = tipo === 'entrada' ? dadosSaidasObra : dadosEntradasPers;
+  const lista = tipo === 'entrada' ? listaSaidas : dadosEntradasPers;
   const select = document.getElementById('vincular-custopers-select');
   select.innerHTML = lista.map(item => {
     const label = tipo === 'entrada'
-      ? `${item.descricao} — ${_fmtR$(item.valor)} (${item.projeto})`
+      ? `${item.descricao} — ${_fmtR$(item.valor)} (${item.projeto})${item.automatica ? ' ⚙' : ''}`
       : `Apto ${item.apartamento} — ${item.cliente} — ${_fmtR$(item.valor)}`;
     return `<option value="${item.id}">${label}</option>`;
   }).join('');
