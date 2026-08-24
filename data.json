@@ -25577,7 +25577,21 @@
       "criado_em": "Mon Aug 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
     }
   ],
-  "saidasObra": [],
+  "saidasObra": [
+    {
+      "id": "id_1787602465400_kb33q",
+      "data": "Sat Sep 19 2026 04:00:00 GMT-0300 (Brasilia Standard Time)",
+      "descricao": "Banheira Apartamento 112",
+      "categoria": "Banheiras",
+      "fornecedor": "Sabbia",
+      "valor": "2836.84",
+      "projeto": "Essence",
+      "comprovante_url": "",
+      "observacao": "Pagamento em 30 / 60 / 90",
+      "apartamento": "112",
+      "criado_em": "Mon Aug 24 2026 04:00:00 GMT-0300 (Brasilia Standard Time)"
+    }
+  ],
   "vinculos": [
     {
       "id": "id_1787601923471_5e9zg",
