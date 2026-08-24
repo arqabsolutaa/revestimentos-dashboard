@@ -2623,7 +2623,7 @@ body.mobile-mode #main{padding-bottom:72px}
     <div class="page-header">
       <div class="page-header-left">
         <h1>Margem de Lucro</h1>
-        <p>Venda x custo dos revestimentos usados nas personalizações</p>
+        <p>Revestimento + Banheira (automático) + Custo Personalizações (manual), por apartamento</p>
       </div>
       <div class="header-actions">
         <button class="btn btn-secondary" onclick="loadMargemLucro()">Atualizar</button>
@@ -2637,9 +2637,9 @@ body.mobile-mode #main{padding-bottom:72px}
       </div>
       <div class="card" style="margin-bottom:16px">
         <h3 style="font-size:14px;margin-bottom:4px">Total geral</h3>
-        <div id="margemlucro-total-geral" style="font-size:13px;color:var(--text2)">Aguardando o backend (Code.gs) ser atualizado...</div>
+        <div id="margemlucro-total-geral" style="font-size:13px;color:var(--text2)">Carregando...</div>
       </div>
-      <div id="margemlucro-lista"></div>
+      <div id="margemlucro-lista" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px"></div>
     </div>
   </div>
 </div>
@@ -2901,6 +2901,12 @@ body.mobile-mode #main{padding-bottom:72px}
         <select class="form-control" id="saida-obra-projeto">
           <option>Essence</option>
           <option>Vista Park</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Apartamento (opcional — preencha se for gasto de um cliente específico)</label>
+        <select class="form-control" id="saida-obra-apto">
+          <option value="">— Nenhum (gasto geral da obra) —</option>
         </select>
       </div>
       <div class="form-group">
@@ -4842,7 +4848,7 @@ function renderCustoPersonalizacoes() {
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
           <div>
             <strong style="font-size:13px">${sa.descricao||'—'}</strong>
-            <div style="font-size:12px;color:var(--text2);margin-top:2px">${sa.categoria||''} · ${sa.data||''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${sa.categoria||''} · ${sa.data||''} ${sa.apartamento ? '<span class="badge badge-info" style="margin-left:4px">Apto '+sa.apartamento+'</span>' : ''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''}</div>
           </div>
           <strong style="font-size:15px;color:#8c6f3f">${_fmtR$(total)}</strong>
         </div>
@@ -5059,6 +5065,10 @@ function abrirModalNovaSaidaObra() {
   ['saida-obra-descricao','saida-obra-categoria','saida-obra-fornecedor','saida-obra-valor','saida-obra-obs'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('saida-obra-data').value = new Date().toISOString().split('T')[0];
   document.getElementById('saida-obra-arquivo').value = '';
+  const selApto = document.getElementById('saida-obra-apto');
+  selApto.innerHTML = '<option value="">— Nenhum (gasto geral da obra) —</option>' +
+    _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('');
+  selApto.value = '';
   _resetarCalculadora('saida');
   abrirModal('modal-nova-saida-obra');
 }
@@ -5071,6 +5081,7 @@ async function salvarNovaSaidaObra() {
     valor: document.getElementById('saida-obra-valor').value,
     data: document.getElementById('saida-obra-data').value,
     projeto: document.getElementById('saida-obra-projeto').value,
+    apartamento: document.getElementById('saida-obra-apto').value,
     observacao: document.getElementById('saida-obra-obs').value.trim(),
   };
   if (!dados.descricao || !dados.valor) { showToast('Preencha ao menos descrição e valor', 'error'); return; }
@@ -5149,53 +5160,98 @@ async function loadMargemLucro() {
     renderMargemLucro();
   } catch(e) {
     document.getElementById('margemlucro-total-geral').innerHTML =
-      '<span style="color:var(--danger)">Ainda não consegui carregar — provavelmente o Code.gs ainda não tem a função getMargemLucro. Erro: ' + e.message + '</span>';
+      '<span style="color:var(--danger)">Ainda não consegui carregar — provavelmente o Code.gs ainda não tem a versão mais recente da função getMargemLucro. Erro: ' + e.message + '</span>';
   }
 }
+
+window._margemLucroPorApto = {};
 
 function renderMargemLucro() {
   const porApto = {};
   margemLucroDados.forEach(l => {
     if (!porApto[l.apto]) porApto[l.apto] = { cliente: l.cliente, status: l.status, itens: [] };
     porApto[l.apto].itens.push(l);
+    if (l.cliente && !porApto[l.apto].cliente) porApto[l.apto].cliente = l.cliente;
   });
+  window._margemLucroPorApto = porApto;
 
-  let m2G=0, vendaG=0, custoG=0, lucroG=0;
+  let vendaG=0, custoG=0, lucroG=0;
   const lista = document.getElementById('margemlucro-lista');
-  lista.innerHTML = Object.keys(porApto).map(apto => {
+  const aptosOrdenados = Object.keys(porApto).sort((a,b) => (parseInt(a)||0) - (parseInt(b)||0));
+
+  lista.innerHTML = !aptosOrdenados.length ? '<div class="empty-state" style="grid-column:1/-1"><strong>Nenhum dado ainda</strong></div>' : aptosOrdenados.map(apto => {
     const grupo = porApto[apto];
-    const m2 = grupo.itens.reduce((s,i)=>s+i.m2,0);
     const venda = grupo.itens.reduce((s,i)=>s+(i.valorVenda||0),0);
     const custo = grupo.itens.reduce((s,i)=>s+(i.valorCusto||0),0);
     const lucro = grupo.itens.reduce((s,i)=>s+(i.lucro||0),0);
-    m2G+=m2; vendaG+=venda; custoG+=custo; lucroG+=lucro;
+    vendaG+=venda; custoG+=custo; lucroG+=lucro;
     const margem = venda ? (lucro/venda*100).toFixed(1) : '0.0';
-    const aberto = margemLucroAbertos[apto];
-    return `<div class="card" style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleDetalheApto('${apto}')">
-        <div><strong>Apto ${apto}</strong> <span style="font-size:12px;color:var(--text3)">· ${grupo.cliente} · ${grupo.status}</span></div>
-        <div style="font-size:12px;text-align:right">
-          ${m2.toFixed(2)} m² · Venda R$ ${venda.toFixed(2)} · Custo R$ ${custo.toFixed(2)} · <strong>Lucro R$ ${lucro.toFixed(2)} (${margem}%)</strong>
-        </div>
-      </div>
-      ${aberto ? `<div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
-        ${grupo.itens.map(i => `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12px;${i.custo==null?'background:#F8D7DA':''}">
-          <span>${i.ambiente} — ${i.nome} (${i.codigo}) — ${i.m2} m²</span>
-          ${i.custo==null
-            ? `<span>Sem custo: <input type="number" step="0.01" style="width:80px" id="custo-${i.idRev}" placeholder="R$/m²"> <button class="btn btn-secondary" style="padding:2px 8px;font-size:11px" onclick="salvarCustoRevestimento('${i.idRev}')">Salvar</button></span>`
-            : `<span>Lucro R$ ${i.lucro.toFixed(2)}</span>`}
-        </div>`).join('')}
-      </div>` : ''}
+    const corLucro = lucro >= 0 ? 'var(--accent2)' : 'var(--danger)';
+    return `<div onclick="abrirModalDetalheMargem('${apto}')" style="aspect-ratio:1/1;background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,0.06);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;gap:6px;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+      <strong style="font-size:16px">Apto ${apto}</strong>
+      <div style="color:var(--text2);font-size:11px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">${grupo.cliente||'—'}</div>
+      <strong style="font-size:17px;color:${corLucro};margin-top:4px">${_fmtR$(lucro)}</strong>
+      <span style="font-size:10px;color:var(--text3)">lucro · ${margem}%</span>
     </div>`;
   }).join('');
 
   document.getElementById('margemlucro-total-geral').innerHTML =
-    `${m2G.toFixed(2)} m² · Venda R$ ${vendaG.toFixed(2)} · Custo R$ ${custoG.toFixed(2)} · <strong>Lucro R$ ${lucroG.toFixed(2)} (${(vendaG?lucroG/vendaG*100:0).toFixed(1)}%)</strong>`;
+    `Venda R$ ${vendaG.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} · Custo R$ ${custoG.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} · <strong style="color:${lucroG>=0?'var(--accent2)':'var(--danger)'}">Lucro R$ ${lucroG.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} (${(vendaG?lucroG/vendaG*100:0).toFixed(1)}%)</strong>`;
 }
 
-function toggleDetalheApto(apto) {
-  margemLucroAbertos[apto] = !margemLucroAbertos[apto];
-  renderMargemLucro();
+function abrirModalDetalheMargem(apto) {
+  const grupo = window._margemLucroPorApto[apto];
+  if (!grupo) return;
+  const grupos = {};
+  grupo.itens.forEach(i => {
+    const cat = i.categoriaModulo || 'Outros';
+    if (!grupos[cat]) grupos[cat] = [];
+    grupos[cat].push(i);
+  });
+
+  const venda = grupo.itens.reduce((s,i)=>s+(i.valorVenda||0),0);
+  const custo = grupo.itens.reduce((s,i)=>s+(i.valorCusto||0),0);
+  const lucro = grupo.itens.reduce((s,i)=>s+(i.lucro||0),0);
+
+  const corCategoria = {
+    'Revestimento': '#2C4034', 'Banheira': '#8c6f3f',
+    'Custo Personalizações (Entrada)': '#2C4034', 'Custo Personalizações (Saída)': '#8c6f3f'
+  };
+
+  const blocos = Object.keys(grupos).map(cat => {
+    const itens = grupos[cat];
+    const subVenda = itens.reduce((s,i)=>s+(i.valorVenda||0),0);
+    const subCusto = itens.reduce((s,i)=>s+(i.valorCusto||0),0);
+    const subLucro = itens.reduce((s,i)=>s+(i.lucro||0),0);
+    return `<div style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <strong style="font-size:12px;color:${corCategoria[cat]||'var(--text)'};text-transform:uppercase;letter-spacing:0.5px">${cat}</strong>
+        <span style="font-size:12px;font-weight:600">${_fmtR$(subLucro)}</span>
+      </div>
+      ${itens.map(i => `<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;${i.custo==null && i.categoriaModulo==='Revestimento' ? 'background:#FCECEA' : ''}">
+        <div style="display:flex;justify-content:space-between">
+          <span>${i.ambiente ? i.ambiente+' — ' : ''}${i.nome}${i.m2 ? ' — '+i.m2+' m²' : ''}</span>
+          ${i.custo==null && i.categoriaModulo==='Revestimento'
+            ? `<span style="display:flex;gap:4px;align-items:center">Sem custo: <input type="number" step="0.01" style="width:70px;padding:2px 4px" id="custo-${i.idRev}" placeholder="R$/m²"><button class="btn btn-secondary" style="padding:2px 6px;font-size:10px" onclick="salvarCustoRevestimento('${i.idRev}')">Salvar</button></span>`
+            : `<strong style="color:${(i.lucro||0)>=0?'var(--accent2)':'var(--danger)'}">${_fmtR$(i.lucro||0)}</strong>`}
+        </div>
+      </div>`).join('')}
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px">
+        <span>Venda ${_fmtR$(subVenda)} · Custo ${_fmtR$(subCusto)}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('modal-material-apto-titulo').textContent = `Apto ${apto} — ${grupo.cliente||'—'}`;
+  document.getElementById('modal-material-apto-corpo').innerHTML = `
+    <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+      <span style="color:var(--text2);font-size:13px">Lucro total do apartamento</span>
+      <strong style="font-size:18px;color:${lucro>=0?'var(--accent2)':'var(--danger)'}">${_fmtR$(lucro)}</strong>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:14px">Venda R$ ${venda.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} · Custo R$ ${custo.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+    ${blocos}
+  `;
+  document.getElementById('modal-material-apto').classList.add('open');
 }
 
 async function salvarCustoRevestimento(idRev) {
