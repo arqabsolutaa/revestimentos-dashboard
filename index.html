@@ -4908,7 +4908,10 @@ function renderCustoPersonalizacoes() {
         ${_comprovantesLinksHTML(en.comprovante_url)}
         <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
           ${_badgeSaldo(total, vinc)}
-          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('entrada','${en.id}')">Vincular a saída</button>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('entrada','${en.id}')">Vincular a saída</button>
+            <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirEntradaPers('${en.id}')" title="Excluir entrada">🗑️</button>
+          </div>
         </div>
       </div>`;
     }).join('');
@@ -4928,7 +4931,10 @@ function renderCustoPersonalizacoes() {
         ${_comprovantesLinksHTML(sa.comprovante_url)}
         <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
           ${_badgeSaldo(total, vinc)}
-          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('saida','${sa.id}')">Vincular a entrada</button>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('saida','${sa.id}')">Vincular a entrada</button>
+            <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirSaidaObra('${sa.id}')" title="Excluir saída">🗑️</button>
+          </div>
         </div>
       </div>`;
     }).join('');
@@ -5179,6 +5185,32 @@ async function salvarNovaSaidaObra() {
 }
 
 let _vincularOrigem = null; // {tipo: 'entrada'|'saida', id}
+
+async function excluirEntradaPers(id) {
+  if (!confirm('Excluir esta entrada? Se ela estiver vinculada a alguma saída, o vínculo também será removido (a saída em si não é apagada).')) return;
+  try {
+    const vinculosRelacionados = dadosVinculosPers.filter(v => v.entrada_id === id);
+    for (const v of vinculosRelacionados) {
+      await apiAction('deleteVinculo', v.id);
+    }
+    await apiAction('deleteEntradaPersonalizacao', id);
+    showToast('Entrada excluída!', 'success');
+    loadCustoPersonalizacoes();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function excluirSaidaObra(id) {
+  if (!confirm('Excluir esta saída? Se ela estiver vinculada a alguma entrada, o vínculo também será removido (a entrada em si não é apagada).')) return;
+  try {
+    const vinculosRelacionados = dadosVinculosPers.filter(v => v.saida_id === id);
+    for (const v of vinculosRelacionados) {
+      await apiAction('deleteVinculo', v.id);
+    }
+    await apiAction('deleteSaidaObra', id);
+    showToast('Saída excluída!', 'success');
+    loadCustoPersonalizacoes();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
 
 function abrirModalVincular(tipo, id) {
   _vincularOrigem = { tipo, id };
