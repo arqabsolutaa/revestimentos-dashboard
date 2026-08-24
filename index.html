@@ -4443,8 +4443,8 @@ function jsonp(url) {
     const script = document.createElement('script');
     const timeout = setTimeout(() => {
       delete window[cb]; script.remove();
-      reject(new Error('Timeout'));
-    }, 15000);
+      reject(new Error('Timeout — o Apps Script demorou demais pra responder (pode estar "frio"). O dado pode ter sido salvo mesmo assim; atualize a tela antes de tentar de novo.'));
+    }, 40000);
     window[cb] = (data) => {
       clearTimeout(timeout); delete window[cb]; script.remove();
       resolve(data);
