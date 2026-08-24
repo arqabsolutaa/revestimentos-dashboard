@@ -4854,6 +4854,8 @@ async function loadCustoPersonalizacoes() {
     dadosEntradasPers = dados.entradasPersonalizacao || [];
     dadosSaidasObra = dados.saidasObra || [];
     dadosVinculosPers = dados.vinculos || [];
+    if (dados.personalizar && dados.personalizar.length) dadosPersonalizar = dados.personalizar;
+    if (dados.revestimentos && dados.revestimentos.length) dadosRevestimentos = dados.revestimentos;
   } catch(e) {
     dadosEntradasPers = []; dadosSaidasObra = []; dadosVinculosPers = [];
   }
