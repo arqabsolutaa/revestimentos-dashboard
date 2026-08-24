@@ -5229,12 +5229,16 @@ function abrirModalDetalheMargem(apto) {
         <span style="font-size:12px;font-weight:600">${_fmtR$(subLucro)}</span>
       </div>
       ${itens.map(i => `<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;${i.custo==null && i.categoriaModulo==='Revestimento' ? 'background:#FCECEA' : ''}">
-        <div style="display:flex;justify-content:space-between">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
           <span>${i.ambiente ? i.ambiente+' — ' : ''}${i.nome}${i.m2 ? ' — '+i.m2+' m²' : ''}</span>
           ${i.custo==null && i.categoriaModulo==='Revestimento'
-            ? `<span style="display:flex;gap:4px;align-items:center">Sem custo: <input type="number" step="0.01" style="width:70px;padding:2px 4px" id="custo-${i.idRev}" placeholder="R$/m²"><button class="btn btn-secondary" style="padding:2px 6px;font-size:10px" onclick="salvarCustoRevestimento('${i.idRev}')">Salvar</button></span>`
-            : `<strong style="color:${(i.lucro||0)>=0?'var(--accent2)':'var(--danger)'}">${_fmtR$(i.lucro||0)}</strong>`}
+            ? `<span style="display:flex;gap:4px;align-items:center;flex-shrink:0">Sem custo: <input type="number" step="0.01" style="width:70px;padding:2px 4px" id="custo-${i.idRev}" placeholder="R$/m²"><button class="btn btn-secondary" style="padding:2px 6px;font-size:10px" onclick="salvarCustoRevestimento('${i.idRev}')">Salvar</button></span>`
+            : `<strong style="color:${(i.lucro||0)>=0?'var(--accent2)':'var(--danger)'};flex-shrink:0">${_fmtR$(i.lucro||0)}</strong>`}
         </div>
+        ${(i.valorCusto != null || i.valorVenda != null) ? `<div style="font-size:10.5px;color:var(--text3);margin-top:2px">
+          ${i.custo != null && i.m2 ? 'custo ' + _fmtR$(i.custo) + '/m² · ' : (i.custo != null ? 'custo unit. ' + _fmtR$(i.custo) + ' · ' : '')}
+          pagamos ${_fmtR$(i.valorCusto||0)}${i.valorVenda != null ? ' · vendemos ' + _fmtR$(i.valorVenda) : ''}
+        </div>` : ''}
       </div>`).join('')}
       <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px">
         <span>Venda ${_fmtR$(subVenda)} · Custo ${_fmtR$(subCusto)}</span>
