@@ -25575,22 +25575,6 @@
       "status": "pendente",
       "observacao": "Pagamento para Opera House",
       "criado_em": "Mon Aug 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
-    },
-    {
-      "id": "id_1787601690382_jgyn6",
-      "data": "Thu Jul 16 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)",
-      "apartamento": "92",
-      "cliente": "Fabricia e Anderson",
-      "categoria": "Revestimento",
-      "valor": "91124.533584",
-      "valor_avista": "83608.16",
-      "condicao_pagamento": "credito12",
-      "valor_juros": "7516.373584000001",
-      "forma_pagamento": "",
-      "comprovante_url": "",
-      "status": "pendente",
-      "observacao": "Pagamento para Opera House",
-      "criado_em": "Mon Aug 24 2026 04:00:00 GMT-0300 (Horário Padrão de Brasília)"
     }
   ],
   "saidasObra": [],
