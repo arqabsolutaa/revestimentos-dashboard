@@ -1391,10 +1391,12 @@ async function _gerarPDFBanheiraInterno(ap, cliente, itens, pagamento) {
   y += 6;
 
   // ===== FORMA DE PAGAMENTO =====
-  const pgLabelsBanh = { avista: 'À Vista', pix: 'PIX', debito: 'Cartão Débito',
-    credito2: 'Crédito 2x (+2%)', credito3: 'Crédito 3x (+3%)', credito4: 'Crédito 4x (+4%)',
-    credito5: 'Crédito 5x (+5%)', credito6: 'Crédito 6x (+6%)', credito7: 'Crédito 7x (+7%)',
-    credito8: 'Crédito 8x (+8%)', credito9: 'Crédito 9x (+9%)', credito10: 'Crédito 10x (+10%)' };
+  const fmtPctBanh = v => (v*100).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}).replace('.',',');
+  const pgLabelsBanh = { avista: 'À Vista', pix: 'PIX', debito: 'Cartão Débito (+' + fmtPctBanh(TAXAS_MAQUININHA.debito) + '%)',
+    credito1: 'Crédito à Vista (+' + fmtPctBanh(TAXAS_MAQUININHA.credito1) + '%)' };
+  for (let n = 2; n <= 12; n++) {
+    pgLabelsBanh['credito'+n] = 'Crédito ' + n + 'x (+' + fmtPctBanh(TAXAS_MAQUININHA['credito'+n]) + '%)';
+  }
   const pagamentoBanh = pagamento || 'avista';
   if (pagamentoBanh.startsWith('pixparc')) {
     const n = pagamentoBanh.replace('pixparc', '');
@@ -2789,7 +2791,7 @@ body.mobile-mode #main{padding-bottom:72px}
         <select class="form-control" id="entrada-pers-condicao" onchange="atualizarCalculoJurosEntrada()">
           <option value="avista">À Vista</option>
           <option value="pix">PIX</option>
-          <option value="debito">Cartão Débito</option>
+          <option value="debito">Cartão Débito (+0,75%)</option>
           <option value="boleto1">Boleto à Vista</option>
           <option value="boleto2">Boleto 2x</option>
           <option value="boleto3">Boleto 3x</option>
@@ -2802,17 +2804,18 @@ body.mobile-mode #main{padding-bottom:72px}
           <option value="boleto10">Boleto 10x</option>
           <option value="boleto11">Boleto 11x</option>
           <option value="boleto12">Boleto 12x</option>
-          <option value="credito2">Crédito 2x (+2%)</option>
-          <option value="credito3">Crédito 3x (+3%)</option>
-          <option value="credito4">Crédito 4x (+4%)</option>
-          <option value="credito5">Crédito 5x (+5%)</option>
-          <option value="credito6">Crédito 6x (+6%)</option>
-          <option value="credito7">Crédito 7x (+7%)</option>
-          <option value="credito8">Crédito 8x (+8%)</option>
-          <option value="credito9">Crédito 9x (+9%)</option>
-          <option value="credito10">Crédito 10x (+10%)</option>
-          <option value="credito11">Crédito 11x (+11%)</option>
-          <option value="credito12">Crédito 12x (+12%)</option>
+          <option value="credito1">Crédito à Vista (+2,69%)</option>
+          <option value="credito2">Crédito 2x (+3,94%)</option>
+          <option value="credito3">Crédito 3x (+4,46%)</option>
+          <option value="credito4">Crédito 4x (+4,98%)</option>
+          <option value="credito5">Crédito 5x (+5,49%)</option>
+          <option value="credito6">Crédito 6x (+5,99%)</option>
+          <option value="credito7">Crédito 7x (+6,51%)</option>
+          <option value="credito8">Crédito 8x (+6,99%)</option>
+          <option value="credito9">Crédito 9x (+7,51%)</option>
+          <option value="credito10">Crédito 10x (+7,99%)</option>
+          <option value="credito11">Crédito 11x (+8,49%)</option>
+          <option value="credito12">Crédito 12x (+8,99%)</option>
         </select>
       </div>
       <div id="entrada-pers-juros-resumo" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:12px"></div>
@@ -3127,24 +3130,25 @@ body.mobile-mode #main{padding-bottom:72px}
         <select class="form-control" id="confirmar-pgto-condicao" onchange="atualizarCalculoConfirmarPagamento()">
           <option value="avista">À Vista</option>
           <option value="pix">PIX</option>
-          <option value="debito">Cartão Débito</option>
+          <option value="debito">Cartão Débito (+0,75%)</option>
           <option value="boleto1">Boleto à Vista</option>
           <option value="boleto2">Boleto 2x</option>
           <option value="boleto3">Boleto 3x</option>
           <option value="boleto4">Boleto 4x</option>
           <option value="boleto5">Boleto 5x</option>
           <option value="boleto6">Boleto 6x</option>
-          <option value="credito2">Crédito 2x (+2%)</option>
-          <option value="credito3">Crédito 3x (+3%)</option>
-          <option value="credito4">Crédito 4x (+4%)</option>
-          <option value="credito5">Crédito 5x (+5%)</option>
-          <option value="credito6">Crédito 6x (+6%)</option>
-          <option value="credito7">Crédito 7x (+7%)</option>
-          <option value="credito8">Crédito 8x (+8%)</option>
-          <option value="credito9">Crédito 9x (+9%)</option>
-          <option value="credito10">Crédito 10x (+10%)</option>
-          <option value="credito11">Crédito 11x (+11%)</option>
-          <option value="credito12">Crédito 12x (+12%)</option>
+          <option value="credito1">Crédito à Vista (+2,69%)</option>
+          <option value="credito2">Crédito 2x (+3,94%)</option>
+          <option value="credito3">Crédito 3x (+4,46%)</option>
+          <option value="credito4">Crédito 4x (+4,98%)</option>
+          <option value="credito5">Crédito 5x (+5,49%)</option>
+          <option value="credito6">Crédito 6x (+5,99%)</option>
+          <option value="credito7">Crédito 7x (+6,51%)</option>
+          <option value="credito8">Crédito 8x (+6,99%)</option>
+          <option value="credito9">Crédito 9x (+7,51%)</option>
+          <option value="credito10">Crédito 10x (+7,99%)</option>
+          <option value="credito11">Crédito 11x (+8,49%)</option>
+          <option value="credito12">Crédito 12x (+8,99%)</option>
         </select>
       </div>
       <div id="confirmar-pgto-resumo" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:13px"></div>
@@ -3181,16 +3185,19 @@ body.mobile-mode #main{padding-bottom:72px}
       <div style="display:flex;flex-direction:column;gap:8px">
         <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('avista')">À Vista</button>
         <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('pix')">PIX</button>
-        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('debito')">Cartão Débito</button>
-        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito2')">Crédito 2x (+2%)</button>
-        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito3')">Crédito 3x (+3%)</button>
-        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito4')">Crédito 4x (+4%)</button>
-        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito5')">Crédito 5x (+5%)</button>
-        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito6')">Crédito 6x (+6%)</button>
-        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito7')">Crédito 7x (+7%)</button>
-        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito8')">Crédito 8x (+8%)</button>
-        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito9')">Crédito 9x (+9%)</button>
-        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito10')">Crédito 10x (+10%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('debito')">Cartão Débito (+0,75%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito1')">Crédito à Vista (+2,69%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito2')">Crédito 2x (+3,94%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito3')">Crédito 3x (+4,46%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito4')">Crédito 4x (+4,98%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito5')">Crédito 5x (+5,49%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito6')">Crédito 6x (+5,99%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito7')">Crédito 7x (+6,51%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito8')">Crédito 8x (+6,99%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito9')">Crédito 9x (+7,51%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito10')">Crédito 10x (+7,99%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito11')">Crédito 11x (+8,49%)</button>
+        <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('credito12')">Crédito 12x (+8,99%)</button>
         <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('pixparc2')">PIX Parcelado 2x</button>
         <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('pixparc3')">PIX Parcelado 3x</button>
         <button class="pgto-btn-modal" onclick="selecionarCondicaoModal('pixparc4')">PIX Parcelado 4x</button>
@@ -3484,17 +3491,20 @@ body.mobile-mode #main{padding-bottom:72px}
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="pagamento-opcoes">
             <button class="pgto-btn active" onclick="selecionarPagamento(this,'avista')">À Vista</button>
             <button class="pgto-btn" onclick="selecionarPagamento(this,'pix')">PIX</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'debito')">Débito</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'debito')">Débito (+0,75%)</button>
             <button class="pgto-btn" id="btn-pix-parc" onclick="togglePixParcelado(this)">PIX Parcelado ▾</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito2')">Crédito 2x (+2%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito3')">Crédito 3x (+3%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito4')">Crédito 4x (+4%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito5')">Crédito 5x (+5%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito6')">Crédito 6x (+6%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito7')">Crédito 7x (+7%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito8')">Crédito 8x (+8%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito9')">Crédito 9x (+9%)</button>
-            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito10')">Crédito 10x (+10%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito1')">Crédito à Vista (+2,69%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito2')">Crédito 2x (+3,94%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito3')">Crédito 3x (+4,46%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito4')">Crédito 4x (+4,98%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito5')">Crédito 5x (+5,49%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito6')">Crédito 6x (+5,99%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito7')">Crédito 7x (+6,51%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito8')">Crédito 8x (+6,99%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito9')">Crédito 9x (+7,51%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito10')">Crédito 10x (+7,99%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito11')">Crédito 11x (+8,49%)</button>
+            <button class="pgto-btn" onclick="selecionarPagamento(this,'credito12')">Crédito 12x (+8,99%)</button>
           </div>
           <div id="pix-parcelado-menu" style="display:none;margin-bottom:12px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)">
             <p style="font-size:11px;color:var(--text3);margin-bottom:8px">Escolha as parcelas (sem juros):</p>
@@ -3549,16 +3559,19 @@ body.mobile-mode #main{padding-bottom:72px}
       <div style="display:flex;flex-direction:column;gap:8px" id="pgto-pdf-opcoes">
         <button class="pgto-btn active" onclick="setPgtoPDF(this,'avista')" style="text-align:left;padding:10px 14px">À Vista</button>
         <button class="pgto-btn" onclick="setPgtoPDF(this,'pix')" style="text-align:left;padding:10px 14px">PIX</button>
-        <button class="pgto-btn" onclick="setPgtoPDF(this,'debito')" style="text-align:left;padding:10px 14px">Cartão Débito</button>
-        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito2')" style="text-align:left;padding:10px 14px">Crédito 2x (+2%)</button>
-        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito3')" style="text-align:left;padding:10px 14px">Crédito 3x (+3%)</button>
-        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito4')" style="text-align:left;padding:10px 14px">Crédito 4x (+4%)</button>
-        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito5')" style="text-align:left;padding:10px 14px">Crédito 5x (+5%)</button>
-        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito6')" style="text-align:left;padding:10px 14px">Crédito 6x (+6%)</button>
-        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito7')" style="text-align:left;padding:10px 14px">Crédito 7x (+7%)</button>
-        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito8')" style="text-align:left;padding:10px 14px">Crédito 8x (+8%)</button>
-        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito9')" style="text-align:left;padding:10px 14px">Crédito 9x (+9%)</button>
-        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito10')" style="text-align:left;padding:10px 14px">Crédito 10x (+10%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'debito')" style="text-align:left;padding:10px 14px">Cartão Débito (+0,75%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito1')" style="text-align:left;padding:10px 14px">Crédito à Vista (+2,69%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito2')" style="text-align:left;padding:10px 14px">Crédito 2x (+3,94%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito3')" style="text-align:left;padding:10px 14px">Crédito 3x (+4,46%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito4')" style="text-align:left;padding:10px 14px">Crédito 4x (+4,98%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito5')" style="text-align:left;padding:10px 14px">Crédito 5x (+5,49%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito6')" style="text-align:left;padding:10px 14px">Crédito 6x (+5,99%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito7')" style="text-align:left;padding:10px 14px">Crédito 7x (+6,51%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito8')" style="text-align:left;padding:10px 14px">Crédito 8x (+6,99%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito9')" style="text-align:left;padding:10px 14px">Crédito 9x (+7,51%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito10')" style="text-align:left;padding:10px 14px">Crédito 10x (+7,99%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito11')" style="text-align:left;padding:10px 14px">Crédito 11x (+8,49%)</button>
+        <button class="pgto-btn" onclick="setPgtoPDF(this,'credito12')" style="text-align:left;padding:10px 14px">Crédito 12x (+8,99%)</button>
       </div>
     </div>
     <div class="modal-footer">
@@ -3734,8 +3747,22 @@ function calcularTotalValor() {
   return total;
 }
 
+// Taxas reais da maquininha (Bárbara mandou a tabela oficial)
+const TAXAS_MAQUININHA = {
+  pix: 0, avista: 0,
+  debito: 0.0075,
+  credito1: 0.0269,
+  credito2: 0.0394, credito3: 0.0446, credito4: 0.0498, credito5: 0.0549, credito6: 0.0599,
+  credito7: 0.0651, credito8: 0.0699, credito9: 0.0751, credito10: 0.0799, credito11: 0.0849, credito12: 0.0899
+};
+
 function calcularTotalComPagamento(totalValor, tipo) {
-  if (!tipo || tipo === 'avista' || tipo === 'pix' || tipo === 'debito') return { total: totalValor, parcelas: 1, juros: 0 };
+  if (!tipo || tipo === 'avista' || tipo === 'pix') return { total: totalValor, parcelas: 1, juros: 0 };
+  if (tipo === 'debito') {
+    const taxa = TAXAS_MAQUININHA.debito;
+    const total = totalValor * (1 + taxa);
+    return { total, parcelas: 1, juros: total - totalValor };
+  }
   if (tipo.startsWith('pixparc')) {
     const parcelas = parseInt(tipo.replace('pixparc',''));
     const parcela = totalValor / parcelas;
@@ -3748,7 +3775,8 @@ function calcularTotalComPagamento(totalValor, tipo) {
   }
   if (tipo.startsWith('credito')) {
     const n = parseInt(tipo.replace('credito',''));
-    const total = totalValor * (1 + n * 0.01); // 1% por parcela sobre o total
+    const taxa = TAXAS_MAQUININHA[tipo] != null ? TAXAS_MAQUININHA[tipo] : (n * 0.01);
+    const total = totalValor * (1 + taxa);
     const parcela = total / n;
     return { total, parcelas: n, juros: total - totalValor, parcela };
   }
@@ -4954,9 +4982,12 @@ function atualizarCalculoJurosEntrada() {
   if (!valorAvista) { resumo.style.display = 'none'; return; }
   const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   const { total, parcelas, juros, boleto } = calcularTotalComPagamento(valorAvista, condicao);
-  if (condicao === 'avista' || condicao === 'pix' || condicao === 'debito') {
+  if (condicao === 'avista' || condicao === 'pix') {
     resumo.style.display = 'block';
-    resumo.innerHTML = `Valor recebido: <strong>${fmt(valorAvista)}</strong> · sem juros`;
+    resumo.innerHTML = `Valor recebido: <strong>${fmt(valorAvista)}</strong> · sem taxa`;
+  } else if (condicao === 'debito') {
+    resumo.style.display = 'block';
+    resumo.innerHTML = `Total recebido: <strong>${fmt(total)}</strong> · Taxa da maquininha: <strong style="color:var(--warn)">${fmt(juros)}</strong>`;
   } else if (boleto) {
     resumo.style.display = 'block';
     const vp = total / parcelas;
@@ -5933,8 +5964,10 @@ function atualizarCalculoConfirmarPagamento() {
   const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   if (!valorAvista) { resumo.innerHTML = ''; return; }
   const { total, parcelas, juros, boleto } = calcularTotalComPagamento(valorAvista, condicao);
-  if (condicao === 'avista' || condicao === 'pix' || condicao === 'debito') {
-    resumo.innerHTML = `Valor pago: <strong>${fmt(valorAvista)}</strong> · sem juros`;
+  if (condicao === 'avista' || condicao === 'pix') {
+    resumo.innerHTML = `Valor pago: <strong>${fmt(valorAvista)}</strong> · sem taxa`;
+  } else if (condicao === 'debito') {
+    resumo.innerHTML = `Total pago: <strong>${fmt(total)}</strong> · Taxa da maquininha: <strong style="color:var(--warn)">${fmt(juros)}</strong>`;
   } else if (boleto) {
     const vp = total / parcelas;
     resumo.innerHTML = parcelas > 1 ? `${parcelas}x de ${fmt(vp)} · Total: <strong>${fmt(total)}</strong>` : `Valor pago: <strong>${fmt(total)}</strong>`;
@@ -7891,16 +7924,18 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
   }
 
   // ===== PAGAMENTO =====
-  const pgLabels = { avista: 'À Vista', pix: 'PIX', debito: 'Cartão Débito',
-    credito2: 'Crédito 2x (+2%)', credito3: 'Crédito 3x (+3%)', credito4: 'Crédito 4x (+4%)',
-    credito5: 'Crédito 5x (+5%)', credito6: 'Crédito 6x (+6%)', credito7: 'Crédito 7x (+7%)',
-    credito8: 'Crédito 8x (+8%)', credito9: 'Crédito 9x (+9%)', credito10: 'Crédito 10x (+10%)' };
+  const fmtPct = v => (v*100).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}).replace('.',',');
+  const pgLabels = { avista: 'À Vista', pix: 'PIX', debito: 'Cartão Débito (+' + fmtPct(TAXAS_MAQUININHA.debito) + '%)',
+    credito1: 'Crédito à Vista (+' + fmtPct(TAXAS_MAQUININHA.credito1) + '%)' };
+  for (let n = 2; n <= 12; n++) {
+    pgLabels['credito'+n] = 'Crédito ' + n + 'x (+' + fmtPct(TAXAS_MAQUININHA['credito'+n]) + '%)';
+  }
   if (pagamento && pagamento.startsWith('pixparc')) {
     const n = pagamento.replace('pixparc', '');
     pgLabels[pagamento] = 'PIX ' + n + 'x (sem juros)';
   }
   let totalValorFinalPDF = totalFinal;
-  if (pagamento && pagamento.startsWith('credito')) {
+  if (pagamento && (pagamento.startsWith('credito') || pagamento === 'debito')) {
     totalValorFinalPDF = calcularTotalComPagamento(totalFinal, pagamento).total;
   }
   if (pagamento && !quitado) {
