@@ -5175,7 +5175,7 @@ function renderMargemLucro() {
   });
   window._margemLucroPorApto = porApto;
 
-  let vendaG=0, custoG=0, lucroG=0;
+  let vendaG=0, custoG=0, lucroG=0, lucroConfirmadoG=0, lucroPendenteG=0;
   const lista = document.getElementById('margemlucro-lista');
   const aptosOrdenados = Object.keys(porApto).sort((a,b) => (parseInt(a)||0) - (parseInt(b)||0));
 
@@ -5187,8 +5187,15 @@ function renderMargemLucro() {
     vendaG+=venda; custoG+=custo; lucroG+=lucro;
     const margem = venda ? (lucro/venda*100).toFixed(1) : '0.0';
     const corLucro = lucro >= 0 ? 'var(--accent2)' : 'var(--danger)';
+    const statusRelevantes = grupo.itens.filter(i => i.status !== 'manual').map(i => i.status);
+    const confirmado = statusRelevantes.length > 0 && statusRelevantes.every(s => s === 'confirmado');
+    if (confirmado) lucroConfirmadoG += lucro; else lucroPendenteG += lucro;
+    const badgeStatus = confirmado
+      ? '<span class="badge badge-green" style="font-size:9px">Confirmado</span>'
+      : '<span class="badge" style="font-size:9px;background:#FFF2CC;color:#8a6d00">Projeção · pendente</span>';
     return `<div onclick="abrirModalDetalheMargem('${apto}')" style="aspect-ratio:1/1;background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:0 1px 3px rgba(0,0,0,0.06);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;gap:6px;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
-      <strong style="font-size:16px">Apto ${apto}</strong>
+      ${badgeStatus}
+      <strong style="font-size:16px;margin-top:2px">Apto ${apto}</strong>
       <div style="color:var(--text2);font-size:11px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">${grupo.cliente||'—'}</div>
       <strong style="font-size:17px;color:${corLucro};margin-top:4px">${_fmtR$(lucro)}</strong>
       <span style="font-size:10px;color:var(--text3)">lucro · ${margem}%</span>
@@ -5196,7 +5203,12 @@ function renderMargemLucro() {
   }).join('');
 
   document.getElementById('margemlucro-total-geral').innerHTML =
-    `Venda R$ ${vendaG.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} · Custo R$ ${custoG.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} · <strong style="color:${lucroG>=0?'var(--accent2)':'var(--danger)'}">Lucro R$ ${lucroG.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} (${(vendaG?lucroG/vendaG*100:0).toFixed(1)}%)</strong>`;
+    `Venda R$ ${vendaG.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} · Custo R$ ${custoG.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} · <strong style="color:${lucroG>=0?'var(--accent2)':'var(--danger)'}">Lucro R$ ${lucroG.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} (${(vendaG?lucroG/vendaG*100:0).toFixed(1)}%)</strong>
+    <div style="font-size:11px;color:var(--text3);margin-top:4px">
+      <span style="color:var(--accent2)">● Confirmado: R$ ${lucroConfirmadoG.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+      &nbsp;·&nbsp;
+      <span style="color:#8a6d00">● Projeção (pendente): R$ ${lucroPendenteG.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+    </div>`;
 }
 
 function abrirModalDetalheMargem(apto) {
