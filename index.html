@@ -3110,6 +3110,49 @@ body.mobile-mode #main{padding-bottom:72px}
 </div>
 
 <!-- MODAL OUTRA CONDIÇÃO DE PAGAMENTO -->
+<div id="modal-confirmar-pagamento" class="modal-overlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h2>Confirmar Pagamento</h2>
+      <button class="modal-close" onclick="fecharModal('modal-confirmar-pagamento')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text3);margin-bottom:16px" id="confirmar-pgto-cliente"></p>
+      <div class="form-group">
+        <label class="form-label">Valor do orçamento (à vista)</label>
+        <input class="form-control" type="number" step="0.01" id="confirmar-pgto-valor-avista">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Como o cliente pagou?</label>
+        <select class="form-control" id="confirmar-pgto-condicao" onchange="atualizarCalculoConfirmarPagamento()">
+          <option value="avista">À Vista</option>
+          <option value="pix">PIX</option>
+          <option value="debito">Cartão Débito</option>
+          <option value="boleto1">Boleto à Vista</option>
+          <option value="boleto2">Boleto 2x</option>
+          <option value="boleto3">Boleto 3x</option>
+          <option value="boleto4">Boleto 4x</option>
+          <option value="boleto5">Boleto 5x</option>
+          <option value="boleto6">Boleto 6x</option>
+          <option value="credito2">Crédito 2x (+2%)</option>
+          <option value="credito3">Crédito 3x (+3%)</option>
+          <option value="credito4">Crédito 4x (+4%)</option>
+          <option value="credito5">Crédito 5x (+5%)</option>
+          <option value="credito6">Crédito 6x (+6%)</option>
+          <option value="credito7">Crédito 7x (+7%)</option>
+          <option value="credito8">Crédito 8x (+8%)</option>
+          <option value="credito9">Crédito 9x (+9%)</option>
+          <option value="credito10">Crédito 10x (+10%)</option>
+          <option value="credito11">Crédito 11x (+11%)</option>
+          <option value="credito12">Crédito 12x (+12%)</option>
+        </select>
+      </div>
+      <div id="confirmar-pgto-resumo" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:13px"></div>
+      <button class="btn btn-primary" onclick="salvarConfirmarPagamento()" style="width:100%;justify-content:center">✓ Confirmar Pagamento</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-pdf-quitado" class="modal-overlay">
   <div class="modal" style="max-width:420px">
     <div class="modal-header">
@@ -5819,13 +5862,14 @@ function renderPagamentos(lista) {
         <p style="font-weight:600;font-size:14px">${p.cliente||'—'}</p>
         <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
         <p style="font-size:13px;font-weight:500;color:var(--accent2);margin-top:4px">R$ ${totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})} · ${totalM2.toFixed(2)} m²</p>
+        ${p.valor_pago && parseFloat(p.valor_pago) > 0 ? `<p style="font-size:12px;color:#2e7d3f;margin-top:2px">✓ Pago: R$ ${parseFloat(p.valor_pago).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}${p.condicao_pagamento_confirmada ? ' · ' + _labelCondicaoPagamento(p.condicao_pagamento_confirmada) : ''}</p>` : ''}
         ${p.obs_pgto ? `<p style="font-size:12px;color:var(--text2);margin-top:4px">Obs: ${p.obs_pgto}</p>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
         <div style="display:flex;gap:6px">
           <button class="status-pgto-badge ${status === 'pendente' ? 'status-pendente' : ''}" onclick="alterarStatusPgto('${p.id}','pendente')" style="${status === 'pendente' ? '' : 'opacity:0.4'}">Pendente</button>
           <button class="status-pgto-badge ${status === 'parcial' ? 'status-parcial' : 'status-parcial'}" onclick="alterarStatusPgto('${p.id}','parcial')" style="${status === 'parcial' ? '' : 'opacity:0.4'}">Parcial</button>
-          <button class="status-pgto-badge ${status === 'pago' ? 'status-pago' : 'status-pago'}" onclick="alterarStatusPgto('${p.id}','pago')" style="${status === 'pago' ? '' : 'opacity:0.4'}">Pago</button>
+          <button class="status-pgto-badge ${status === 'pago' ? 'status-pago' : 'status-pago'}" onclick="abrirModalConfirmarPagamento('${p.id}', ${totalValor})" style="${status === 'pago' ? '' : 'opacity:0.4'}">Pago</button>
         </div>
         <div style="display:flex;gap:4px;align-items:center">
           <input class="form-control" placeholder="Observação (parcelas, etc)" id="obs-${p.id}" style="font-size:11px;padding:4px 8px;flex:1" value="${p.obs_pgto||''}">
@@ -5857,6 +5901,65 @@ async function alterarStatusPgto(id, status) {
     // Forçar atualização do data.json via Apps Script
     try { await jsonp(SCRIPT_URL + '?action=forcarAtualizar'); } catch(e) {}
   } catch(e) { showToast('Erro ao salvar status: ' + e.message, 'error'); }
+}
+
+function _labelCondicaoPagamento(c) {
+  if (!c) return '';
+  if (c === 'avista') return 'À Vista';
+  if (c === 'pix') return 'PIX';
+  if (c === 'debito') return 'Débito';
+  if (c.startsWith('boleto')) { const n = parseInt(c.replace('boleto','')); return n > 1 ? 'Boleto ' + n + 'x' : 'Boleto à Vista'; }
+  if (c.startsWith('credito')) { return 'Crédito ' + c.replace('credito','') + 'x'; }
+  return c;
+}
+
+let _confirmarPgtoId = null;
+
+function abrirModalConfirmarPagamento(id, valorBase) {
+  const item = dadosPersonalizar.find(p => String(p.id) === String(id));
+  if (!item) return;
+  _confirmarPgtoId = id;
+  document.getElementById('confirmar-pgto-cliente').textContent = `${item.cliente||'—'} — Apto ${item.ap||'—'}`;
+  document.getElementById('confirmar-pgto-valor-avista').value = (valorBase || 0).toFixed(2);
+  document.getElementById('confirmar-pgto-condicao').value = 'avista';
+  atualizarCalculoConfirmarPagamento();
+  abrirModal('modal-confirmar-pagamento');
+}
+
+function atualizarCalculoConfirmarPagamento() {
+  const valorAvista = parseFloat(document.getElementById('confirmar-pgto-valor-avista').value) || 0;
+  const condicao = document.getElementById('confirmar-pgto-condicao').value;
+  const resumo = document.getElementById('confirmar-pgto-resumo');
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  if (!valorAvista) { resumo.innerHTML = ''; return; }
+  const { total, parcelas, juros, boleto } = calcularTotalComPagamento(valorAvista, condicao);
+  if (condicao === 'avista' || condicao === 'pix' || condicao === 'debito') {
+    resumo.innerHTML = `Valor pago: <strong>${fmt(valorAvista)}</strong> · sem juros`;
+  } else if (boleto) {
+    const vp = total / parcelas;
+    resumo.innerHTML = parcelas > 1 ? `${parcelas}x de ${fmt(vp)} · Total: <strong>${fmt(total)}</strong>` : `Valor pago: <strong>${fmt(total)}</strong>`;
+  } else {
+    const vp = total / parcelas;
+    resumo.innerHTML = `${parcelas}x de ${fmt(vp)} · Total pago: <strong>${fmt(total)}</strong> · Juros do cartão: <strong style="color:var(--warn)">${fmt(juros)}</strong>`;
+  }
+}
+
+async function salvarConfirmarPagamento() {
+  const id = _confirmarPgtoId;
+  if (!id) return;
+  const valorAvista = parseFloat(document.getElementById('confirmar-pgto-valor-avista').value) || 0;
+  const condicao = document.getElementById('confirmar-pgto-condicao').value;
+  const { total } = calcularTotalComPagamento(valorAvista, condicao);
+  try {
+    await apiPost('confirmarPagamentoComValor', { id, valor_pago: total, condicao_pagamento: condicao, valor_avista: valorAvista });
+    const item = dadosPersonalizar.find(p => String(p.id) === String(id));
+    if (item) { item.status_pgto = 'pago'; item.valor_pago = total; item.condicao_pagamento_confirmada = condicao; }
+    renderPagamentos(dadosPersonalizar);
+    renderPersonalizar(dadosPersonalizar);
+    fecharModal('modal-confirmar-pagamento');
+    showToast('Pagamento confirmado: ' + total.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}), 'success');
+    try { await jsonp(SCRIPT_URL + '?action=forcarAtualizar'); } catch(e) {}
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
 async function salvarObsPgto(id, obs) {
