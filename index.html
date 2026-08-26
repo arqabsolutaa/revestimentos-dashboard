@@ -1041,7 +1041,7 @@ async function loadPagamentosVinilico() {
   try {
     invalidarCacheExtra('vinilico');
     const d = await lerDadosExtra('vinilico');
-    renderPagamentosVinilico(d.personalizar || []);
+    renderPagamentosVinilico((d.personalizar || []).filter(p => String(p.arquivado||'').toLowerCase() !== 'true'));
   } catch(e) {
     el.innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
   }
@@ -1071,7 +1071,7 @@ async function loadPagamentosMarmoraria() {
   try {
     invalidarCacheExtra('marmoraria');
     const d = await lerDadosExtra('marmoraria');
-    renderPagamentosMarmoraria(d.personalizar || []);
+    renderPagamentosMarmoraria((d.personalizar || []).filter(p => String(p.arquivado||'').toLowerCase() !== 'true'));
   } catch(e) {
     el.innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
   }
@@ -1096,7 +1096,7 @@ async function loadPagamentosBanheiras() {
   try {
     invalidarCacheExtra('banheiras');
     const d = await lerDadosExtra('banheiras');
-    renderPagamentosBanheiras(d.personalizar || []);
+    renderPagamentosBanheiras((d.personalizar || []).filter(p => String(p.arquivado||'').toLowerCase() !== 'true'));
   } catch(e) {
     el.innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
   }
@@ -1136,6 +1136,7 @@ function _renderCardPgto(p, totalValor, extra, status, prefixo, modulo) {
         <button class="btn btn-secondary" onclick="gerarPDFModulo('${p.id}','${modulo}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
         ${renderComprovantesHTML(p.comprovante_url, p.id, modulo, `document.getElementById('file-comp-${prefixo}-${p.id}').click()`)}
         <input type="file" id="file-comp-${prefixo}-${p.id}" accept="image/*,.pdf" style="display:none" onchange="uploadComprovanteModulo('${p.id}', this, '${modulo}')">
+        <button class="btn btn-secondary" onclick="arquivarPersonalizacaoExtra('${p.id}','${modulo}')" style="font-size:11px;padding:4px 10px">🗄 Arquivar</button>
       </div>
     </div>
   </div>`;
@@ -1155,6 +1156,16 @@ async function salvarObsPgtoModulo(id, obs, modulo) {
     await apiPost('updateObsPgtoExtra', { id, obs, modulo });
     invalidarCacheExtra(modulo);
     showToast('Observação salva!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function arquivarPersonalizacaoExtra(id, modulo) {
+  if (!confirm('Arquivar esse orçamento? Ele sai da lista ativa e deixa de contar na Margem de Lucro.')) return;
+  try {
+    await apiPost('arquivarPersonalizarExtra', { id, modulo, arquivado: true });
+    invalidarCacheExtra(modulo);
+    loadPagamentosAtivo();
+    showToast('Orçamento arquivado!', 'success');
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -4425,15 +4436,15 @@ function showScreen(name) {
   if (name === 'personalizar') loadPersonalizar();
   if (name === 'visaogeral') loadVisaoGeral();
   if (name === 'orcamentos') loadOrcamentos();
-  if (name === 'pagamentos') { if (!pgtoDesbloqueado) { document.getElementById('pgto-lock').style.display = 'flex'; document.getElementById('pgto-conteudo').style.display = 'none'; } else loadPagamentos(); }
+  if (name === 'pagamentos') { if (!pgtoDesbloqueado) { document.getElementById('pgto-lock').style.display = 'flex'; document.getElementById('pgto-conteudo').style.display = 'none'; } else { document.getElementById('pgto-lock').style.display = 'none'; document.getElementById('pgto-conteudo').style.display = 'block'; loadPagamentos(); } }
   if (name === 'vinilico') loadVinilico();
   if (name === 'marmoraria') loadMarmoraria();
   if (name === 'banheiras') loadBanheiras();
   if (name === 'metais') loadMetais();
   if (name === 'vagasdep') { if (!vagasDepDesbloqueado) { document.getElementById('vagasdep-lock').style.display = 'flex'; document.getElementById('vagasdep-conteudo').style.display = 'none'; } else loadVagasDep(); }
-  if (name === 'margemlucro') { if (!margemLucroDesbloqueado) { document.getElementById('margemlucro-lock').style.display = 'flex'; document.getElementById('margemlucro-conteudo').style.display = 'none'; } else loadMargemLucro(); }
-  if (name === 'custopersonalizacoes') { if (!custoPersDesbloqueado) { document.getElementById('custopers-lock').style.display = 'flex'; document.getElementById('custopers-conteudo').style.display = 'none'; } else loadCustoPersonalizacoes(); }
-  if (name === 'visaogeralvalores') { if (!vgValoresDesbloqueado) { document.getElementById('vgvalores-lock').style.display = 'flex'; document.getElementById('vgvalores-conteudo').style.display = 'none'; } else loadVisaoGeralValores(); }
+  if (name === 'margemlucro') { if (!margemLucroDesbloqueado) { document.getElementById('margemlucro-lock').style.display = 'flex'; document.getElementById('margemlucro-conteudo').style.display = 'none'; } else { document.getElementById('margemlucro-lock').style.display = 'none'; document.getElementById('margemlucro-conteudo').style.display = 'block'; loadMargemLucro(); } }
+  if (name === 'custopersonalizacoes') { if (!custoPersDesbloqueado) { document.getElementById('custopers-lock').style.display = 'flex'; document.getElementById('custopers-conteudo').style.display = 'none'; } else { document.getElementById('custopers-lock').style.display = 'none'; document.getElementById('custopers-conteudo').style.display = 'block'; loadCustoPersonalizacoes(); } }
+  if (name === 'visaogeralvalores') { if (!vgValoresDesbloqueado) { document.getElementById('vgvalores-lock').style.display = 'flex'; document.getElementById('vgvalores-conteudo').style.display = 'none'; } else { document.getElementById('vgvalores-lock').style.display = 'none'; document.getElementById('vgvalores-conteudo').style.display = 'block'; loadVisaoGeralValores(); } }
 }
 
 
@@ -4545,7 +4556,7 @@ async function testarConexao() {
 
 
 const SENHA_PGTO = 'absoluta@2026';
-let pgtoDesbloqueado = false;
+let pgtoDesbloqueado = true; // senha interna removida - a senha da tela inicial (Controle) ja protege o acesso
 
 function verificarSenhaPgto() {
   const senha = document.getElementById('pgto-senha-input').value;
@@ -4560,11 +4571,7 @@ function verificarSenhaPgto() {
 }
 
 function sairControlePgto() {
-  pgtoDesbloqueado = false;
-  document.getElementById('pgto-lock').style.display = 'flex';
-  document.getElementById('pgto-conteudo').style.display = 'none';
-  document.getElementById('pgto-senha-input').value = '';
-  document.getElementById('pgto-senha-erro').style.display = 'none';
+  sairParaEscolha();
 }
 
 // ===================== VAGAS E DEPÓSITOS =====================
@@ -4657,7 +4664,7 @@ function sairVagasDep() {
 
 // ===================== MARGEM DE LUCRO =====================
 const SENHA_MARGEMLUCRO = SENHA_PGTO; // mesma senha do Controle de Pagamentos
-let margemLucroDesbloqueado = false;
+let margemLucroDesbloqueado = true; // senha interna removida - a senha da tela inicial (Controle) ja protege o acesso
 let margemLucroDados = [];
 let margemLucroAbertos = {};
 
@@ -4674,15 +4681,11 @@ function verificarSenhaMargemLucro() {
 }
 
 function sairMargemLucro() {
-  margemLucroDesbloqueado = false;
-  document.getElementById('margemlucro-lock').style.display = 'flex';
-  document.getElementById('margemlucro-conteudo').style.display = 'none';
-  document.getElementById('margemlucro-senha-input').value = '';
-  document.getElementById('margemlucro-senha-erro').style.display = 'none';
+  sairParaEscolha();
 }
 
 // ===================== VISÃO GERAL DE VALORES (CONTROLE) =====================
-let vgValoresDesbloqueado = false;
+let vgValoresDesbloqueado = true; // senha interna removida - a senha da tela inicial (Controle) ja protege o acesso
 
 function verificarSenhaVgValores() {
   const senha = document.getElementById('vgvalores-senha-input').value;
@@ -4824,7 +4827,7 @@ async function loadVisaoGeralValores() {
 
 // ===================== CUSTO PERSONALIZAÇÕES =====================
 const SENHA_CUSTOPERS = SENHA_PGTO; // mesma senha do Controle de Pagamentos
-let custoPersDesbloqueado = false;
+let custoPersDesbloqueado = true; // senha interna removida - a senha da tela inicial (Controle) ja protege o acesso
 let dadosEntradasPers = [], dadosSaidasObra = [], dadosVinculosPers = [];
 
 function verificarSenhaCustoPers() {
@@ -4840,11 +4843,7 @@ function verificarSenhaCustoPers() {
 }
 
 function sairCustoPers() {
-  custoPersDesbloqueado = false;
-  document.getElementById('custopers-lock').style.display = 'flex';
-  document.getElementById('custopers-conteudo').style.display = 'none';
-  document.getElementById('custopers-senha-input').value = '';
-  document.getElementById('custopers-senha-erro').style.display = 'none';
+  sairParaEscolha();
 }
 
 async function loadCustoPersonalizacoes() {
