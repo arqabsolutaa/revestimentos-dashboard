@@ -1999,6 +1999,10 @@ body.mobile-mode #main{padding-bottom:72px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
       Custo Personalizações
     </button>
+    <button class="nav-btn" onclick="showScreen('previsaocobrancas')" id="nav-previsaocobrancas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Previsão de Cobranças
+    </button>
     <button class="nav-btn" onclick="showScreen('config');document.getElementById('nav-config').classList.add('active')" id="nav-config">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       Configurações do Sistema
@@ -2753,6 +2757,30 @@ body.mobile-mode #main{padding-bottom:72px}
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- PREVISÃO DE COBRANÇAS -->
+<div id="previsaocobrancas-screen" class="screen">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Previsão de Cobranças</h1>
+      <p>Parcelas futuras das entradas lançadas — o que vai precisar virar boleto, mês a mês</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="loadPrevisaoCobrancas()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Atualizar
+      </button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="card" style="background:var(--accent-bg);border-color:var(--accent);margin-bottom:20px;padding:14px 18px">
+      <p style="font-size:13px;color:var(--text);margin:0;line-height:1.6">
+        Essa lista é calculada a partir das <strong>Entradas parceladas</strong> lançadas em Custo Personalizações — pra cada uma, o sistema projeta uma parcela por mês a partir da data lançada. Pronta pra guiar quais boletos preparar em cada mês.
+      </p>
+    </div>
+    <div id="previsaocobrancas-lista"></div>
   </div>
 </div>
 
@@ -4445,6 +4473,7 @@ function showScreen(name) {
   if (name === 'margemlucro') { if (!margemLucroDesbloqueado) { document.getElementById('margemlucro-lock').style.display = 'flex'; document.getElementById('margemlucro-conteudo').style.display = 'none'; } else { document.getElementById('margemlucro-lock').style.display = 'none'; document.getElementById('margemlucro-conteudo').style.display = 'block'; loadMargemLucro(); } }
   if (name === 'custopersonalizacoes') { if (!custoPersDesbloqueado) { document.getElementById('custopers-lock').style.display = 'flex'; document.getElementById('custopers-conteudo').style.display = 'none'; } else { document.getElementById('custopers-lock').style.display = 'none'; document.getElementById('custopers-conteudo').style.display = 'block'; loadCustoPersonalizacoes(); } }
   if (name === 'visaogeralvalores') { if (!vgValoresDesbloqueado) { document.getElementById('vgvalores-lock').style.display = 'flex'; document.getElementById('vgvalores-conteudo').style.display = 'none'; } else { document.getElementById('vgvalores-lock').style.display = 'none'; document.getElementById('vgvalores-conteudo').style.display = 'block'; loadVisaoGeralValores(); } }
+  if (name === 'previsaocobrancas') loadPrevisaoCobrancas();
 }
 
 
@@ -4859,6 +4888,107 @@ async function loadCustoPersonalizacoes() {
     dadosEntradasPers = []; dadosSaidasObra = []; dadosVinculosPers = [];
   }
   renderCustoPersonalizacoes();
+}
+
+// ===================== PREVISÃO DE COBRANÇAS =====================
+function _numeroParcelas(condicao) {
+  if (!condicao) return 1;
+  if (condicao.startsWith('credito') || condicao.startsWith('boleto')) {
+    const n = parseInt(condicao.replace('credito','').replace('boleto',''));
+    return n > 0 ? n : 1;
+  }
+  return 1;
+}
+
+function _parseDataBR(str) {
+  if (!str) return null;
+  // aceita "YYYY-MM-DD" (input date) ou "DD/MM/YYYY" (planilha)
+  if (/^\d{4}-\d{2}-\d{2}/.test(str)) return new Date(str + 'T00:00:00');
+  const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function _calcularParcelasFuturas() {
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const parcelas = [];
+  (dadosEntradasPers || []).forEach(en => {
+    const dataBase = _parseDataBR(en.data);
+    if (!dataBase) return;
+    const n = _numeroParcelas(en.condicao_pagamento);
+    const total = parseFloat(en.valor) || 0;
+    if (!total) return;
+    const valorParcela = total / n;
+    for (let i = 0; i < n; i++) {
+      const dataParcela = new Date(dataBase.getFullYear(), dataBase.getMonth() + i, dataBase.getDate());
+      if (dataParcela < hoje) continue; // so mostra o que ainda vem pela frente
+      parcelas.push({
+        entradaId: en.id,
+        apartamento: en.apartamento,
+        cliente: en.cliente,
+        categoria: en.categoria,
+        numeroParcela: i + 1,
+        totalParcelas: n,
+        valor: valorParcela,
+        data: dataParcela,
+        condicao: en.condicao_pagamento
+      });
+    }
+  });
+  parcelas.sort((a,b) => a.data - b.data);
+  return parcelas;
+}
+
+async function loadPrevisaoCobrancas() {
+  const cont = document.getElementById('previsaocobrancas-lista');
+  cont.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  try {
+    if (!dadosEntradasPers.length) {
+      const dados = await lerDados();
+      dadosEntradasPers = dados.entradasPersonalizacao || [];
+    }
+  } catch(e) {}
+
+  const parcelas = _calcularParcelasFuturas();
+  if (!parcelas.length) {
+    cont.innerHTML = '<div class="empty-state"><strong>Nenhuma cobrança futura encontrada</strong><p>Lance entradas parceladas (Boleto ou Crédito 2x+) em Custo Personalizações pra elas aparecerem aqui</p></div>';
+    return;
+  }
+
+  const meses = {};
+  parcelas.forEach(p => {
+    const chave = p.data.getFullYear() + '-' + String(p.data.getMonth()+1).padStart(2,'0');
+    if (!meses[chave]) meses[chave] = [];
+    meses[chave].push(p);
+  });
+
+  const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  cont.innerHTML = Object.keys(meses).sort().map(chave => {
+    const [ano, mes] = chave.split('-');
+    const lista = meses[chave];
+    const totalMes = lista.reduce((s,p) => s + p.valor, 0);
+    return `
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)">
+          <h3 style="font-size:16px;margin:0">${nomesMeses[parseInt(mes)-1]} de ${ano}</h3>
+          <span class="badge badge-green" style="font-size:12px">${fmt(totalMes)} no mês</span>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Data</th><th>Apartamento</th><th>Cliente</th><th>Categoria</th><th>Parcela</th><th style="text-align:right">Valor</th></tr></thead>
+          <tbody>${lista.map(p => `<tr>
+            <td>${String(p.data.getDate()).padStart(2,'0')}/${String(p.data.getMonth()+1).padStart(2,'0')}</td>
+            <td><span class="badge badge-info">Apto ${p.apartamento||'—'}</span></td>
+            <td>${p.cliente||'—'}</td>
+            <td style="color:var(--text2)">${p.categoria||''}</td>
+            <td style="color:var(--text2)">${p.numeroParcela}/${p.totalParcelas}</td>
+            <td style="text-align:right;font-weight:600">${fmt(p.valor)}</td>
+          </tr>`).join('')}</tbody>
+        </table></div>
+      </div>`;
+  }).join('');
 }
 
 function _valorVinculadoEntrada(id) {
