@@ -24468,7 +24468,7 @@
       "comprovante_url": "",
       "total_m2": "312.41999999999996",
       "total_valor": "49272.669839999995",
-      "arquivado": "",
+      "arquivado": "true",
       "valor_pago": "",
       "condicao_pagamento_confirmada": "",
       "valor_avista_confirmado": ""
