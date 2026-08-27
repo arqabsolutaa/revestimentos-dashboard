@@ -25655,23 +25655,7 @@
       "criado_em": "24/08/2026"
     }
   ],
-  "saidasObra": [
-    {
-      "id": "id_1787834657845_w95pw",
-      "data": "27/08/2026",
-      "descricao": "Banheira Apto 112 - Valquiria e Maurício",
-      "categoria": "Banheiras",
-      "fornecedor": "Sabbia",
-      "valor": "8510.53",
-      "projeto": "Essence",
-      "comprovante_url": "[{\"url\":\"https://drive.google.com/file/d/1iXehbXqXjty3d1ijXtdF7FOV-S5gQdTa/view?usp=drivesdk\",\"filename\":\"Boleto_RD06EMPREENDIMENTOIMOBI.pdf\",\"data\":\"27/08/2026\"}]",
-      "observacao": "",
-      "apartamento": "112",
-      "criado_em": "27/08/2026",
-      "valor_avista": "8510.53",
-      "condicao_pagamento": "boleto3"
-    }
-  ],
+  "saidasObra": [],
   "vinculos": [
     {
       "id": "id_1787601923471_5e9zg",
