@@ -1035,22 +1035,34 @@ async function loadPagamentosAtivo() {
 }
 
 // ---- VINILICO ----
+let _dadosCompletosVin = [], _dadosCompletosMarm = [], _dadosCompletosBanh = [];
+let _mostrarArquivadosVin = false, _mostrarArquivadosMarm = false, _mostrarArquivadosBanh = false;
+
 async function loadPagamentosVinilico() {
   const el = document.getElementById('pgto-lista-vin');
   el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
   try {
     invalidarCacheExtra('vinilico');
     const d = await lerDadosExtra('vinilico');
-    renderPagamentosVinilico((d.personalizar || []).filter(p => String(p.arquivado||'').toLowerCase() !== 'true'));
+    _dadosCompletosVin = d.personalizar || [];
+    renderPagamentosVinilico();
   } catch(e) {
     el.innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
   }
 }
 
-function renderPagamentosVinilico(lista) {
+function toggleMostrarArquivadosVin() {
+  _mostrarArquivadosVin = !_mostrarArquivadosVin;
+  renderPagamentosVinilico();
+}
+
+function renderPagamentosVinilico() {
   const el = document.getElementById('pgto-lista-vin');
-  if (!lista.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de vinílico encontrado</strong></div>'; return; }
-  el.innerHTML = lista.map(p => {
+  const lista = _mostrarArquivadosVin ? _dadosCompletosVin : _dadosCompletosVin.filter(p => String(p.arquivado||'').toLowerCase() !== 'true');
+  const arquivadosCount = _dadosCompletosVin.filter(p => String(p.arquivado||'').toLowerCase() === 'true').length;
+  const toggleHtml = `<div style="margin-bottom:12px"><label style="font-size:12px;color:var(--text3);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox" ${_mostrarArquivadosVin?'checked':''} onchange="toggleMostrarArquivadosVin()"> Mostrar arquivados também (${arquivadosCount})</label></div>`;
+  if (!lista.length) { el.innerHTML = toggleHtml + '<div class="empty-state"><strong>Nenhum orçamento de vinílico encontrado</strong></div>'; return; }
+  el.innerHTML = toggleHtml + lista.map(p => {
     const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
     let totalValor = 0, totalM2 = 0;
     for (const v of Object.values(selecoes)) {
@@ -1060,7 +1072,8 @@ function renderPagamentosVinilico(lista) {
       totalM2 += m2; totalValor += preco * m2;
     }
     const status = p.status_pgto || 'pendente';
-    return _renderCardPgto(p, totalValor, totalM2 + ' m²', status, 'vin', 'vinilico');
+    const arquivado = String(p.arquivado||'').toLowerCase() === 'true';
+    return _renderCardPgto(p, totalValor, totalM2 + ' m²', status, 'vin', 'vinilico', arquivado);
   }).join('');
 }
 
@@ -1071,21 +1084,31 @@ async function loadPagamentosMarmoraria() {
   try {
     invalidarCacheExtra('marmoraria');
     const d = await lerDadosExtra('marmoraria');
-    renderPagamentosMarmoraria((d.personalizar || []).filter(p => String(p.arquivado||'').toLowerCase() !== 'true'));
+    _dadosCompletosMarm = d.personalizar || [];
+    renderPagamentosMarmoraria();
   } catch(e) {
     el.innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
   }
 }
 
-function renderPagamentosMarmoraria(lista) {
+function toggleMostrarArquivadosMarm() {
+  _mostrarArquivadosMarm = !_mostrarArquivadosMarm;
+  renderPagamentosMarmoraria();
+}
+
+function renderPagamentosMarmoraria() {
   const el = document.getElementById('pgto-lista-marm');
-  if (!lista.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de marmoraria encontrado</strong></div>'; return; }
-  el.innerHTML = lista.map(p => {
+  const lista = _mostrarArquivadosMarm ? _dadosCompletosMarm : _dadosCompletosMarm.filter(p => String(p.arquivado||'').toLowerCase() !== 'true');
+  const arquivadosCount = _dadosCompletosMarm.filter(p => String(p.arquivado||'').toLowerCase() === 'true').length;
+  const toggleHtml = `<div style="margin-bottom:12px"><label style="font-size:12px;color:var(--text3);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox" ${_mostrarArquivadosMarm?'checked':''} onchange="toggleMostrarArquivadosMarm()"> Mostrar arquivados também (${arquivadosCount})</label></div>`;
+  if (!lista.length) { el.innerHTML = toggleHtml + '<div class="empty-state"><strong>Nenhum orçamento de marmoraria encontrado</strong></div>'; return; }
+  el.innerHTML = toggleHtml + lista.map(p => {
     const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
     let totalValor = 0;
     (Array.isArray(selecoes)?selecoes:[]).forEach(b => { totalValor += parseFloat(b.valor)||0; });
     const status = p.status_pgto || 'pendente';
-    return _renderCardPgto(p, totalValor, null, status, 'marm', 'marmoraria');
+    const arquivado = String(p.arquivado||'').toLowerCase() === 'true';
+    return _renderCardPgto(p, totalValor, null, status, 'marm', 'marmoraria', arquivado);
   }).join('');
 }
 
@@ -1096,31 +1119,41 @@ async function loadPagamentosBanheiras() {
   try {
     invalidarCacheExtra('banheiras');
     const d = await lerDadosExtra('banheiras');
-    renderPagamentosBanheiras((d.personalizar || []).filter(p => String(p.arquivado||'').toLowerCase() !== 'true'));
+    _dadosCompletosBanh = d.personalizar || [];
+    renderPagamentosBanheiras();
   } catch(e) {
     el.innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
   }
 }
 
-function renderPagamentosBanheiras(lista) {
+function toggleMostrarArquivadosBanh() {
+  _mostrarArquivadosBanh = !_mostrarArquivadosBanh;
+  renderPagamentosBanheiras();
+}
+
+function renderPagamentosBanheiras() {
   const el = document.getElementById('pgto-lista-banh');
-  if (!lista.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de banheiras encontrado</strong></div>'; return; }
-  el.innerHTML = lista.map(p => {
+  const lista = _mostrarArquivadosBanh ? _dadosCompletosBanh : _dadosCompletosBanh.filter(p => String(p.arquivado||'').toLowerCase() !== 'true');
+  const arquivadosCount = _dadosCompletosBanh.filter(p => String(p.arquivado||'').toLowerCase() === 'true').length;
+  const toggleHtml = `<div style="margin-bottom:12px"><label style="font-size:12px;color:var(--text3);cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox" ${_mostrarArquivadosBanh?'checked':''} onchange="toggleMostrarArquivadosBanh()"> Mostrar arquivados também (${arquivadosCount})</label></div>`;
+  if (!lista.length) { el.innerHTML = toggleHtml + '<div class="empty-state"><strong>Nenhum orçamento de banheiras encontrado</strong></div>'; return; }
+  el.innerHTML = toggleHtml + lista.map(p => {
     const itens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
     let totalValor = 0;
     (Array.isArray(itens)?itens:[]).forEach(b => { totalValor += parseFloat(b.preco_venda)||0; });
     const status = p.status_pgto || 'pendente';
-    return _renderCardPgto(p, totalValor, null, status, 'banh', 'banheiras');
+    const arquivado = String(p.arquivado||'').toLowerCase() === 'true';
+    return _renderCardPgto(p, totalValor, null, status, 'banh', 'banheiras', arquivado);
   }).join('');
 }
 
 // ---- CARD GENÉRICO ----
-function _renderCardPgto(p, totalValor, extra, status, prefixo, modulo) {
+function _renderCardPgto(p, totalValor, extra, status, prefixo, modulo, arquivado) {
   const valorStr = totalValor > 0 ? 'R$ ' + totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
   const extraStr = extra ? ' · ' + extra : '';
-  return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+  return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px${arquivado ? ';opacity:0.65' : ''}">
     <div>
-      <p style="font-weight:600;font-size:14px">${p.cliente||'—'}</p>
+      <p style="font-weight:600;font-size:14px">${p.cliente||'—'} ${arquivado ? '<span class="badge" style="background:#E8E4DE;color:#555;margin-left:4px">🗄 Arquivado</span>' : ''}</p>
       <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
       <p style="font-size:13px;font-weight:500;color:var(--accent2);margin-top:4px">${valorStr}${extraStr}</p>
       ${p.obs_pgto ? `<p style="font-size:12px;color:var(--text2);margin-top:4px">Obs: ${p.obs_pgto}</p>` : ''}
@@ -1136,7 +1169,9 @@ function _renderCardPgto(p, totalValor, extra, status, prefixo, modulo) {
         <button class="btn btn-secondary" onclick="gerarPDFModulo('${p.id}','${modulo}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
         ${renderComprovantesHTML(p.comprovante_url, p.id, modulo, `document.getElementById('file-comp-${prefixo}-${p.id}').click()`)}
         <input type="file" id="file-comp-${prefixo}-${p.id}" accept="image/*,.pdf" style="display:none" onchange="uploadComprovanteModulo('${p.id}', this, '${modulo}')">
-        <button class="btn btn-secondary" onclick="arquivarPersonalizacaoExtra('${p.id}','${modulo}')" style="font-size:11px;padding:4px 10px">🗄 Arquivar</button>
+        ${arquivado
+          ? `<button class="btn btn-secondary" onclick="desarquivarPersonalizacaoExtra('${p.id}','${modulo}')" style="font-size:11px;padding:4px 10px;color:var(--accent2);border-color:var(--accent2)">↩ Desarquivar</button>`
+          : `<button class="btn btn-secondary" onclick="arquivarPersonalizacaoExtra('${p.id}','${modulo}')" style="font-size:11px;padding:4px 10px">🗄 Arquivar</button>`}
       </div>
     </div>
   </div>`;
@@ -1166,6 +1201,15 @@ async function arquivarPersonalizacaoExtra(id, modulo) {
     invalidarCacheExtra(modulo);
     loadPagamentosAtivo();
     showToast('Orçamento arquivado!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function desarquivarPersonalizacaoExtra(id, modulo) {
+  try {
+    await apiPost('arquivarPersonalizarExtra', { id, modulo, arquivado: false });
+    invalidarCacheExtra(modulo);
+    loadPagamentosAtivo();
+    showToast('Orçamento desarquivado — voltou pra lista ativa!', 'success');
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
