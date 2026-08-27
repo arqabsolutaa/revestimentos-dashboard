@@ -24408,7 +24408,7 @@
       "criado_em": "30/07/2026",
       "status_pgto": "parcial",
       "obs_pgto": "",
-      "comprovante_url": "",
+      "comprovante_url": "[{\"url\":\"https://drive.google.com/file/d/1VtabBng70l8BDmAyZDE8kp0XDNmZ1mX6/view?usp=drivesdk\",\"filename\":\"SICOOB_2026_03_08_10_16_17_PIX.pdf\",\"data\":\"27/08/2026\"}]",
       "total_m2": "327.64799999999997",
       "total_valor": "73947.59976",
       "arquivado": "",
