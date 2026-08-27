@@ -2946,6 +2946,38 @@ body.mobile-mode #main{padding-bottom:72px}
         </select>
       </div>
       <div class="form-group">
+        <label class="form-label">Como foi pago? (se foi parcelado, cada parcela pode ser vinculada separado a uma entrada)</label>
+        <select class="form-control" id="saida-obra-condicao" onchange="atualizarCalculoSaidaObra()">
+          <option value="avista">À Vista</option>
+          <option value="pix">PIX</option>
+          <option value="debito">Cartão Débito</option>
+          <option value="boleto1">Boleto à Vista</option>
+          <option value="boleto2">Boleto 2x</option>
+          <option value="boleto3">Boleto 3x</option>
+          <option value="boleto4">Boleto 4x</option>
+          <option value="boleto5">Boleto 5x</option>
+          <option value="boleto6">Boleto 6x</option>
+          <option value="boleto7">Boleto 7x</option>
+          <option value="boleto8">Boleto 8x</option>
+          <option value="boleto9">Boleto 9x</option>
+          <option value="boleto10">Boleto 10x</option>
+          <option value="boleto11">Boleto 11x</option>
+          <option value="boleto12">Boleto 12x</option>
+          <option value="credito2">Crédito 2x (+2%)</option>
+          <option value="credito3">Crédito 3x (+3%)</option>
+          <option value="credito4">Crédito 4x (+4%)</option>
+          <option value="credito5">Crédito 5x (+5%)</option>
+          <option value="credito6">Crédito 6x (+6%)</option>
+          <option value="credito7">Crédito 7x (+7%)</option>
+          <option value="credito8">Crédito 8x (+8%)</option>
+          <option value="credito9">Crédito 9x (+9%)</option>
+          <option value="credito10">Crédito 10x (+10%)</option>
+          <option value="credito11">Crédito 11x (+11%)</option>
+          <option value="credito12">Crédito 12x (+12%)</option>
+        </select>
+        <div id="saida-obra-condicao-resumo" style="font-size:12px;color:var(--text3);margin-top:4px"></div>
+      </div>
+      <div class="form-group">
         <label class="form-label">Apartamento (opcional — preencha se for gasto de um cliente específico)</label>
         <select class="form-control" id="saida-obra-apto">
           <option value="">— Nenhum (gasto geral da obra) —</option>
@@ -4924,6 +4956,7 @@ function _calcularParcelasFuturas() {
       const dataParcela = new Date(dataBase.getFullYear(), dataBase.getMonth() + i, dataBase.getDate());
       if (dataParcela < hoje) continue; // so mostra o que ainda vem pela frente
       parcelas.push({
+        tipo: 'entrada',
         entradaId: en.id,
         apartamento: en.apartamento,
         cliente: en.cliente,
@@ -4936,6 +4969,30 @@ function _calcularParcelasFuturas() {
       });
     }
   });
+  (dadosSaidasObra || []).forEach(sa => {
+    const dataBase = _parseDataBR(sa.data);
+    if (!dataBase) return;
+    const n = _numeroParcelas(sa.condicao_pagamento);
+    const total = parseFloat(sa.valor) || 0;
+    if (!total || n <= 1) return; // só entra na previsão se for realmente parcelada
+    const valorParcela = total / n;
+    for (let i = 0; i < n; i++) {
+      const dataParcela = new Date(dataBase.getFullYear(), dataBase.getMonth() + i, dataBase.getDate());
+      if (dataParcela < hoje) continue;
+      parcelas.push({
+        tipo: 'saida',
+        saidaId: sa.id,
+        descricao: sa.descricao,
+        fornecedor: sa.fornecedor,
+        categoria: sa.categoria,
+        numeroParcela: i + 1,
+        totalParcelas: n,
+        valor: valorParcela,
+        data: dataParcela,
+        condicao: sa.condicao_pagamento
+      });
+    }
+  });
   parcelas.sort((a,b) => a.data - b.data);
   return parcelas;
 }
@@ -4944,15 +5001,16 @@ async function loadPrevisaoCobrancas() {
   const cont = document.getElementById('previsaocobrancas-lista');
   cont.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
   try {
-    if (!dadosEntradasPers.length) {
+    if (!dadosEntradasPers.length || !dadosSaidasObra.length) {
       const dados = await lerDados();
       dadosEntradasPers = dados.entradasPersonalizacao || [];
+      dadosSaidasObra = dados.saidasObra || [];
     }
   } catch(e) {}
 
   const parcelas = _calcularParcelasFuturas();
   if (!parcelas.length) {
-    cont.innerHTML = '<div class="empty-state"><strong>Nenhuma cobrança futura encontrada</strong><p>Lance entradas parceladas (Boleto ou Crédito 2x+) em Custo Personalizações pra elas aparecerem aqui</p></div>';
+    cont.innerHTML = '<div class="empty-state"><strong>Nenhuma cobrança futura encontrada</strong><p>Lance entradas ou saídas parceladas (Boleto ou Crédito 2x+) em Custo Personalizações pra elas aparecerem aqui</p></div>';
     return;
   }
 
@@ -4969,24 +5027,45 @@ async function loadPrevisaoCobrancas() {
   cont.innerHTML = Object.keys(meses).sort().map(chave => {
     const [ano, mes] = chave.split('-');
     const lista = meses[chave];
-    const totalMes = lista.reduce((s,p) => s + p.valor, 0);
+    const entradasMes = lista.filter(p => p.tipo === 'entrada');
+    const saidasMes = lista.filter(p => p.tipo === 'saida');
+    const totalReceber = entradasMes.reduce((s,p) => s + p.valor, 0);
+    const totalPagar = saidasMes.reduce((s,p) => s + p.valor, 0);
     return `
       <div class="card" style="margin-bottom:16px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px">
           <h3 style="font-size:16px;margin:0">${nomesMeses[parseInt(mes)-1]} de ${ano}</h3>
-          <span class="badge badge-green" style="font-size:12px">${fmt(totalMes)} no mês</span>
+          <div style="display:flex;gap:8px">
+            ${totalReceber > 0 ? `<span class="badge badge-green" style="font-size:12px">A receber: ${fmt(totalReceber)}</span>` : ''}
+            ${totalPagar > 0 ? `<span class="badge" style="font-size:12px;background:#FCECEA;color:#B5453D">A pagar: ${fmt(totalPagar)}</span>` : ''}
+          </div>
         </div>
+        ${entradasMes.length ? `
+        <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--accent2);text-transform:uppercase;margin:0 0 6px">A receber dos clientes</p>
         <div class="table-wrap"><table>
           <thead><tr><th>Data</th><th>Apartamento</th><th>Cliente</th><th>Categoria</th><th>Parcela</th><th style="text-align:right">Valor</th></tr></thead>
-          <tbody>${lista.map(p => `<tr>
+          <tbody>${entradasMes.map(p => `<tr>
             <td>${String(p.data.getDate()).padStart(2,'0')}/${String(p.data.getMonth()+1).padStart(2,'0')}</td>
             <td><span class="badge badge-info">Apto ${p.apartamento||'—'}</span></td>
             <td>${p.cliente||'—'}</td>
             <td style="color:var(--text2)">${p.categoria||''}</td>
             <td style="color:var(--text2)">${p.numeroParcela}/${p.totalParcelas}</td>
-            <td style="text-align:right;font-weight:600">${fmt(p.valor)}</td>
+            <td style="text-align:right;font-weight:600;color:var(--accent2)">${fmt(p.valor)}</td>
           </tr>`).join('')}</tbody>
-        </table></div>
+        </table></div>` : ''}
+        ${saidasMes.length ? `
+        <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:#B5453D;text-transform:uppercase;margin:${entradasMes.length?'16px':'0'} 0 6px">A pagar a fornecedores</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Data</th><th>Descrição</th><th>Fornecedor</th><th>Categoria</th><th>Parcela</th><th style="text-align:right">Valor</th></tr></thead>
+          <tbody>${saidasMes.map(p => `<tr>
+            <td>${String(p.data.getDate()).padStart(2,'0')}/${String(p.data.getMonth()+1).padStart(2,'0')}</td>
+            <td>${p.descricao||'—'}</td>
+            <td style="color:var(--text2)">${p.fornecedor||'—'}</td>
+            <td style="color:var(--text2)">${p.categoria||''}</td>
+            <td style="color:var(--text2)">${p.numeroParcela}/${p.totalParcelas}</td>
+            <td style="text-align:right;font-weight:600;color:#B5453D">${fmt(p.valor)}</td>
+          </tr>`).join('')}</tbody>
+        </table></div>` : ''}
       </div>`;
   }).join('');
 }
@@ -5090,7 +5169,7 @@ function renderCustoPersonalizacoes() {
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
           <div>
             <strong style="font-size:13px">${sa.descricao||'—'}</strong>
-            <div style="font-size:12px;color:var(--text2);margin-top:2px">${sa.categoria||''}${sa.categoria?' · ':''}<strong style="color:var(--text)">📅 ${sa.data||'sem data'}</strong> ${sa.apartamento ? '<span class="badge badge-info" style="margin-left:4px">Apto '+sa.apartamento+'</span>' : ''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''} ${sa.automatica ? '<span class="badge" style="background:#E8E4DE;color:#555;margin-left:4px">⚙ Automático (revestimento)</span>' : ''}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${sa.categoria||''}${sa.categoria?' · ':''}<strong style="color:var(--text)">📅 ${sa.data||'sem data'}</strong> ${sa.apartamento ? '<span class="badge badge-info" style="margin-left:4px">Apto '+sa.apartamento+'</span>' : ''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''} ${sa.automatica ? '<span class="badge" style="background:#E8E4DE;color:#555;margin-left:4px">⚙ Automático (revestimento)</span>' : ''}${sa.condicao_pagamento && sa.condicao_pagamento !== 'avista' ? ' · ' + _labelCondicaoPagamento(sa.condicao_pagamento) : ''}</div>
           </div>
           <strong style="font-size:15px;color:#8c6f3f">${_fmtR$(total)}</strong>
         </div>
@@ -5326,6 +5405,8 @@ function abrirModalNovaSaidaObra() {
   ['saida-obra-descricao','saida-obra-categoria','saida-obra-fornecedor','saida-obra-valor','saida-obra-obs'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('saida-obra-data').value = new Date().toISOString().split('T')[0];
   document.getElementById('saida-obra-arquivo').value = '';
+  document.getElementById('saida-obra-condicao').value = 'avista';
+  document.getElementById('saida-obra-condicao-resumo').innerHTML = '';
   const selApto = document.getElementById('saida-obra-apto');
   selApto.innerHTML = '<option value="">— Nenhum (gasto geral da obra) —</option>' +
     _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('');
@@ -5334,18 +5415,41 @@ function abrirModalNovaSaidaObra() {
   abrirModal('modal-nova-saida-obra');
 }
 
+function atualizarCalculoSaidaObra() {
+  const valorBase = parseFloat(document.getElementById('saida-obra-valor').value) || 0;
+  const condicao = document.getElementById('saida-obra-condicao').value;
+  const resumo = document.getElementById('saida-obra-condicao-resumo');
+  if (!valorBase) { resumo.innerHTML = ''; return; }
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const { total, parcelas, juros, boleto } = calcularTotalComPagamento(valorBase, condicao);
+  if (condicao === 'avista' || condicao === 'pix' || condicao === 'debito') {
+    resumo.innerHTML = `Valor: <strong>${fmt(valorBase)}</strong>`;
+  } else if (boleto) {
+    const vp = total / parcelas;
+    resumo.innerHTML = parcelas > 1 ? `${parcelas}x de ${fmt(vp)} · Total: <strong>${fmt(total)}</strong>` : `Valor: <strong>${fmt(total)}</strong>`;
+  } else {
+    const vp = total / parcelas;
+    resumo.innerHTML = `${parcelas}x de ${fmt(vp)} · Total: <strong>${fmt(total)}</strong> · Juros: <strong style="color:var(--warn)">${fmt(juros)}</strong>`;
+  }
+}
+
 async function salvarNovaSaidaObra() {
+  const valorBase = parseFloat(document.getElementById('saida-obra-valor').value) || 0;
+  const condicao = document.getElementById('saida-obra-condicao').value;
+  const { total } = calcularTotalComPagamento(valorBase, condicao);
   const dados = {
     descricao: document.getElementById('saida-obra-descricao').value.trim(),
     categoria: document.getElementById('saida-obra-categoria').value.trim(),
     fornecedor: document.getElementById('saida-obra-fornecedor').value.trim(),
-    valor: document.getElementById('saida-obra-valor').value,
+    valor: total,
+    valor_avista: valorBase,
+    condicao_pagamento: condicao,
     data: document.getElementById('saida-obra-data').value,
     projeto: document.getElementById('saida-obra-projeto').value,
     apartamento: document.getElementById('saida-obra-apto').value,
     observacao: document.getElementById('saida-obra-obs').value.trim(),
   };
-  if (!dados.descricao || !dados.valor) { showToast('Preencha ao menos descrição e valor', 'error'); return; }
+  if (!dados.descricao || !valorBase) { showToast('Preencha ao menos descrição e valor', 'error'); return; }
   const arquivo = document.getElementById('saida-obra-arquivo').files[0];
   if (arquivo && arquivo.size > 10 * 1024 * 1024) { showToast('Arquivo muito grande (máx 10MB)', 'error'); return; }
   try {
