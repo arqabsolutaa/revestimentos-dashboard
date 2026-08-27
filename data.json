@@ -24050,7 +24050,10 @@
       "comprovante_url": "https://drive.google.com/file/d/1_qXTG9RkFab4zfitjNWxNFV7XU9wcSHt/view?usp=drivesdk",
       "total_m2": "",
       "total_valor": "",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1781789858937_4totb",
@@ -24066,7 +24069,10 @@
       "comprovante_url": "https://drive.google.com/file/d/1Z1Ymao-2RzM3NjToKVCieSk711rIhm8y/view?usp=drivesdk",
       "total_m2": "358.1639999999999",
       "total_valor": "94594.818",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1781876001668_g692d",
@@ -24082,7 +24088,10 @@
       "comprovante_url": "",
       "total_m2": "324.8639999999999",
       "total_valor": "77358.08592000001",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1782135227820_y8prm",
@@ -24098,7 +24107,10 @@
       "comprovante_url": "",
       "total_m2": "380.20799999999986",
       "total_valor": "83022.8904",
-      "arquivado": "true"
+      "arquivado": "true",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1782157710207_2lzyv",
@@ -24114,7 +24126,10 @@
       "comprovante_url": "",
       "total_m2": "367.1879999999999",
       "total_valor": "83101.42103999999",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1782312642958_g0v4v",
@@ -24130,7 +24145,10 @@
       "comprovante_url": "[{\"url\":\"https://drive.google.com/file/d/1BNQ19e5nHxVf74pEjOPF4YehpVV5N71z/view?usp=drivesdk\",\"filename\":\"WHATSA~1.JPE\",\"data\":\"19/08/2026\"},{\"url\":\"https://drive.google.com/file/d/1lUr5Yx9DnyqS0meer79AfpVZrOuijZAV/view?usp=drivesdk\",\"filename\":\"WhatsApp Image 2026-08-19 at 15.33.00.jpeg\",\"data\":\"27/08/2026\"}]",
       "total_m2": "",
       "total_valor": "",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1782321305054_ekaae",
@@ -24146,7 +24164,10 @@
       "comprovante_url": "",
       "total_m2": "0",
       "total_valor": "0",
-      "arquivado": "true"
+      "arquivado": "true",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1782408341525_gsdzf",
@@ -24162,7 +24183,10 @@
       "comprovante_url": "",
       "total_m2": "327.64799999999997",
       "total_valor": "74274.08712",
-      "arquivado": "true"
+      "arquivado": "true",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1782426976430_bb3rw",
@@ -24178,7 +24202,10 @@
       "comprovante_url": "",
       "total_m2": "275.34000000000003",
       "total_valor": "48076.404",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1782823123815_yfw2l",
@@ -24194,7 +24221,10 @@
       "comprovante_url": "",
       "total_m2": "",
       "total_valor": "",
-      "arquivado": "true"
+      "arquivado": "true",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1782823763529_98q2c",
@@ -24210,7 +24240,10 @@
       "comprovante_url": "[{\"url\":\"https://drive.google.com/file/d/1IZMQfzPiH4YfQqYaFPsujFBZjD8YlG2Q/view?usp=drivesdk\",\"filename\":\"\",\"data\":\"\"},{\"url\":\"https://drive.google.com/file/d/155_0fM2zL84jSNAkv-Prkt2HyOUxGKjl/view?usp=drivesdk\",\"filename\":\"WhatsApp Image 2026-07-30 at 14.53.27.jpeg\",\"data\":\"06/08/2026\"}]",
       "total_m2": "",
       "total_valor": "",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1783354249055_jia1w",
@@ -24226,7 +24259,10 @@
       "comprovante_url": "",
       "total_m2": "",
       "total_valor": "",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1783369733910_k3yc8",
@@ -24242,7 +24278,10 @@
       "comprovante_url": "",
       "total_m2": "",
       "total_valor": "",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1783449225298_xo6n1",
@@ -24258,7 +24297,10 @@
       "comprovante_url": "",
       "total_m2": "",
       "total_valor": "",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1783513647906_8pft9",
@@ -24274,7 +24316,10 @@
       "comprovante_url": "",
       "total_m2": "",
       "total_valor": "",
-      "arquivado": "true"
+      "arquivado": "true",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1783547360829_up1nr",
@@ -24290,7 +24335,10 @@
       "comprovante_url": "",
       "total_m2": "342.44399999999996",
       "total_valor": "77791.3584",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1783693984918_q7wqz",
@@ -24306,7 +24354,10 @@
       "comprovante_url": "",
       "total_m2": "331.02000000000004",
       "total_valor": "47393.72520000001",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1783699648060_nnonr",
@@ -24322,7 +24373,10 @@
       "comprovante_url": "",
       "total_m2": "334.152",
       "total_valor": "51233.94599999999",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1784035514666_tqnhl",
@@ -24338,7 +24392,10 @@
       "comprovante_url": "",
       "total_m2": "357.5880000000001",
       "total_valor": "77722.0572",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1785432026683_2b9rr",
@@ -24354,7 +24411,10 @@
       "comprovante_url": "",
       "total_m2": "327.64799999999997",
       "total_valor": "73947.59976",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1786562345827_rzpzm",
@@ -24370,7 +24430,10 @@
       "comprovante_url": "",
       "total_m2": "255.11999999999998",
       "total_valor": "38250.2952",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1786977724567_urkvu",
@@ -24381,12 +24444,15 @@
       "selecoes": "{\"142-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"14\"},\"142-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"14\"},\"142-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"14\"},\"142-Banho 01-D-3\":{\"m2\":2.68,\"piso\":\"166\"},\"142-Banho 01-E-4\":{\"m2\":2.42,\"piso\":\"14\"},\"142-Banho 01-F-5\":{\"m2\":0.59,\"piso\":\"14\"},\"142-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"14\"},\"142-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"11\"},\"142-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"11\"},\"142-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"11\"},\"142-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"58\"},\"142-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"11\"},\"142-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"11\"},\"142-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"11\"},\"142-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"11\"},\"142-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"11\"},\"142-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"68\"},\"142-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"11\"},\"142-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"13\"},\"142-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"13\"},\"142-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"13\"},\"142-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"13\"},\"142-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"83\"},\"142-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"83\"},\"142-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"13\"},\"142-Banho A.S-E-4\":{\"m2\":4.33,\"piso\":\"11\"},\"142-Banho A.S-Piso-5\":{\"m2\":1.91,\"piso\":\"11\"},\"142-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"68\"}}",
       "status": "pendente",
       "criado_em": "17/08/2026",
-      "status_pgto": "",
+      "status_pgto": "pago",
       "obs_pgto": "",
       "comprovante_url": "[{\"url\":\"https://drive.google.com/file/d/1ISNnQcbQ8C4-vy7LbTLN-_lRCeME613v/view?usp=drivesdk\",\"filename\":\"WhatsApp Image 2026-08-22 at 11.40.25.jpeg\",\"data\":\"27/08/2026\"},{\"url\":\"https://drive.google.com/file/d/1R-n0DujxL9PgglH-wPmG2t5y4bi_VBFM/view?usp=drivesdk\",\"filename\":\"WhatsApp Image 2026-08-22 at 11.40.25.jpeg\",\"data\":\"27/08/2026\"}]",
       "total_m2": "126.20399999999995",
       "total_valor": "13888.901039999999",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "14651.400609999999",
+      "condicao_pagamento_confirmada": "credito5",
+      "valor_avista_confirmado": "13888.9"
     },
     {
       "id": "id_1787158458442_oubas",
@@ -24402,7 +24468,10 @@
       "comprovante_url": "",
       "total_m2": "312.41999999999996",
       "total_valor": "49272.669839999995",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1787159025855_7jfbu",
@@ -24418,7 +24487,10 @@
       "comprovante_url": "",
       "total_m2": "312.41999999999996",
       "total_valor": "56081.133839999995",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1787576543792_lr3cr",
@@ -24434,7 +24506,10 @@
       "comprovante_url": "",
       "total_m2": "373.11599999999993",
       "total_valor": "9087.642",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     },
     {
       "id": "id_1787595956209_rtw5l",
@@ -24450,7 +24525,10 @@
       "comprovante_url": "",
       "total_m2": "306.61199999999997",
       "total_valor": "51567.17232",
-      "arquivado": ""
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     }
   ],
   "orcamentos": [
