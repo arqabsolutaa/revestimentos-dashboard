@@ -25760,6 +25760,15 @@
       "data": "27/08/2026",
       "observacao": "",
       "criado_em": "27/08/2026"
+    },
+    {
+      "id": "id_1787837193299_u856e",
+      "entrada_id": "id_1787837041897_8qx9y",
+      "saida_id": "auto_rev_id_1785432026683_2b9rr",
+      "valor": "17809.64",
+      "data": "27/08/2026",
+      "observacao": "",
+      "criado_em": "27/08/2026"
     }
   ],
   "transferencias": []
