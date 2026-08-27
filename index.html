@@ -4960,7 +4960,7 @@ function renderCustoPersonalizacoes() {
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
           <div>
             <strong style="font-size:13px">${sa.descricao||'—'}</strong>
-            <div style="font-size:12px;color:var(--text2);margin-top:2px">${sa.categoria||''} · ${sa.data||''} ${sa.apartamento ? '<span class="badge badge-info" style="margin-left:4px">Apto '+sa.apartamento+'</span>' : ''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''} ${sa.automatica ? '<span class="badge" style="background:#E8E4DE;color:#555;margin-left:4px">⚙ Automático (revestimento)</span>' : ''}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${sa.categoria||''}${sa.categoria?' · ':''}<strong style="color:var(--text)">📅 ${sa.data||'sem data'}</strong> ${sa.apartamento ? '<span class="badge badge-info" style="margin-left:4px">Apto '+sa.apartamento+'</span>' : ''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''} ${sa.automatica ? '<span class="badge" style="background:#E8E4DE;color:#555;margin-left:4px">⚙ Automático (revestimento)</span>' : ''}</div>
           </div>
           <strong style="font-size:15px;color:#8c6f3f">${_fmtR$(total)}</strong>
         </div>
@@ -5054,6 +5054,19 @@ function _lerArquivoBase64(file) {
   });
 }
 
+// Envio de comprovante via POST de verdade (corpo da requisição), não por URL —
+// arquivos maiores que uns 2000 caracteres em base64 estouram o limite de URL do GET/JSONP.
+async function _enviarComprovante(action, campos) {
+  const response = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action, dados: campos })
+  });
+  const result = await response.json();
+  if (result.error) throw new Error(result.error);
+  return result.data;
+}
+
 async function salvarNovaEntradaPers() {
   const valorAvista = parseFloat(document.getElementById('entrada-pers-valor').value) || 0;
   const condicao = document.getElementById('entrada-pers-condicao').value;
@@ -5077,7 +5090,7 @@ async function salvarNovaEntradaPers() {
     if (arquivo) {
       showToast('Entrada salva! Enviando comprovante...', 'success');
       const base64data = await _lerArquivoBase64(arquivo);
-      await apiPost('uploadComprovanteEntradaPersonalizacao', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
+      await _enviarComprovante('uploadComprovanteEntradaPersonalizacao', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
       showToast('Comprovante anexado!', 'success');
     } else {
       showToast('Entrada salva!', 'success');
@@ -5210,7 +5223,7 @@ async function salvarNovaSaidaObra() {
     if (arquivo) {
       showToast('Saída salva! Enviando comprovante...', 'success');
       const base64data = await _lerArquivoBase64(arquivo);
-      await apiPost('uploadComprovanteSaidaObra', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
+      await _enviarComprovante('uploadComprovanteSaidaObra', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
       showToast('Comprovante anexado!', 'success');
     } else {
       showToast('Saída salva!', 'success');
