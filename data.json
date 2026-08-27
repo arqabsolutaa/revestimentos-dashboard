@@ -25577,21 +25577,7 @@
       "criado_em": "24/08/2026"
     }
   ],
-  "saidasObra": [
-    {
-      "id": "id_1787602465400_kb33q",
-      "data": "19/09/2026",
-      "descricao": "Banheira Apartamento 112",
-      "categoria": "Banheiras",
-      "fornecedor": "Sabbia",
-      "valor": "2836.84",
-      "projeto": "Essence",
-      "comprovante_url": "",
-      "observacao": "Pagamento em 30 / 60 / 90",
-      "apartamento": "112",
-      "criado_em": "24/08/2026"
-    }
-  ],
+  "saidasObra": [],
   "vinculos": [
     {
       "id": "id_1787601923471_5e9zg",
