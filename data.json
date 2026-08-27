@@ -25735,6 +25735,15 @@
       "data": "27/08/2026",
       "observacao": "",
       "criado_em": "27/08/2026"
+    },
+    {
+      "id": "id_1787836721438_klyqj",
+      "entrada_id": "id_1787601635858_n5qe3",
+      "saida_id": "id_1787836400215_br4vi",
+      "valor": "11693",
+      "data": "27/08/2026",
+      "observacao": "",
+      "criado_em": "27/08/2026"
     }
   ],
   "transferencias": []
