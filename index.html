@@ -1118,7 +1118,7 @@ function renderPagamentosBanheiras(lista) {
 function _renderCardPgto(p, totalValor, extra, status, prefixo, modulo) {
   const valorStr = totalValor > 0 ? 'R$ ' + totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
   const extraStr = extra ? ' · ' + extra : '';
-  return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+  return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
     <div>
       <p style="font-weight:600;font-size:14px">${p.cliente||'—'}</p>
       <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
@@ -6102,7 +6102,7 @@ function renderPagamentos(lista) {
       }
     }
     const status = p.status_pgto || 'pendente';
-    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
       <div>
         <p style="font-weight:600;font-size:14px">${p.cliente||'—'}</p>
         <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
