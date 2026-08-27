@@ -25653,6 +25653,22 @@
       "status": "pendente",
       "observacao": "Pagamento para Opera House",
       "criado_em": "24/08/2026"
+    },
+    {
+      "id": "id_1787837041897_8qx9y",
+      "data": "03/08/2026",
+      "apartamento": "112",
+      "cliente": "Valquíria e Mauricio",
+      "categoria": "Revestimento",
+      "valor": "18486.9",
+      "valor_avista": "18486.9",
+      "condicao_pagamento": "pix",
+      "valor_juros": "0",
+      "forma_pagamento": "",
+      "comprovante_url": "",
+      "status": "pendente",
+      "observacao": "1/4 parcela",
+      "criado_em": "27/08/2026"
     }
   ],
   "saidasObra": [
