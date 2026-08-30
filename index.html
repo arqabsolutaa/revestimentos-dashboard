@@ -2047,6 +2047,10 @@ body.mobile-mode #main{padding-bottom:72px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Previsão de Cobranças
     </button>
+    <button class="nav-btn" onclick="showScreen('mapavinculos')" id="nav-mapavinculos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="12" r="3"/><path d="M8.5 7.5L15.5 10.5M8.5 16.5L15.5 13.5"/></svg>
+      Mapa de Vínculos
+    </button>
     <button class="nav-btn" onclick="showScreen('config');document.getElementById('nav-config').classList.add('active')" id="nav-config">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       Configurações do Sistema
@@ -2825,6 +2829,31 @@ body.mobile-mode #main{padding-bottom:72px}
       </p>
     </div>
     <div id="previsaocobrancas-lista"></div>
+  </div>
+</div>
+
+<!-- MAPA DE VÍNCULOS -->
+<div id="mapavinculos-screen" class="screen">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Mapa de Vínculos</h1>
+      <p>Entradas e Saídas reais de um apartamento, e como estão vinculadas</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="loadMapaVinculos()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Atualizar
+      </button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="form-group" style="max-width:340px">
+      <label class="form-label">Escolha um apartamento</label>
+      <select class="form-control" id="mapavinculos-apto-select" onchange="renderMapaVinculos()">
+        <option value="">— Selecione —</option>
+      </select>
+    </div>
+    <div id="mapavinculos-conteudo"></div>
   </div>
 </div>
 
@@ -4560,6 +4589,7 @@ function showScreen(name) {
   if (name === 'custopersonalizacoes') { if (!custoPersDesbloqueado) { document.getElementById('custopers-lock').style.display = 'flex'; document.getElementById('custopers-conteudo').style.display = 'none'; } else { document.getElementById('custopers-lock').style.display = 'none'; document.getElementById('custopers-conteudo').style.display = 'block'; loadCustoPersonalizacoes(); } }
   if (name === 'visaogeralvalores') { if (!vgValoresDesbloqueado) { document.getElementById('vgvalores-lock').style.display = 'flex'; document.getElementById('vgvalores-conteudo').style.display = 'none'; } else { document.getElementById('vgvalores-lock').style.display = 'none'; document.getElementById('vgvalores-conteudo').style.display = 'block'; loadVisaoGeralValores(); } }
   if (name === 'previsaocobrancas') loadPrevisaoCobrancas();
+  if (name === 'mapavinculos') loadMapaVinculos();
 }
 
 
@@ -5134,6 +5164,114 @@ function abrirModalMesPrevisao(chave) {
     </table></div>` : ''}
   `;
   abrirModal('modal-mes-previsao');
+}
+
+async function loadMapaVinculos() {
+  try {
+    if (!dadosEntradasPers.length && !dadosSaidasObra.length) {
+      const dados = await lerDados();
+      dadosEntradasPers = dados.entradasPersonalizacao || [];
+      dadosSaidasObra = dados.saidasObra || [];
+      dadosVinculosPers = dados.vinculos || [];
+    }
+  } catch(e) {}
+
+  const aptos = new Set();
+  dadosEntradasPers.forEach(e => { if (e.apartamento) aptos.add(String(e.apartamento)); });
+  dadosSaidasObra.forEach(s => { if (s.apartamento) aptos.add(String(s.apartamento)); });
+
+  const select = document.getElementById('mapavinculos-apto-select');
+  const valorAtual = select.value;
+  select.innerHTML = '<option value="">— Selecione —</option>' +
+    [...aptos].sort((a,b) => a.localeCompare(b, undefined, {numeric:true})).map(ap => `<option value="${ap}">Apto ${ap}</option>`).join('');
+  if (valorAtual && aptos.has(valorAtual)) select.value = valorAtual;
+  renderMapaVinculos();
+}
+
+function renderMapaVinculos() {
+  const apto = document.getElementById('mapavinculos-apto-select').value;
+  const cont = document.getElementById('mapavinculos-conteudo');
+  if (!apto) {
+    cont.innerHTML = '<div class="empty-state" style="margin-top:16px"><strong>Escolha um apartamento acima</strong><p>Pra ver as entradas e saídas reais dele, e como estão vinculadas</p></div>';
+    return;
+  }
+
+  const entradas = dadosEntradasPers.filter(e => String(e.apartamento) === apto);
+  const saidasManuais = dadosSaidasObra.filter(s => String(s.apartamento) === apto);
+  const saidasAuto = _saidasAutomaticasRevestimento().filter(s => String(s.apartamento) === apto);
+  const saidas = [...saidasManuais, ...saidasAuto];
+
+  if (!entradas.length && !saidas.length) {
+    cont.innerHTML = '<div class="empty-state" style="margin-top:16px"><strong>Nada lançado pra esse apartamento ainda</strong></div>';
+    return;
+  }
+
+  const fmt = _fmtR$;
+  let totalEntradas = 0, totalSaidas = 0, totalVinculado = 0;
+
+  const entradasHTML = entradas.map(e => {
+    const total = parseFloat(e.valor) || 0;
+    totalEntradas += total;
+    const vinc = _valorVinculadoEntrada(e.id);
+    totalVinculado += vinc;
+    const linhas = dadosVinculosPers.filter(v => v.entrada_id === e.id).map(v => {
+      const saidaLigada = saidas.find(s => s.id === v.saida_id) || dadosSaidasObra.find(s => s.id === v.saida_id);
+      return `<div style="font-size:11px;color:var(--text3);margin-top:2px">→ vinculado a "${saidaLigada ? (saidaLigada.descricao||saidaLigada.categoria||'saída') : 'saída removida'}" · ${fmt(v.valor)}</div>`;
+    }).join('');
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div>
+          <p style="font-weight:600;font-size:14px">${e.cliente||'—'}</p>
+          <p style="font-size:12px;color:var(--text3)">${e.categoria||''} · 📅 ${e.data||'—'}${e.condicao_pagamento && e.condicao_pagamento!=='avista' ? ' · '+_labelCondicaoPagamento(e.condicao_pagamento) : ''}</p>
+        </div>
+        <p style="font-weight:600;color:var(--accent2);white-space:nowrap">${fmt(total)}</p>
+      </div>
+      ${_badgeSaldo(total, vinc)}
+      ${linhas}
+    </div>`;
+  }).join('');
+
+  const saidasHTML = saidas.map(s => {
+    const total = parseFloat(s.valor) || 0;
+    if (!s.automatica) totalSaidas += total;
+    const vinc = s.automatica ? 0 : _valorVinculadoSaida(s.id);
+    const linhas = s.automatica ? '' : dadosVinculosPers.filter(v => v.saida_id === s.id).map(v => {
+      const entradaLigada = entradas.find(e => e.id === v.entrada_id) || dadosEntradasPers.find(e => e.id === v.entrada_id);
+      return `<div style="font-size:11px;color:var(--text3);margin-top:2px">→ coberto pela entrada de "${entradaLigada ? entradaLigada.cliente : 'entrada removida'}" · ${fmt(v.valor)}</div>`;
+    }).join('');
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div>
+          <p style="font-weight:600;font-size:14px">${s.descricao||s.categoria||'—'}</p>
+          <p style="font-size:12px;color:var(--text3)">${s.categoria||''}${s.fornecedor?' · '+s.fornecedor:''} · 📅 ${s.data||'—'}</p>
+        </div>
+        <p style="font-weight:600;color:#B5453D;white-space:nowrap">${fmt(total)}</p>
+      </div>
+      ${s.automatica ? '<span class="badge" style="background:#E8E4DE;color:#555">⚙ Automático (revestimento) · não entra em vínculo</span>' : _badgeSaldo(total, vinc)}
+      ${linhas}
+    </div>`;
+  }).join('');
+
+  const saldoLivre = totalEntradas - totalVinculado;
+
+  cont.innerHTML = `
+    <div class="card" style="margin:16px 0;padding:14px 18px;display:flex;gap:24px;flex-wrap:wrap">
+      <div><p style="font-size:11px;color:var(--text3);text-transform:uppercase">Total entradas</p><p style="font-weight:600;color:var(--accent2)">${fmt(totalEntradas)}</p></div>
+      <div><p style="font-size:11px;color:var(--text3);text-transform:uppercase">Total saídas (não-automáticas)</p><p style="font-weight:600;color:#B5453D">${fmt(totalSaidas)}</p></div>
+      <div><p style="font-size:11px;color:var(--text3);text-transform:uppercase">Vinculado</p><p style="font-weight:600">${fmt(totalVinculado)}</p></div>
+      <div><p style="font-size:11px;color:var(--text3);text-transform:uppercase">Saldo livre das entradas</p><p style="font-weight:600;color:${saldoLivre>=0?'var(--accent2)':'#B5453D'}">${fmt(saldoLivre)}</p></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+      <div>
+        <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--accent2);text-transform:uppercase;margin-bottom:8px">Entradas (${entradas.length})</p>
+        ${entradasHTML || '<p style="font-size:13px;color:var(--text3)">Nenhuma entrada lançada</p>'}
+      </div>
+      <div>
+        <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:#B5453D;text-transform:uppercase;margin-bottom:8px">Saídas (${saidas.length})</p>
+        ${saidasHTML || '<p style="font-size:13px;color:var(--text3)">Nenhuma saída lançada</p>'}
+      </div>
+    </div>
+  `;
 }
 
 function _valorVinculadoEntrada(id) {
