@@ -25814,15 +25814,6 @@
   ],
   "vinculos": [
     {
-      "id": "id_1787601923471_5e9zg",
-      "entrada_id": "id_1787601635858_n5qe3",
-      "saida_id": "auto_rev_id_1782157710207_2lzyv",
-      "valor": "26102.23",
-      "data": "24/08/2026",
-      "observacao": "",
-      "criado_em": "24/08/2026"
-    },
-    {
       "id": "id_1787836256765_p7iod",
       "entrada_id": "id_1787601635858_n5qe3",
       "saida_id": "id_1787836180735_qkotx",
