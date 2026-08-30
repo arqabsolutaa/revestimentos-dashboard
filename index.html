@@ -4511,6 +4511,11 @@ async function forcarAtualizarDados() {
     if (dados.orcamentos) dadosOrcamentos = dados.orcamentos;
     if (dados.instalacoes) dadosInstalacoes = dados.instalacoes;
     if (dados.lotes) { dadosLotes = dados.lotes; }
+    if (dados.entradasPersonalizacao) dadosEntradasPers = dados.entradasPersonalizacao;
+    if (dados.saidasObra) dadosSaidasObra = dados.saidasObra;
+    if (dados.vinculos) dadosVinculosPers = dados.vinculos;
+    // Módulos extras (vinilico/marmoraria/banheiras) e vagas/depósitos têm cache próprio — invalida pra forçar buscar de novo
+    if (typeof invalidarCacheExtra === 'function') ['vinilico','marmoraria','banheiras'].forEach(m => invalidarCacheExtra(m));
     // Recarregar tela atual
     const lastScreen = localStorage.getItem('last_screen');
     if (lastScreen) showScreen(lastScreen);
