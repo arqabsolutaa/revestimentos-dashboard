@@ -5305,7 +5305,7 @@ function renderMapaVinculosCards() {
   cont.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px">` +
     aptos.map(apto => {
       const { entradas, saidas } = _entradasSaidasDoApto(apto);
-      const totalEntradas = entradas.reduce((s,e) => s + (parseFloat(e.valor)||0), 0);
+      const totalEntradas = entradas.reduce((s,e) => s + _valorLiquidoEntrada(e), 0);
       const totalVinculado = entradas.reduce((s,e) => s + _valorVinculadoEntrada(e.id), 0);
       const saldoLivre = totalEntradas - totalVinculado;
       const clienteRef = entradas[0]?.cliente || '';
@@ -5341,13 +5341,13 @@ function _renderMapaVinculosCorpo() {
   const { entradas, saidas } = _entradasSaidasDoApto(_mapaVinculosAptoAtual);
   const fmt = _fmtR$;
   let totalEntradas = 0, totalSaidas = 0, totalVinculado = 0;
-  entradas.forEach(e => { totalEntradas += parseFloat(e.valor)||0; totalVinculado += _valorVinculadoEntrada(e.id); });
+  entradas.forEach(e => { totalEntradas += _valorLiquidoEntrada(e); totalVinculado += _valorVinculadoEntrada(e.id); });
   saidas.forEach(s => { if (!s.automatica) totalSaidas += parseFloat(s.valor)||0; });
   const saldoLivre = totalEntradas - totalVinculado;
 
   const resumoHTML = `
     <div class="card" style="margin-bottom:16px;padding:14px 18px;display:flex;gap:24px;flex-wrap:wrap">
-      <div><p style="font-size:11px;color:var(--text3);text-transform:uppercase">Total entradas</p><p style="font-weight:600;color:var(--accent2)">${fmt(totalEntradas)}</p></div>
+      <div><p style="font-size:11px;color:var(--text3);text-transform:uppercase">Total entradas (líquido)</p><p style="font-weight:600;color:var(--accent2)">${fmt(totalEntradas)}</p></div>
       <div><p style="font-size:11px;color:var(--text3);text-transform:uppercase">Total saídas (não-automáticas)</p><p style="font-weight:600;color:#B5453D">${fmt(totalSaidas)}</p></div>
       <div><p style="font-size:11px;color:var(--text3);text-transform:uppercase">Vinculado</p><p style="font-weight:600">${fmt(totalVinculado)}</p></div>
       <div><p style="font-size:11px;color:var(--text3);text-transform:uppercase">Saldo livre das entradas</p><p style="font-weight:600;color:${saldoLivre>=0?'var(--accent2)':'#B5453D'}">${fmt(saldoLivre)}</p></div>
@@ -5359,7 +5359,8 @@ function _renderMapaVinculosCorpo() {
 function _mapaVinculosListaHTML(entradas, saidas) {
   const fmt = _fmtR$;
   const entradasHTML = entradas.map(e => {
-    const total = parseFloat(e.valor) || 0;
+    const total = _valorLiquidoEntrada(e);
+    const temJuros = parseFloat(e.valor_avista) > 0.005;
     const vinc = _valorVinculadoEntrada(e.id);
     return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
@@ -5367,7 +5368,7 @@ function _mapaVinculosListaHTML(entradas, saidas) {
           <p style="font-weight:600;font-size:14px">${e.cliente||'—'}</p>
           <p style="font-size:12px;color:var(--text3)">${e.categoria||''} · 📅 ${e.data||'—'}${e.condicao_pagamento && e.condicao_pagamento!=='avista' ? ' · '+_labelCondicaoPagamento(e.condicao_pagamento) : ''}</p>
         </div>
-        <p style="font-weight:600;color:var(--accent2);white-space:nowrap">${fmt(total)}</p>
+        <p style="font-weight:600;color:var(--accent2);white-space:nowrap">${fmt(total)}${temJuros ? '<br><span style="font-size:10px;color:var(--text3);font-weight:400">líquido</span>' : ''}</p>
       </div>
       ${_badgeSaldo(total, vinc)}
       ${_linhasVinculoEntradaHTML(e.id, saidas)}
@@ -5428,10 +5429,10 @@ function _mapaVinculosFluxogramaSVG(entradas, saidas) {
 
   entradas.forEach(e => {
     const y = posE[e.id];
-    const total = parseFloat(e.valor) || 0;
+    const total = _valorLiquidoEntrada(e);
     svg += `<rect x="${xE}" y="${y}" width="${colEW}" height="${boxH}" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
       <text x="${xE+12}" y="${y+22}" font-size="13" font-weight="600" fill="#04342C">${_truncaTexto(e.cliente, 26)}</text>
-      <text x="${xE+12}" y="${y+40}" font-size="11" fill="#0F6E56">${_truncaTexto(e.categoria,20)} · ${fmt(total)}</text>`;
+      <text x="${xE+12}" y="${y+40}" font-size="11" fill="#0F6E56">${_truncaTexto(e.categoria,20)} · ${fmt(total)}${parseFloat(e.valor_avista)>0.005 ? ' líq.' : ''}</text>`;
   });
 
   saidas.forEach(s => {
@@ -5463,6 +5464,16 @@ function _mapaVinculosFluxogramaSVG(entradas, saidas) {
 
   svg += `</svg></div>`;
   return svg;
+}
+
+// Valor "de verdade" disponivel pra vincular/saldo: quando a entrada teve juros de credito embutidos
+// (valor_avista preenchido), usa o valor_avista (liquido, sem os juros) — os juros sao so repasse
+// pra cobrir a taxa da maquininha, nao sobram como lucro/saldo real.
+function _valorLiquidoEntrada(en) {
+  if (!en) return 0;
+  const avista = parseFloat(en.valor_avista);
+  if (avista > 0.005) return avista;
+  return parseFloat(en.valor) || 0;
 }
 
 function _valorVinculadoEntrada(id) {
@@ -5530,6 +5541,7 @@ function renderCustoPersonalizacoes() {
     dadosEntradasPers.map(en => {
       const vinc = _valorVinculadoEntrada(en.id);
       const total = parseFloat(en.valor)||0;
+      const totalLiquido = _valorLiquidoEntrada(en);
       const jurosVal = parseFloat(en.valor_juros)||0;
       const avistaVal = parseFloat(en.valor_avista)||0;
       const temJuros = jurosVal > 0.005;
@@ -5541,11 +5553,11 @@ function renderCustoPersonalizacoes() {
           </div>
           <strong style="font-size:15px;color:var(--accent2)">${_fmtR$(total)}</strong>
         </div>
-        ${temJuros ? `<div style="font-size:11px;color:var(--text3);margin-top:4px">à vista seria ${_fmtR$(avistaVal)} · <span style="color:var(--warn)">juros ${_fmtR$(jurosVal)}</span></div>` : ''}
+        ${temJuros ? `<div style="font-size:11px;color:var(--text3);margin-top:4px">líquido pra vincular: <strong>${_fmtR$(avistaVal)}</strong> · <span style="color:var(--warn)">juros da maquininha ${_fmtR$(jurosVal)} (repasse, não conta como saldo)</span></div>` : ''}
         ${_comprovantesLinksHTML(en.comprovante_url)}
         ${_linhasVinculoEntradaHTML(en.id)}
         <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
-          ${_badgeSaldo(total, vinc)}
+          ${_badgeSaldo(totalLiquido, vinc)}
           <div style="display:flex;gap:6px">
             <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('entrada','${en.id}')">Vincular a saída</button>
             <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirEntradaPers('${en.id}')" title="Excluir entrada">🗑️</button>
@@ -5915,14 +5927,16 @@ function abrirModalVincular(tipo, id) {
   const listaSaidas = window._saidasParaExibir || dadosSaidasObra;
   const origem = tipo === 'entrada' ? dadosEntradasPers.find(x => x.id === id) : listaSaidas.find(x => x.id === id);
   if (!origem) return;
-  const totalOrigem = parseFloat(origem.valor)||0;
+  const totalOrigem = tipo === 'entrada' ? _valorLiquidoEntrada(origem) : (parseFloat(origem.valor)||0);
   const vincOrigem = tipo === 'entrada' ? _valorVinculadoEntrada(id) : _valorVinculadoSaida(id);
   const restante = totalOrigem - vincOrigem;
+  const temJurosOrigem = tipo === 'entrada' && parseFloat(origem.valor_avista) > 0.005;
+  const notaJuros = temJurosOrigem ? `<br><span style="color:var(--text3);font-size:11px">Recebido com juros: ${_fmtR$(origem.valor)} · o valor pra vincular é sem os juros da maquininha (${_fmtR$(totalOrigem)}), já que eles são só repasse</span>` : '';
 
   document.getElementById('vincular-custopers-titulo').textContent = tipo === 'entrada' ? 'Vincular Entrada a uma Saída' : 'Vincular Saída a uma Entrada';
   document.getElementById('vincular-custopers-label-lista').textContent = tipo === 'entrada' ? 'Vincular a qual saída?' : 'Vincular a qual entrada?';
   document.getElementById('vincular-custopers-origem').innerHTML = tipo === 'entrada'
-    ? `<strong>Apto ${origem.apartamento} — ${origem.cliente}</strong><br>Total: ${_fmtR$(totalOrigem)} · Ainda livre: <strong>${_fmtR$(restante)}</strong>`
+    ? `<strong>Apto ${origem.apartamento} — ${origem.cliente}</strong><br>Total (líquido): ${_fmtR$(totalOrigem)} · Ainda livre: <strong>${_fmtR$(restante)}</strong>${notaJuros}`
     : `<strong>${origem.descricao}</strong><br>Total: ${_fmtR$(totalOrigem)} · Ainda livre: <strong>${_fmtR$(restante)}</strong>`;
 
   const lista = tipo === 'entrada' ? listaSaidas : dadosEntradasPers;
