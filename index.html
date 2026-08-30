@@ -2849,7 +2849,7 @@ body.mobile-mode #main{padding-bottom:72px}
   <div class="page-content">
     <div class="card" style="background:var(--accent-bg);border-color:var(--accent);margin-bottom:20px;padding:14px 18px">
       <p style="font-size:13px;color:var(--text);margin:0;line-height:1.6">
-        Essa lista mostra só o que <strong>precisa de ação sua</strong>: Boleto e PIX Parcelado, mês a mês. Pagamentos no <strong>Crédito</strong> não aparecem aqui — eles caem sozinhos na maquininha todo mês, sem você precisar gerar nada.
+        Boleto e PIX Parcelado aparecem separados do <strong>Crédito</strong> (que cai sozinho na maquininha todo mês). Assim você vê rapidinho o que precisa gerar e mandar, sem perder a visão do que já está garantido no cartão.
       </p>
     </div>
     <div id="previsaocobrancas-lista"></div>
@@ -5108,9 +5108,8 @@ function _parseDataBR(str) {
 }
 
 function _precisaGerarCobranca(condicao) {
-  // So entra na Previsao de Cobrancas o que precisa de ACAO MANUAL da Barbara pra cobrar:
-  // Boleto (ela gera e manda) e PIX Parcelado (ela cobra parcela a parcela).
-  // Credito parcelado NAO entra — cai sozinho na maquininha, mes a mes, sem ela precisar fazer nada.
+  // Boleto e PIX Parcelado exigem acao manual (gerar/mandar). Credito parcelado cai sozinho
+  // na maquininha — continua aparecendo aqui, mas separado, so como informativo.
   if (!condicao) return false;
   return condicao.startsWith('boleto') || condicao.startsWith('pixparc');
 }
@@ -5119,10 +5118,11 @@ function _calcularParcelasFuturas() {
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const parcelas = [];
   (dadosEntradasPers || []).forEach(en => {
-    if (!_precisaGerarCobranca(en.condicao_pagamento)) return;
+    const n = _numeroParcelas(en.condicao_pagamento);
+    const ehCredito = (en.condicao_pagamento||'').startsWith('credito');
+    if (n <= 1 && !ehCredito) return; // pagamento a vista/pix/debito nao gera cobranca futura
     const dataBase = _parseDataBR(en.data);
     if (!dataBase) return;
-    const n = _numeroParcelas(en.condicao_pagamento);
     const total = parseFloat(en.valor) || 0;
     if (!total) return;
     const valorParcela = total / n;
@@ -5131,6 +5131,7 @@ function _calcularParcelasFuturas() {
       if (dataParcela < hoje) continue; // so mostra o que ainda vem pela frente
       parcelas.push({
         tipo: 'entrada',
+        automatico: ehCredito,
         entradaId: en.id,
         apartamento: en.apartamento,
         cliente: en.cliente,
@@ -5144,18 +5145,20 @@ function _calcularParcelasFuturas() {
     }
   });
   (dadosSaidasObra || []).forEach(sa => {
-    if (!_precisaGerarCobranca(sa.condicao_pagamento)) return;
+    const n = _numeroParcelas(sa.condicao_pagamento);
+    if (n <= 1) return; // só entra na previsão se for realmente parcelada
+    const ehCredito = (sa.condicao_pagamento||'').startsWith('credito');
     const dataBase = _parseDataBR(sa.data);
     if (!dataBase) return;
-    const n = _numeroParcelas(sa.condicao_pagamento);
     const total = parseFloat(sa.valor) || 0;
-    if (!total || n <= 1) return; // só entra na previsão se for realmente parcelada
+    if (!total) return;
     const valorParcela = total / n;
     for (let i = 0; i < n; i++) {
       const dataParcela = new Date(dataBase.getFullYear(), dataBase.getMonth() + i, dataBase.getDate());
       if (dataParcela < hoje) continue;
       parcelas.push({
         tipo: 'saida',
+        automatico: ehCredito,
         saidaId: sa.id,
         descricao: sa.descricao,
         fornecedor: sa.fornecedor,
@@ -5187,7 +5190,7 @@ async function loadPrevisaoCobrancas() {
 
   const parcelas = _calcularParcelasFuturas();
   if (!parcelas.length) {
-    cont.innerHTML = '<div class="empty-state"><strong>Nenhuma cobrança futura encontrada</strong><p>Lance entradas ou saídas parceladas (Boleto ou Crédito 2x+) em Custo Personalizações pra elas aparecerem aqui</p></div>';
+    cont.innerHTML = '<div class="empty-state"><strong>Nenhuma cobrança futura encontrada</strong><p>Lance entradas ou saídas parceladas (Boleto, PIX Parcelado ou Crédito) em Custo Personalizações pra elas aparecerem aqui</p></div>';
     return;
   }
 
@@ -5206,11 +5209,13 @@ async function loadPrevisaoCobrancas() {
     Object.keys(meses).sort().map(chave => {
       const [ano, mes] = chave.split('-');
       const lista = meses[chave];
-      const totalReceber = lista.filter(p => p.tipo === 'entrada').reduce((s,p) => s + p.valor, 0);
+      const totalReceberManual = lista.filter(p => p.tipo === 'entrada' && !p.automatico).reduce((s,p) => s + p.valor, 0);
+      const totalReceberAuto = lista.filter(p => p.tipo === 'entrada' && p.automatico).reduce((s,p) => s + p.valor, 0);
       const totalPagar = lista.filter(p => p.tipo === 'saida').reduce((s,p) => s + p.valor, 0);
       return `<div onclick="abrirModalMesPrevisao('${chave}')" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
         <p style="font-size:15px;font-weight:600;margin:0 0 10px">${nomesMeses[parseInt(mes)-1]} de ${ano}</p>
-        ${totalReceber > 0 ? `<p style="font-size:13px;color:var(--accent2);margin:0 0 4px">↓ A receber: <strong>${fmt(totalReceber)}</strong></p>` : ''}
+        ${totalReceberManual > 0 ? `<p style="font-size:13px;color:var(--accent2);margin:0 0 4px">↓ Gerar Boleto/PIX: <strong>${fmt(totalReceberManual)}</strong></p>` : ''}
+        ${totalReceberAuto > 0 ? `<p style="font-size:12px;color:var(--text3);margin:0 0 4px">⚙ Crédito automático: <strong>${fmt(totalReceberAuto)}</strong></p>` : ''}
         ${totalPagar > 0 ? `<p style="font-size:13px;color:#B5453D;margin:0">↑ A pagar: <strong>${fmt(totalPagar)}</strong></p>` : ''}
         <p style="font-size:11px;color:var(--text3);margin-top:10px">${lista.length} cobrança${lista.length>1?'s':''} · clique pra ver</p>
       </div>`;
@@ -5220,28 +5225,35 @@ async function loadPrevisaoCobrancas() {
 function abrirModalMesPrevisao(chave) {
   const [ano, mes] = chave.split('-');
   const lista = _mesesPrevisao[chave] || [];
-  const entradasMes = lista.filter(p => p.tipo === 'entrada');
+  const entradasManual = lista.filter(p => p.tipo === 'entrada' && !p.automatico);
+  const entradasAuto = lista.filter(p => p.tipo === 'entrada' && p.automatico);
   const saidasMes = lista.filter(p => p.tipo === 'saida');
   const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 
-  document.getElementById('modal-mes-previsao-titulo').textContent = nomesMeses[parseInt(mes)-1] + ' de ' + ano;
-  document.getElementById('modal-mes-previsao-corpo').innerHTML = `
-    ${entradasMes.length ? `
-    <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--accent2);text-transform:uppercase;margin:0 0 6px">A receber dos clientes</p>
+  const tabelaEntradas = (lista_, corTitulo) => `
     <div class="table-wrap"><table>
       <thead><tr><th>Data</th><th>Apartamento</th><th>Cliente</th><th>Categoria</th><th>Parcela</th><th style="text-align:right">Valor</th></tr></thead>
-      <tbody>${entradasMes.map(p => `<tr>
+      <tbody>${lista_.map(p => `<tr>
         <td>${String(p.data.getDate()).padStart(2,'0')}/${String(p.data.getMonth()+1).padStart(2,'0')}</td>
         <td><span class="badge badge-info">Apto ${p.apartamento||'—'}</span></td>
         <td>${p.cliente||'—'}</td>
-        <td style="color:var(--text2)">${p.categoria||''}</td>
+        <td style="color:var(--text2)">${p.categoria||''} · ${_labelCondicaoPagamento(p.condicao)}</td>
         <td style="color:var(--text2)">${p.numeroParcela}/${p.totalParcelas}</td>
-        <td style="text-align:right;font-weight:600;color:var(--accent2)">${fmt(p.valor)}</td>
+        <td style="text-align:right;font-weight:600;color:${corTitulo}">${fmt(p.valor)}</td>
       </tr>`).join('')}</tbody>
-    </table></div>` : ''}
+    </table></div>`;
+
+  document.getElementById('modal-mes-previsao-titulo').textContent = nomesMeses[parseInt(mes)-1] + ' de ' + ano;
+  document.getElementById('modal-mes-previsao-corpo').innerHTML = `
+    ${entradasManual.length ? `
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--accent2);text-transform:uppercase;margin:0 0 6px">Boleto / PIX Parcelado — você precisa gerar e enviar</p>
+    ${tabelaEntradas(entradasManual, 'var(--accent2)')}` : ''}
+    ${entradasAuto.length ? `
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--text3);text-transform:uppercase;margin:${entradasManual.length?'16px':'0'} 0 6px">⚙ Crédito — cai sozinho na maquininha, sem ação sua</p>
+    ${tabelaEntradas(entradasAuto, 'var(--text3)')}` : ''}
     ${saidasMes.length ? `
-    <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:#B5453D;text-transform:uppercase;margin:${entradasMes.length?'16px':'0'} 0 6px">A pagar a fornecedores</p>
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:#B5453D;text-transform:uppercase;margin:${(entradasManual.length||entradasAuto.length)?'16px':'0'} 0 6px">A pagar a fornecedores</p>
     <div class="table-wrap"><table>
       <thead><tr><th>Data</th><th>Descrição</th><th>Fornecedor</th><th>Categoria</th><th>Parcela</th><th style="text-align:right">Valor</th></tr></thead>
       <tbody>${saidasMes.map(p => `<tr>
