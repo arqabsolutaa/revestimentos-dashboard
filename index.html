@@ -6005,7 +6005,7 @@ async function excluirVinculoModal() {
   if (!_vinculoEmEdicao) return;
   if (!confirm('Excluir esse vínculo? A entrada e a saída voltam a ficar livres nesse valor.')) return;
   try {
-    await apiPost('deleteVinculo', { id: _vinculoEmEdicao.id });
+    await apiAction('deleteVinculo', _vinculoEmEdicao.id);
     showToast('Vínculo excluído!', 'success');
     fecharModal('modal-editar-vinculo');
     loadCustoPersonalizacoes();
