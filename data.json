@@ -25701,6 +25701,22 @@
       "status": "pendente",
       "observacao": "",
       "criado_em": "30/08/2026"
+    },
+    {
+      "id": "id_1788123072094_3fqvv",
+      "data": "19/10/2026",
+      "apartamento": "92",
+      "cliente": "Fabricia e Anderson",
+      "categoria": "Banheira",
+      "valor": "12765.8",
+      "valor_avista": "12765.8",
+      "condicao_pagamento": "boleto3",
+      "valor_juros": "0",
+      "forma_pagamento": "",
+      "comprovante_url": "",
+      "status": "pendente",
+      "observacao": "",
+      "criado_em": "30/08/2026"
     }
   ],
   "saidasObra": [
