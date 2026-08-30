@@ -25717,6 +25717,22 @@
       "status": "pendente",
       "observacao": "",
       "criado_em": "30/08/2026"
+    },
+    {
+      "id": "id_1788123217442_97ltv",
+      "data": "20/07/2026",
+      "apartamento": "12",
+      "cliente": "Suzana e Junior",
+      "categoria": "Revestimento",
+      "valor": "31533.33",
+      "valor_avista": "31533.33",
+      "condicao_pagamento": "pix",
+      "valor_juros": "0",
+      "forma_pagamento": "",
+      "comprovante_url": "",
+      "status": "pendente",
+      "observacao": "",
+      "criado_em": "30/08/2026"
     }
   ],
   "saidasObra": [
