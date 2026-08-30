@@ -4448,6 +4448,7 @@ function entrarSistema() {
   capa.style.transition = 'opacity 0.3s ease';
   capa.style.opacity = '0';
   capa.style.display = 'none';
+  sessionStorage.setItem('absoluta_capa_ok', '1');
   // Detectar mobile/tablet e aplicar modo correto
   setMode(isMobileDevice() ? 'mobile' : 'desktop');
   const escolha = document.getElementById('escolha-modulo');
@@ -4480,6 +4481,7 @@ function confirmarSenhaModulo() {
   const tipo = window._senhaModuloPendente;
   const senha = document.getElementById('escolha-senha-input').value;
   if (senha === SENHAS_MODULO[tipo]) {
+    sessionStorage.setItem('absoluta_area', tipo);
     cancelarSenhaModulo();
     escolherModulo(tipo);
   } else {
@@ -4519,6 +4521,7 @@ function escolherModulo(tipo) {
 }
 
 function sairParaEscolha() {
+  sessionStorage.removeItem('absoluta_area');
   const escolha = document.getElementById('escolha-modulo');
   if (escolha) {
     escolha.style.display = 'flex';
@@ -4540,6 +4543,17 @@ function detectarCapaMobile() {
 
 window.onload = async () => {
   detectarCapaMobile();
+  // Restaura sessão (capa + área) apos F5/reload, sem pedir senha de novo
+  const capaOk = sessionStorage.getItem('absoluta_capa_ok');
+  const areaSalva = sessionStorage.getItem('absoluta_area');
+  if (capaOk) {
+    entrarSistema();
+    if (areaSalva && SENHAS_MODULO[areaSalva]) {
+      const lastScreen = localStorage.getItem('last_screen'); // le ANTES, pois escolherModulo tambem mexe no last_screen
+      escolherModulo(areaSalva);
+      if (lastScreen) showScreen(lastScreen);
+    }
+  }
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA);
   if (empresa) {
     const el = document.getElementById('empresa-nome');
