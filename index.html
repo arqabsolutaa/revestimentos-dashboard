@@ -2036,16 +2036,16 @@ body.mobile-mode #main{padding-bottom:72px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       Dados dos Revestimentos
     </button>
-    <button class="nav-btn" onclick="showScreen('pagamentos')" id="nav-pagamentos">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
-      Controle de Pagamentos
-    </button>
     </div>
     <button onclick="toggleNavSubgrupo('controle-b')" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:none;border:none;color:rgba(255,255,255,0.45);font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:14px 12px 4px;cursor:pointer">
       <span>Financeiro</span>
       <svg id="nav-subgrupo-controle-b-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 0.15s"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div id="nav-subgrupo-controle-b">
+    <button class="nav-btn" onclick="showScreen('pagamentos')" id="nav-pagamentos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+      Controle de Pagamentos
+    </button>
     <button class="nav-btn" onclick="showScreen('margemlucro')" id="nav-margemlucro">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
       Margem de Lucro
@@ -2113,6 +2113,22 @@ body.mobile-mode #main{padding-bottom:72px}
       </div>
       <p id="escolha-senha-erro" style="display:none;color:#e0958a;font-size:12px;font-family:'Inter',sans-serif;margin:0">Senha incorreta</p>
       <button onclick="cancelarSenhaModulo()" style="background:none;border:none;color:rgba(232,223,196,0.5);font-size:11px;font-family:'Inter',sans-serif;cursor:pointer;text-decoration:underline;margin-top:4px">Voltar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-senha-navgrupo">
+  <div class="modal" style="max-width:340px">
+    <div class="modal-header">
+      <h2 id="modal-senha-navgrupo-titulo">Senha</h2>
+      <button class="modal-close" onclick="cancelarSenhaNavGrupo()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <input class="form-control" type="password" id="senha-navgrupo-input" placeholder="Digite a senha" style="text-align:center" onkeydown="if(event.key==='Enter')confirmarSenhaNavGrupo()">
+      </div>
+      <p id="senha-navgrupo-erro" style="display:none;color:var(--danger);font-size:12px;text-align:center;margin-bottom:10px">Senha incorreta</p>
+      <button class="btn btn-primary" onclick="confirmarSenhaNavGrupo()" style="width:100%;justify-content:center">Entrar</button>
     </div>
   </div>
 </div>
@@ -4586,19 +4602,73 @@ function escolherModulo(tipo) {
   }
 }
 
+const SENHAS_NAV_SUBGRUPO = {
+  'controle-a': 'arquitetura1@',
+  'controle-b': 'financeiro1@'
+};
+const NOMES_NAV_SUBGRUPO = {
+  'controle-a': 'Obra',
+  'controle-b': 'Financeiro'
+};
+let _navSubgrupoPendente = null;
+
 function toggleNavSubgrupo(nome) {
   const cont = document.getElementById('nav-subgrupo-' + nome);
-  const chevron = document.getElementById('nav-subgrupo-' + nome + '-chevron');
-  const fechado = cont.style.display === 'none';
-  cont.style.display = fechado ? 'block' : 'none';
-  chevron.style.transform = fechado ? 'rotate(0deg)' : 'rotate(-90deg)';
-  localStorage.setItem('nav-subgrupo-' + nome + '-fechado', fechado ? '0' : '1');
+  const estaFechado = cont.style.display === 'none';
+
+  if (!estaFechado) {
+    // esta aberto, so fecha - nao precisa de senha pra fechar
+    cont.style.display = 'none';
+    document.getElementById('nav-subgrupo-' + nome + '-chevron').style.transform = 'rotate(-90deg)';
+    localStorage.setItem('nav-subgrupo-' + nome + '-fechado', '1');
+    return;
+  }
+
+  const jaDesbloqueado = sessionStorage.getItem('nav-subgrupo-' + nome + '-desbloqueado') === '1';
+  if (jaDesbloqueado) {
+    _abrirNavSubgrupo(nome);
+    return;
+  }
+
+  _navSubgrupoPendente = nome;
+  document.getElementById('modal-senha-navgrupo-titulo').textContent = NOMES_NAV_SUBGRUPO[nome] || 'Senha';
+  document.getElementById('senha-navgrupo-input').value = '';
+  document.getElementById('senha-navgrupo-erro').style.display = 'none';
+  abrirModal('modal-senha-navgrupo');
+  setTimeout(() => document.getElementById('senha-navgrupo-input').focus(), 150);
+}
+
+function _abrirNavSubgrupo(nome) {
+  document.getElementById('nav-subgrupo-' + nome).style.display = 'block';
+  document.getElementById('nav-subgrupo-' + nome + '-chevron').style.transform = 'rotate(0deg)';
+  localStorage.setItem('nav-subgrupo-' + nome + '-fechado', '0');
+}
+
+function confirmarSenhaNavGrupo() {
+  const nome = _navSubgrupoPendente;
+  if (!nome) return;
+  const senha = document.getElementById('senha-navgrupo-input').value;
+  if (senha === SENHAS_NAV_SUBGRUPO[nome]) {
+    sessionStorage.setItem('nav-subgrupo-' + nome + '-desbloqueado', '1');
+    fecharModal('modal-senha-navgrupo');
+    _abrirNavSubgrupo(nome);
+    _navSubgrupoPendente = null;
+  } else {
+    document.getElementById('senha-navgrupo-erro').style.display = 'block';
+  }
+}
+
+function cancelarSenhaNavGrupo() {
+  fecharModal('modal-senha-navgrupo');
+  _navSubgrupoPendente = null;
 }
 
 function _restaurarNavSubgrupos() {
   ['controle-a','controle-b'].forEach(nome => {
     const fechado = localStorage.getItem('nav-subgrupo-' + nome + '-fechado') === '1';
-    if (fechado) {
+    const desbloqueado = sessionStorage.getItem('nav-subgrupo-' + nome + '-desbloqueado') === '1';
+    // Se nao esta desbloqueado nessa sessao, sempre comeca fechado (precisa da senha de novo)
+    if (fechado || !desbloqueado) {
       document.getElementById('nav-subgrupo-' + nome).style.display = 'none';
       document.getElementById('nav-subgrupo-' + nome + '-chevron').style.transform = 'rotate(-90deg)';
     }
@@ -4607,6 +4677,8 @@ function _restaurarNavSubgrupos() {
 
 function sairParaEscolha() {
   sessionStorage.removeItem('absoluta_area');
+  sessionStorage.removeItem('nav-subgrupo-controle-a-desbloqueado');
+  sessionStorage.removeItem('nav-subgrupo-controle-b-desbloqueado');
   const escolha = document.getElementById('escolha-modulo');
   if (escolha) {
     escolha.style.display = 'flex';
