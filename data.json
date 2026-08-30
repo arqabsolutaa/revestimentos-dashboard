@@ -25747,6 +25747,21 @@
       "criado_em": "27/08/2026",
       "valor_avista": "11693",
       "condicao_pagamento": "pix"
+    },
+    {
+      "id": "id_1788114179458_dcvac",
+      "data": "19/10/2026",
+      "descricao": "Banheira Apartamento 92",
+      "categoria": "Banheiras",
+      "fornecedor": "Sabbia",
+      "valor": "8510.53",
+      "projeto": "Essence",
+      "comprovante_url": "",
+      "observacao": "",
+      "apartamento": "92",
+      "criado_em": "30/08/2026",
+      "valor_avista": "8510.53",
+      "condicao_pagamento": "boleto3"
     }
   ],
   "vinculos": [
