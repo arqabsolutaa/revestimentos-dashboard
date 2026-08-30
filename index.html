@@ -2828,6 +2828,16 @@ body.mobile-mode #main{padding-bottom:72px}
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-mes-previsao">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <h2 id="modal-mes-previsao-titulo">Mês</h2>
+      <button class="modal-close" onclick="fecharModal('modal-mes-previsao')">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-mes-previsao-corpo"></div>
+  </div>
+</div>
+
 <!-- MODAL NOVA ENTRADA PERSONALIZACAO -->
 <div class="modal-overlay" id="modal-nova-entrada-pers">
   <div class="modal" style="max-width:440px">
@@ -5041,6 +5051,8 @@ function _calcularParcelasFuturas() {
   return parcelas;
 }
 
+let _mesesPrevisao = {};
+
 async function loadPrevisaoCobrancas() {
   const cont = document.getElementById('previsaocobrancas-lista');
   cont.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
@@ -5064,54 +5076,64 @@ async function loadPrevisaoCobrancas() {
     if (!meses[chave]) meses[chave] = [];
     meses[chave].push(p);
   });
+  _mesesPrevisao = meses;
 
   const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 
-  cont.innerHTML = Object.keys(meses).sort().map(chave => {
-    const [ano, mes] = chave.split('-');
-    const lista = meses[chave];
-    const entradasMes = lista.filter(p => p.tipo === 'entrada');
-    const saidasMes = lista.filter(p => p.tipo === 'saida');
-    const totalReceber = entradasMes.reduce((s,p) => s + p.valor, 0);
-    const totalPagar = saidasMes.reduce((s,p) => s + p.valor, 0);
-    return `
-      <div class="card" style="margin-bottom:16px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px">
-          <h3 style="font-size:16px;margin:0">${nomesMeses[parseInt(mes)-1]} de ${ano}</h3>
-          <div style="display:flex;gap:8px">
-            ${totalReceber > 0 ? `<span class="badge badge-green" style="font-size:12px">A receber: ${fmt(totalReceber)}</span>` : ''}
-            ${totalPagar > 0 ? `<span class="badge" style="font-size:12px;background:#FCECEA;color:#B5453D">A pagar: ${fmt(totalPagar)}</span>` : ''}
-          </div>
-        </div>
-        ${entradasMes.length ? `
-        <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--accent2);text-transform:uppercase;margin:0 0 6px">A receber dos clientes</p>
-        <div class="table-wrap"><table>
-          <thead><tr><th>Data</th><th>Apartamento</th><th>Cliente</th><th>Categoria</th><th>Parcela</th><th style="text-align:right">Valor</th></tr></thead>
-          <tbody>${entradasMes.map(p => `<tr>
-            <td>${String(p.data.getDate()).padStart(2,'0')}/${String(p.data.getMonth()+1).padStart(2,'0')}</td>
-            <td><span class="badge badge-info">Apto ${p.apartamento||'—'}</span></td>
-            <td>${p.cliente||'—'}</td>
-            <td style="color:var(--text2)">${p.categoria||''}</td>
-            <td style="color:var(--text2)">${p.numeroParcela}/${p.totalParcelas}</td>
-            <td style="text-align:right;font-weight:600;color:var(--accent2)">${fmt(p.valor)}</td>
-          </tr>`).join('')}</tbody>
-        </table></div>` : ''}
-        ${saidasMes.length ? `
-        <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:#B5453D;text-transform:uppercase;margin:${entradasMes.length?'16px':'0'} 0 6px">A pagar a fornecedores</p>
-        <div class="table-wrap"><table>
-          <thead><tr><th>Data</th><th>Descrição</th><th>Fornecedor</th><th>Categoria</th><th>Parcela</th><th style="text-align:right">Valor</th></tr></thead>
-          <tbody>${saidasMes.map(p => `<tr>
-            <td>${String(p.data.getDate()).padStart(2,'0')}/${String(p.data.getMonth()+1).padStart(2,'0')}</td>
-            <td>${p.descricao||'—'}</td>
-            <td style="color:var(--text2)">${p.fornecedor||'—'}</td>
-            <td style="color:var(--text2)">${p.categoria||''}</td>
-            <td style="color:var(--text2)">${p.numeroParcela}/${p.totalParcelas}</td>
-            <td style="text-align:right;font-weight:600;color:#B5453D">${fmt(p.valor)}</td>
-          </tr>`).join('')}</tbody>
-        </table></div>` : ''}
+  cont.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">` +
+    Object.keys(meses).sort().map(chave => {
+      const [ano, mes] = chave.split('-');
+      const lista = meses[chave];
+      const totalReceber = lista.filter(p => p.tipo === 'entrada').reduce((s,p) => s + p.valor, 0);
+      const totalPagar = lista.filter(p => p.tipo === 'saida').reduce((s,p) => s + p.valor, 0);
+      return `<div onclick="abrirModalMesPrevisao('${chave}')" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+        <p style="font-size:15px;font-weight:600;margin:0 0 10px">${nomesMeses[parseInt(mes)-1]} de ${ano}</p>
+        ${totalReceber > 0 ? `<p style="font-size:13px;color:var(--accent2);margin:0 0 4px">↓ A receber: <strong>${fmt(totalReceber)}</strong></p>` : ''}
+        ${totalPagar > 0 ? `<p style="font-size:13px;color:#B5453D;margin:0">↑ A pagar: <strong>${fmt(totalPagar)}</strong></p>` : ''}
+        <p style="font-size:11px;color:var(--text3);margin-top:10px">${lista.length} cobrança${lista.length>1?'s':''} · clique pra ver</p>
       </div>`;
-  }).join('');
+    }).join('') + `</div>`;
+}
+
+function abrirModalMesPrevisao(chave) {
+  const [ano, mes] = chave.split('-');
+  const lista = _mesesPrevisao[chave] || [];
+  const entradasMes = lista.filter(p => p.tipo === 'entrada');
+  const saidasMes = lista.filter(p => p.tipo === 'saida');
+  const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  document.getElementById('modal-mes-previsao-titulo').textContent = nomesMeses[parseInt(mes)-1] + ' de ' + ano;
+  document.getElementById('modal-mes-previsao-corpo').innerHTML = `
+    ${entradasMes.length ? `
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--accent2);text-transform:uppercase;margin:0 0 6px">A receber dos clientes</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Data</th><th>Apartamento</th><th>Cliente</th><th>Categoria</th><th>Parcela</th><th style="text-align:right">Valor</th></tr></thead>
+      <tbody>${entradasMes.map(p => `<tr>
+        <td>${String(p.data.getDate()).padStart(2,'0')}/${String(p.data.getMonth()+1).padStart(2,'0')}</td>
+        <td><span class="badge badge-info">Apto ${p.apartamento||'—'}</span></td>
+        <td>${p.cliente||'—'}</td>
+        <td style="color:var(--text2)">${p.categoria||''}</td>
+        <td style="color:var(--text2)">${p.numeroParcela}/${p.totalParcelas}</td>
+        <td style="text-align:right;font-weight:600;color:var(--accent2)">${fmt(p.valor)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>` : ''}
+    ${saidasMes.length ? `
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:#B5453D;text-transform:uppercase;margin:${entradasMes.length?'16px':'0'} 0 6px">A pagar a fornecedores</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Data</th><th>Descrição</th><th>Fornecedor</th><th>Categoria</th><th>Parcela</th><th style="text-align:right">Valor</th></tr></thead>
+      <tbody>${saidasMes.map(p => `<tr>
+        <td>${String(p.data.getDate()).padStart(2,'0')}/${String(p.data.getMonth()+1).padStart(2,'0')}</td>
+        <td>${p.descricao||'—'}</td>
+        <td style="color:var(--text2)">${p.fornecedor||'—'}</td>
+        <td style="color:var(--text2)">${p.categoria||''}</td>
+        <td style="color:var(--text2)">${p.numeroParcela}/${p.totalParcelas}</td>
+        <td style="text-align:right;font-weight:600;color:#B5453D">${fmt(p.valor)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>` : ''}
+  `;
+  abrirModal('modal-mes-previsao');
 }
 
 function _valorVinculadoEntrada(id) {
