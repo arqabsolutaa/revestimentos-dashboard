@@ -2135,6 +2135,15 @@ body.mobile-mode #main{padding-bottom:72px}
 
 <main id="main">
 
+  <!-- CONTROLE - TELA NEUTRA (mostrada ao entrar, antes de escolher Obra ou Financeiro) -->
+  <div id="controle-neutro-screen" class="screen">
+    <div class="page-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.2" width="56" height="56" style="margin-bottom:16px"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M9 22V12h6v10"/></svg>
+      <h2 style="font-size:18px;color:var(--text2);margin-bottom:6px">Escolha uma área no menu</h2>
+      <p style="font-size:13px;color:var(--text3);max-width:320px">Clique em <strong>Obra</strong> ou <strong>Financeiro</strong> no menu lateral e digite a senha daquela área pra continuar.</p>
+    </div>
+  </div>
+
   <!-- HOME -->
   <div id="home-screen" class="screen active">
     <div class="home-center">
@@ -4596,7 +4605,7 @@ function escolherModulo(tipo) {
   if (tipo === 'vagasdep') {
     showScreen('vagasdep');
   } else if (tipo === 'controle') {
-    showScreen('visaogeralvalores');
+    showScreen('controle-neutro');
   } else {
     showScreen('home');
   }
@@ -4612,15 +4621,19 @@ const NOMES_NAV_SUBGRUPO = {
 };
 let _navSubgrupoPendente = null;
 
+const TELA_PADRAO_NAV_SUBGRUPO = {
+  'controle-a': 'visaogeralvalores',
+  'controle-b': 'pagamentos'
+};
+
 function toggleNavSubgrupo(nome) {
   const cont = document.getElementById('nav-subgrupo-' + nome);
   const estaFechado = cont.style.display === 'none';
 
   if (!estaFechado) {
     // esta aberto, so fecha - nao precisa de senha pra fechar
-    cont.style.display = 'none';
-    document.getElementById('nav-subgrupo-' + nome + '-chevron').style.transform = 'rotate(-90deg)';
-    localStorage.setItem('nav-subgrupo-' + nome + '-fechado', '1');
+    _fecharNavSubgrupo(nome);
+    showScreen('controle-neutro');
     return;
   }
 
@@ -4638,10 +4651,21 @@ function toggleNavSubgrupo(nome) {
   setTimeout(() => document.getElementById('senha-navgrupo-input').focus(), 150);
 }
 
+function _fecharNavSubgrupo(nome) {
+  document.getElementById('nav-subgrupo-' + nome).style.display = 'none';
+  document.getElementById('nav-subgrupo-' + nome + '-chevron').style.transform = 'rotate(-90deg)';
+  localStorage.setItem('nav-subgrupo-' + nome + '-fechado', '1');
+}
+
 function _abrirNavSubgrupo(nome) {
+  // Exclusividade: abrir um grupo fecha o outro, pra nao ficar tela antiga no fundo
+  const outro = nome === 'controle-a' ? 'controle-b' : 'controle-a';
+  _fecharNavSubgrupo(outro);
+
   document.getElementById('nav-subgrupo-' + nome).style.display = 'block';
   document.getElementById('nav-subgrupo-' + nome + '-chevron').style.transform = 'rotate(0deg)';
   localStorage.setItem('nav-subgrupo-' + nome + '-fechado', '0');
+  showScreen(TELA_PADRAO_NAV_SUBGRUPO[nome]);
 }
 
 function confirmarSenhaNavGrupo() {
