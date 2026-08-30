@@ -25669,6 +25669,22 @@
       "status": "pendente",
       "observacao": "1/4 parcela",
       "criado_em": "27/08/2026"
+    },
+    {
+      "id": "id_1788113529866_c7pr0",
+      "data": "23/06/2026",
+      "apartamento": "42",
+      "cliente": "Claudia e Caio",
+      "categoria": "Revestimento",
+      "valor": "69140.27",
+      "valor_avista": "69140.27",
+      "condicao_pagamento": "avista",
+      "valor_juros": "0",
+      "forma_pagamento": "",
+      "comprovante_url": "",
+      "status": "pendente",
+      "observacao": "",
+      "criado_em": "30/08/2026"
     }
   ],
   "saidasObra": [
