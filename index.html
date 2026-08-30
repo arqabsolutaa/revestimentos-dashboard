@@ -2007,6 +2007,11 @@ body.mobile-mode #main{padding-bottom:72px}
     </button>
     </div>
     <div id="nav-group-controle" style="display:none">
+    <button onclick="toggleNavSubgrupo('controle-a')" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:none;border:none;color:rgba(255,255,255,0.45);font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:10px 12px 4px;cursor:pointer">
+      <span>Obra</span>
+      <svg id="nav-subgrupo-controle-a-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 0.15s"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div id="nav-subgrupo-controle-a">
     <button class="nav-btn active" onclick="showScreen('visaogeralvalores')" id="nav-visaogeralvalores">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
       Visão Geral
@@ -2035,6 +2040,12 @@ body.mobile-mode #main{padding-bottom:72px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
       Controle de Pagamentos
     </button>
+    </div>
+    <button onclick="toggleNavSubgrupo('controle-b')" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:none;border:none;color:rgba(255,255,255,0.45);font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:14px 12px 4px;cursor:pointer">
+      <span>Financeiro</span>
+      <svg id="nav-subgrupo-controle-b-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 0.15s"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div id="nav-subgrupo-controle-b">
     <button class="nav-btn" onclick="showScreen('margemlucro')" id="nav-margemlucro">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
       Margem de Lucro
@@ -2051,6 +2062,7 @@ body.mobile-mode #main{padding-bottom:72px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       Configurações do Sistema
     </button>
+    </div>
     </div>
     <div style="margin-top:auto;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.06)">
       <button onclick="sairParaEscolha()" style="display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:none;padding:8px 10px;border-radius:6px;cursor:pointer;color:rgba(255,255,255,0.4);font-size:11px;font-family:'Inter',sans-serif;transition:all 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">
@@ -4574,6 +4586,25 @@ function escolherModulo(tipo) {
   }
 }
 
+function toggleNavSubgrupo(nome) {
+  const cont = document.getElementById('nav-subgrupo-' + nome);
+  const chevron = document.getElementById('nav-subgrupo-' + nome + '-chevron');
+  const fechado = cont.style.display === 'none';
+  cont.style.display = fechado ? 'block' : 'none';
+  chevron.style.transform = fechado ? 'rotate(0deg)' : 'rotate(-90deg)';
+  localStorage.setItem('nav-subgrupo-' + nome + '-fechado', fechado ? '0' : '1');
+}
+
+function _restaurarNavSubgrupos() {
+  ['controle-a','controle-b'].forEach(nome => {
+    const fechado = localStorage.getItem('nav-subgrupo-' + nome + '-fechado') === '1';
+    if (fechado) {
+      document.getElementById('nav-subgrupo-' + nome).style.display = 'none';
+      document.getElementById('nav-subgrupo-' + nome + '-chevron').style.transform = 'rotate(-90deg)';
+    }
+  });
+}
+
 function sairParaEscolha() {
   sessionStorage.removeItem('absoluta_area');
   const escolha = document.getElementById('escolha-modulo');
@@ -4597,6 +4628,7 @@ function detectarCapaMobile() {
 
 window.onload = async () => {
   detectarCapaMobile();
+  _restaurarNavSubgrupos();
   // Restaura sessão (capa + área) apos F5/reload, sem pedir senha de novo
   const capaOk = sessionStorage.getItem('absoluta_capa_ok');
   const areaSalva = sessionStorage.getItem('absoluta_area');
