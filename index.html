@@ -2687,10 +2687,37 @@ body.mobile-mode #main{padding-bottom:72px}
     <p id="vagasdep-senha-erro" style="font-size:12px;color:var(--danger);display:none">Senha incorreta</p>
   </div>
   <div id="vagasdep-conteudo" style="display:block;width:100%">
-    <div id="vagasdep-mapa-placeholder" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px">
-      <svg viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.2" width="56" height="56" style="margin-bottom:16px"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4z"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-      <h2 style="font-size:18px;color:var(--text2);margin-bottom:6px">Mapa em breve</h2>
-      <p style="font-size:13px;color:var(--text3);max-width:340px">Assim que as plantas dos subsolos do Essence forem enviadas, essa tela vai mostrar a localização real de cada vaga e depósito.</p>
+    <div id="vagasdep-mapa-placeholder" style="display:none;flex-direction:column;padding:24px 32px">
+      <h2 style="font-size:20px;margin-bottom:4px">Mapa de Vagas e Depósitos</h2>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Planta do subsolo — pontos mostram o apê de cada vaga/depósito já vinculado.</p>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px">
+        <button class="btn btn-secondary" id="btn-mapageral-sub2" onclick="setMapaGeralSubsolo('2 Subsolo')">2º Subsolo</button>
+        <button class="btn btn-secondary" id="btn-mapageral-sub1" onclick="setMapaGeralSubsolo('1 Subsolo')">1º Subsolo</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
+        <div id="mapageral-imgwrap" style="position:relative;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface)">
+          <img id="mapageral-img" src="" style="width:100%;display:block">
+          <div id="mapageral-pins" style="position:absolute;top:0;left:0;width:100%;height:100%"></div>
+        </div>
+        <div class="card">
+          <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--accent2);text-transform:uppercase;margin-bottom:8px" id="mapageral-vagas-titulo">Vagas neste subsolo</p>
+          <div id="mapageral-vagas-lista" style="display:flex;flex-direction:column;gap:6px;font-size:12px;margin-bottom:16px"></div>
+          <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:#B5453D;text-transform:uppercase;margin-bottom:8px" id="mapageral-depositos-titulo">Depósitos neste subsolo</p>
+          <div id="mapageral-depositos-lista" style="display:flex;flex-direction:column;gap:6px;font-size:12px"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <p style="font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--text3);text-transform:uppercase;margin-bottom:10px">Marcar/corrigir posição manualmente</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <input class="form-control" id="mapageral-manual-numero" placeholder="Número (ex: 56)" style="max-width:140px">
+          <select class="form-control" id="mapageral-manual-tipo" style="max-width:140px">
+            <option value="vaga">Vaga</option>
+            <option value="deposito">Depósito</option>
+          </select>
+          <button class="btn btn-primary" onclick="abrirClickManualMapa()">Marcar/Corrigir essa posição</button>
+          <button class="btn btn-secondary" onclick="limparPosicaoManual()" style="color:var(--danger)">Limpar essa marcação</button>
+        </div>
+      </div>
     </div>
     <div id="vagasdep-conteudo-destinacao">
     <div class="page-content">
@@ -2755,7 +2782,7 @@ body.mobile-mode #main{padding-bottom:72px}
 
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-primary" onclick="salvarVagasDepAtual()">Salvar vínculo</button>
-          <button class="btn btn-secondary" onclick="showToast('Disponível assim que as plantas do subsolo forem enviadas', 'success')" style="opacity:0.6" title="Em breve">
+          <button class="btn btn-secondary" onclick="abrirModalRevisarMarcacoes()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
             Revisar marcações no mapa
           </button>
@@ -2912,6 +2939,41 @@ body.mobile-mode #main{padding-bottom:72px}
       <div id="custopers-tab-mapa" style="display:none">
         <p style="font-size:13px;color:var(--text3);margin-bottom:14px">Escolha um apartamento pra ver as entradas, saídas e vínculos reais dele, em lista ou fluxograma.</p>
         <div id="mapavinculos-cards"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-revisar-marcacoes">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h2 id="modal-revisar-marcacoes-titulo">Marcações no mapa</h2>
+      <button class="modal-close" onclick="fecharModal('modal-revisar-marcacoes')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Confira ou corrija antes de gerar o comprovante.</p>
+      <div id="modal-revisar-marcacoes-lista" style="display:flex;flex-direction:column;gap:10px"></div>
+      <button class="btn btn-primary" onclick="fecharModal('modal-revisar-marcacoes')" style="width:100%;justify-content:center;margin-top:16px">Concluir revisão</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-clique-mapa">
+  <div class="modal" style="max-width:820px">
+    <div class="modal-header">
+      <h2 id="modal-clique-mapa-titulo">Clique onde fica</h2>
+      <button class="modal-close" onclick="fecharModal('modal-clique-mapa')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="modal-clique-mapa-imgwrap" style="position:relative;cursor:crosshair;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+        <img id="modal-clique-mapa-img" src="" style="width:100%;display:block" onclick="registrarCliqueMapa(event)">
+        <div id="modal-clique-mapa-marcador" style="display:none;position:absolute;width:22px;height:22px;margin-left:-11px;margin-top:-22px;pointer-events:none">
+          <svg viewBox="0 0 24 24" fill="var(--danger)" stroke="#fff" stroke-width="1"><path d="M12 2C7.6 2 4 5.6 4 10c0 6 8 12 8 12s8-6 8-12c0-4.4-3.6-8-8-8zm0 11a3 3 0 110-6 3 3 0 010 6z"/></svg>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+        <button class="btn btn-secondary" onclick="fecharModal('modal-clique-mapa')" style="font-size:12px">Pular esse item</button>
+        <button class="btn btn-primary" id="modal-clique-mapa-salvar" onclick="salvarCliqueMapa()" disabled>Salvar posição</button>
       </div>
     </div>
   </div>
@@ -5051,6 +5113,164 @@ function setVagasDepTab(tab) {
   const mapaPlaceholder = document.getElementById('vagasdep-mapa-placeholder');
   if (conteudo) conteudo.style.display = tab === 'destinacao' ? 'block' : 'none';
   if (mapaPlaceholder) mapaPlaceholder.style.display = tab === 'mapa' ? 'flex' : 'none';
+  if (tab === 'mapa') setMapaGeralSubsolo(_mapaGeralSubsoloAtual || '2 Subsolo');
+}
+
+// ===================== MAPA VISUAL (plantas dos subsolos) =====================
+const URLS_PLANTA = {
+  '2 subsolo': 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/assets/planta_2_subsolo.jpg',
+  '1 subsolo': 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/assets/planta_1_subsolo.jpg'
+};
+function _urlPlanta(subsolo) {
+  const s = String(subsolo || '');
+  // Robusto a variações de escrita: "1º Subsolo", "1 Subsolo", "Subsolo 1", etc.
+  if (s.includes('2')) return URLS_PLANTA['2 subsolo'];
+  if (s.includes('1')) return URLS_PLANTA['1 subsolo'];
+  return URLS_PLANTA['2 subsolo'];
+}
+function _itemCatalogo(tipo, numero) {
+  return vagasDepCatalogo.find(c => c.tipo === tipo && String(c.numero) === String(numero) && (c.predio || 'Essence') === vagasDepPredioAtual);
+}
+function _itemMarcado(tipo, numero) {
+  const item = _itemCatalogo(tipo, numero);
+  return !!(item && item.posicao_x !== '' && item.posicao_x != null && item.posicao_y !== '' && item.posicao_y != null);
+}
+
+let _cliqueMapaContexto = null; // {tipo, numero, x, y}
+
+function abrirModalRevisarMarcacoes() {
+  if (!vagasDepApAtual) { showToast('Selecione um apartamento', 'error'); return; }
+  document.getElementById('modal-revisar-marcacoes-titulo').textContent = 'Marcações no mapa — Apto ' + vagasDepApAtual;
+  const itens = [
+    ...vagasDepSelecionadas.map(n => ({ tipo: 'vaga', numero: n, label: 'Vaga ' + n })),
+    ...vagasDepDepositosSelecionados.map(n => ({ tipo: 'deposito', numero: n, label: 'Depósito ' + n }))
+  ];
+  const lista = document.getElementById('modal-revisar-marcacoes-lista');
+  if (!itens.length) {
+    lista.innerHTML = '<p style="font-size:13px;color:var(--text3)">Nenhuma vaga ou depósito selecionado ainda pra esse apê.</p>';
+    abrirModal('modal-revisar-marcacoes');
+    return;
+  }
+  lista.innerHTML = itens.map(it => {
+    const item = _itemCatalogo(it.tipo, it.numero);
+    const subsolo = item ? item.subsolo : '';
+    const marcado = _itemMarcado(it.tipo, it.numero);
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--surface2);border-radius:8px">
+      <span style="font-size:13px">${it.label} <span style="color:var(--text3);font-size:11px">(${subsolo||'—'})</span> — ${marcado ? '<span style="color:var(--accent2)">✓ marcado</span>' : '<span style="color:var(--warn)">pendente</span>'}</span>
+      <button onclick="abrirModalCliqueMapa('${it.tipo}','${it.numero}')" style="background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer;text-decoration:underline">Refazer</button>
+    </div>`;
+  }).join('');
+  abrirModal('modal-revisar-marcacoes');
+}
+
+function abrirModalCliqueMapa(tipo, numero) {
+  const item = _itemCatalogo(tipo, numero);
+  const subsolo = item ? item.subsolo : (_mapaGeralSubsoloAtual || '2 Subsolo');
+  const label = (tipo === 'vaga' ? 'Vaga ' : 'Depósito ') + numero;
+  document.getElementById('modal-clique-mapa-titulo').textContent = 'Clique onde fica: ' + label + ' (' + (subsolo||'Subsolo') + ')';
+  document.getElementById('modal-clique-mapa-img').src = _urlPlanta(subsolo);
+  document.getElementById('modal-clique-mapa-marcador').style.display = 'none';
+  document.getElementById('modal-clique-mapa-salvar').disabled = true;
+  _cliqueMapaContexto = { tipo, numero, subsolo, x: null, y: null };
+  fecharModal('modal-revisar-marcacoes');
+  abrirModal('modal-clique-mapa');
+}
+
+function registrarCliqueMapa(event) {
+  const img = document.getElementById('modal-clique-mapa-img');
+  const rect = img.getBoundingClientRect();
+  const xPct = ((event.clientX - rect.left) / rect.width) * 100;
+  const yPct = ((event.clientY - rect.top) / rect.height) * 100;
+  if (!_cliqueMapaContexto) return;
+  _cliqueMapaContexto.x = xPct.toFixed(2);
+  _cliqueMapaContexto.y = yPct.toFixed(2);
+  const marcador = document.getElementById('modal-clique-mapa-marcador');
+  marcador.style.left = xPct + '%';
+  marcador.style.top = yPct + '%';
+  marcador.style.display = 'block';
+  document.getElementById('modal-clique-mapa-salvar').disabled = false;
+}
+
+async function salvarCliqueMapa() {
+  if (!_cliqueMapaContexto || _cliqueMapaContexto.x == null) return;
+  try {
+    await apiPost('marcarPosicaoVagaDep', { tipo: _cliqueMapaContexto.tipo, numero: _cliqueMapaContexto.numero, predio: vagasDepPredioAtual, x: _cliqueMapaContexto.x, y: _cliqueMapaContexto.y });
+    showToast('Posição salva!', 'success');
+    fecharModal('modal-clique-mapa');
+    await loadVagasDep(true);
+    if (vagasDepApAtual) selecionarApVagasDep();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+let _mapaGeralSubsoloAtual = '2 Subsolo';
+
+function setMapaGeralSubsolo(subsolo) {
+  _mapaGeralSubsoloAtual = subsolo;
+  const chave = subsolo.replace(' ', '').toLowerCase();
+  document.getElementById('btn-mapageral-sub2').className = chave.startsWith('2') ? 'btn btn-primary' : 'btn btn-secondary';
+  document.getElementById('btn-mapageral-sub1').className = chave.startsWith('1') ? 'btn btn-primary' : 'btn btn-secondary';
+  document.getElementById('mapageral-img').src = _urlPlanta(subsolo);
+  renderMapaGeral();
+}
+
+function _vinculoDoItem(item) {
+  return vagasDepVinculos.find(v => {
+    if ((v.predio || 'Essence') !== vagasDepPredioAtual) return false;
+    if (item.tipo === 'vaga') return String(v.vagas || '').split(',').map(s=>s.trim()).includes(String(item.numero));
+    return String(v.deposito || '').split(',').map(s=>s.trim()).includes(String(item.numero));
+  });
+}
+
+function renderMapaGeral() {
+  const subsolo = _mapaGeralSubsoloAtual;
+  const digito = subsolo.includes('2') ? '2' : '1';
+  const itensSubsolo = vagasDepCatalogo.filter(c => (c.predio || 'Essence') === vagasDepPredioAtual && String(c.subsolo||'').includes(digito));
+  const vagasMarcadas = itensSubsolo.filter(c => c.tipo === 'vaga' && _itemMarcado('vaga', c.numero));
+  const depsMarcados = itensSubsolo.filter(c => c.tipo === 'deposito' && _itemMarcado('deposito', c.numero));
+
+  const pinsDiv = document.getElementById('mapageral-pins');
+  const fmtPin = (item, cor) => {
+    const vinc = _vinculoDoItem(item);
+    const apLabel = vinc ? vinc.ap : '—';
+    return `<div title="${item.tipo === 'vaga' ? 'Vaga' : 'Depósito'} ${item.numero} — Apto ${apLabel}" style="position:absolute;left:${item.posicao_x}%;top:${item.posicao_y}%;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:${cor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.3)">${apLabel}</div>`;
+  };
+  pinsDiv.innerHTML = vagasMarcadas.map(v => fmtPin(v, 'var(--accent)')).join('') + depsMarcados.map(d => fmtPin(d, '#3a6b4a')).join('');
+
+  const listaItem = (item) => {
+    const vinc = _vinculoDoItem(item);
+    return `<div style="display:flex;justify-content:space-between"><strong>Apto ${vinc ? vinc.ap : '—'}</strong><span style="color:var(--text3)">${vinc ? vinc.cliente : ''}</span></div>`;
+  };
+  document.getElementById('mapageral-vagas-titulo').textContent = 'Vagas neste subsolo (' + vagasMarcadas.length + ')';
+  document.getElementById('mapageral-vagas-lista').innerHTML = vagasMarcadas.map(listaItem).join('') || '<span style="color:var(--text3)">Nenhuma marcada ainda</span>';
+  document.getElementById('mapageral-depositos-titulo').textContent = 'Depósitos neste subsolo (' + depsMarcados.length + ')';
+  document.getElementById('mapageral-depositos-lista').innerHTML = depsMarcados.map(listaItem).join('') || '<span style="color:var(--text3)">Nenhum marcado ainda</span>';
+}
+
+function abrirClickManualMapa() {
+  const numero = document.getElementById('mapageral-manual-numero').value.trim();
+  const tipo = document.getElementById('mapageral-manual-tipo').value;
+  if (!numero) { showToast('Digite o número', 'error'); return; }
+  const item = _itemCatalogo(tipo, numero);
+  if (!item) { showToast('Esse número não existe no catálogo desse prédio', 'error'); return; }
+  document.getElementById('modal-clique-mapa-titulo').textContent = 'Clique onde fica: ' + (tipo==='vaga'?'Vaga ':'Depósito ') + numero + ' (' + _mapaGeralSubsoloAtual + ')';
+  document.getElementById('modal-clique-mapa-img').src = _urlPlanta(_mapaGeralSubsoloAtual);
+  document.getElementById('modal-clique-mapa-marcador').style.display = 'none';
+  document.getElementById('modal-clique-mapa-salvar').disabled = true;
+  _cliqueMapaContexto = { tipo, numero, subsolo: _mapaGeralSubsoloAtual, x: null, y: null };
+  abrirModal('modal-clique-mapa');
+}
+
+async function limparPosicaoManual() {
+  const numero = document.getElementById('mapageral-manual-numero').value.trim();
+  const tipo = document.getElementById('mapageral-manual-tipo').value;
+  if (!numero) { showToast('Digite o número', 'error'); return; }
+  if (!confirm('Limpar a posição marcada de ' + (tipo==='vaga'?'Vaga ':'Depósito ') + numero + '?')) return;
+  try {
+    await apiPost('limparPosicaoVagaDep', { tipo, numero, predio: vagasDepPredioAtual });
+    showToast('Posição removida!', 'success');
+    await loadVagasDep(true);
+    setMapaGeralSubsolo(_mapaGeralSubsoloAtual);
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
 function selecionarApVagasDepSidebar(ap) {
