@@ -2684,29 +2684,50 @@ body.mobile-mode #main{padding-bottom:72px}
       </div>
 
       <div id="vagasdep-detalhe" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+          <div>
+            <h2 id="vagasdep-detalhe-titulo" style="font-size:20px;margin:0">Apartamento</h2>
+            <p style="font-size:13px;color:var(--text3);margin-top:2px"><span id="vagasdep-detalhe-cliente">—</span> · Destinação de vagas e depósitos</p>
+          </div>
+          <span id="vagasdep-detalhe-badge" class="badge badge-info" style="font-size:13px;padding:8px 14px;white-space:nowrap">0 vagas · 0 depósitos</span>
+        </div>
+
         <div class="card" style="margin-bottom:16px">
           <label>Cliente</label>
           <input class="form-control" id="vagasdep-cliente-input" placeholder="Nome do proprietário" style="max-width:300px">
         </div>
-        <div class="card" style="margin-bottom:16px">
-          <h3 style="font-size:14px;margin-bottom:12px">Depósito vinculado</h3>
-          <select class="form-control" id="vagasdep-deposito-select" style="max-width:300px">
-            <option value="">— Nenhum depósito —</option>
-          </select>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+          <div class="card">
+            <h3 style="font-size:14px;margin-bottom:4px">Vagas <span id="vagasdep-vagas-contador" style="font-weight:400;color:var(--text3)"></span></h3>
+            <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Vagas ocupadas por outros apartamentos aparecem desabilitadas.</p>
+            <div id="vagasdep-vagas-grid" style="display:flex;flex-direction:column;gap:10px;max-height:420px;overflow-y:auto;padding:4px"></div>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size:14px;margin-bottom:4px">Depósitos <span id="vagasdep-depositos-contador" style="font-weight:400;color:var(--text3)"></span></h3>
+            <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Depósitos ocupados por outros apartamentos aparecem desabilitados.</p>
+            <div id="vagasdep-depositos-grid" style="display:flex;flex-direction:column;gap:10px;max-height:420px;overflow-y:auto;padding:4px"></div>
+            <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+              <label style="font-size:12px">Valor extra (se houver)</label>
+              <p style="font-size:11px;color:var(--text3);margin-bottom:6px">Preencha só se cobrar algo a mais pelo(s) depósito(s) deste apê.</p>
+              <input class="form-control" type="number" step="0.01" id="vagasdep-valor-extra-input" placeholder="Incluso (sem custo extra)" style="max-width:220px">
+            </div>
+          </div>
         </div>
 
-        <div class="card" style="margin-bottom:16px">
-          <h3 style="font-size:14px;margin-bottom:4px">Vagas vinculadas</h3>
-          <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Selecione uma ou mais vagas para este apartamento. Vagas ocupadas por outros apartamentos aparecem desabilitadas.</p>
-          <div id="vagasdep-vagas-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:6px;max-height:340px;overflow-y:auto;padding:4px"></div>
-        </div>
-
-        <div class="card" style="margin-bottom:16px">
+        <div class="card" style="margin:16px 0">
           <label>Observações <span style="font-weight:400;color:var(--text3)">(opcional)</span></label>
           <input class="form-control" id="vagasdep-obs-input" placeholder="Ex: vaga dupla, próxima à entrada">
         </div>
 
-        <button class="btn btn-primary" onclick="salvarVagasDepAtual()">Salvar vínculo</button>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="salvarVagasDepAtual()">Salvar vínculo</button>
+          <button class="btn btn-secondary" onclick="gerarPDFVagasDep(vagasDepApAtual)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Exportar comprovante PDF
+          </button>
+        </div>
       </div>
 
       <div class="card" style="margin-top:24px">
@@ -4943,6 +4964,7 @@ let vagasDepCatalogo = [];
 let vagasDepVinculos = [];
 let vagasDepApAtual = '';
 let vagasDepSelecionadas = [];
+let vagasDepDepositosSelecionados = [];
 let vagasDepPredioAtual = 'Essence';
 let vagasDepPredios = ['Essence']; // Vista Park agora tem dashboard próprio, separado do Essence
 let vagasDepApartamentosExtra = []; // apartamentos de prédios além do Essence, vindos da aba Predios_Apartamentos
@@ -6383,40 +6405,60 @@ function nomeClienteAp(ap) {
   return paredesAp[0]?.cliente || '';
 }
 
-function renderGridVagasAgrupado() {
-  const vagas = vagasDepCatalogo.filter(c => c.tipo === 'vaga' && (c.predio || 'Essence') === vagasDepPredioAtual).sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
-  const grid = document.getElementById('vagasdep-vagas-grid');
+function _renderGridItens(containerId, tipo, selecionadas) {
+  const itens = vagasDepCatalogo.filter(c => c.tipo === tipo && (c.predio || 'Essence') === vagasDepPredioAtual).sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
+  const cont = document.getElementById(containerId);
+  if (!cont) return;
 
   const renderBotao = v => {
     const num = String(v.numero);
-    const ocupadaPorOutro = v.status === 'ocupado' && !vagasDepSelecionadas.includes(num);
-    const selecionada = vagasDepSelecionadas.includes(num);
-    const bg = selecionada ? 'var(--accent)' : (ocupadaPorOutro ? 'var(--surface3, #e5e0d5)' : 'var(--surface2)');
-    const color = selecionada ? '#fff' : (ocupadaPorOutro ? 'var(--text3)' : 'var(--text)');
-    const cursor = ocupadaPorOutro ? 'not-allowed' : 'pointer';
-    return `<button type="button" onclick="${ocupadaPorOutro ? '' : 'toggleVagaSelecionada(\''+num+'\')'}" 
-      style="padding:8px 4px;border-radius:8px;border:1px solid var(--border);background:${bg};color:${color};font-size:11px;font-weight:600;cursor:${cursor}" 
-      ${ocupadaPorOutro ? 'disabled title="Ocupada por outro apartamento"' : ''}>${num}</button>`;
+    const ocupadoPorOutro = v.status === 'ocupado' && !selecionadas.includes(num);
+    const selecionado = selecionadas.includes(num);
+    const bg = selecionado ? 'var(--accent)' : (ocupadoPorOutro ? 'var(--surface3, #e5e0d5)' : 'var(--surface2)');
+    const color = selecionado ? '#fff' : (ocupadoPorOutro ? 'var(--text3)' : 'var(--text)');
+    const cursor = ocupadoPorOutro ? 'not-allowed' : 'pointer';
+    const acao = ocupadoPorOutro ? '' : (tipo === 'vaga' ? "toggleVagaSelecionada('" + num + "')" : "toggleDepositoSelecionado('" + num + "')");
+    return '<button type="button" onclick="' + acao + '" style="padding:8px 4px;border-radius:8px;border:1px solid var(--border);background:' + bg + ';color:' + color + ';font-size:11px;font-weight:600;cursor:' + cursor + '" ' + (ocupadoPorOutro ? 'disabled title="Ocupado por outro apartamento"' : '') + '>' + num + '</button>';
   };
 
-  const temSubsolo = vagas.some(v => v.subsolo);
+  const gridWrap = itensLista => '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px">' + itensLista.map(renderBotao).join('') + '</div>';
+
+  const temSubsolo = itens.some(v => v.subsolo);
   if (!temSubsolo) {
-    grid.innerHTML = vagas.map(renderBotao).join('');
+    cont.innerHTML = gridWrap(itens);
     return;
   }
 
   const grupos = {};
-  vagas.forEach(v => {
+  itens.forEach(v => {
     const key = v.subsolo || 'Sem subsolo definido';
     if (!grupos[key]) grupos[key] = [];
     grupos[key].push(v);
   });
   const ordemGrupos = Object.keys(grupos).sort();
 
-  grid.innerHTML = ordemGrupos.map(grupo => `
-    <div style="grid-column:1/-1;font-size:11px;font-weight:700;color:var(--text2);margin:6px 0 2px;text-transform:uppercase;letter-spacing:.5px">${grupo}</div>
-    ${grupos[grupo].map(renderBotao).join('')}
-  `).join('');
+  cont.innerHTML = ordemGrupos.map(grupo =>
+    '<div><p style="font-size:11px;font-weight:700;color:var(--text2);margin:0 0 6px;text-transform:uppercase;letter-spacing:.5px">' + grupo + '</p>' + gridWrap(grupos[grupo]) + '</div>'
+  ).join('');
+}
+
+function renderGridVagasAgrupado() {
+  _renderGridItens('vagasdep-vagas-grid', 'vaga', vagasDepSelecionadas);
+  const c = document.getElementById('vagasdep-vagas-contador');
+  if (c) c.textContent = vagasDepSelecionadas.length ? ('(' + vagasDepSelecionadas.length + ' destinada' + (vagasDepSelecionadas.length>1?'s':'') + ' a este apê)') : '';
+}
+
+function renderGridDepositosAgrupado() {
+  _renderGridItens('vagasdep-depositos-grid', 'deposito', vagasDepDepositosSelecionados);
+  const c = document.getElementById('vagasdep-depositos-contador');
+  if (c) c.textContent = vagasDepDepositosSelecionados.length ? ('(' + vagasDepDepositosSelecionados.length + ' destinado' + (vagasDepDepositosSelecionados.length>1?'s':'') + ' a este apê)') : '';
+}
+
+function atualizarBadgeVagasDep() {
+  const badge = document.getElementById('vagasdep-detalhe-badge');
+  if (!badge) return;
+  const nv = vagasDepSelecionadas.length, nd = vagasDepDepositosSelecionados.length;
+  badge.textContent = nv + ' vaga' + (nv!==1?'s':'') + ' · ' + nd + ' depósito' + (nd!==1?'s':'');
 }
 
 function selecionarApVagasDep() {
@@ -6429,38 +6471,18 @@ function selecionarApVagasDep() {
   const predio = vagasDepPredioAtual;
   const vinculo = vagasDepVinculos.find(v => String(v.ap) === String(ap) && (v.predio || 'Essence') === predio);
   vagasDepSelecionadas = vinculo ? String(vinculo.vagas || '').split(',').map(v=>v.trim()).filter(Boolean) : [];
-  const depositoAtual = vinculo ? String(vinculo.deposito || '') : '';
+  vagasDepDepositosSelecionados = vinculo ? String(vinculo.deposito || '').split(',').map(v=>v.trim()).filter(Boolean) : [];
 
-  // Cliente: prioriza o que já está salvo no vínculo; senão usa o cadastro do prédio
-  const clienteInput = document.getElementById('vagasdep-cliente-input');
-  clienteInput.value = (vinculo && vinculo.cliente) ? vinculo.cliente : getClienteApNoPredio(predio, ap);
-
-  // Montar select de depósitos: livres + o que já está vinculado a este apto, agrupado por subsolo
-  const depSelect = document.getElementById('vagasdep-deposito-select');
-  const depositosLivres = vagasDepCatalogo.filter(c => c.tipo === 'deposito' && (c.predio || 'Essence') === predio && (c.status === 'livre' || String(c.numero) === depositoAtual));
-  depositosLivres.sort((a,b) => parseInt(a.numero) - parseInt(b.numero));
-  const optDep = d => `<option value="${d.numero}" ${String(d.numero)===depositoAtual?'selected':''}>Depósito ${d.numero}</option>`;
-
-  if (predio === 'Essence') {
-    // Mantém o agrupamento original do Essence (1-15 / 16-30)
-    const sub1Dep = depositosLivres.filter(d => parseInt(d.numero) <= 15);
-    const sub2Dep = depositosLivres.filter(d => parseInt(d.numero) > 15);
-    depSelect.innerHTML = '<option value="">— Nenhum depósito —</option>' +
-      (sub1Dep.length ? `<optgroup label="1º Subsolo">${sub1Dep.map(optDep).join('')}</optgroup>` : '') +
-      (sub2Dep.length ? `<optgroup label="2º Subsolo">${sub2Dep.map(optDep).join('')}</optgroup>` : '');
-  } else if (depositosLivres.some(d => d.subsolo)) {
-    // Outros prédios: agrupa pelo campo subsolo salvo no catálogo, se existir
-    const grupos = {};
-    depositosLivres.forEach(d => { const k = d.subsolo || 'Sem subsolo'; (grupos[k] = grupos[k]||[]).push(d); });
-    depSelect.innerHTML = '<option value="">— Nenhum depósito —</option>' +
-      Object.keys(grupos).sort().map(g => `<optgroup label="${g}">${grupos[g].map(optDep).join('')}</optgroup>`).join('');
-  } else {
-    depSelect.innerHTML = '<option value="">— Nenhum depósito —</option>' + depositosLivres.map(optDep).join('');
-  }
+  const cliente = (vinculo && vinculo.cliente) ? vinculo.cliente : getClienteApNoPredio(predio, ap);
+  document.getElementById('vagasdep-cliente-input').value = cliente;
+  document.getElementById('vagasdep-detalhe-titulo').textContent = 'Apartamento ' + ap;
+  document.getElementById('vagasdep-detalhe-cliente').textContent = cliente || '—';
+  document.getElementById('vagasdep-valor-extra-input').value = (vinculo && parseFloat(vinculo.valor_extra_deposito)) ? vinculo.valor_extra_deposito : '';
+  document.getElementById('vagasdep-obs-input').value = (vinculo && vinculo.obs) || '';
 
   renderGridVagasAgrupado();
-
-  document.getElementById('vagasdep-obs-input').value = vinculo?.obs || '';
+  renderGridDepositosAgrupado();
+  atualizarBadgeVagasDep();
 }
 
 function toggleVagaSelecionada(num) {
@@ -6468,19 +6490,29 @@ function toggleVagaSelecionada(num) {
   if (idx >= 0) vagasDepSelecionadas.splice(idx, 1);
   else vagasDepSelecionadas.push(num);
   renderGridVagasAgrupado();
+  atualizarBadgeVagasDep();
+}
+
+function toggleDepositoSelecionado(num) {
+  const idx = vagasDepDepositosSelecionados.indexOf(num);
+  if (idx >= 0) vagasDepDepositosSelecionados.splice(idx, 1);
+  else vagasDepDepositosSelecionados.push(num);
+  renderGridDepositosAgrupado();
+  atualizarBadgeVagasDep();
 }
 
 async function salvarVagasDepAtual() {
   if (!vagasDepApAtual) { showToast('Selecione um apartamento', 'error'); return; }
-  const deposito = document.getElementById('vagasdep-deposito-select').value;
+  const valorExtraDeposito = document.getElementById('vagasdep-valor-extra-input').value;
   const obs = document.getElementById('vagasdep-obs-input').value;
   const cliente = document.getElementById('vagasdep-cliente-input').value.trim();
   showToast('Salvando...', 'success');
   try {
-    await apiPost('salvarVinculoVagas', { ap: vagasDepApAtual, predio: vagasDepPredioAtual, cliente, vagas: vagasDepSelecionadas, deposito, obs });
+    await apiPost('salvarVinculoVagas', { ap: vagasDepApAtual, predio: vagasDepPredioAtual, cliente, vagas: vagasDepSelecionadas, depositos: vagasDepDepositosSelecionados, valorExtraDeposito, obs });
     showToast('Vínculo salvo!', 'success');
     await loadVagasDep(true);
     selecionarApVagasDep();
+    popularSidebarApVagasDep();
   } catch(e) {
     showToast('Erro ao salvar: ' + e.message, 'error');
   }
@@ -6542,7 +6574,7 @@ function renderVagasDepResumo() {
       </div>
       <div style="display:flex;align-items:center;gap:12px">
         <div style="font-size:12px;color:var(--text2);text-align:right">
-          ${vagas.length ? 'Vagas: ' + vagas.join(', ') : 'Sem vagas'} ${deposito ? ' · Depósito ' + deposito : ''}
+          ${vagas.length ? 'Vagas: ' + vagas.join(', ') : 'Sem vagas'} ${deposito ? ' · Depósito(s) ' + deposito : ''}
         </div>
         ${temDados ? `<button onclick="gerarPDFVagasDep('${ap}')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--accent);color:var(--accent);background:none;cursor:pointer;white-space:nowrap">📄 PDF</button>` : ''}
       </div>
@@ -6559,18 +6591,18 @@ async function gerarPDFVagasDep(ap) {
   const v = vagasDepVinculos.find(x => String(x.ap) === String(ap) && (x.predio || 'Essence') === predio);
   const cliente = (v && v.cliente) ? v.cliente : getClienteApNoPredio(predio, ap);
   const vagas = v ? String(v.vagas || '').split(',').map(s=>s.trim()).filter(Boolean) : [];
-  const deposito = v ? String(v.deposito || '') : '';
+  const depositos = v ? String(v.deposito || '').split(',').map(s=>s.trim()).filter(Boolean) : [];
 
-  let vagas1 = [], vagas2 = [], dep1 = '', dep2 = '';
+  let vagas1 = [], vagas2 = [], dep1 = [], dep2 = [];
   if (predio === 'Essence') {
     vagas1 = vagas.filter(n => parseInt(n) <= 31);
     vagas2 = vagas.filter(n => parseInt(n) > 31);
-    dep1 = deposito && parseInt(deposito) <= 15 ? deposito : '';
-    dep2 = deposito && parseInt(deposito) > 15 ? deposito : '';
+    dep1 = depositos.filter(n => parseInt(n) <= 15);
+    dep2 = depositos.filter(n => parseInt(n) > 15);
   } else {
     // Outros prédios: sem divisão de subsolo pré-definida, tudo num bloco só
     vagas1 = vagas;
-    dep1 = deposito;
+    dep1 = depositos;
   }
   const hoje = new Date().toLocaleDateString('pt-BR');
 
@@ -6673,8 +6705,8 @@ async function gerarPDFVagasDep(ap) {
   const labelDep2 = '2º SUBSOLO · DEPÓSITO';
   if (vagas1.length) blocos.push({ label: labelVaga1, items: vagas1.map(n=>'Vaga '+n), bg: COR_DOURADO_BG, bd: COR_DOURADO_BD, lc: COR_DOURADO, pb: COR_PILL_V, pt: COR_PILL_VT, tipo: 'vaga' });
   if (vagas2.length) blocos.push({ label: labelVaga2, items: vagas2.map(n=>'Vaga '+n), bg: COR_DOURADO_BG, bd: COR_DOURADO_BD, lc: COR_DOURADO, pb: COR_PILL_V, pt: COR_PILL_VT, tipo: 'vaga' });
-  if (dep1) blocos.push({ label: labelDep1, items: ['Depósito '+dep1], bg: COR_VERDE_BG, bd: COR_VERDE_BD, lc: COR_VERDE, pb: COR_PILL_D, pt: COR_PILL_DT, tipo: 'dep' });
-  if (dep2) blocos.push({ label: labelDep2, items: ['Depósito '+dep2], bg: COR_VERDE_BG, bd: COR_VERDE_BD, lc: COR_VERDE, pb: COR_PILL_D, pt: COR_PILL_DT, tipo: 'dep' });
+  if (dep1.length) blocos.push({ label: labelDep1, items: dep1.map(d => 'Depósito '+d), bg: COR_VERDE_BG, bd: COR_VERDE_BD, lc: COR_VERDE, pb: COR_PILL_D, pt: COR_PILL_DT, tipo: 'dep' });
+  if (dep2.length) blocos.push({ label: labelDep2, items: dep2.map(d => 'Depósito '+d), bg: COR_VERDE_BG, bd: COR_VERDE_BD, lc: COR_VERDE, pb: COR_PILL_D, pt: COR_PILL_DT, tipo: 'dep' });
 
   // Dividir em pares lado a lado
   for (let i = 0; i < blocos.length; i += 2) {
