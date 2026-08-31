@@ -25761,7 +25761,7 @@
       "condicao_pagamento": "pix",
       "valor_juros": "0",
       "forma_pagamento": "",
-      "comprovante_url": "",
+      "comprovante_url": "[{\"url\":\"https://drive.google.com/file/d/1Oe7a26FyleOMrhGZvPUL046kJ3UXYC68/view?usp=drivesdk\",\"filename\":\"WHATSA~1.JPE\",\"data\":\"30/08/2026\"}]",
       "status": "pendente",
       "observacao": "",
       "criado_em": "30/08/2026"
