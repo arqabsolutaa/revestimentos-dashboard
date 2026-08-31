@@ -2637,7 +2637,7 @@ body.mobile-mode #main{padding-bottom:72px}
 
 <!-- VAGAS E DEPÓSITOS -->
 <div id="vagasdep-screen" class="screen">
-  <div id="vagasdep-lock" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:20px;padding:40px;text-align:center">
+  <div id="vagasdep-lock" style="display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:20px;padding:40px;text-align:center">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="color:var(--text3)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
     <p style="font-size:18px;font-weight:600;color:var(--text)">Área Restrita</p>
     <p style="font-size:13px;color:var(--text3)">Vagas e Depósitos</p>
@@ -2647,7 +2647,7 @@ body.mobile-mode #main{padding-bottom:72px}
     </div>
     <p id="vagasdep-senha-erro" style="font-size:12px;color:var(--danger);display:none">Senha incorreta</p>
   </div>
-  <div id="vagasdep-conteudo" style="display:none;width:100%">
+  <div id="vagasdep-conteudo" style="display:block;width:100%">
     <div class="page-header">
       <div class="page-header-left">
         <h1>Vagas e Depósitos</h1>
@@ -4959,7 +4959,7 @@ function sairControlePgto() {
 
 // ===================== VAGAS E DEPÓSITOS =====================
 const SENHA_VAGASDEP = SENHA_PGTO; // mesma senha do Controle de Pagamentos
-let vagasDepDesbloqueado = false;
+let vagasDepDesbloqueado = true; // senha interna removida - a senha da tela inicial (Vagas e Depósitos) ja protege o acesso
 let vagasDepCatalogo = [];
 let vagasDepVinculos = [];
 let vagasDepApAtual = '';
