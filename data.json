@@ -25765,6 +25765,22 @@
       "status": "pendente",
       "observacao": "",
       "criado_em": "30/08/2026"
+    },
+    {
+      "id": "id_1788136184731_b9o6t",
+      "data": "30/06/2026",
+      "apartamento": "142",
+      "cliente": "Alexandre e Ivana (Banheiros R01)",
+      "categoria": "Revestimento",
+      "valor": "34827.25",
+      "valor_avista": "34827.25",
+      "condicao_pagamento": "pix",
+      "valor_juros": "0",
+      "forma_pagamento": "",
+      "comprovante_url": "",
+      "status": "pendente",
+      "observacao": "",
+      "criado_em": "30/08/2026"
     }
   ],
   "saidasObra": [
