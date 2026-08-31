@@ -25749,6 +25749,22 @@
       "status": "pendente",
       "observacao": "",
       "criado_em": "30/08/2026"
+    },
+    {
+      "id": "id_1788135943543_83i1r",
+      "data": "06/08/2026",
+      "apartamento": "61",
+      "cliente": "Patricia e Edson",
+      "categoria": "Revestimento",
+      "valor": "20795.37",
+      "valor_avista": "20795.37",
+      "condicao_pagamento": "pix",
+      "valor_juros": "0",
+      "forma_pagamento": "",
+      "comprovante_url": "",
+      "status": "pendente",
+      "observacao": "",
+      "criado_em": "30/08/2026"
     }
   ],
   "saidasObra": [
