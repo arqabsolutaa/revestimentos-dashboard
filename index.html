@@ -1972,6 +1972,17 @@ body.mobile-mode #main{padding-bottom:72px}
       </button>
     </div>
     <div class="nav-label">Principal</div>
+    <div id="nav-group-vagasdep" style="display:none">
+      <div style="padding:10px 12px 4px;font-size:11px;font-weight:700;letter-spacing:0.5px;color:rgba(255,255,255,0.45);text-transform:uppercase">Apartamentos</div>
+      <div id="vagasdep-sidebar-predio-toggle" style="padding:0 12px 8px"></div>
+      <div id="vagasdep-sidebar-apartamentos"></div>
+      <div style="padding:10px 12px 4px;border-top:1px solid rgba(255,255,255,0.06);margin-top:8px">
+        <button class="nav-btn" onclick="abrirNovoApVagasDepSidebar()" style="font-size:12px;opacity:0.8">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Novo apartamento
+        </button>
+      </div>
+    </div>
     <div id="nav-group-personalizar">
     <button class="nav-btn active" onclick="showScreen('home')" id="nav-home">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -2653,7 +2664,7 @@ body.mobile-mode #main{padding-bottom:72px}
     <div class="page-content">
       <div id="vagasdep-predio-toggle" style="display:none"></div>
 
-      <div class="card" style="margin-bottom:16px">
+      <div class="card" style="margin-bottom:16px;display:none">
         <div class="form-grid">
           <div class="form-group span-2">
             <label>Apartamento</label>
@@ -4604,8 +4615,10 @@ function escolherModulo(tipo) {
   window._areaAtual = tipo;
   const grupoPers = document.getElementById('nav-group-personalizar');
   const grupoControle = document.getElementById('nav-group-controle');
-  if (grupoPers) grupoPers.style.display = tipo === 'controle' ? 'none' : 'block';
+  const grupoVagasDep = document.getElementById('nav-group-vagasdep');
+  if (grupoPers) grupoPers.style.display = (tipo === 'controle' || tipo === 'vagasdep') ? 'none' : 'block';
   if (grupoControle) grupoControle.style.display = tipo === 'controle' ? 'block' : 'none';
+  if (grupoVagasDep) grupoVagasDep.style.display = tipo === 'vagasdep' ? 'block' : 'none';
 
   if (tipo === 'vagasdep') {
     showScreen('vagasdep');
@@ -4936,12 +4949,58 @@ let vagasDepApartamentosExtra = []; // apartamentos de prédios além do Essence
 
 function renderPredioToggleVagasDep() {
   const el = document.getElementById('vagasdep-predio-toggle');
-  if (!el) return;
-  el.innerHTML = vagasDepPredios.map(p => `
-    <button type="button" onclick="trocarPredioVagasDep('${p}')"
-      style="padding:8px 16px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:13px;font-weight:600;
-      background:${p===vagasDepPredioAtual?'var(--accent)':'var(--surface2)'};color:${p===vagasDepPredioAtual?'#fff':'var(--text)'}">${p}</button>
-  `).join('');
+  if (el) {
+    el.innerHTML = vagasDepPredios.map(p => `
+      <button type="button" onclick="trocarPredioVagasDep('${p}')"
+        style="padding:8px 16px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:13px;font-weight:600;
+        background:${p===vagasDepPredioAtual?'var(--accent)':'var(--surface2)'};color:${p===vagasDepPredioAtual?'#fff':'var(--text)'}">${p}</button>
+    `).join('');
+  }
+  const elSidebar = document.getElementById('vagasdep-sidebar-predio-toggle');
+  if (elSidebar && vagasDepPredios.length > 1) {
+    elSidebar.innerHTML = `<div style="display:flex;gap:4px;margin-bottom:8px">` + vagasDepPredios.map(p => `
+      <button type="button" onclick="trocarPredioVagasDep('${p}')"
+        style="flex:1;padding:6px 4px;border-radius:6px;border:1px solid rgba(255,255,255,0.12);cursor:pointer;font-size:11px;font-weight:600;
+        background:${p===vagasDepPredioAtual?'var(--accent)':'rgba(255,255,255,0.06)'};color:${p===vagasDepPredioAtual?'#fff':'rgba(255,255,255,0.7)'}">${p}</button>
+    `).join('') + `</div>`;
+  } else if (elSidebar) {
+    elSidebar.innerHTML = '';
+  }
+}
+
+function popularSidebarApVagasDep() {
+  const cont = document.getElementById('vagasdep-sidebar-apartamentos');
+  if (!cont) return;
+  const aps = getApartamentosDoPredio(vagasDepPredioAtual);
+  cont.innerHTML = aps.map(ap => {
+    const vinculo = vagasDepVinculos.find(v => String(v.ap) === String(ap) && (v.predio || 'Essence') === vagasDepPredioAtual);
+    const temAlgo = vinculo && (vinculo.deposito || (vinculo.vagas && String(vinculo.vagas).trim()));
+    const ativo = String(vagasDepApAtual) === String(ap);
+    return `<button class="nav-btn${ativo ? ' active' : ''}" onclick="selecionarApVagasDepSidebar('${ap}')" style="font-size:12px;padding:8px 12px">
+      <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${temAlgo?'var(--accent2)':'var(--text3)'};margin-right:2px"></span>
+      Apto ${ap}
+    </button>`;
+  }).join('');
+}
+
+function selecionarApVagasDepSidebar(ap) {
+  document.getElementById('vagasdep-ap-select').value = ap;
+  selecionarApVagasDep();
+  popularSidebarApVagasDep();
+}
+
+async function abrirNovoApVagasDepSidebar() {
+  const numero = prompt('Número do novo apartamento:');
+  if (!numero || !numero.trim()) return;
+  const cliente = prompt('Cliente (opcional, pode deixar em branco):') || '';
+  showToast('Cadastrando...', 'success');
+  try {
+    await apiPost('addPredioApartamento', { predio: vagasDepPredioAtual, apartamento: numero.trim(), cliente: cliente.trim() });
+    showToast('Apartamento cadastrado!', 'success');
+    await loadVagasDep(true);
+  } catch(e) {
+    showToast('Erro: ' + e.message, 'error');
+  }
 }
 
 function trocarPredioVagasDep(predio) {
@@ -4951,6 +5010,7 @@ function trocarPredioVagasDep(predio) {
   document.getElementById('vagasdep-novo-ap').style.display = predio === 'Essence' ? 'none' : 'block';
   renderPredioToggleVagasDep();
   popularSelectApVagasDep();
+  popularSidebarApVagasDep();
   renderVagasDepResumo();
 }
 
@@ -6310,6 +6370,7 @@ async function loadVagasDep(forcar) {
     renderPredioToggleVagasDep();
     document.getElementById('vagasdep-novo-ap').style.display = vagasDepPredioAtual === 'Essence' ? 'none' : 'block';
     popularSelectApVagasDep();
+    popularSidebarApVagasDep();
     renderVagasDepResumo();
     if (vagasDepApAtual) selecionarApVagasDep();
   } catch(e) {
