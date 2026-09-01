@@ -1560,7 +1560,8 @@ input,select,textarea{font-family:'Inter',sans-serif;outline:none}
 #sidebar.sidebar-light .sidebar-logo,
 #sidebar.sidebar-light #sidebar-toolbar-topo,
 #sidebar.sidebar-light #nav-group-personalizar,
-#sidebar.sidebar-light #nav-group-controle{display:none !important}
+#sidebar.sidebar-light #nav-group-controle,
+#sidebar.sidebar-light #nav-group-financeiro{display:none !important}
 #sidebar.sidebar-light .nav-btn{color:#3a3730}
 #sidebar.sidebar-light .nav-btn:hover{background:rgba(0,0,0,0.05);color:#1a1812}
 #sidebar.sidebar-light .nav-btn.active{background:var(--accent);color:#fff;font-weight:600;border-left:none}
@@ -2057,11 +2058,6 @@ body.mobile-mode #main{padding-bottom:72px}
     </button>
     </div>
     <div id="nav-group-controle" style="display:none">
-    <button onclick="toggleNavSubgrupo('controle-a')" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:none;border:none;color:rgba(255,255,255,0.45);font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:10px 12px 4px;cursor:pointer">
-      <span>Obra</span>
-      <svg id="nav-subgrupo-controle-a-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 0.15s"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <div id="nav-subgrupo-controle-a">
     <button class="nav-btn active" onclick="showScreen('visaogeralvalores')" id="nav-visaogeralvalores">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
       Visão Geral
@@ -2087,12 +2083,8 @@ body.mobile-mode #main{padding-bottom:72px}
       Dados dos Revestimentos
     </button>
     </div>
-    <button onclick="toggleNavSubgrupo('controle-b')" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:none;border:none;color:rgba(255,255,255,0.45);font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:14px 12px 4px;cursor:pointer">
-      <span>Financeiro</span>
-      <svg id="nav-subgrupo-controle-b-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 0.15s"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <div id="nav-subgrupo-controle-b">
-    <button class="nav-btn" onclick="showScreen('pagamentos')" id="nav-pagamentos">
+    <div id="nav-group-financeiro" style="display:none">
+    <button class="nav-btn active" onclick="showScreen('pagamentos')" id="nav-pagamentos">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
       Controle de Pagamentos
     </button>
@@ -2112,7 +2104,6 @@ body.mobile-mode #main{padding-bottom:72px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       Configurações do Sistema
     </button>
-    </div>
     </div>
     <div style="margin-top:auto;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.06)">
       <button onclick="sairParaEscolha()" style="display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:none;padding:8px 10px;border-radius:6px;cursor:pointer;color:rgba(255,255,255,0.4);font-size:11px;font-family:'Inter',sans-serif;transition:all 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">
@@ -2151,7 +2142,11 @@ body.mobile-mode #main{padding-bottom:72px}
       </button>
       <button onclick="pedirSenhaModulo('controle')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="display:block;margin:0 auto 12px;pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        Controle
+        Obra
+      </button>
+      <button onclick="pedirSenhaModulo('financeiro')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="display:block;margin:0 auto 12px;pointer-events:none"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Financeiro
       </button>
     </div>
 
@@ -4689,7 +4684,8 @@ function entrarSistema() {
 const SENHAS_MODULO = {
   personalizar: 'ABS4027@',
   vagasdep: 'ABS4002@',
-  controle: 'ABS4003@'
+  controle: 'arquitetura1@',
+  financeiro: 'financeiro1@'
 };
 const NOMES_MODULO = {
   personalizar: 'Personalizar',
@@ -4739,113 +4735,28 @@ function escolherModulo(tipo) {
   window._areaAtual = tipo;
   const grupoPers = document.getElementById('nav-group-personalizar');
   const grupoControle = document.getElementById('nav-group-controle');
+  const grupoFinanceiro = document.getElementById('nav-group-financeiro');
   const grupoVagasDep = document.getElementById('nav-group-vagasdep');
-  if (grupoPers) grupoPers.style.display = (tipo === 'controle' || tipo === 'vagasdep') ? 'none' : 'block';
+  if (grupoPers) grupoPers.style.display = (tipo === 'controle' || tipo === 'financeiro' || tipo === 'vagasdep') ? 'none' : 'block';
   if (grupoControle) grupoControle.style.display = tipo === 'controle' ? 'block' : 'none';
+  if (grupoFinanceiro) grupoFinanceiro.style.display = tipo === 'financeiro' ? 'block' : 'none';
   if (grupoVagasDep) grupoVagasDep.style.display = tipo === 'vagasdep' ? 'block' : 'none';
   document.getElementById('sidebar').classList.toggle('sidebar-light', tipo === 'vagasdep');
 
   if (tipo === 'vagasdep') {
     showScreen('vagasdep');
   } else if (tipo === 'controle') {
-    showScreen('controle-neutro');
+    showScreen('visaogeralvalores');
+  } else if (tipo === 'financeiro') {
+    showScreen('pagamentos');
   } else {
     showScreen('home');
   }
 }
 
-const SENHAS_NAV_SUBGRUPO = {
-  'controle-a': 'arquitetura1@',
-  'controle-b': 'financeiro1@'
-};
-const NOMES_NAV_SUBGRUPO = {
-  'controle-a': 'Obra',
-  'controle-b': 'Financeiro'
-};
-let _navSubgrupoPendente = null;
-
-const TELA_PADRAO_NAV_SUBGRUPO = {
-  'controle-a': 'visaogeralvalores',
-  'controle-b': 'pagamentos'
-};
-
-function toggleNavSubgrupo(nome) {
-  const cont = document.getElementById('nav-subgrupo-' + nome);
-  const estaFechado = cont.style.display === 'none';
-
-  if (!estaFechado) {
-    // esta aberto, so fecha - nao precisa de senha pra fechar
-    _fecharNavSubgrupo(nome);
-    showScreen('controle-neutro');
-    return;
-  }
-
-  const jaDesbloqueado = sessionStorage.getItem('nav-subgrupo-' + nome + '-desbloqueado') === '1';
-  if (jaDesbloqueado) {
-    _abrirNavSubgrupo(nome);
-    return;
-  }
-
-  _navSubgrupoPendente = nome;
-  document.getElementById('modal-senha-navgrupo-titulo').textContent = NOMES_NAV_SUBGRUPO[nome] || 'Senha';
-  document.getElementById('senha-navgrupo-input').value = '';
-  document.getElementById('senha-navgrupo-erro').style.display = 'none';
-  abrirModal('modal-senha-navgrupo');
-  setTimeout(() => document.getElementById('senha-navgrupo-input').focus(), 150);
-}
-
-function _fecharNavSubgrupo(nome) {
-  document.getElementById('nav-subgrupo-' + nome).style.display = 'none';
-  document.getElementById('nav-subgrupo-' + nome + '-chevron').style.transform = 'rotate(-90deg)';
-  localStorage.setItem('nav-subgrupo-' + nome + '-fechado', '1');
-}
-
-function _abrirNavSubgrupo(nome) {
-  // Exclusividade: abrir um grupo fecha o outro, pra nao ficar tela antiga no fundo
-  const outro = nome === 'controle-a' ? 'controle-b' : 'controle-a';
-  _fecharNavSubgrupo(outro);
-
-  document.getElementById('nav-subgrupo-' + nome).style.display = 'block';
-  document.getElementById('nav-subgrupo-' + nome + '-chevron').style.transform = 'rotate(0deg)';
-  localStorage.setItem('nav-subgrupo-' + nome + '-fechado', '0');
-  showScreen(TELA_PADRAO_NAV_SUBGRUPO[nome]);
-}
-
-function confirmarSenhaNavGrupo() {
-  const nome = _navSubgrupoPendente;
-  if (!nome) return;
-  const senha = document.getElementById('senha-navgrupo-input').value;
-  if (senha === SENHAS_NAV_SUBGRUPO[nome]) {
-    sessionStorage.setItem('nav-subgrupo-' + nome + '-desbloqueado', '1');
-    fecharModal('modal-senha-navgrupo');
-    _abrirNavSubgrupo(nome);
-    _navSubgrupoPendente = null;
-  } else {
-    document.getElementById('senha-navgrupo-erro').style.display = 'block';
-  }
-}
-
-function cancelarSenhaNavGrupo() {
-  fecharModal('modal-senha-navgrupo');
-  _navSubgrupoPendente = null;
-}
-
-function _restaurarNavSubgrupos() {
-  ['controle-a','controle-b'].forEach(nome => {
-    const fechado = localStorage.getItem('nav-subgrupo-' + nome + '-fechado') === '1';
-    const desbloqueado = sessionStorage.getItem('nav-subgrupo-' + nome + '-desbloqueado') === '1';
-    // Se nao esta desbloqueado nessa sessao, sempre comeca fechado (precisa da senha de novo)
-    if (fechado || !desbloqueado) {
-      document.getElementById('nav-subgrupo-' + nome).style.display = 'none';
-      document.getElementById('nav-subgrupo-' + nome + '-chevron').style.transform = 'rotate(-90deg)';
-    }
-  });
-}
 
 function sairParaEscolha() {
   sessionStorage.removeItem('absoluta_area');
-  sessionStorage.removeItem('nav-subgrupo-controle-a-desbloqueado');
-  sessionStorage.removeItem('nav-subgrupo-controle-b-desbloqueado');
   const escolha = document.getElementById('escolha-modulo');
   if (escolha) {
     escolha.style.display = 'flex';
@@ -4867,7 +4778,6 @@ function detectarCapaMobile() {
 
 window.onload = async () => {
   detectarCapaMobile();
-  _restaurarNavSubgrupos();
   // Restaura sessão (capa + área) apos F5/reload, sem pedir senha de novo
   const capaOk = sessionStorage.getItem('absoluta_capa_ok');
   const areaSalva = sessionStorage.getItem('absoluta_area');
