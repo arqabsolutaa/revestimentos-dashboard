@@ -3048,7 +3048,6 @@ body.mobile-mode #main{padding-bottom:72px}
           <option value="">— Selecione o apartamento —</option>
         </select>
       </div>
-      <div id="entrada-pers-saidas-referencia"></div>
       <div class="form-group">
         <label class="form-label">Cliente</label>
         <input class="form-control" id="entrada-pers-cliente" placeholder="Nome do cliente">
@@ -6031,7 +6030,6 @@ function abrirModalNovaEntradaPers() {
     _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('') +
     '<option value="__outro__">Outro apartamento (digitar)</option>';
   sel.value = '';
-  document.getElementById('entrada-pers-saidas-referencia').innerHTML = '';
   _resetarCalculadora('entrada');
   abrirModal('modal-nova-entrada-pers');
 }
@@ -6053,23 +6051,8 @@ function preencherClienteEntradaPers() {
   }
   const encontrado = _apartamentosConhecidos().find(a => a.ap === sel.value);
   document.getElementById('entrada-pers-cliente').value = encontrado ? encontrado.cliente : '';
-  _mostrarSaidasReferenciaApto(sel.value);
 }
 
-function _mostrarSaidasReferenciaApto(apto) {
-  const cont = document.getElementById('entrada-pers-saidas-referencia');
-  if (!apto) { cont.innerHTML = ''; return; }
-  const { saidas } = _entradasSaidasDoApto(apto);
-  const naoAuto = saidas.filter(s => !s.automatica);
-  if (!naoAuto.length) { cont.innerHTML = ''; return; }
-  const fmt = _fmtR$;
-  const totalPago = naoAuto.reduce((s,x) => s + (parseFloat(x.valor)||0), 0);
-  cont.innerHTML = `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:12px">
-    <p style="font-weight:600;margin-bottom:4px">💡 Já pago a fornecedor nesse apartamento: ${fmt(totalPago)}</p>
-    ${naoAuto.map(s => `<div style="color:var(--text3)">· ${s.descricao||s.categoria} — ${fmt(parseFloat(s.valor)||0)}${s.condicao_pagamento && s.condicao_pagamento!=='avista' ? ' ('+_labelCondicaoPagamento(s.condicao_pagamento)+')' : ''}</div>`).join('')}
-    <p style="color:var(--text3);margin-top:4px">Use isso como referência pra decidir o valor a cobrar do cliente nesta entrada.</p>
-  </div>`;
-}
 
 function atualizarCalculoJurosEntrada() {
   const valorAvista = parseFloat(document.getElementById('entrada-pers-valor').value) || 0;
