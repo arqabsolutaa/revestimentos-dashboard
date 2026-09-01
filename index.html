@@ -2527,6 +2527,15 @@ body.mobile-mode #main{padding-bottom:72px}
         </button>
         <p id="test-result" style="font-size:13px;margin-top:10px"></p>
       </div>
+      <div class="config-card">
+        <h2>Corrigir orçamentos zerados</h2>
+        <p>Recalcula automaticamente o m² e o valor de qualquer personalização que esteja com esses campos vazios na planilha (ex: quando o cálculo falhou no momento de salvar). Não mexe nos que já estão preenchidos.</p>
+        <button class="btn btn-secondary" onclick="rodarCorrigirOrcamentosZerados()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Corrigir agora
+        </button>
+        <p id="corrigir-zerados-result" style="font-size:12px;margin-top:10px;white-space:pre-wrap;color:var(--text3)"></p>
+      </div>
     </div>
   </div>
 
@@ -5018,6 +5027,21 @@ function salvarEmpresa() {
   document.getElementById('empresa-nome').textContent = v;
   showToast('Nome salvo!', 'success');
 }
+async function rodarCorrigirOrcamentosZerados() {
+  const el = document.getElementById('corrigir-zerados-result');
+  el.textContent = 'Corrigindo, pode levar alguns segundos...';
+  el.style.color = 'var(--text3)';
+  try {
+    const resultado = await apiPost('corrigirOrcamentosZerados', {});
+    el.textContent = resultado;
+    el.style.color = 'var(--accent2)';
+    showToast('Orçamentos zerados corrigidos!', 'success');
+  } catch(e) {
+    el.textContent = 'Erro: ' + e.message;
+    el.style.color = 'var(--danger)';
+  }
+}
+
 async function testarConexao() {
   const el = document.getElementById('test-result');
   el.textContent = 'Testando...'; el.style.color = 'var(--text3)';
