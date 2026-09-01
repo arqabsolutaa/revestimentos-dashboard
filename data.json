@@ -27053,6 +27053,15 @@
       "data": "01/09/2026",
       "observacao": "",
       "criado_em": "01/09/2026"
+    },
+    {
+      "id": "id_1788301915887_tl99w",
+      "entrada_id": "id_1788135943543_83i1r",
+      "saida_id": "id_1788297106393_a4231",
+      "valor": "20795.37",
+      "data": "01/09/2026",
+      "observacao": "",
+      "criado_em": "01/09/2026"
     }
   ],
   "transferencias": []
