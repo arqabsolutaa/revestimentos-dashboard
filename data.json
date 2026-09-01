@@ -26985,6 +26985,21 @@
       "criado_em": "30/08/2026",
       "valor_avista": "8510.53",
       "condicao_pagamento": "boleto3"
+    },
+    {
+      "id": "id_1788296998469_gdrit",
+      "data": "13/07/2026",
+      "descricao": "Marmores Personalização",
+      "categoria": "Pedras",
+      "fornecedor": "Arienes Pedras",
+      "valor": "20795.37",
+      "projeto": "Essence",
+      "comprovante_url": "",
+      "observacao": "",
+      "apartamento": "",
+      "criado_em": "01/09/2026",
+      "valor_avista": "20795.37",
+      "condicao_pagamento": "pix"
     }
   ],
   "vinculos": [
