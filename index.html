@@ -3042,6 +3042,12 @@ body.mobile-mode #main{padding-bottom:72px}
       <button class="modal-close" onclick="fecharModal('modal-nova-entrada-pers')">&times;</button>
     </div>
     <div class="modal-body">
+      <div class="form-group" style="background:var(--accent-bg);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:12px">
+        <label class="form-label" style="color:var(--accent2)">🔍 Buscar de um orçamento existente</label>
+        <p style="font-size:11px;color:var(--text3);margin-bottom:6px">Escolha um orçamento já pronto e o apartamento, cliente e valor preenchem sozinhos.</p>
+        <input class="form-control" id="entrada-pers-buscar-orcamento" list="lista-orcamentos-datalist" placeholder="Digite o apê ou nome do cliente..." oninput="selecionarOrcamentoParaEntrada(this.value)">
+        <datalist id="lista-orcamentos-datalist"></datalist>
+      </div>
       <div class="form-group">
         <label class="form-label">Apartamento</label>
         <select class="form-control" id="entrada-pers-apto" onchange="preencherClienteEntradaPers()">
@@ -6020,7 +6026,7 @@ function _apartamentosConhecidos() {
 }
 
 function abrirModalNovaEntradaPers() {
-  ['entrada-pers-cliente','entrada-pers-valor','entrada-pers-obs'].forEach(id => document.getElementById(id).value = '');
+  ['entrada-pers-cliente','entrada-pers-valor','entrada-pers-obs','entrada-pers-buscar-orcamento'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('entrada-pers-condicao').value = 'avista';
   document.getElementById('entrada-pers-data').value = new Date().toISOString().split('T')[0];
   document.getElementById('entrada-pers-juros-resumo').style.display = 'none';
@@ -6030,8 +6036,43 @@ function abrirModalNovaEntradaPers() {
     _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('') +
     '<option value="__outro__">Outro apartamento (digitar)</option>';
   sel.value = '';
+  _popularListaOrcamentosParaEntrada();
   _resetarCalculadora('entrada');
   abrirModal('modal-nova-entrada-pers');
+}
+
+function _popularListaOrcamentosParaEntrada() {
+  const dl = document.getElementById('lista-orcamentos-datalist');
+  window._mapaOrcamentosEntrada = {};
+  const fmt = _fmtR$;
+  const opcoes = (dadosPersonalizar || []).filter(p => !p.arquivado || p.arquivado === 'false').map(p => {
+    const valor = parseFloat(p.total_valor) || 0;
+    const label = `Apto ${p.ap} — ${p.cliente || 'sem nome'} — ${valor > 0 ? fmt(valor) : 'valor zerado, corrija o orçamento'}`;
+    window._mapaOrcamentosEntrada[label] = p;
+    return `<option value="${label.replace(/"/g,'')}"></option>`;
+  });
+  dl.innerHTML = opcoes.join('');
+}
+
+function selecionarOrcamentoParaEntrada(valorDigitado) {
+  const registro = window._mapaOrcamentosEntrada && window._mapaOrcamentosEntrada[valorDigitado];
+  if (!registro) return; // ainda digitando, nao bateu com nenhuma opcao exata ainda
+  const valor = parseFloat(registro.total_valor) || 0;
+  if (!valor) { showToast('Esse orçamento está com valor zerado — corrija ele em Personalizar antes de usar aqui', 'error'); }
+
+  const selAp = document.getElementById('entrada-pers-apto');
+  let opt = [...selAp.options].find(o => o.value === String(registro.ap));
+  if (!opt) {
+    opt = document.createElement('option');
+    opt.value = registro.ap;
+    opt.textContent = 'Apto ' + registro.ap + (registro.cliente ? ' — ' + registro.cliente : '');
+    selAp.insertBefore(opt, selAp.lastElementChild);
+  }
+  selAp.value = registro.ap;
+  document.getElementById('entrada-pers-cliente').value = registro.cliente || '';
+  document.getElementById('entrada-pers-valor').value = valor || '';
+  atualizarCalculoJurosEntrada();
+  showToast('Preenchido a partir do orçamento!', 'success');
 }
 
 function preencherClienteEntradaPers() {
