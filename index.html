@@ -6041,24 +6041,60 @@ function abrirModalNovaEntradaPers() {
   abrirModal('modal-nova-entrada-pers');
 }
 
-function _popularListaOrcamentosParaEntrada() {
+async function _popularListaOrcamentosParaEntrada() {
   const dl = document.getElementById('lista-orcamentos-datalist');
   window._mapaOrcamentosEntrada = {};
   const fmt = _fmtR$;
-  const opcoes = (dadosPersonalizar || []).filter(p => !p.arquivado || p.arquivado === 'false').map(p => {
+  const opcoes = [];
+
+  // Revestimentos (ja carregados na tela)
+  (dadosPersonalizar || []).filter(p => !p.arquivado || p.arquivado === 'false').forEach(p => {
     const valor = parseFloat(p.total_valor) || 0;
-    const label = `Apto ${p.ap} — ${p.cliente || 'sem nome'} — ${valor > 0 ? fmt(valor) : 'valor zerado, corrija o orçamento'}`;
-    window._mapaOrcamentosEntrada[label] = p;
-    return `<option value="${label.replace(/"/g,'')}"></option>`;
+    const label = `Apto ${p.ap} — ${p.cliente || 'sem nome'} — Revestimento — ${valor > 0 ? fmt(valor) : 'valor zerado, corrija o orçamento'}`;
+    window._mapaOrcamentosEntrada[label] = { ap: p.ap, cliente: p.cliente, valor };
+    opcoes.push(label);
   });
-  dl.innerHTML = opcoes.join('');
+
+  // Banheiras, Vinilico, Marmoraria (busca via lerDadosExtra, com cache)
+  try {
+    const [banh, vin, marm] = await Promise.all([lerDadosExtra('banheiras'), lerDadosExtra('vinilico'), lerDadosExtra('marmoraria')]);
+
+    (banh.personalizar || []).filter(p => !p.arquivado || p.arquivado === 'false').forEach(p => {
+      const itens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
+      const valor = (Array.isArray(itens)?itens:[]).reduce((s,it) => s + (parseFloat(it.preco_venda)||0), 0);
+      const label = `Apto ${p.ap} — ${p.cliente || 'sem nome'} — Banheira — ${valor > 0 ? fmt(valor) : 'valor zerado, corrija o orçamento'}`;
+      window._mapaOrcamentosEntrada[label] = { ap: p.ap, cliente: p.cliente, valor };
+      opcoes.push(label);
+    });
+
+    (marm.personalizar || []).filter(p => !p.arquivado || p.arquivado === 'false').forEach(p => {
+      const itens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
+      const valor = (Array.isArray(itens)?itens:[]).reduce((s,it) => s + (parseFloat(it.valor)||0), 0);
+      const label = `Apto ${p.ap} — ${p.cliente || 'sem nome'} — Marmoraria — ${valor > 0 ? fmt(valor) : 'valor zerado, corrija o orçamento'}`;
+      window._mapaOrcamentosEntrada[label] = { ap: p.ap, cliente: p.cliente, valor };
+      opcoes.push(label);
+    });
+
+    (vin.personalizar || []).filter(p => !p.arquivado || p.arquivado === 'false').forEach(p => {
+      const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+      let valor = 0;
+      for (const v of Object.values(selecoes)) {
+        const prod = (vin.produtos || []).find(r => String(r.id||r.codigo) === String(v.produto));
+        valor += (precoM2(prod?.preco_m2)||0) * (parseFloat(v.m2)||0);
+      }
+      const label = `Apto ${p.ap} — ${p.cliente || 'sem nome'} — Vinílico — ${valor > 0 ? fmt(valor) : 'valor zerado, corrija o orçamento'}`;
+      window._mapaOrcamentosEntrada[label] = { ap: p.ap, cliente: p.cliente, valor };
+      opcoes.push(label);
+    });
+  } catch(e) { /* segue só com revestimentos se der erro nos outros */ }
+
+  dl.innerHTML = opcoes.map(label => `<option value="${label.replace(/"/g,'')}"></option>`).join('');
 }
 
 function selecionarOrcamentoParaEntrada(valorDigitado) {
   const registro = window._mapaOrcamentosEntrada && window._mapaOrcamentosEntrada[valorDigitado];
   if (!registro) return; // ainda digitando, nao bateu com nenhuma opcao exata ainda
-  const valor = parseFloat(registro.total_valor) || 0;
-  if (!valor) { showToast('Esse orçamento está com valor zerado — corrija ele em Personalizar antes de usar aqui', 'error'); }
+  if (!registro.valor) { showToast('Esse orçamento está com valor zerado — corrija ele antes de usar aqui', 'error'); }
 
   const selAp = document.getElementById('entrada-pers-apto');
   let opt = [...selAp.options].find(o => o.value === String(registro.ap));
@@ -6070,7 +6106,7 @@ function selecionarOrcamentoParaEntrada(valorDigitado) {
   }
   selAp.value = registro.ap;
   document.getElementById('entrada-pers-cliente').value = registro.cliente || '';
-  document.getElementById('entrada-pers-valor').value = valor || '';
+  document.getElementById('entrada-pers-valor').value = registro.valor || '';
   atualizarCalculoJurosEntrada();
   showToast('Preenchido a partir do orçamento!', 'success');
 }
