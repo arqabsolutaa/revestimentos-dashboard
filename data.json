@@ -27044,6 +27044,15 @@
       "data": "30/08/2026",
       "observacao": "",
       "criado_em": "30/08/2026"
+    },
+    {
+      "id": "id_1788301896646_kt5zn",
+      "entrada_id": "id_1788135862483_ewfvp",
+      "saida_id": "id_1788296998469_gdrit",
+      "valor": "20795.37",
+      "data": "01/09/2026",
+      "observacao": "",
+      "criado_em": "01/09/2026"
     }
   ],
   "transferencias": []
