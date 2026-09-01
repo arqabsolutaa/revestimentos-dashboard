@@ -26892,6 +26892,22 @@
       "status": "pendente",
       "observacao": "",
       "criado_em": "30/08/2026"
+    },
+    {
+      "id": "id_1788296650117_lxtfr",
+      "data": "01/09/2026",
+      "apartamento": "112",
+      "cliente": "Valquíria e Mauricio",
+      "categoria": "Revestimento",
+      "valor": "18486.9",
+      "valor_avista": "18486.9",
+      "condicao_pagamento": "pix",
+      "valor_juros": "0",
+      "forma_pagamento": "",
+      "comprovante_url": "",
+      "status": "pendente",
+      "observacao": "",
+      "criado_em": "01/09/2026"
     }
   ],
   "saidasObra": [
