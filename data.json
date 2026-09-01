@@ -26908,6 +26908,22 @@
       "status": "pendente",
       "observacao": "",
       "criado_em": "01/09/2026"
+    },
+    {
+      "id": "id_1788304128624_g73wi",
+      "data": "19/09/2026",
+      "apartamento": "112",
+      "cliente": "Valquíria e Mauricio",
+      "categoria": "Banheira",
+      "valor": "12765.8",
+      "valor_avista": "12765.8",
+      "condicao_pagamento": "boleto3",
+      "valor_juros": "0",
+      "forma_pagamento": "",
+      "comprovante_url": "",
+      "status": "pendente",
+      "observacao": "",
+      "criado_em": "01/09/2026"
     }
   ],
   "saidasObra": [
