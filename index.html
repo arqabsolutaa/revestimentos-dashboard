@@ -3036,17 +3036,17 @@ body.mobile-mode #main{padding-bottom:72px}
 
 <!-- MODAL NOVA ENTRADA PERSONALIZACAO -->
 <div class="modal-overlay" id="modal-nova-entrada-pers">
-  <div class="modal" style="max-width:440px">
+  <div class="modal" style="max-width:640px">
     <div class="modal-header">
       <h2>Nova Entrada</h2>
       <button class="modal-close" onclick="fecharModal('modal-nova-entrada-pers')">&times;</button>
     </div>
     <div class="modal-body">
-      <div class="form-group" style="background:var(--accent-bg);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:12px">
-        <label class="form-label" style="color:var(--accent2)">🔍 Buscar de um orçamento existente</label>
+      <div class="form-group" style="background:#eef1e6;border:1px solid #6b7d4f;border-radius:var(--radius-sm);padding:12px">
+        <label class="form-label" style="color:#4a5a34">Buscar Orçamento Existente</label>
         <p style="font-size:11px;color:var(--text3);margin-bottom:6px">Escolha um orçamento já pronto e o apartamento, cliente e valor preenchem sozinhos.</p>
-        <input class="form-control" id="entrada-pers-buscar-orcamento" list="lista-orcamentos-datalist" placeholder="Digite o apê ou nome do cliente..." oninput="selecionarOrcamentoParaEntrada(this.value)">
-        <datalist id="lista-orcamentos-datalist"></datalist>
+        <input class="form-control" id="entrada-pers-buscar-orcamento" placeholder="Digite o apê ou nome do cliente..." oninput="filtrarOrcamentosParaEntrada(this.value)">
+        <div id="entrada-pers-orcamentos-cards" style="display:none;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:10px;max-height:220px;overflow-y:auto;padding:2px"></div>
       </div>
       <div class="form-group">
         <label class="form-label">Apartamento</label>
@@ -6042,17 +6042,12 @@ function abrirModalNovaEntradaPers() {
 }
 
 async function _popularListaOrcamentosParaEntrada() {
-  const dl = document.getElementById('lista-orcamentos-datalist');
-  window._mapaOrcamentosEntrada = {};
-  const fmt = _fmtR$;
-  const opcoes = [];
+  window._listaOrcamentosEntrada = [];
+  const push = (ap, cliente, categoria, valor) => window._listaOrcamentosEntrada.push({ ap, cliente, categoria, valor });
 
   // Revestimentos (ja carregados na tela)
   (dadosPersonalizar || []).filter(p => !p.arquivado || p.arquivado === 'false').forEach(p => {
-    const valor = parseFloat(p.total_valor) || 0;
-    const label = `Apto ${p.ap} — ${p.cliente || 'sem nome'} — Revestimento — ${valor > 0 ? fmt(valor) : 'valor zerado, corrija o orçamento'}`;
-    window._mapaOrcamentosEntrada[label] = { ap: p.ap, cliente: p.cliente, valor };
-    opcoes.push(label);
+    push(p.ap, p.cliente, 'Revestimento', parseFloat(p.total_valor) || 0);
   });
 
   // Banheiras, Vinilico, Marmoraria (busca via lerDadosExtra, com cache)
@@ -6062,17 +6057,13 @@ async function _popularListaOrcamentosParaEntrada() {
     (banh.personalizar || []).filter(p => !p.arquivado || p.arquivado === 'false').forEach(p => {
       const itens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
       const valor = (Array.isArray(itens)?itens:[]).reduce((s,it) => s + (parseFloat(it.preco_venda)||0), 0);
-      const label = `Apto ${p.ap} — ${p.cliente || 'sem nome'} — Banheira — ${valor > 0 ? fmt(valor) : 'valor zerado, corrija o orçamento'}`;
-      window._mapaOrcamentosEntrada[label] = { ap: p.ap, cliente: p.cliente, valor };
-      opcoes.push(label);
+      push(p.ap, p.cliente, 'Banheira', valor);
     });
 
     (marm.personalizar || []).filter(p => !p.arquivado || p.arquivado === 'false').forEach(p => {
       const itens = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
       const valor = (Array.isArray(itens)?itens:[]).reduce((s,it) => s + (parseFloat(it.valor)||0), 0);
-      const label = `Apto ${p.ap} — ${p.cliente || 'sem nome'} — Marmoraria — ${valor > 0 ? fmt(valor) : 'valor zerado, corrija o orçamento'}`;
-      window._mapaOrcamentosEntrada[label] = { ap: p.ap, cliente: p.cliente, valor };
-      opcoes.push(label);
+      push(p.ap, p.cliente, 'Marmoraria', valor);
     });
 
     (vin.personalizar || []).filter(p => !p.arquivado || p.arquivado === 'false').forEach(p => {
@@ -6082,18 +6073,31 @@ async function _popularListaOrcamentosParaEntrada() {
         const prod = (vin.produtos || []).find(r => String(r.id||r.codigo) === String(v.produto));
         valor += (precoM2(prod?.preco_m2)||0) * (parseFloat(v.m2)||0);
       }
-      const label = `Apto ${p.ap} — ${p.cliente || 'sem nome'} — Vinílico — ${valor > 0 ? fmt(valor) : 'valor zerado, corrija o orçamento'}`;
-      window._mapaOrcamentosEntrada[label] = { ap: p.ap, cliente: p.cliente, valor };
-      opcoes.push(label);
+      push(p.ap, p.cliente, 'Vinílico', valor);
     });
   } catch(e) { /* segue só com revestimentos se der erro nos outros */ }
-
-  dl.innerHTML = opcoes.map(label => `<option value="${label.replace(/"/g,'')}"></option>`).join('');
 }
 
-function selecionarOrcamentoParaEntrada(valorDigitado) {
-  const registro = window._mapaOrcamentosEntrada && window._mapaOrcamentosEntrada[valorDigitado];
-  if (!registro) return; // ainda digitando, nao bateu com nenhuma opcao exata ainda
+function filtrarOrcamentosParaEntrada(termo) {
+  const cont = document.getElementById('entrada-pers-orcamentos-cards');
+  const lista = window._listaOrcamentosEntrada || [];
+  if (!termo || !termo.trim()) { cont.style.display = 'none'; cont.innerHTML = ''; return; }
+  const t = termo.trim().toLowerCase();
+  const filtrados = lista.filter(o => String(o.ap).toLowerCase().includes(t) || String(o.cliente||'').toLowerCase().includes(t)).slice(0, 24);
+  if (!filtrados.length) { cont.style.display = 'none'; cont.innerHTML = ''; return; }
+  cont.style.display = 'grid';
+  cont.innerHTML = filtrados.map((o, i) => `
+    <button type="button" onclick="selecionarOrcamentoParaEntrada(${i})" style="background:#fff;border:1px solid #6b7d4f;border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;font-size:12px" onmouseover="this.style.background='#eef1e6'" onmouseout="this.style.background='#fff'">
+      <div style="font-weight:600">Apto ${o.ap}</div>
+      <div style="color:#4a5a34">${o.categoria}</div>
+    </button>
+  `).join('');
+  window._listaOrcamentosFiltrada = filtrados;
+}
+
+function selecionarOrcamentoParaEntrada(indice) {
+  const registro = (window._listaOrcamentosFiltrada || [])[indice];
+  if (!registro) return;
   if (!registro.valor) { showToast('Esse orçamento está com valor zerado — corrija ele antes de usar aqui', 'error'); }
 
   const selAp = document.getElementById('entrada-pers-apto');
@@ -6107,6 +6111,8 @@ function selecionarOrcamentoParaEntrada(valorDigitado) {
   selAp.value = registro.ap;
   document.getElementById('entrada-pers-cliente').value = registro.cliente || '';
   document.getElementById('entrada-pers-valor').value = registro.valor || '';
+  document.getElementById('entrada-pers-buscar-orcamento').value = `Apto ${registro.ap} — ${registro.categoria}`;
+  document.getElementById('entrada-pers-orcamentos-cards').style.display = 'none';
   atualizarCalculoJurosEntrada();
   showToast('Preenchido a partir do orçamento!', 'success');
 }
