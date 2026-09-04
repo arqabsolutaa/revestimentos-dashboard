@@ -25699,6 +25699,25 @@
       "valor_pago": "",
       "condicao_pagamento_confirmada": "",
       "valor_avista_confirmado": ""
+    },
+    {
+      "id": "id_1788543466301_dyjsf",
+      "ap": "111",
+      "cliente": "Carla e Marcos  (R02)",
+      "empresa": "Empresa",
+      "data": "04/09/2026",
+      "selecoes": "{\"111-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"12\"},\"111-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"12\"},\"111-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"12\"},\"111-Banho 01-D-3\":{\"m2\":2.68,\"piso\":\"12\"},\"111-Banho 01-E-4\":{\"m2\":2.42,\"piso\":\"12\"},\"111-Banho 01-F-5\":{\"m2\":0.59,\"piso\":\"12\"},\"111-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"12\"},\"111-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"id_1783367814492_tipnn\"},\"111-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"id_1783367814492_tipnn\"},\"111-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"id_1783367814492_tipnn\"},\"111-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"id_1783367814492_tipnn\"},\"111-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"14\"},\"111-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"14\"},\"111-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"14\"},\"111-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"id_1788543044352_4msyx\"},\"111-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"14\"},\"111-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"14\"},\"111-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"14\"},\"111-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"14\"},\"111-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"14\"},\"111-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"14\"},\"111-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"id_1788543044352_4msyx\"},\"111-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"14\"},\"111-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"14\"},\"111-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"14\"},\"111-Lavabo-Piso-0\":{\"m2\":2.4,\"piso\":\"37\"},\"111-Cozinha-A-0\":{\"m2\":6.55,\"piso\":\"id_1788543044352_4msyx\"},\"111-Cozinha-B-1\":{\"m2\":11.47,\"piso\":\"id_1788543044352_4msyx\"},\"111-Cozinha-C-2\":{\"m2\":2.24,\"piso\":\"id_1788543044352_4msyx\"},\"111-A.S-A-0\":{\"m2\":4.41,\"piso\":\"80\"},\"111-A.S-B-1\":{\"m2\":2.24,\"piso\":\"80\"},\"111-Banho A.S-Piso-5\":{\"m2\":1.91,\"piso\":\"37\"},\"111-Living/ Coz. / A.S-Piso Total-0\":{\"m2\":130.2,\"piso\":\"37\"},\"111-Banho 02 (Master)-Parede Decorativa-1788542416586\":{\"m2\":6.35,\"piso\":\"58\"},\"111-Banho 02 (Master)-Parede Decorativa-1788542626245\":{\"m2\":3.14,\"piso\":\"id_1783367814492_tipnn\"}}",
+      "status": "pendente",
+      "criado_em": "04/09/2026",
+      "status_pgto": "",
+      "obs_pgto": "",
+      "comprovante_url": "",
+      "total_m2": "312.0839999999999",
+      "total_valor": "55959.451199999996",
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     }
   ],
   "orcamentos": [
