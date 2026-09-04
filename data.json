@@ -21561,6 +21561,20 @@
       "criado_em": "24/08/2026",
       "planta_img": "",
       "nome_arquivo": ""
+    },
+    {
+      "id": "id_1788542417444_yzgtg",
+      "apartamento": "111",
+      "cliente": "Carla e Marcos ",
+      "local": "Banho 02 (Master)",
+      "parede": "Parede Decorativa",
+      "metro_linear": "2.49",
+      "altura": "2.55",
+      "imagem": "",
+      "obs": "",
+      "criado_em": "04/09/2026",
+      "planta_img": "",
+      "nome_arquivo": ""
     }
   ],
   "saidas": [
