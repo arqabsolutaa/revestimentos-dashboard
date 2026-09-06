@@ -851,8 +851,8 @@ const ESSENCE_CORES = ESSENCE_PALETAS.vinilico; // fallback
 const ESSENCE_ASSETS = 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/assets/';
 
 // Carrega imagem de URL e retorna base64 para jsPDF (com timeout de 5s)
-async function carregarImagemPDF(url) {
-  const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+async function carregarImagemPDF(url, timeoutMs) {
+  const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeoutMs || 5000));
   const load = fetch(url).then(r => r.blob()).then(blob => new Promise(resolve => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
@@ -5109,7 +5109,7 @@ function abrirModalRevisarMarcacoes() {
 function _iconeMarcadorMapa(tipo) {
   const cor = tipo === 'deposito' ? '#3a6b4a' : '#3a4a2e';
   if (tipo === 'deposito') {
-    return `<svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 8l9-4 9 4-9 4-9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M3 8v8l9 4V12L3 8z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M21 8v8l-9 4V12l9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/></svg>`;
+  return `<svg viewBox="0 0 24 24" width="16" height="16"><path d="M3 8l9-4 9 4-9 4-9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M3 8v8l9 4V12L3 8z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M21 8v8l-9 4V12l9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/></svg>`;
   }
   return `<svg viewBox="0 0 24 24" width="26" height="26"><rect x="3" y="10" width="18" height="7" rx="2" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M5 10l2-4a2 2 0 012-1h6a2 2 0 012 1l2 4" fill="${cor}" stroke="#fff" stroke-width="1"/><circle cx="7.5" cy="17" r="1.8" fill="#fff" stroke="${cor}" stroke-width="1"/><circle cx="16.5" cy="17" r="1.8" fill="#fff" stroke="${cor}" stroke-width="1"/></svg>`;
 }
@@ -5252,7 +5252,7 @@ function renderMapaGeral() {
 
   const pinsDiv = document.getElementById('mapageral-pins');
   const CARRO_SVG = (cor) => `<svg viewBox="0 0 24 24" width="30" height="30" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))"><rect x="3" y="10" width="18" height="7" rx="2" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M5 10l2-4a2 2 0 012-1h6a2 2 0 012 1l2 4" fill="${cor}" stroke="#fff" stroke-width="1"/><circle cx="7.5" cy="17" r="1.8" fill="#fff" stroke="${cor}" stroke-width="1"/><circle cx="16.5" cy="17" r="1.8" fill="#fff" stroke="${cor}" stroke-width="1"/></svg>`;
-  const CAIXA_SVG = (cor) => `<svg viewBox="0 0 24 24" width="28" height="28" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))"><path d="M3 8l9-4 9 4-9 4-9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M3 8v8l9 4V12L3 8z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M21 8v8l-9 4V12l9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/></svg>`;
+  const CAIXA_SVG = (cor) => `<svg viewBox="0 0 24 24" width="18" height="18" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))"><path d="M3 8l9-4 9 4-9 4-9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M3 8v8l9 4V12L3 8z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M21 8v8l-9 4V12l9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/></svg>`;
   const fmtPin = (item, cor) => {
     const vinc = _vinculoDoItem(item);
     const apLabel = vinc ? vinc.ap : '—';
@@ -7105,12 +7105,79 @@ async function gerarPDFVagasDep(ap) {
   doc.text(linhas, ml, y);
   y += linhas.length * 5;
 
-  // RODAPÉ
+  // RODAPÉ (página 1)
   const rodapeY = 285;
   doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
   doc.line(ml, rodapeY, W-mr, rodapeY);
   doc.setFontSize(7); doc.setTextColor(...COR_CINZA);
   doc.text('Absoluta Construtora e Incorporadora · ' + nomeEmpreendimento + ' · São Bernardo do Campo/SP', W/2, rodapeY+5, { align: 'center' });
+
+  // PÁGINAS DE MAPA COM MARCAÇÃO (uma por subsolo que tiver item marcado desse apê)
+  if (predio === 'Essence') {
+    const itensAp = [
+      ...vagas.map(n => ({ tipo: 'vaga', numero: n, label: 'Vaga ' + n })),
+      ...depositos.map(n => ({ tipo: 'deposito', numero: n, label: 'Depósito ' + n }))
+    ];
+    const porSubsolo = {};
+    itensAp.forEach(it => {
+      const cat = _itemCatalogo(it.tipo, it.numero);
+      if (!cat || cat.posicao_x === '' || cat.posicao_x == null || cat.posicao_y === '' || cat.posicao_y == null) return;
+      const sub = cat.subsolo || '';
+      if (!porSubsolo[sub]) porSubsolo[sub] = [];
+      porSubsolo[sub].push({ ...it, posicao_x: parseFloat(cat.posicao_x), posicao_y: parseFloat(cat.posicao_y) });
+    });
+
+    for (const sub of Object.keys(porSubsolo).sort()) {
+      const itensSub = porSubsolo[sub];
+      if (!itensSub.length) continue;
+      let imgData = null, imgW = 0, imgH = 0;
+      try {
+        imgData = await carregarImagemPDF(_urlPlanta(sub), 15000);
+        const dim = await new Promise((resolve, reject) => {
+          const im = new Image();
+          im.onload = () => resolve({ w: im.naturalWidth, h: im.naturalHeight });
+          im.onerror = reject;
+          im.src = imgData;
+        });
+        imgW = dim.w; imgH = dim.h;
+      } catch(e) { continue; }
+
+      doc.addPage();
+      let py2 = 16;
+      doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
+      doc.text('Mapa de Vagas e Depósitos — ' + (sub || 'Subsolo'), ml, py2);
+      py2 += 3;
+      doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
+      doc.line(ml, py2, W-mr, py2);
+      py2 += 6;
+
+      const maxImgW = cw;
+      const maxImgH = 250 - py2 - 14;
+      let drawW = maxImgW, drawH = drawW * (imgH / imgW);
+      if (drawH > maxImgH) { drawH = maxImgH; drawW = drawH * (imgW / imgH); }
+      const imgX = ml + (cw - drawW) / 2;
+      const imgY = py2;
+      doc.addImage(imgData, 'JPEG', imgX, imgY, drawW, drawH);
+
+      itensSub.forEach(it => {
+        const dotX = imgX + (it.posicao_x / 100) * drawW;
+        const dotY = imgY + (it.posicao_y / 100) * drawH;
+        doc.setFillColor(255,255,255);
+        doc.circle(dotX, dotY, 2.1, 'F');
+        doc.setFillColor(200, 40, 40);
+        doc.circle(dotX, dotY, 1.5, 'F');
+      });
+
+      py2 = imgY + drawH + 8;
+      doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
+      const legendaTxt = 'Marcado(s) neste subsolo: ' + itensSub.map(i => i.label).join(' · ');
+      const legendaLinhas = doc.splitTextToSize(legendaTxt, cw);
+      doc.text(legendaLinhas, ml, py2);
+
+      doc.setFontSize(7); doc.setTextColor(...COR_CINZA);
+      doc.text('Absoluta Construtora e Incorporadora · ' + nomeEmpreendimento + ' · São Bernardo do Campo/SP', W/2, 292, { align: 'center' });
+    }
+  }
 
   doc.save(`Comprovante_Vagas_Apto${ap}.pdf`);
   showToast('PDF gerado!', 'success');
