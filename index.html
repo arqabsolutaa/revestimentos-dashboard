@@ -2693,14 +2693,15 @@ body.mobile-mode #main{padding-bottom:72px}
   <div id="vagasdep-conteudo" style="display:block;width:100%">
     <div id="vagasdep-mapa-placeholder" style="display:none;flex-direction:column;padding:24px 32px">
       <h2 style="font-size:20px;margin-bottom:4px">Mapa de Vagas e Depósitos</h2>
-      <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Planta do subsolo — pontos mostram o apê de cada vaga/depósito já vinculado.</p>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:4px">Planta do subsolo — pontos mostram o apê de cada vaga/depósito já vinculado.</p>
+      <p style="font-size:11px;color:var(--text3);margin-bottom:16px">Role a rodinha do mouse pra dar zoom · clique e arraste pra mover · duplo clique reseta</p>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px">
         <button class="btn btn-secondary" id="btn-mapageral-sub2" onclick="setMapaGeralSubsolo('2 Subsolo')">2º Subsolo</button>
         <button class="btn btn-secondary" id="btn-mapageral-sub1" onclick="setMapaGeralSubsolo('1 Subsolo')">1º Subsolo</button>
       </div>
       <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
-        <div id="mapageral-scroll" style="border:1px solid var(--border);border-radius:8px;overflow:auto;background:var(--surface);max-height:75vh">
-          <div id="mapageral-imgwrap" style="position:relative">
+        <div id="mapageral-scroll" style="border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface);max-height:75vh">
+          <div id="mapageral-imgwrap" style="position:relative;will-change:transform">
             <img id="mapageral-img" src="" style="width:100%;display:block">
             <div id="mapageral-pins" style="position:absolute;top:0;left:0;width:100%;height:100%"></div>
           </div>
@@ -2971,9 +2972,10 @@ body.mobile-mode #main{padding-bottom:72px}
       <button class="modal-close" onclick="fecharModal('modal-clique-mapa')">&times;</button>
     </div>
     <div class="modal-body" style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden">
+      <p style="font-size:11px;color:var(--text3);margin:0 0 8px;flex-shrink:0">Role a rodinha do mouse pra dar zoom · clique e arraste pra mover a planta · duplo clique reseta o zoom</p>
       <div id="modal-clique-mapa-scroll" style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--border);border-radius:8px;background:var(--surface2)">
-        <div id="modal-clique-mapa-imgwrap" style="position:relative;cursor:crosshair;max-width:100%;max-height:100%;line-height:0">
-          <img id="modal-clique-mapa-img" src="" style="max-width:100%;max-height:calc(90vh - 190px);display:block" onclick="registrarCliqueMapa(event)">
+        <div id="modal-clique-mapa-imgwrap" style="position:relative;cursor:crosshair;max-width:100%;max-height:100%;line-height:0;will-change:transform">
+          <img id="modal-clique-mapa-img" src="" style="max-width:100%;max-height:calc(90vh - 215px);display:block" onclick="registrarCliqueMapa(event)">
           <div id="modal-clique-mapa-marcador" style="display:none;position:absolute;width:26px;height:26px;margin-left:-13px;margin-top:-13px;pointer-events:none"></div>
         </div>
       </div>
@@ -5105,12 +5107,79 @@ function abrirModalRevisarMarcacoes() {
 }
 
 function _iconeMarcadorMapa(tipo) {
-  const cor = 'var(--danger)';
+  const cor = tipo === 'deposito' ? '#3a6b4a' : '#3a4a2e';
   if (tipo === 'deposito') {
     return `<svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 8l9-4 9 4-9 4-9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M3 8v8l9 4V12L3 8z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M21 8v8l-9 4V12l9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/></svg>`;
   }
   return `<svg viewBox="0 0 24 24" width="26" height="26"><rect x="3" y="10" width="18" height="7" rx="2" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M5 10l2-4a2 2 0 012-1h6a2 2 0 012 1l2 4" fill="${cor}" stroke="#fff" stroke-width="1"/><circle cx="7.5" cy="17" r="1.8" fill="#fff" stroke="${cor}" stroke-width="1"/><circle cx="16.5" cy="17" r="1.8" fill="#fff" stroke="${cor}" stroke-width="1"/></svg>`;
 }
+
+// ---- Zoom (rolagem do mouse) e arrastar (clicar e segurar) nas plantas ----
+function _attachPanZoom(scrollId, wrapId, modoClicar) {
+  const scroll = document.getElementById(scrollId);
+  const wrap = document.getElementById(wrapId);
+  if (!scroll || !wrap) return null;
+  let scale = 1, tx = 0, ty = 0;
+  let dragging = false, moved = false, startX = 0, startY = 0, startTx = 0, startTy = 0;
+
+  function apply() {
+    wrap.style.transformOrigin = '0 0';
+    wrap.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+    wrap.style.cursor = dragging ? 'grabbing' : (scale > 1 ? 'grab' : (modoClicar ? 'crosshair' : 'default'));
+  }
+
+  function resetZoom() { scale = 1; tx = 0; ty = 0; apply(); }
+
+  scroll.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    const rect = scroll.getBoundingClientRect();
+    const cx = e.clientX - rect.left;
+    const cy = e.clientY - rect.top;
+    const factor = e.deltaY < 0 ? 1.18 : (1 / 1.18);
+    let newScale = Math.max(1, Math.min(6, scale * factor));
+    const contentX = (cx - tx) / scale;
+    const contentY = (cy - ty) / scale;
+    tx = cx - contentX * newScale;
+    ty = cy - contentY * newScale;
+    scale = newScale;
+    if (scale <= 1.001) { scale = 1; tx = 0; ty = 0; }
+    apply();
+  }, { passive: false });
+
+  wrap.addEventListener('mousedown', function(e) {
+    if (scale <= 1) return;
+    dragging = true; moved = false;
+    startX = e.clientX; startY = e.clientY;
+    startTx = tx; startTy = ty;
+    apply();
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+    tx = startTx + dx;
+    ty = startTy + dy;
+    apply();
+  });
+  window.addEventListener('mouseup', function() {
+    if (!dragging) return;
+    dragging = false;
+    apply();
+    if (moved) {
+      window._panZoomJustDragged = true;
+      setTimeout(function() { window._panZoomJustDragged = false; }, 0);
+    }
+  });
+
+  wrap.addEventListener('dblclick', function(e) { e.preventDefault(); resetZoom(); });
+
+  return { reset: resetZoom };
+}
+
+const _panZoomClique = _attachPanZoom('modal-clique-mapa-scroll', 'modal-clique-mapa-imgwrap', true);
+const _panZoomMapaGeral = _attachPanZoom('mapageral-scroll', 'mapageral-imgwrap', false);
 
 function abrirModalCliqueMapa(tipo, numero) {
   const item = _itemCatalogo(tipo, numero);
@@ -5121,12 +5190,14 @@ function abrirModalCliqueMapa(tipo, numero) {
   document.getElementById('modal-clique-mapa-marcador').innerHTML = _iconeMarcadorMapa(tipo);
   document.getElementById('modal-clique-mapa-marcador').style.display = 'none';
   document.getElementById('modal-clique-mapa-salvar').disabled = true;
+  if (_panZoomClique) _panZoomClique.reset();
   _cliqueMapaContexto = { tipo, numero, subsolo, x: null, y: null };
   fecharModal('modal-revisar-marcacoes');
   abrirModal('modal-clique-mapa');
 }
 
 function registrarCliqueMapa(event) {
+  if (window._panZoomJustDragged) return;
   const img = document.getElementById('modal-clique-mapa-img');
   const rect = img.getBoundingClientRect();
   const xPct = ((event.clientX - rect.left) / rect.width) * 100;
@@ -5160,6 +5231,7 @@ function setMapaGeralSubsolo(subsolo) {
   document.getElementById('btn-mapageral-sub2').className = chave.startsWith('2') ? 'btn btn-primary' : 'btn btn-secondary';
   document.getElementById('btn-mapageral-sub1').className = chave.startsWith('1') ? 'btn btn-primary' : 'btn btn-secondary';
   document.getElementById('mapageral-img').src = _urlPlanta(subsolo);
+  if (_panZoomMapaGeral) _panZoomMapaGeral.reset();
   renderMapaGeral();
 }
 
@@ -5213,6 +5285,7 @@ function abrirClickManualMapa() {
   document.getElementById('modal-clique-mapa-marcador').innerHTML = _iconeMarcadorMapa(tipo);
   document.getElementById('modal-clique-mapa-marcador').style.display = 'none';
   document.getElementById('modal-clique-mapa-salvar').disabled = true;
+  if (_panZoomClique) _panZoomClique.reset();
   _cliqueMapaContexto = { tipo, numero, subsolo: _mapaGeralSubsoloAtual, x: null, y: null };
   abrirModal('modal-clique-mapa');
 }
