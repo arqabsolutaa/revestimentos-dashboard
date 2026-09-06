@@ -7143,7 +7143,13 @@ async function gerarPDFVagasDep(ap) {
       } catch(e) { continue; }
 
       doc.addPage();
-      let py2 = 16;
+      let py2 = 14;
+      if (logoData) doc.addImage(logoData, 'PNG', ml, py2, 30, 9.8);
+      doc.setDrawColor(...COR_DOURADO); doc.setLineWidth(0.3);
+      doc.line(ml + 34, py2 - 1, ml + 34, py2 + 10);
+      doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
+      doc.text(nomeEmpreendimento + ' · São Bernardo do Campo/SP', ml + 38, py2 + 6);
+      py2 += 16;
       doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
       doc.text('Mapa de Vagas e Depósitos — ' + (sub || 'Subsolo'), ml, py2);
       py2 += 3;
@@ -7159,13 +7165,35 @@ async function gerarPDFVagasDep(ap) {
       const imgY = py2;
       doc.addImage(imgData, 'JPEG', imgX, imgY, drawW, drawH);
 
+      // Marcadores no mesmo padrão visual usado no mapa do sistema: carrinho pra vaga, caixa pra depósito
+      function desenharCarrinhoPDF(x, y, cor) {
+        const w = 5.2, h = 2.2;
+        doc.setDrawColor(255,255,255); doc.setLineWidth(0.25);
+        doc.setFillColor(...cor);
+        doc.roundedRect(x - w/2, y - h/2, w, h*0.72, 0.5, 0.5, 'FD');
+        doc.triangle(x - w*0.28, y - h*0.14, x - w*0.05, y - h*0.85, x + w*0.05, y - h*0.85, 'FD');
+        doc.triangle(x - w*0.05, y - h*0.85, x + w*0.05, y - h*0.85, x + w*0.22, y - h*0.14, 'FD');
+        doc.setDrawColor(...cor); doc.setLineWidth(0.25);
+        doc.setFillColor(255,255,255);
+        doc.circle(x - w*0.28, y + h*0.36, 0.55, 'FD');
+        doc.circle(x + w*0.28, y + h*0.36, 0.55, 'FD');
+      }
+      function desenharCaixaPDF(x, y, cor) {
+        const s = 3.6;
+        doc.setDrawColor(255,255,255); doc.setLineWidth(0.2);
+        doc.setFillColor(...cor);
+        doc.triangle(x, y - s*0.55, x - s*0.5, y - s*0.15, x + s*0.5, y - s*0.15, 'FD');
+        doc.triangle(x - s*0.5, y - s*0.15, x, y + s*0.15, x, y - s*0.55, 'FD');
+        doc.triangle(x + s*0.5, y - s*0.15, x, y + s*0.15, x, y - s*0.55, 'FD');
+        doc.triangle(x - s*0.5, y - s*0.15, x, y + s*0.55, x, y + s*0.15, 'FD');
+        doc.triangle(x + s*0.5, y - s*0.15, x, y + s*0.55, x, y + s*0.15, 'FD');
+      }
       itensSub.forEach(it => {
         const dotX = imgX + (it.posicao_x / 100) * drawW;
         const dotY = imgY + (it.posicao_y / 100) * drawH;
-        doc.setFillColor(255,255,255);
-        doc.circle(dotX, dotY, 2.1, 'F');
-        doc.setFillColor(200, 40, 40);
-        doc.circle(dotX, dotY, 1.5, 'F');
+        const cor = it.tipo === 'vaga' ? [58,74,46] : [58,107,74];
+        if (it.tipo === 'vaga') desenharCarrinhoPDF(dotX, dotY, cor);
+        else desenharCaixaPDF(dotX, dotY, cor);
       });
 
       py2 = imgY + drawH + 8;
