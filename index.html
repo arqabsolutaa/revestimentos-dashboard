@@ -2974,9 +2974,7 @@ body.mobile-mode #main{padding-bottom:72px}
       <div id="modal-clique-mapa-scroll" style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--border);border-radius:8px;background:var(--surface2)">
         <div id="modal-clique-mapa-imgwrap" style="position:relative;cursor:crosshair;max-width:100%;max-height:100%;line-height:0">
           <img id="modal-clique-mapa-img" src="" style="max-width:100%;max-height:calc(90vh - 190px);display:block" onclick="registrarCliqueMapa(event)">
-          <div id="modal-clique-mapa-marcador" style="display:none;position:absolute;width:26px;height:26px;margin-left:-13px;margin-top:-13px;pointer-events:none">
-            <svg viewBox="0 0 24 24" width="26" height="26"><rect x="3" y="10" width="18" height="7" rx="2" fill="var(--danger)" stroke="#fff" stroke-width="1"/><path d="M5 10l2-4a2 2 0 012-1h6a2 2 0 012 1l2 4" fill="var(--danger)" stroke="#fff" stroke-width="1"/><circle cx="7.5" cy="17" r="1.8" fill="#fff" stroke="var(--danger)" stroke-width="1"/><circle cx="16.5" cy="17" r="1.8" fill="#fff" stroke="var(--danger)" stroke-width="1"/></svg>
-          </div>
+          <div id="modal-clique-mapa-marcador" style="display:none;position:absolute;width:26px;height:26px;margin-left:-13px;margin-top:-13px;pointer-events:none"></div>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-shrink:0">
@@ -5106,12 +5104,21 @@ function abrirModalRevisarMarcacoes() {
   abrirModal('modal-revisar-marcacoes');
 }
 
+function _iconeMarcadorMapa(tipo) {
+  const cor = 'var(--danger)';
+  if (tipo === 'deposito') {
+    return `<svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 8l9-4 9 4-9 4-9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M3 8v8l9 4V12L3 8z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M21 8v8l-9 4V12l9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/></svg>`;
+  }
+  return `<svg viewBox="0 0 24 24" width="26" height="26"><rect x="3" y="10" width="18" height="7" rx="2" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M5 10l2-4a2 2 0 012-1h6a2 2 0 012 1l2 4" fill="${cor}" stroke="#fff" stroke-width="1"/><circle cx="7.5" cy="17" r="1.8" fill="#fff" stroke="${cor}" stroke-width="1"/><circle cx="16.5" cy="17" r="1.8" fill="#fff" stroke="${cor}" stroke-width="1"/></svg>`;
+}
+
 function abrirModalCliqueMapa(tipo, numero) {
   const item = _itemCatalogo(tipo, numero);
   const subsolo = item ? item.subsolo : (_mapaGeralSubsoloAtual || '2 Subsolo');
   const label = (tipo === 'vaga' ? 'Vaga ' : 'Depósito ') + numero;
   document.getElementById('modal-clique-mapa-titulo').textContent = 'Clique onde fica: ' + label + ' (' + (subsolo||'Subsolo') + ')';
   document.getElementById('modal-clique-mapa-img').src = _urlPlanta(subsolo);
+  document.getElementById('modal-clique-mapa-marcador').innerHTML = _iconeMarcadorMapa(tipo);
   document.getElementById('modal-clique-mapa-marcador').style.display = 'none';
   document.getElementById('modal-clique-mapa-salvar').disabled = true;
   _cliqueMapaContexto = { tipo, numero, subsolo, x: null, y: null };
@@ -5173,11 +5180,13 @@ function renderMapaGeral() {
 
   const pinsDiv = document.getElementById('mapageral-pins');
   const CARRO_SVG = (cor) => `<svg viewBox="0 0 24 24" width="30" height="30" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))"><rect x="3" y="10" width="18" height="7" rx="2" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M5 10l2-4a2 2 0 012-1h6a2 2 0 012 1l2 4" fill="${cor}" stroke="#fff" stroke-width="1"/><circle cx="7.5" cy="17" r="1.8" fill="#fff" stroke="${cor}" stroke-width="1"/><circle cx="16.5" cy="17" r="1.8" fill="#fff" stroke="${cor}" stroke-width="1"/></svg>`;
+  const CAIXA_SVG = (cor) => `<svg viewBox="0 0 24 24" width="28" height="28" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))"><path d="M3 8l9-4 9 4-9 4-9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M3 8v8l9 4V12L3 8z" fill="${cor}" stroke="#fff" stroke-width="1"/><path d="M21 8v8l-9 4V12l9-4z" fill="${cor}" stroke="#fff" stroke-width="1"/></svg>`;
   const fmtPin = (item, cor) => {
     const vinc = _vinculoDoItem(item);
     const apLabel = vinc ? vinc.ap : '—';
+    const icone = item.tipo === 'vaga' ? CARRO_SVG(cor) : CAIXA_SVG(cor);
     return `<div title="${item.tipo === 'vaga' ? 'Vaga' : 'Depósito'} ${item.numero} — Apto ${apLabel}" style="position:absolute;left:${item.posicao_x}%;top:${item.posicao_y}%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;pointer-events:auto">
-      ${CARRO_SVG(cor)}
+      ${icone}
       <span style="font-size:9px;font-weight:700;color:#fff;background:${cor};padding:0 4px;border-radius:4px;border:1px solid #fff;margin-top:-2px">${apLabel}</span>
     </div>`;
   };
@@ -5201,6 +5210,7 @@ function abrirClickManualMapa() {
   if (!item) { showToast('Esse número não existe no catálogo desse prédio', 'error'); return; }
   document.getElementById('modal-clique-mapa-titulo').textContent = 'Clique onde fica: ' + (tipo==='vaga'?'Vaga ':'Depósito ') + numero + ' (' + _mapaGeralSubsoloAtual + ')';
   document.getElementById('modal-clique-mapa-img').src = _urlPlanta(_mapaGeralSubsoloAtual);
+  document.getElementById('modal-clique-mapa-marcador').innerHTML = _iconeMarcadorMapa(tipo);
   document.getElementById('modal-clique-mapa-marcador').style.display = 'none';
   document.getElementById('modal-clique-mapa-salvar').disabled = true;
   _cliqueMapaContexto = { tipo, numero, subsolo: _mapaGeralSubsoloAtual, x: null, y: null };
