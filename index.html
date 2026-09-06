@@ -7227,8 +7227,8 @@ async function gerarPDFVagasDep(ap) {
       doc.line(ml, py2, W-mr, py2);
       py2 += 6;
 
-      const maxImgW = cw;
-      const maxImgH = 297 - py2 - 26;
+      const maxImgW = cw * 0.94;
+      const maxImgH = 297 - py2 - 28;
       let drawW = maxImgW, drawH = drawW * (imgH / imgW);
       if (drawH > maxImgH) { drawH = maxImgH; drawW = drawH * (imgW / imgH); }
       const imgX = ml + (cw - drawW) / 2;
