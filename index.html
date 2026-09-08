@@ -5588,10 +5588,10 @@ function setCustoPersTab(tab) {
   if (tab === 'mapa') renderMapaVinculosCards();
 }
 
-async function loadCustoPersonalizacoes() {
+async function loadCustoPersonalizacoes(forcarFresco) {
   if (!custoPersDesbloqueado) return;
   try {
-    const dados = await lerDados();
+    const dados = await lerDados(forcarFresco);
     dadosEntradasPers = dados.entradasPersonalizacao || [];
     dadosSaidasObra = dados.saidasObra || [];
     dadosVinculosPers = dados.vinculos || [];
@@ -6325,7 +6325,7 @@ async function salvarNovaEntradaPers() {
       showToast('Entrada salva!', 'success');
     }
     fecharModal('modal-nova-entrada-pers');
-    loadCustoPersonalizacoes();
+    loadCustoPersonalizacoes(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -6483,7 +6483,7 @@ async function salvarNovaSaidaObra() {
       showToast('Saída salva!', 'success');
     }
     fecharModal('modal-nova-saida-obra');
-    loadCustoPersonalizacoes();
+    loadCustoPersonalizacoes(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -6498,7 +6498,7 @@ async function excluirEntradaPers(id) {
     }
     await apiAction('deleteEntradaPersonalizacao', id);
     showToast('Entrada excluída!', 'success');
-    loadCustoPersonalizacoes();
+    loadCustoPersonalizacoes(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -6511,7 +6511,7 @@ async function excluirSaidaObra(id) {
     }
     await apiAction('deleteSaidaObra', id);
     showToast('Saída excluída!', 'success');
-    loadCustoPersonalizacoes();
+    loadCustoPersonalizacoes(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -6561,7 +6561,7 @@ async function salvarVinculoCustoPers() {
     await apiPost('addVinculo', dados);
     showToast('Vínculo salvo!', 'success');
     fecharModal('modal-vincular-custopers');
-    loadCustoPersonalizacoes();
+    loadCustoPersonalizacoes(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -6590,7 +6590,7 @@ async function salvarEdicaoVinculo() {
     await apiPost('editVinculo', { id: _vinculoEmEdicao.id, valor, observacao: obs });
     showToast('Vínculo atualizado!', 'success');
     fecharModal('modal-editar-vinculo');
-    loadCustoPersonalizacoes();
+    loadCustoPersonalizacoes(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -6601,7 +6601,7 @@ async function excluirVinculoModal() {
     await apiAction('deleteVinculo', _vinculoEmEdicao.id);
     showToast('Vínculo excluído!', 'success');
     fecharModal('modal-editar-vinculo');
-    loadCustoPersonalizacoes();
+    loadCustoPersonalizacoes(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
