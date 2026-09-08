@@ -5561,6 +5561,10 @@ async function loadVisaoGeralValores() {
 const SENHA_CUSTOPERS = SENHA_PGTO; // mesma senha do Controle de Pagamentos
 let custoPersDesbloqueado = true; // senha interna removida - a senha da tela inicial (Controle) ja protege o acesso
 let dadosEntradasPers = [], dadosSaidasObra = [], dadosVinculosPers = [];
+// Guarda itens recem-adicionados localmente ate confirmar que o servidor ja os tem —
+// assim a sincronizacao em segundo plano nunca "some" com algo que acabou de aparecer na tela.
+const _entradasOtimistas = {};
+const _saidasOtimistas = {};
 
 function verificarSenhaCustoPers() {
   const senha = document.getElementById('custopers-senha-input').value;
@@ -5592,13 +5596,24 @@ async function loadCustoPersonalizacoes(forcarFresco) {
   if (!custoPersDesbloqueado) return;
   try {
     const dados = await lerDados(forcarFresco);
-    dadosEntradasPers = dados.entradasPersonalizacao || [];
-    dadosSaidasObra = dados.saidasObra || [];
+    let entradas = dados.entradasPersonalizacao || [];
+    let saidas = dados.saidasObra || [];
+    // Reaplica otimistas que o servidor ainda nao confirmou (evita sumico por sincronizacao atrasada)
+    Object.keys(_entradasOtimistas).forEach(id => {
+      if (entradas.some(e => e.id === id)) { delete _entradasOtimistas[id]; }
+      else { entradas = [...entradas, _entradasOtimistas[id]]; }
+    });
+    Object.keys(_saidasOtimistas).forEach(id => {
+      if (saidas.some(s => s.id === id)) { delete _saidasOtimistas[id]; }
+      else { saidas = [...saidas, _saidasOtimistas[id]]; }
+    });
+    dadosEntradasPers = entradas;
+    dadosSaidasObra = saidas;
     dadosVinculosPers = dados.vinculos || [];
     if (dados.personalizar && dados.personalizar.length) dadosPersonalizar = dados.personalizar;
     if (dados.revestimentos && dados.revestimentos.length) dadosRevestimentos = dados.revestimentos;
   } catch(e) {
-    dadosEntradasPers = []; dadosSaidasObra = []; dadosVinculosPers = [];
+    // Em caso de falha, preserva o que ja estava na tela (nao zera a lista)
   }
   renderCustoPersonalizacoes();
 }
@@ -6316,16 +6331,22 @@ async function salvarNovaEntradaPers() {
   if (arquivo && arquivo.size > 10 * 1024 * 1024) { showToast('Arquivo muito grande (máx 10MB)', 'error'); return; }
   try {
     const resultado = await apiPost('addEntradaPersonalizacao', dados);
+    const novaEntrada = { id: resultado.id, ...dados, valor: String(dados.valor), valor_avista: String(dados.valor_avista), valor_juros: String(dados.valor_juros), criado_em: new Date().toLocaleDateString('pt-BR'), comprovante_url: '' };
     if (arquivo) {
       showToast('Entrada salva! Enviando comprovante...', 'success');
       const base64data = await _lerArquivoBase64(arquivo);
-      await _enviarComprovante('uploadComprovanteEntradaPersonalizacao', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
+      const resComp = await _enviarComprovante('uploadComprovanteEntradaPersonalizacao', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
+      if (resComp && resComp.comprovantes) novaEntrada.comprovante_url = JSON.stringify(resComp.comprovantes);
       showToast('Comprovante anexado!', 'success');
     } else {
       showToast('Entrada salva!', 'success');
     }
+    // Mostra na hora, sem esperar o servidor — já sabemos os dados que acabaram de ser digitados
+    _entradasOtimistas[novaEntrada.id] = novaEntrada;
+    dadosEntradasPers.push(novaEntrada);
+    renderCustoPersonalizacoes();
     fecharModal('modal-nova-entrada-pers');
-    loadCustoPersonalizacoes(true);
+    loadCustoPersonalizacoes(true); // sincroniza em segundo plano
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -6474,16 +6495,22 @@ async function salvarNovaSaidaObra() {
   if (arquivo && arquivo.size > 10 * 1024 * 1024) { showToast('Arquivo muito grande (máx 10MB)', 'error'); return; }
   try {
     const resultado = await apiPost('addSaidaObra', dados);
+    const novaSaida = { id: resultado.id, ...dados, valor: String(dados.valor), valor_avista: String(dados.valor_avista), criado_em: new Date().toLocaleDateString('pt-BR'), comprovante_url: '' };
     if (arquivo) {
       showToast('Saída salva! Enviando comprovante...', 'success');
       const base64data = await _lerArquivoBase64(arquivo);
-      await _enviarComprovante('uploadComprovanteSaidaObra', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
+      const resComp = await _enviarComprovante('uploadComprovanteSaidaObra', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
+      if (resComp && resComp.comprovantes) novaSaida.comprovante_url = JSON.stringify(resComp.comprovantes);
       showToast('Comprovante anexado!', 'success');
     } else {
       showToast('Saída salva!', 'success');
     }
+    // Mostra na hora, sem esperar o servidor
+    _saidasOtimistas[novaSaida.id] = novaSaida;
+    dadosSaidasObra.push(novaSaida);
+    renderCustoPersonalizacoes();
     fecharModal('modal-nova-saida-obra');
-    loadCustoPersonalizacoes(true);
+    loadCustoPersonalizacoes(true); // sincroniza em segundo plano
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
