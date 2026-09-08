@@ -4901,16 +4901,19 @@ async function apiPost(action, data) {
   return result.data;
 }
 
-async function lerDados() {
-  // Buscar do data.json (rápido) como fonte principal
-  try {
-    const baseUrl = window.location.hostname === 'arqabsolutaa.github.io'
-      ? 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/data.json'
-      : '/data.json';
-    const r = await fetch(baseUrl + '?t=' + Date.now());
-    if (r.ok) return await r.json();
-  } catch(e) {}
-  // Fallback para Apps Script se data.json falhar
+async function lerDados(forcarFresco) {
+  // Buscar do data.json (rápido) como fonte principal — exceto quando forcarFresco pede dado
+  // direto da planilha (evita o delay de cache do GitHub logo após uma escrita)
+  if (!forcarFresco) {
+    try {
+      const baseUrl = window.location.hostname === 'arqabsolutaa.github.io'
+        ? 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/data.json'
+        : '/data.json';
+      const r = await fetch(baseUrl + '?t=' + Date.now());
+      if (r.ok) return await r.json();
+    } catch(e) {}
+  }
+  // Apps Script direto (sempre fresco, sem cache de CDN)
   try {
     const result = await jsonp(SCRIPT_URL + '?action=getDados');
     if (result && result.data) return result.data;
@@ -7281,11 +7284,11 @@ async function gerarPDFVagasDep(ap) {
   showToast('PDF gerado!', 'success');
 }
 
-async function loadPagamentos() {
+async function loadPagamentos(forcarFresco) {
   if (!pgtoDesbloqueado) return;
   document.getElementById('pgto-lista').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
   try {
-    const dados = await lerDados();
+    const dados = await lerDados(forcarFresco);
     const pers = (dados.personalizar || []).filter(p => p.arquivado !== 'true');
     renderPagamentos(pers);
   } catch(e) {
@@ -7293,11 +7296,11 @@ async function loadPagamentos() {
   }
 }
 
-async function loadPagamentosArquivados() {
+async function loadPagamentosArquivados(forcarFresco) {
   if (!pgtoDesbloqueado) return;
   document.getElementById('pgto-lista-arq').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
   try {
-    const dados = await lerDados();
+    const dados = await lerDados(forcarFresco);
     const pers = (dados.personalizar || []).filter(p => p.arquivado === 'true');
     renderPagamentosArquivados(pers);
   } catch(e) {
@@ -7326,7 +7329,7 @@ async function arquivarPersonalizacao(id) {
   try {
     await apiPost('arquivarPersonalizacao', { id, arquivado: 'true' });
     showToast('Orçamento arquivado!', 'success');
-    loadPagamentos();
+    loadPagamentos(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -7334,7 +7337,7 @@ async function desarquivarPersonalizacao(id) {
   try {
     await apiPost('arquivarPersonalizacao', { id, arquivado: 'false' });
     showToast('Orçamento restaurado!', 'success');
-    loadPagamentosArquivados();
+    loadPagamentosArquivados(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
