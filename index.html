@@ -7335,8 +7335,12 @@ async function arquivarPersonalizacao(id) {
 
 async function desarquivarPersonalizacao(id) {
   try {
-    await apiPost('arquivarPersonalizacao', { id, arquivado: 'false' });
-    showToast('Orçamento restaurado!', 'success');
+    const r = await apiPost('arquivarPersonalizacao', { id, arquivado: 'false' });
+    if (r && r.versaoCodigo) {
+      showToast('Restaurado! [linha ' + r.linhaSheet + ', col ' + r.colunaSheet + ', gravado="' + r.valorGravado + '"]', 'success');
+    } else {
+      showToast('Orçamento restaurado! (código antigo ainda rodando — redeploy pendente)', 'success');
+    }
     loadPagamentosArquivados(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
