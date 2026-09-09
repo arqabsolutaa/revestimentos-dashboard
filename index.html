@@ -4850,7 +4850,7 @@ function showScreen(name) {
   if (name === 'metais') loadMetais();
   if (name === 'vagasdep') { if (!vagasDepDesbloqueado) { document.getElementById('vagasdep-lock').style.display = 'flex'; document.getElementById('vagasdep-conteudo').style.display = 'none'; } else loadVagasDep(); }
   if (name === 'margemlucro') { if (!margemLucroDesbloqueado) { document.getElementById('margemlucro-lock').style.display = 'flex'; document.getElementById('margemlucro-conteudo').style.display = 'none'; } else { document.getElementById('margemlucro-lock').style.display = 'none'; document.getElementById('margemlucro-conteudo').style.display = 'block'; loadMargemLucro(); } }
-  if (name === 'custopersonalizacoes') { if (!custoPersDesbloqueado) { document.getElementById('custopers-lock').style.display = 'flex'; document.getElementById('custopers-conteudo').style.display = 'none'; } else { document.getElementById('custopers-lock').style.display = 'none'; document.getElementById('custopers-conteudo').style.display = 'block'; loadCustoPersonalizacoes(); } }
+  if (name === 'custopersonalizacoes') { if (!custoPersDesbloqueado) { document.getElementById('custopers-lock').style.display = 'flex'; document.getElementById('custopers-conteudo').style.display = 'none'; } else { document.getElementById('custopers-lock').style.display = 'none'; document.getElementById('custopers-conteudo').style.display = 'block'; loadCustoPersonalizacoes(true); } }
   if (name === 'visaogeralvalores') { if (!vgValoresDesbloqueado) { document.getElementById('vgvalores-lock').style.display = 'flex'; document.getElementById('vgvalores-conteudo').style.display = 'none'; } else { document.getElementById('vgvalores-lock').style.display = 'none'; document.getElementById('vgvalores-conteudo').style.display = 'block'; loadVisaoGeralValores(); } }
   if (name === 'previsaocobrancas') loadPrevisaoCobrancas();
 }
@@ -5570,6 +5570,8 @@ let dadosEntradasPers = [], dadosSaidasObra = [], dadosVinculosPers = [];
 // assim a sincronizacao em segundo plano nunca "some" com algo que acabou de aparecer na tela.
 const _entradasOtimistas = {};
 const _saidasOtimistas = {};
+const _vinculosOtimistas = {};
+const _vinculosExcluidosOtimista = new Set();
 
 function verificarSenhaCustoPers() {
   const senha = document.getElementById('custopers-senha-input').value;
@@ -5577,7 +5579,7 @@ function verificarSenhaCustoPers() {
     custoPersDesbloqueado = true;
     document.getElementById('custopers-lock').style.display = 'none';
     document.getElementById('custopers-conteudo').style.display = 'block';
-    loadCustoPersonalizacoes();
+    loadCustoPersonalizacoes(true);
   } else {
     document.getElementById('custopers-senha-erro').style.display = 'block';
   }
@@ -5603,6 +5605,7 @@ async function loadCustoPersonalizacoes(forcarFresco) {
     const dados = await lerDados(forcarFresco);
     let entradas = dados.entradasPersonalizacao || [];
     let saidas = dados.saidasObra || [];
+    let vinculos = dados.vinculos || [];
     // Reaplica otimistas que o servidor ainda nao confirmou (evita sumico por sincronizacao atrasada)
     Object.keys(_entradasOtimistas).forEach(id => {
       if (entradas.some(e => e.id === id)) { delete _entradasOtimistas[id]; }
@@ -5612,9 +5615,19 @@ async function loadCustoPersonalizacoes(forcarFresco) {
       if (saidas.some(s => s.id === id)) { delete _saidasOtimistas[id]; }
       else { saidas = [...saidas, _saidasOtimistas[id]]; }
     });
+    Object.keys(_vinculosOtimistas).forEach(id => {
+      if (vinculos.some(v => v.id === id)) { delete _vinculosOtimistas[id]; }
+      else { vinculos = [...vinculos, _vinculosOtimistas[id]]; }
+    });
+    // Remove vinculos que foram excluidos localmente mas o servidor ainda pode nao ter sincronizado
+    _vinculosExcluidosOtimista.forEach(id => {
+      const aindaVemDoServidor = vinculos.some(v => v.id === id);
+      if (!aindaVemDoServidor) { _vinculosExcluidosOtimista.delete(id); }
+      else { vinculos = vinculos.filter(v => v.id !== id); }
+    });
     dadosEntradasPers = entradas;
     dadosSaidasObra = saidas;
-    dadosVinculosPers = dados.vinculos || [];
+    dadosVinculosPers = vinculos;
     if (dados.personalizar && dados.personalizar.length) dadosPersonalizar = dados.personalizar;
     if (dados.revestimentos && dados.revestimentos.length) dadosRevestimentos = dados.revestimentos;
   } catch(e) {
@@ -6599,10 +6612,18 @@ async function salvarVinculoCustoPers() {
     : { entrada_id: destinoId, saida_id: _vincularOrigem.id, valor, observacao: obs };
 
   try {
-    await apiPost('addVinculo', dados);
+    const resultado = await apiPost('addVinculo', dados);
     showToast('Vínculo salvo!', 'success');
+    // Mostra na hora, sem esperar sincronizar
+    const novoVinculo = {
+      id: resultado.id, entrada_id: dados.entrada_id, saida_id: dados.saida_id,
+      valor: dados.valor, data: new Date().toLocaleDateString('pt-BR'), observacao: dados.observacao, criado_em: new Date().toLocaleDateString('pt-BR')
+    };
+    dadosVinculosPers.push(novoVinculo);
+    _vinculosOtimistas[novoVinculo.id] = novoVinculo;
+    renderCustoPersonalizacoes();
     fecharModal('modal-vincular-custopers');
-    loadCustoPersonalizacoes(true);
+    loadCustoPersonalizacoes(true); // sincroniza em segundo plano
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -6630,6 +6651,12 @@ async function salvarEdicaoVinculo() {
   try {
     await apiPost('editVinculo', { id: _vinculoEmEdicao.id, valor, observacao: obs });
     showToast('Vínculo atualizado!', 'success');
+    const idx = dadosVinculosPers.findIndex(v => v.id === _vinculoEmEdicao.id);
+    if (idx >= 0) {
+      dadosVinculosPers[idx] = { ...dadosVinculosPers[idx], valor, observacao: obs };
+      _vinculosOtimistas[_vinculoEmEdicao.id] = dadosVinculosPers[idx];
+    }
+    renderCustoPersonalizacoes();
     fecharModal('modal-editar-vinculo');
     loadCustoPersonalizacoes(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
@@ -6641,6 +6668,10 @@ async function excluirVinculoModal() {
   try {
     await apiAction('deleteVinculo', _vinculoEmEdicao.id);
     showToast('Vínculo excluído!', 'success');
+    _vinculosExcluidosOtimista.add(_vinculoEmEdicao.id);
+    delete _vinculosOtimistas[_vinculoEmEdicao.id];
+    dadosVinculosPers = dadosVinculosPers.filter(v => v.id !== _vinculoEmEdicao.id);
+    renderCustoPersonalizacoes();
     fecharModal('modal-editar-vinculo');
     loadCustoPersonalizacoes(true);
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
