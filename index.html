@@ -9066,15 +9066,25 @@ async function salvarNovaVersao() {
   const dados = { ap: calcApAtual, cliente, empresa, data: new Date().toLocaleDateString('pt-BR'), selecoes: calcSelecoes, total_m2: window._calcTotalM2 || 0, total_valor: window._calcTotalValor || 0 };
   showToast('Salvando nova versão...', 'success');
   try {
-    await apiPost('addPersonalizar', dados);
+    const resultado = await apiPost('addPersonalizar', dados);
     showToast('Nova versão salva!', 'success');
-    const novos = await lerDados();
-    if (novos) {
-      dadosPersonalizar = novos.personalizar || dadosPersonalizar;
-      dadosRevestimentos = novos.revestimentos || dadosRevestimentos;
-      dadosParedes = novos.paredes || dadosParedes;
-    }
+    // Mostra na hora, sem esperar sincronizar — evita o delay do data.json no GitHub
+    const novaPersonalizacao = {
+      id: resultado.id, ap: dados.ap, cliente: dados.cliente, empresa: dados.empresa, data: dados.data,
+      selecoes: JSON.stringify(dados.selecoes||{}), status: 'pendente', criado_em: dados.data,
+      status_pgto: '', obs_pgto: '', comprovante_url: '', total_m2: dados.total_m2, total_valor: dados.total_valor, arquivado: ''
+    };
+    dadosPersonalizar.push(novaPersonalizacao);
     renderPersonalizar(dadosPersonalizar);
+    // Sincroniza em segundo plano, direto da planilha (nao do data.json cacheado)
+    lerDados(true).then(novos => {
+      if (novos) {
+        if (novos.personalizar) dadosPersonalizar = novos.personalizar;
+        if (novos.revestimentos) dadosRevestimentos = novos.revestimentos;
+        if (novos.paredes) dadosParedes = novos.paredes;
+        renderPersonalizar(dadosPersonalizar);
+      }
+    }).catch(()=>{});
   } catch(e) {
     showToast('Erro ao salvar: ' + e.message, 'error');
   }
@@ -9090,17 +9100,34 @@ async function salvarSelecao() {
   try {
     if (window._editandoPersonalizacaoId) {
       // Atualizar existente
-      await apiPost('updatePersonalizar', { id: window._editandoPersonalizacaoId, ...dados });
+      const id = window._editandoPersonalizacaoId;
+      await apiPost('updatePersonalizar', { id, ...dados });
       window._editandoPersonalizacaoId = null;
       showToast('Orçamento atualizado!', 'success');
+      const idx = dadosPersonalizar.findIndex(p => p.id === id);
+      if (idx >= 0) {
+        dadosPersonalizar[idx] = { ...dadosPersonalizar[idx], ap: dados.ap, cliente: dados.cliente, empresa: dados.empresa, data: dados.data, selecoes: JSON.stringify(dados.selecoes||{}), total_m2: dados.total_m2, total_valor: dados.total_valor };
+      }
     } else {
-      await apiPost('addPersonalizar', dados);
+      const resultado = await apiPost('addPersonalizar', dados);
       showToast('Salvo em Personalizar!', 'success');
+      dadosPersonalizar.push({
+        id: resultado.id, ap: dados.ap, cliente: dados.cliente, empresa: dados.empresa, data: dados.data,
+        selecoes: JSON.stringify(dados.selecoes||{}), status: 'pendente', criado_em: dados.data,
+        status_pgto: '', obs_pgto: '', comprovante_url: '', total_m2: dados.total_m2, total_valor: dados.total_valor, arquivado: ''
+      });
     }
-    const novos = await lerDados();
-    if (novos.personalizar) dadosPersonalizar = novos.personalizar;
-    if (novos.revestimentos) dadosRevestimentos = novos.revestimentos;
-    if (novos.paredes) dadosParedes = novos.paredes;
+    // Mostra na hora, sem esperar sincronizar
+    renderPersonalizar(dadosPersonalizar);
+    // Sincroniza em segundo plano, direto da planilha
+    lerDados(true).then(novos => {
+      if (novos) {
+        if (novos.personalizar) dadosPersonalizar = novos.personalizar;
+        if (novos.revestimentos) dadosRevestimentos = novos.revestimentos;
+        if (novos.paredes) dadosParedes = novos.paredes;
+        renderPersonalizar(dadosPersonalizar);
+      }
+    }).catch(()=>{});
   } catch(e) {
     showToast('Erro ao salvar: ' + e.message, 'error');
   }
