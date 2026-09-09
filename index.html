@@ -5809,6 +5809,15 @@ function abrirModalMesPrevisao(chave) {
 let _mapaVinculosModo = 'lista';
 let _mapaVinculosAptoAtual = null;
 
+// Remove sufixo de módulo do nome (ex: "Alexandre e Ivana (Banheiros R01)" -> "Alexandre e Ivana").
+// Usado só em Custo Personalizações — no Controle de Pagamento o nome completo continua aparecendo,
+// pois lá cada card É daquele módulo específico.
+function _nomeClienteLimpo(nome) {
+  if (!nome) return nome;
+  const idx = nome.indexOf(' (');
+  return idx > 0 ? nome.slice(0, idx).trim() : nome;
+}
+
 function _entradasSaidasDoApto(apto) {
   const entradas = dadosEntradasPers.filter(e => String(e.apartamento) === apto);
   const entradaIds = new Set(entradas.map(e => e.id));
@@ -5844,7 +5853,7 @@ function renderMapaVinculosCards() {
       const totalEntradas = entradas.reduce((s,e) => s + _valorLiquidoEntrada(e), 0);
       const totalVinculado = entradas.reduce((s,e) => s + _valorVinculadoEntrada(e.id), 0);
       const saldoLivre = totalEntradas - totalVinculado;
-      const clienteRef = entradas[0]?.cliente || '';
+      const clienteRef = _nomeClienteLimpo(entradas[0]?.cliente || '');
       return `<div onclick="abrirModalMapaVinculosApto('${apto}')" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
         <p style="font-size:14px;font-weight:600;margin:0 0 2px">Apto ${apto}</p>
         <p style="font-size:11px;color:var(--text3);margin:0 0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${clienteRef}</p>
@@ -5901,7 +5910,7 @@ function _mapaVinculosListaHTML(entradas, saidas) {
     return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
         <div>
-          <p style="font-weight:600;font-size:14px">${e.cliente||'—'}</p>
+          <p style="font-weight:600;font-size:14px">${_nomeClienteLimpo(e.cliente)||'—'}</p>
           <p style="font-size:12px;color:var(--text3)">${e.categoria||''} · 📅 ${e.data||'—'}${e.condicao_pagamento && e.condicao_pagamento!=='avista' ? ' · '+_labelCondicaoPagamento(e.condicao_pagamento) : ''}</p>
         </div>
         <p style="font-weight:600;color:var(--accent2);white-space:nowrap">${fmt(total)}${temJuros ? '<br><span style="font-size:10px;color:var(--text3);font-weight:400">líquido</span>' : ''}</p>
@@ -6084,7 +6093,7 @@ function renderCustoPersonalizacoes() {
       return `<div class="card" style="padding:14px 16px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
           <div>
-            <strong style="font-size:13px">Apto ${en.apartamento||'—'} — ${en.cliente||'—'}</strong>
+            <strong style="font-size:13px">Apto ${en.apartamento||'—'} — ${_nomeClienteLimpo(en.cliente)||'—'}</strong>
             <div style="font-size:12px;color:var(--text2);margin-top:2px">${en.categoria||''} · ${en.data||''}${en.condicao_pagamento && en.condicao_pagamento !== 'avista' ? ' · ' + en.condicao_pagamento.replace('credito','Crédito ').replace('boleto1','Boleto à Vista').replace('boleto','Boleto ').replace('pix','PIX ') : ''}</div>
           </div>
           <strong style="font-size:15px;color:var(--accent2)">${_fmtR$(total)}</strong>
@@ -6607,7 +6616,7 @@ function abrirModalEditarVinculo(vinculoId) {
   const saidasTodas = [...dadosSaidasObra, ..._saidasAutomaticasRevestimento()];
   const saida = saidasTodas.find(s => s.id === v.saida_id);
   document.getElementById('editar-vinculo-resumo').innerHTML =
-    `<strong>${entrada ? entrada.cliente : 'entrada removida'}</strong> (Apto ${entrada?.apartamento||'—'})<br>↕ vinculado com<br><strong>${saida ? (saida.descricao||saida.categoria) : 'saída removida'}</strong>`;
+    `<strong>${entrada ? _nomeClienteLimpo(entrada.cliente) : 'entrada removida'}</strong> (Apto ${entrada?.apartamento||'—'})<br>↕ vinculado com<br><strong>${saida ? (saida.descricao||saida.categoria) : 'saída removida'}</strong>`;
   document.getElementById('editar-vinculo-valor').value = parseFloat(v.valor)||0;
   document.getElementById('editar-vinculo-obs').value = v.observacao || '';
   abrirModal('modal-editar-vinculo');
@@ -6651,7 +6660,7 @@ function _linhasVinculoSaidaHTML(saidaId) {
   return dadosVinculosPers.filter(v => v.saida_id === saidaId).map(v => {
     const entradaLigada = dadosEntradasPers.find(e => e.id === v.entrada_id);
     return `<div style="font-size:11px;color:var(--text3);margin-top:3px;display:flex;justify-content:space-between;align-items:center;gap:6px">
-      <span>→ coberto pela entrada de "${entradaLigada ? entradaLigada.cliente : 'entrada removida'}" · ${_fmtR$(v.valor)}</span>
+      <span>→ coberto pela entrada de "${entradaLigada ? _nomeClienteLimpo(entradaLigada.cliente) : 'entrada removida'}" · ${_fmtR$(v.valor)}</span>
       <button onclick="abrirModalEditarVinculo('${v.id}')" style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--accent);padding:0 2px" title="Editar vínculo">✏️</button>
     </div>`;
   }).join('');
