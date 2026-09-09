@@ -5877,7 +5877,7 @@ async function gerarPDFRelatorioConta(contaKey) {
     doc.setFillColor(...COR_BEGE_BG); doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
     doc.roundedRect(ml, y, cw, 20, 2, 2, 'FD');
     doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
-    doc.text('SALDO TOTAL (líquido, sem juros de maquininha)', ml + 5, y + 7);
+    doc.text('SALDO TOTAL', ml + 5, y + 7);
     doc.setFontSize(18); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_DOURADO);
     doc.text(fmt(g.total), ml + 5, y + 16);
     doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
