@@ -3043,9 +3043,6 @@ body.mobile-mode #main{padding-bottom:72px}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
         Atualizar
       </button>
-      <button class="btn btn-primary" onclick="gerarPDFRelatorioContas()">
-        📄 Gerar PDF do Relatório
-      </button>
     </div>
   </div>
   <div class="page-content">
@@ -5808,6 +5805,7 @@ async function loadContasTotais() {
       <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">${c.label}</div>
       <div style="font-size:22px;font-weight:700;color:${cor};margin-top:4px">${fmt(g.total)}</div>
       <div style="font-size:11px;color:var(--text3);margin-top:2px">${g.itens.length} entrada(s) · ${c.desc}</div>
+      ${g.itens.length ? `<button class="btn btn-secondary" style="font-size:11px;padding:5px 10px;margin-top:10px;width:100%" onclick="gerarPDFRelatorioConta('${c.key}')">📄 Gerar PDF desta conta</button>` : ''}
     </div>`;
   }).join('') + `<div class="card" style="padding:16px 18px;background:var(--accent-bg);border-color:var(--accent)">
       <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px">Total Geral (líquido)</div>
@@ -5828,7 +5826,9 @@ async function loadContasTotais() {
   }).join('');
 }
 
-async function gerarPDFRelatorioContas() {
+async function gerarPDFRelatorioConta(contaKey) {
+  const contaInfo = CONTAS_ORDEM.find(c => c.key === contaKey);
+  if (!contaInfo) return;
   showToast('Gerando PDF...', 'success');
   try {
     const dados = await lerDados(true);
@@ -5836,39 +5836,21 @@ async function gerarPDFRelatorioContas() {
   } catch(e) { /* usa o que já tiver carregado */ }
 
   const grupos = _computarTotaisPorConta();
+  const g = grupos[contaKey];
   const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
-  const totalGeral = CONTAS_ORDEM.reduce((s,c) => s + grupos[c.key].total, 0);
   const hoje = new Date().toLocaleDateString('pt-BR');
 
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const W = 210, ml = 18, mr = 18, cw = W - ml - mr;
 
-  // CAPA CHEIA (fundo verde da marca), igual ao comprovante de vagas
+  // CAPA CHEIA (fundo verde da marca) — sem nenhum texto escrito em cima
   let capaData = null;
   try {
     capaData = await carregarImagemPDF('https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/assets/capa_relatorio_contas_essence.jpg', 15000);
   } catch(e) {}
   if (capaData) doc.addImage(capaData, 'JPEG', 0, 0, W, 297, undefined, 'NONE');
 
-  const CREME_TITULO = [232, 224, 196];
-  const CREME_SUAVE = [196, 192, 170];
-  const CINZA_CLARO = [150, 156, 141];
-
-  let yc = 148;
-  doc.setFontSize(13); doc.setFont('helvetica','normal'); doc.setTextColor(...CREME_SUAVE);
-  doc.text('Saldo por conta — preparado para Fernanda', ml, yc);
-  yc += 10;
-  doc.setFontSize(28); doc.setFont('helvetica','bold'); doc.setTextColor(...CREME_TITULO);
-  doc.text(fmt(totalGeral), ml, yc);
-  yc += 6;
-  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...CINZA_CLARO);
-  doc.text('Total geral recebido (valor líquido, já sem juros de maquininha)', ml, yc);
-
-  doc.setFontSize(9); doc.setTextColor(...CINZA_CLARO);
-  doc.text(hoje, ml, 282);
-  doc.text('Absoluta Construtora e Incorporadora', W - mr, 282, { align: 'right' });
-
-  // PÁGINA 2 — RESUMO POR CONTA
+  // PÁGINA 2 — RELATÓRIO DA CONTA
   doc.addPage();
   const COR_TEXTO = [44, 44, 44];
   const COR_CINZA = [136, 136, 136];
@@ -5878,54 +5860,45 @@ async function gerarPDFRelatorioContas() {
 
   let y = 20;
   doc.setFontSize(17); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
-  doc.text('Relatório de Contas — Essence Residence', ml, y);
+  doc.text('Relatório de Conta — ' + contaInfo.label, ml, y);
   y += 5;
   doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
-  doc.text('Saldo líquido recebido por conta de destino · ' + hoje, ml, y);
+  doc.text('Essence Residence · ' + hoje, ml, y);
   y += 8;
   doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
   doc.line(ml, y, W - mr, y);
   y += 10;
 
-  CONTAS_ORDEM.forEach(c => {
-    const g = grupos[c.key];
-    if (!g.itens.length) return;
+  // Card de resumo da conta
+  doc.setFillColor(...COR_BEGE_BG); doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
+  doc.roundedRect(ml, y, cw, 20, 2, 2, 'FD');
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
+  doc.text('SALDO TOTAL (líquido, sem juros de maquininha)', ml + 5, y + 7);
+  doc.setFontSize(18); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_DOURADO);
+  doc.text(fmt(g.total), ml + 5, y + 16);
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
+  doc.text(g.itens.length + ' entrada(s)', W - mr - 5, y + 16, { align: 'right' });
+  y += 28;
 
-    // Card de resumo da conta
-    doc.setFillColor(...COR_BEGE_BG); doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
-    doc.roundedRect(ml, y, cw, 16, 2, 2, 'FD');
-    doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
-    doc.text(c.label, ml + 5, y + 7);
-    doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
-    doc.text(g.itens.length + ' entrada(s)' + (c.desc ? ' · ' + c.desc : ''), ml + 5, y + 12.5);
-    doc.setFontSize(13); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_DOURADO);
-    doc.text(fmt(g.total), W - mr - 5, y + 10, { align: 'right' });
-    y += 21;
+  // Tabela de entradas dessa conta
+  doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_CINZA);
+  doc.text('APARTAMENTO', ml + 2, y);
+  doc.text('CLIENTE', ml + 32, y);
+  doc.text('DATA', ml + 110, y);
+  doc.text('VALOR (R$)', W - mr - 2, y, { align: 'right' });
+  y += 2;
+  doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
+  y += 5;
 
-    // Se a lista não couber, nova página
-    if (y + Math.min(g.itens.length, 30) * 6 > 275) { doc.addPage(); y = 20; }
-
-    // Tabela de entradas dessa conta
-    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_CINZA);
-    doc.text('APARTAMENTO', ml + 2, y);
-    doc.text('CLIENTE', ml + 32, y);
-    doc.text('DATA', ml + 110, y);
-    doc.text('VALOR (R$)', W - mr - 2, y, { align: 'right' });
-    y += 2;
-    doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
-    y += 5;
-
-    const itensOrdenados = [...g.itens].sort((a,b) => (b.criado_em||'').localeCompare(a.criado_em||''));
-    itensOrdenados.forEach(en => {
-      if (y > 280) { doc.addPage(); y = 20; }
-      doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
-      doc.text(String(en.apartamento || '—'), ml + 2, y);
-      const nomeCurto = doc.splitTextToSize(_nomeClienteLimpo(en.cliente) || '—', 74)[0];
-      doc.text(nomeCurto, ml + 32, y);
-      doc.text(en.data || '', ml + 110, y);
-      doc.text(fmt(_valorLiquidoEntrada(en)), W - mr - 2, y, { align: 'right' });
-      y += 6;
-    });
+  const itensOrdenados = [...g.itens].sort((a,b) => (b.criado_em||'').localeCompare(a.criado_em||''));
+  itensOrdenados.forEach(en => {
+    if (y > 280) { doc.addPage(); y = 20; }
+    doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
+    doc.text(String(en.apartamento || '—'), ml + 2, y);
+    const nomeCurto = doc.splitTextToSize(_nomeClienteLimpo(en.cliente) || '—', 74)[0];
+    doc.text(nomeCurto, ml + 32, y);
+    doc.text(en.data || '', ml + 110, y);
+    doc.text(fmt(_valorLiquidoEntrada(en)), W - mr - 2, y, { align: 'right' });
     y += 6;
   });
 
@@ -5933,7 +5906,7 @@ async function gerarPDFRelatorioContas() {
   doc.setFontSize(7); doc.setTextColor(...COR_CINZA);
   doc.text('Absoluta Construtora e Incorporadora · Essence Residence · São Bernardo do Campo/SP', W/2, 292, { align: 'center' });
 
-  doc.save('Relatorio_Contas_Essence_' + hoje.replace(/\//g,'-') + '.pdf');
+  doc.save('Relatorio_' + contaInfo.label.replace(/\s+/g,'_') + '_' + hoje.replace(/\//g,'-') + '.pdf');
   showToast('PDF gerado!', 'success');
 }
 
