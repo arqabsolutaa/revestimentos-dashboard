@@ -2100,6 +2100,10 @@ body.mobile-mode #main{padding-bottom:72px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Previsão de Cobranças
     </button>
+    <button class="nav-btn" onclick="showScreen('contastotais')" id="nav-contastotais">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+      Contas
+    </button>
     <button class="nav-btn" onclick="showScreen('config');document.getElementById('nav-config').classList.add('active')" id="nav-config">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="pointer-events:none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       Configurações do Sistema
@@ -3027,6 +3031,26 @@ body.mobile-mode #main{padding-bottom:72px}
   </div>
 </div>
 
+<!-- CONTAS (totais por conta de destino) -->
+<div id="contastotais-screen" class="screen">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Contas</h1>
+      <p>Totais recebidos por conta de destino — valor líquido, já sem os juros da maquininha</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="loadContasTotais()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Atualizar
+      </button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div id="contastotais-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:24px"></div>
+    <div id="contastotais-lista"></div>
+  </div>
+</div>
+
 
 <div class="modal-overlay" id="modal-mes-previsao">
   <div class="modal" style="max-width:700px">
@@ -3042,7 +3066,7 @@ body.mobile-mode #main{padding-bottom:72px}
 <div class="modal-overlay" id="modal-nova-entrada-pers">
   <div class="modal" style="max-width:640px">
     <div class="modal-header">
-      <h2>Nova Entrada</h2>
+      <h2 id="modal-entrada-pers-titulo">Nova Entrada</h2>
       <button class="modal-close" onclick="fecharModal('modal-nova-entrada-pers')">&times;</button>
     </div>
     <div class="modal-body">
@@ -3130,6 +3154,15 @@ body.mobile-mode #main{padding-bottom:72px}
       </div>
       <div id="entrada-pers-juros-resumo" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:12px"></div>
       <div class="form-group">
+        <label class="form-label">Conta / Para onde vai o pagamento</label>
+        <select class="form-control" id="entrada-pers-conta">
+          <option value="">— Selecione —</option>
+          <option value="rd06">RD06 Empreendimentos (conta CNPJ Essence)</option>
+          <option value="pix_arienes">Conta PIX Arienes (pedras/estoque)</option>
+          <option value="cartao">Conta Cartão</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label class="form-label">Observação</label>
         <textarea class="form-control" id="entrada-pers-obs" rows="2"></textarea>
       </div>
@@ -3181,7 +3214,7 @@ body.mobile-mode #main{padding-bottom:72px}
 <div class="modal-overlay" id="modal-nova-saida-obra">
   <div class="modal" style="max-width:440px">
     <div class="modal-header">
-      <h2>Nova Saída</h2>
+      <h2 id="modal-saida-obra-titulo">Nova Saída</h2>
       <button class="modal-close" onclick="fecharModal('modal-nova-saida-obra')">&times;</button>
     </div>
     <div class="modal-body">
@@ -4853,6 +4886,7 @@ function showScreen(name) {
   if (name === 'custopersonalizacoes') { if (!custoPersDesbloqueado) { document.getElementById('custopers-lock').style.display = 'flex'; document.getElementById('custopers-conteudo').style.display = 'none'; } else { document.getElementById('custopers-lock').style.display = 'none'; document.getElementById('custopers-conteudo').style.display = 'block'; loadCustoPersonalizacoes(true); } }
   if (name === 'visaogeralvalores') { if (!vgValoresDesbloqueado) { document.getElementById('vgvalores-lock').style.display = 'flex'; document.getElementById('vgvalores-conteudo').style.display = 'none'; } else { document.getElementById('vgvalores-lock').style.display = 'none'; document.getElementById('vgvalores-conteudo').style.display = 'block'; loadVisaoGeralValores(); } }
   if (name === 'previsaocobrancas') loadPrevisaoCobrancas();
+  if (name === 'contastotais') loadContasTotais();
 }
 
 
@@ -5726,6 +5760,65 @@ function _calcularParcelasFuturas() {
 
 let _mesesPrevisao = {};
 
+async function loadContasTotais() {
+  const contCards = document.getElementById('contastotais-cards');
+  const contLista = document.getElementById('contastotais-lista');
+  contCards.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  contLista.innerHTML = '';
+  try {
+    const dados = await lerDados(true); // sempre busca fresco, direto da planilha
+    if (dados.entradasPersonalizacao) dadosEntradasPers = dados.entradasPersonalizacao;
+  } catch(e) {
+    // se falhar, usa o que já estava carregado (nao zera a tela)
+  }
+
+  const CONTAS_ORDEM = [
+    { key: 'rd06', label: 'RD06 Empreendimentos', desc: 'Conta CNPJ do Essence' },
+    { key: 'pix_arienes', label: 'Conta PIX Arienes', desc: 'Pagamentos direto em pedras/estoque' },
+    { key: 'cartao', label: 'Conta Cartão', desc: 'Pagamentos no cartão de crédito' },
+    { key: '', label: 'Sem conta definida', desc: 'Entradas antigas ou ainda não classificadas' },
+  ];
+
+  const grupos = {};
+  CONTAS_ORDEM.forEach(c => grupos[c.key] = { total: 0, itens: [] });
+  (dadosEntradasPers || []).forEach(en => {
+    const conta = en.conta || '';
+    const chave = grupos[conta] ? conta : '';
+    const liquido = _valorLiquidoEntrada(en);
+    grupos[chave].total += liquido;
+    grupos[chave].itens.push(en);
+  });
+
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const totalGeral = CONTAS_ORDEM.reduce((s,c) => s + grupos[c.key].total, 0);
+
+  contCards.innerHTML = CONTAS_ORDEM.map(c => {
+    const g = grupos[c.key];
+    const cor = c.key === '' ? 'var(--text3)' : 'var(--accent2)';
+    return `<div class="card" style="padding:16px 18px${c.key === '' && !g.itens.length ? ';opacity:0.6' : ''}">
+      <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">${c.label}</div>
+      <div style="font-size:22px;font-weight:700;color:${cor};margin-top:4px">${fmt(g.total)}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${g.itens.length} entrada(s) · ${c.desc}</div>
+    </div>`;
+  }).join('') + `<div class="card" style="padding:16px 18px;background:var(--accent-bg);border-color:var(--accent)">
+      <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px">Total Geral (líquido)</div>
+      <div style="font-size:22px;font-weight:700;margin-top:4px">${fmt(totalGeral)}</div>
+    </div>`;
+
+  contLista.innerHTML = CONTAS_ORDEM.map(c => {
+    const g = grupos[c.key];
+    if (!g.itens.length) return '';
+    const itensOrdenados = [...g.itens].sort((a,b) => (b.criado_em||'').localeCompare(a.criado_em||''));
+    return `<div class="card" style="padding:16px 18px;margin-bottom:16px">
+      <h3 style="font-size:14px;margin-bottom:10px">${c.label} <span style="color:var(--text3);font-weight:400">(${fmt(g.total)})</span></h3>
+      ${itensOrdenados.map(en => `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--border);font-size:12px">
+        <span>Apto ${en.apartamento||'—'} — ${_nomeClienteLimpo(en.cliente)||'—'} <span style="color:var(--text3)">· ${en.data||''}</span></span>
+        <strong>${fmt(_valorLiquidoEntrada(en))}</strong>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
 async function loadPrevisaoCobrancas() {
   const cont = document.getElementById('previsaocobrancas-lista');
   cont.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
@@ -6091,6 +6184,8 @@ function _comprovantesLinksHTML(raw) {
   ).join('')}</div>`;
 }
 
+const CONTA_LABEL = { rd06: 'RD06 Empreendimentos', pix_arienes: 'PIX Arienes', cartao: 'Conta Cartão' };
+
 function renderCustoPersonalizacoes() {
   const contE = document.getElementById('custopers-entradas-lista');
   const contS = document.getElementById('custopers-saidas-lista');
@@ -6103,21 +6198,24 @@ function renderCustoPersonalizacoes() {
       const jurosVal = parseFloat(en.valor_juros)||0;
       const avistaVal = parseFloat(en.valor_avista)||0;
       const temJuros = jurosVal > 0.005;
+      const contaLabel = CONTA_LABEL[en.conta] || '';
       return `<div class="card" style="padding:14px 16px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
           <div>
             <strong style="font-size:13px">Apto ${en.apartamento||'—'} — ${_nomeClienteLimpo(en.cliente)||'—'}</strong>
             <div style="font-size:12px;color:var(--text2);margin-top:2px">${en.categoria||''} · ${en.data||''}${en.condicao_pagamento && en.condicao_pagamento !== 'avista' ? ' · ' + en.condicao_pagamento.replace('credito','Crédito ').replace('boleto1','Boleto à Vista').replace('boleto','Boleto ').replace('pix','PIX ') : ''}</div>
+            ${contaLabel ? `<div style="font-size:11px;color:var(--accent2);margin-top:2px">🏦 ${contaLabel}</div>` : ''}
           </div>
-          <strong style="font-size:15px;color:var(--accent2)">${_fmtR$(total)}</strong>
+          <strong style="font-size:15px;color:var(--accent2)">${_fmtR$(totalLiquido)}</strong>
         </div>
-        ${temJuros ? `<div style="font-size:11px;color:var(--text3);margin-top:4px">líquido pra vincular: <strong>${_fmtR$(avistaVal)}</strong> · <span style="color:var(--warn)">juros da maquininha ${_fmtR$(jurosVal)} (repasse, não conta como saldo)</span></div>` : ''}
+        ${temJuros ? `<div style="font-size:11px;color:var(--text3);margin-top:4px">valor bruto cobrado do cliente: <strong>${_fmtR$(total)}</strong> · <span style="color:var(--warn)">juros da maquininha ${_fmtR$(jurosVal)} (repasse, não conta como saldo)</span></div>` : ''}
         ${_comprovantesLinksHTML(en.comprovante_url)}
         ${_linhasVinculoEntradaHTML(en.id)}
         <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
           ${_badgeSaldo(totalLiquido, vinc)}
           <div style="display:flex;gap:6px">
             <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('entrada','${en.id}')">Vincular a saída</button>
+            <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px" onclick="abrirModalEditarEntradaPers('${en.id}')" title="Editar entrada">✏️</button>
             <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirEntradaPers('${en.id}')" title="Excluir entrada">🗑️</button>
           </div>
         </div>
@@ -6145,6 +6243,7 @@ function renderCustoPersonalizacoes() {
           ${_badgeSaldo(total, vinc)}
           <div style="display:flex;gap:6px">
             <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('saida','${sa.id}')">Vincular a entrada</button>
+            ${sa.automatica ? '' : `<button class="btn btn-secondary" style="font-size:11px;padding:4px 8px" onclick="abrirModalEditarSaidaObra('${sa.id}')" title="Editar saída">✏️</button>`}
             ${sa.automatica ? '' : `<button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirSaidaObra('${sa.id}')" title="Excluir saída">🗑️</button>`}
           </div>
         </div>
@@ -6162,8 +6261,11 @@ function _apartamentosConhecidos() {
 }
 
 function abrirModalNovaEntradaPers() {
+  window._editandoEntradaId = null;
+  document.getElementById('modal-entrada-pers-titulo').textContent = 'Nova Entrada';
   ['entrada-pers-cliente','entrada-pers-valor','entrada-pers-obs','entrada-pers-buscar-orcamento'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('entrada-pers-condicao').value = 'avista';
+  document.getElementById('entrada-pers-conta').value = '';
   document.getElementById('entrada-pers-data').value = new Date().toISOString().split('T')[0];
   document.getElementById('entrada-pers-juros-resumo').style.display = 'none';
   document.getElementById('entrada-pers-arquivo').value = '';
@@ -6175,6 +6277,39 @@ function abrirModalNovaEntradaPers() {
   _popularListaOrcamentosParaEntrada();
   _resetarCalculadora('entrada');
   abrirModal('modal-nova-entrada-pers');
+}
+
+function abrirModalEditarEntradaPers(id) {
+  const en = dadosEntradasPers.find(e => e.id === id);
+  if (!en) { showToast('Entrada não encontrada', 'error'); return; }
+  window._editandoEntradaId = id;
+  document.getElementById('modal-entrada-pers-titulo').textContent = 'Editar Entrada';
+  const sel = document.getElementById('entrada-pers-apto');
+  sel.innerHTML = '<option value="">— Selecione o apartamento —</option>' +
+    _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('') +
+    '<option value="__outro__">Outro apartamento (digitar)</option>';
+  if (![..._apartamentosConhecidos()].some(a => String(a.ap) === String(en.apartamento))) {
+    sel.innerHTML += `<option value="${en.apartamento}">Apto ${en.apartamento}</option>`;
+  }
+  sel.value = en.apartamento || '';
+  document.getElementById('entrada-pers-cliente').value = en.cliente || '';
+  document.getElementById('entrada-pers-categoria').value = en.categoria || 'Revestimento';
+  document.getElementById('entrada-pers-valor').value = en.valor_avista || en.valor || '';
+  document.getElementById('entrada-pers-condicao').value = en.condicao_pagamento || 'avista';
+  document.getElementById('entrada-pers-conta').value = en.conta || '';
+  document.getElementById('entrada-pers-data').value = _dataBrParaISO(en.data) || new Date().toISOString().split('T')[0];
+  document.getElementById('entrada-pers-obs').value = en.observacao || '';
+  document.getElementById('entrada-pers-buscar-orcamento').value = '';
+  document.getElementById('entrada-pers-arquivo').value = '';
+  atualizarCalculoJurosEntrada();
+  abrirModal('modal-nova-entrada-pers');
+}
+
+function _dataBrParaISO(dataBr) {
+  if (!dataBr) return '';
+  const partes = String(dataBr).split('/');
+  if (partes.length !== 3) return '';
+  return partes[2] + '-' + partes[1] + '-' + partes[0];
 }
 
 async function _popularListaOrcamentosParaEntrada() {
@@ -6352,11 +6487,39 @@ async function salvarNovaEntradaPers() {
     valor_juros: juros,
     data: document.getElementById('entrada-pers-data').value,
     observacao: document.getElementById('entrada-pers-obs').value.trim(),
+    conta: document.getElementById('entrada-pers-conta').value,
   };
   if (!dados.apartamento || !valorAvista) { showToast('Preencha ao menos apartamento e valor', 'error'); return; }
   const arquivo = document.getElementById('entrada-pers-arquivo').files[0];
   if (arquivo && arquivo.size > 10 * 1024 * 1024) { showToast('Arquivo muito grande (máx 10MB)', 'error'); return; }
+
+  const editandoId = window._editandoEntradaId;
   try {
+    if (editandoId) {
+      await apiPost('updateEntradaPersonalizacao', { id: editandoId, ...dados });
+      const idx = dadosEntradasPers.findIndex(e => e.id === editandoId);
+      let entradaAtualizada = null;
+      if (idx >= 0) {
+        entradaAtualizada = { ...dadosEntradasPers[idx], ...dados, valor: String(dados.valor), valor_avista: String(dados.valor_avista), valor_juros: String(dados.valor_juros) };
+        dadosEntradasPers[idx] = entradaAtualizada;
+        _entradasOtimistas[editandoId] = entradaAtualizada;
+      }
+      if (arquivo) {
+        showToast('Entrada atualizada! Enviando comprovante...', 'success');
+        const base64data = await _lerArquivoBase64(arquivo);
+        const resComp = await _enviarComprovante('uploadComprovanteEntradaPersonalizacao', { id: editandoId, filename: arquivo.name, mimeType: arquivo.type, base64data });
+        if (resComp && resComp.comprovantes && entradaAtualizada) entradaAtualizada.comprovante_url = JSON.stringify(resComp.comprovantes);
+        showToast('Comprovante anexado!', 'success');
+      } else {
+        showToast('Entrada atualizada!', 'success');
+      }
+      window._editandoEntradaId = null;
+      renderCustoPersonalizacoes();
+      fecharModal('modal-nova-entrada-pers');
+      loadCustoPersonalizacoes(true);
+      return;
+    }
+
     const resultado = await apiPost('addEntradaPersonalizacao', dados);
     const novaEntrada = { id: resultado.id, ...dados, valor: String(dados.valor), valor_avista: String(dados.valor_avista), valor_juros: String(dados.valor_juros), criado_em: new Date().toLocaleDateString('pt-BR'), comprovante_url: '' };
     if (arquivo) {
@@ -6470,6 +6633,8 @@ function usarResultadoCalc(tipo, destino) {
 }
 
 function abrirModalNovaSaidaObra() {
+  window._editandoSaidaId = null;
+  document.getElementById('modal-saida-obra-titulo').textContent = 'Nova Saída';
   ['saida-obra-descricao','saida-obra-categoria','saida-obra-fornecedor','saida-obra-valor','saida-obra-obs'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('saida-obra-data').value = new Date().toISOString().split('T')[0];
   document.getElementById('saida-obra-arquivo').value = '';
@@ -6480,6 +6645,31 @@ function abrirModalNovaSaidaObra() {
     _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('');
   selApto.value = '';
   _resetarCalculadora('saida');
+  abrirModal('modal-nova-saida-obra');
+}
+
+function abrirModalEditarSaidaObra(id) {
+  const sa = dadosSaidasObra.find(s => s.id === id);
+  if (!sa) { showToast('Saída não encontrada', 'error'); return; }
+  window._editandoSaidaId = id;
+  document.getElementById('modal-saida-obra-titulo').textContent = 'Editar Saída';
+  document.getElementById('saida-obra-descricao').value = sa.descricao || '';
+  document.getElementById('saida-obra-categoria').value = sa.categoria || '';
+  document.getElementById('saida-obra-fornecedor').value = sa.fornecedor || '';
+  document.getElementById('saida-obra-valor').value = sa.valor_avista || sa.valor || '';
+  document.getElementById('saida-obra-obs').value = sa.observacao || '';
+  document.getElementById('saida-obra-data').value = _dataBrParaISO(sa.data) || new Date().toISOString().split('T')[0];
+  document.getElementById('saida-obra-arquivo').value = '';
+  document.getElementById('saida-obra-condicao').value = sa.condicao_pagamento || 'avista';
+  document.getElementById('saida-obra-projeto').value = sa.projeto || 'Essence';
+  const selApto = document.getElementById('saida-obra-apto');
+  selApto.innerHTML = '<option value="">— Nenhum (gasto geral da obra) —</option>' +
+    _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('');
+  if (sa.apartamento && ![..._apartamentosConhecidos()].some(a => String(a.ap) === String(sa.apartamento))) {
+    selApto.innerHTML += `<option value="${sa.apartamento}">Apto ${sa.apartamento}</option>`;
+  }
+  selApto.value = sa.apartamento || '';
+  atualizarCalculoSaidaObra();
   abrirModal('modal-nova-saida-obra');
 }
 
@@ -6520,7 +6710,34 @@ async function salvarNovaSaidaObra() {
   if (!dados.descricao || !valorBase) { showToast('Preencha ao menos descrição e valor', 'error'); return; }
   const arquivo = document.getElementById('saida-obra-arquivo').files[0];
   if (arquivo && arquivo.size > 10 * 1024 * 1024) { showToast('Arquivo muito grande (máx 10MB)', 'error'); return; }
+
+  const editandoId = window._editandoSaidaId;
   try {
+    if (editandoId) {
+      await apiPost('updateSaidaObra', { id: editandoId, ...dados });
+      const idx = dadosSaidasObra.findIndex(s => s.id === editandoId);
+      let saidaAtualizada = null;
+      if (idx >= 0) {
+        saidaAtualizada = { ...dadosSaidasObra[idx], ...dados, valor: String(dados.valor), valor_avista: String(dados.valor_avista) };
+        dadosSaidasObra[idx] = saidaAtualizada;
+        _saidasOtimistas[editandoId] = saidaAtualizada;
+      }
+      if (arquivo) {
+        showToast('Saída atualizada! Enviando comprovante...', 'success');
+        const base64data = await _lerArquivoBase64(arquivo);
+        const resComp = await _enviarComprovante('uploadComprovanteSaidaObra', { id: editandoId, filename: arquivo.name, mimeType: arquivo.type, base64data });
+        if (resComp && resComp.comprovantes && saidaAtualizada) saidaAtualizada.comprovante_url = JSON.stringify(resComp.comprovantes);
+        showToast('Comprovante anexado!', 'success');
+      } else {
+        showToast('Saída atualizada!', 'success');
+      }
+      window._editandoSaidaId = null;
+      renderCustoPersonalizacoes();
+      fecharModal('modal-nova-saida-obra');
+      loadCustoPersonalizacoes(true);
+      return;
+    }
+
     const resultado = await apiPost('addSaidaObra', dados);
     const novaSaida = { id: resultado.id, ...dados, valor: String(dados.valor), valor_avista: String(dados.valor_avista), criado_em: new Date().toLocaleDateString('pt-BR'), comprovante_url: '' };
     if (arquivo) {
