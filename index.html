@@ -3158,7 +3158,8 @@ body.mobile-mode #main{padding-bottom:72px}
         <select class="form-control" id="entrada-pers-conta">
           <option value="">— Selecione —</option>
           <option value="rd06">RD06 Empreendimentos (conta CNPJ Essence)</option>
-          <option value="pix_arienes">Conta PIX Arienes (pedras/estoque)</option>
+          <option value="arienes_pedras">Arienes Pedras (granitos/estoque)</option>
+          <option value="igramar">Igramar</option>
           <option value="cartao">Conta Cartão</option>
         </select>
       </div>
@@ -5774,7 +5775,8 @@ async function loadContasTotais() {
 
   const CONTAS_ORDEM = [
     { key: 'rd06', label: 'RD06 Empreendimentos', desc: 'Conta CNPJ do Essence' },
-    { key: 'pix_arienes', label: 'Conta PIX Arienes', desc: 'Pagamentos direto em pedras/estoque' },
+    { key: 'arienes_pedras', label: 'Arienes Pedras', desc: 'Pagamentos direto em granitos/estoque' },
+    { key: 'igramar', label: 'Igramar', desc: '' },
     { key: 'cartao', label: 'Conta Cartão', desc: 'Pagamentos no cartão de crédito' },
     { key: '', label: 'Sem conta definida', desc: 'Entradas antigas ou ainda não classificadas' },
   ];
@@ -6184,7 +6186,7 @@ function _comprovantesLinksHTML(raw) {
   ).join('')}</div>`;
 }
 
-const CONTA_LABEL = { rd06: 'RD06 Empreendimentos', pix_arienes: 'PIX Arienes', cartao: 'Conta Cartão' };
+const CONTA_LABEL = { rd06: 'RD06 Empreendimentos', arienes_pedras: 'Arienes Pedras', igramar: 'Igramar', cartao: 'Conta Cartão' };
 
 function renderCustoPersonalizacoes() {
   const contE = document.getElementById('custopers-entradas-lista');
