@@ -5782,6 +5782,85 @@ function _computarTotaisPorConta() {
   return grupos;
 }
 
+// Extrai o "módulo" do nome do cliente (ex: "Alexandre e Ivana (Banheiros R01)" -> "Banheiros"),
+// removendo o sufixo de revisão (R01, R02...) pra conseguir agrupar revisões do MESMO módulo.
+function _chaveModuloPersonalizacao(cliente) {
+  const m = (cliente || '').match(/\(([^)]+)\)/);
+  if (!m) return 'Revestimentos';
+  const semRevisao = m[1].replace(/\s*R\d+\s*$/i, '').trim();
+  return semRevisao || 'Revestimentos';
+}
+
+function _dataOrdenavelPersonalizacao(p) {
+  for (const campo of ['data','criado_em']) {
+    const v = p[campo];
+    if (v && String(v).includes('/')) {
+      const partes = String(v).split('/');
+      if (partes.length === 3) return partes[2] + partes[1].padStart(2,'0') + partes[0].padStart(2,'0');
+    }
+  }
+  return '00000000';
+}
+
+function _calcularTotalDeSelecoesObj(selecoesRaw) {
+  let selecoes;
+  try { selecoes = typeof selecoesRaw === 'string' ? JSON.parse(selecoesRaw || '{}') : (selecoesRaw || {}); } catch(e) { return 0; }
+  let total = 0;
+  Object.values(selecoes).forEach(v => {
+    const rev = v.piso ? dadosRevestimentos.find(r => String(r.id||r.codigo) === String(v.piso)) : null;
+    const perda = rev ? (parseFloat(rev.perda_pct) > 0 ? parseFloat(rev.perda_pct) : 20) / 100 : 0.20;
+    const m2comPerda = (parseFloat(v.m2)||0) * (1 + perda);
+    total += getPreco(rev) * m2comPerda;
+  });
+  return total;
+}
+
+// Previsão: todos os apês que ainda têm saldo a receber, sem contar duas vezes a mesma
+// revisão (fica só com a mais recente de cada módulo), descontando o que já foi recebido de verdade.
+function _calcularPrevisaoTodosApartamentos() {
+  const maisRecente = {};
+  (dadosPersonalizar || []).forEach(p => {
+    if (String(p.arquivado).toLowerCase() === 'true') return;
+    const ap = String(p.ap || '');
+    if (!ap) return;
+    const modulo = _chaveModuloPersonalizacao(p.cliente);
+    const chave = ap + '|' + modulo;
+    const dt = _dataOrdenavelPersonalizacao(p);
+    if (!maisRecente[chave] || dt > maisRecente[chave]._dt) {
+      maisRecente[chave] = { ...p, _dt: dt };
+    }
+  });
+
+  const totalPorAp = {};
+  const clientePorAp = {};
+  Object.values(maisRecente).forEach(p => {
+    const ap = String(p.ap || '');
+    let total = parseFloat(p.total_valor);
+    if (!total || isNaN(total)) total = _calcularTotalDeSelecoesObj(p.selecoes);
+    totalPorAp[ap] = (totalPorAp[ap] || 0) + total;
+    const nomeBase = (p.cliente || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+    if (nomeBase) clientePorAp[ap] = nomeBase;
+  });
+
+  const recebidoPorAp = {};
+  (dadosEntradasPers || []).forEach(en => {
+    const ap = String(en.apartamento || '');
+    recebidoPorAp[ap] = (recebidoPorAp[ap] || 0) + _valorLiquidoEntrada(en);
+  });
+
+  const linhas = [];
+  Object.keys(totalPorAp).forEach(ap => {
+    const total = totalPorAp[ap];
+    const recebido = recebidoPorAp[ap] || 0;
+    const falta = total - recebido;
+    if (falta > 0.5) {
+      linhas.push({ ap, cliente: clientePorAp[ap] || '—', total, recebido, falta });
+    }
+  });
+  linhas.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
+  return linhas;
+}
+
 async function loadContasTotais() {
   const contCards = document.getElementById('contastotais-cards');
   const contLista = document.getElementById('contastotais-lista');
@@ -5834,6 +5913,8 @@ async function gerarPDFRelatorioConta(contaKey) {
     try {
       const dados = await lerDados(true);
       if (dados.entradasPersonalizacao) dadosEntradasPers = dados.entradasPersonalizacao;
+      if (dados.personalizar) dadosPersonalizar = dados.personalizar;
+      if (dados.revestimentos) dadosRevestimentos = dados.revestimentos;
     } catch(e) { /* usa o que já tiver carregado */ }
 
     const grupos = _computarTotaisPorConta();
@@ -5905,6 +5986,57 @@ async function gerarPDFRelatorioConta(contaKey) {
       doc.text(fmt(_valorLiquidoEntrada(en)), W - mr - 2, y, { align: 'right' });
       y += 6;
     });
+
+    // PREVISÃO — todos os apês que ainda vão ter pagamento (só a última revisão de cada,
+    // descontando o que já foi recebido de verdade)
+    const previsao = _calcularPrevisaoTodosApartamentos();
+    if (previsao.length) {
+      doc.addPage();
+      y = 20;
+      doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
+      doc.text('Previsão', ml, y);
+      y += 5;
+      doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
+      doc.text('Apês que ainda vão ter pagamento (só a última revisão de cada, já descontando o recebido)', ml, y);
+      y += 8;
+      doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
+      doc.line(ml, y, W - mr, y);
+      y += 8;
+
+      doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_CINZA);
+      doc.text('APARTAMENTO', ml + 2, y);
+      doc.text('CLIENTE', ml + 30, y);
+      doc.text('TOTAL', ml + 108, y, { align: 'right' });
+      doc.text('RECEBIDO', ml + 142, y, { align: 'right' });
+      doc.text('FALTA', W - mr - 2, y, { align: 'right' });
+      y += 2;
+      doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
+      y += 5;
+
+      let totalGeralFalta = 0;
+      previsao.forEach(l => {
+        if (y > 280) { doc.addPage(); y = 20; }
+        doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
+        doc.text(String(l.ap), ml + 2, y);
+        const nomeCurto = doc.splitTextToSize(l.cliente, 72)[0];
+        doc.text(nomeCurto, ml + 30, y);
+        doc.setTextColor(...COR_CINZA);
+        doc.text(fmt(l.total), ml + 108, y, { align: 'right' });
+        doc.text(fmt(l.recebido), ml + 142, y, { align: 'right' });
+        doc.setFont('helvetica','bold'); doc.setTextColor(...COR_DOURADO);
+        doc.text(fmt(l.falta), W - mr - 2, y, { align: 'right' });
+        totalGeralFalta += l.falta;
+        y += 6;
+      });
+
+      y += 3;
+      doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
+      y += 6;
+      doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
+      doc.text('Total ainda a receber:', ml + 108, y, { align: 'right' });
+      doc.setTextColor(...COR_DOURADO);
+      doc.text(fmt(totalGeralFalta), W - mr - 2, y, { align: 'right' });
+    }
 
     // RODAPÉ na última página
     doc.setFontSize(7); doc.setTextColor(...COR_CINZA);
