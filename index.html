@@ -4407,9 +4407,11 @@ async function excluirLote(id) {
 let dadosInstalacoes = [];
 
 async function loadInstalacoes() {
-  const dados = await lerDados();
-  dadosInstalacoes = dados.instalacoes || [];
-  renderInstalacoes(dadosInstalacoes);
+  try {
+    const dados = await lerDados();
+    dadosInstalacoes = dados.instalacoes || [];
+    renderInstalacoes(dadosInstalacoes);
+  } catch(e) { /* mantem o que ja estava na tela */ }
 }
 
 function renderInstalacoes(d) {
@@ -4918,7 +4920,10 @@ async function lerDados(forcarFresco) {
     const result = await jsonp(SCRIPT_URL + '?action=getDados');
     if (result && result.data) return result.data;
   } catch(e) {}
-  return {};
+  // Se a busca fresca falhar (ou vier vazia), NUNCA retorna objeto vazio —
+  // isso faria a tela apagar listas que já estavam certas. Lança erro pra quem
+  // chamou decidir manter o que já tinha na tela.
+  throw new Error('Não consegui buscar os dados atualizados agora — tentando de novo em instantes.');
 }
 
 // ===================== TOAST =====================
@@ -9253,9 +9258,11 @@ async function editarPersonalizacao(id) {
 
   // Garantir que dadosParedes está carregado
   if (!dadosParedes.length) {
-    const dados = await lerDados();
-    dadosParedes = dados.paredes || [];
-    dadosRevestimentos = dados.revestimentos || [];
+    try {
+      const dados = await lerDados();
+      dadosParedes = dados.paredes || [];
+      dadosRevestimentos = dados.revestimentos || [];
+    } catch(e) { /* segue com o que tiver; o modal ainda abre */ }
   }
 
   // Configurar modo edição ANTES de abrir o modal
