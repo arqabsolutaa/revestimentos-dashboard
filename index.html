@@ -5818,6 +5818,7 @@ function _calcularTotalDeSelecoesObj(selecoesRaw) {
 // Previsão: todos os apês que ainda têm saldo a receber, sem contar duas vezes a mesma
 // revisão (fica só com a mais recente de cada módulo), descontando o que já foi recebido de verdade.
 function _calcularSituacaoTodosApartamentos() {
+  const APS_EM_ABERTO = ['31','51','81','91','101','141'];
   const maisRecente = {};
   (dadosPersonalizar || []).forEach(p => {
     if (String(p.arquivado).toLowerCase() === 'true') return;
@@ -5833,7 +5834,6 @@ function _calcularSituacaoTodosApartamentos() {
 
   const totalPorAp = {};
   const clientePorAp = {};
-  const statusPorAp = {};
   Object.values(maisRecente).forEach(p => {
     const ap = String(p.ap || '');
     let total = parseFloat(p.total_valor);
@@ -5841,37 +5841,29 @@ function _calcularSituacaoTodosApartamentos() {
     totalPorAp[ap] = (totalPorAp[ap] || 0) + total;
     const nomeBase = (p.cliente || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
     if (nomeBase) clientePorAp[ap] = nomeBase;
-    const statusModulo = String(p.status || '').trim().toLowerCase();
-    if (statusModulo !== 'confirmado') statusPorAp[ap] = true; // pelo menos um modulo ainda em definicao
   });
 
   const recebidoPorAp = {};
-  const ultimoPagamentoPorAp = {};
   (dadosEntradasPers || []).forEach(en => {
     const ap = String(en.apartamento || '');
     recebidoPorAp[ap] = (recebidoPorAp[ap] || 0) + _valorLiquidoEntrada(en);
-    const dt = _dataOrdenavelPersonalizacao(en);
-    if (!ultimoPagamentoPorAp[ap] || dt > ultimoPagamentoPorAp[ap]._dt) {
-      ultimoPagamentoPorAp[ap] = { _dt: dt, data: en.data || en.criado_em || '' };
-    }
   });
 
-  const pendentes = [], quitados = [];
+  const definido = [], aberto = [];
   Object.keys(totalPorAp).forEach(ap => {
     const total = totalPorAp[ap];
     const recebido = recebidoPorAp[ap] || 0;
     const falta = total - recebido;
     const cliente = clientePorAp[ap] || '—';
-    const emDefinicao = !!statusPorAp[ap];
-    if (falta > 0.5) {
-      pendentes.push({ ap, cliente, total, recebido, falta, emDefinicao });
-    } else if (recebido > 0.5) {
-      quitados.push({ ap, cliente, total, recebido, data: (ultimoPagamentoPorAp[ap] || {}).data || '', emDefinicao });
-    }
+    if (falta <= 0.5) return; // quitado, fora das duas tabelas
+    if (recebido > 0.5) return; // pagamento em andamento, fora das duas tabelas
+    const linha = { ap, cliente, total, recebido, falta };
+    if (APS_EM_ABERTO.includes(ap)) aberto.push(linha);
+    else definido.push(linha);
   });
-  pendentes.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
-  quitados.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
-  return { pendentes, quitados };
+  definido.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
+  aberto.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
+  return { definido, aberto };
 }
 
 async function loadContasTotais() {
@@ -6000,14 +5992,12 @@ async function gerarPDFRelatorioConta(contaKey) {
       y += 6;
     });
 
-    // PREVISÃO — todos os apês que ainda vão ter pagamento (só a última revisão de cada,
-    // descontando o que já foi recebido de verdade) + QUITADOS — os que já fecharam 100%
-    const { pendentes } = _calcularSituacaoTodosApartamentos();
-    if (pendentes.length) {
-      doc.addPage();
-      y = 20;
+    // PREVISÃO DEFINIDA e PREVISÃO EM ABERTO — apês que ainda vão ter pagamento (só a última
+    // revisão de cada, descontando o que já foi recebido), sem contar quem já está com
+    // pagamento em andamento nem quem já quitou
+    function desenharTabelaPrevisao(titulo, itens, mostrarNota) {
       doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
-      doc.text('Previsão', ml, y);
+      doc.text(titulo, ml, y);
       y += 8;
       doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
       doc.line(ml, y, W - mr, y);
@@ -6024,7 +6014,7 @@ async function gerarPDFRelatorioConta(contaKey) {
       y += 5;
 
       let totalGeralFalta = 0;
-      pendentes.forEach(l => {
+      itens.forEach(l => {
         if (y > 280) { doc.addPage(); y = 20; }
         doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
         doc.text(String(l.ap), ml + 2, y);
@@ -6047,19 +6037,34 @@ async function gerarPDFRelatorioConta(contaKey) {
       doc.setTextColor(...COR_DOURADO);
       doc.text(fmt(totalGeralFalta), W - mr - 2, y, { align: 'right' });
 
-      y += 10;
-      const COR_VERMELHO_BG = [253, 237, 235];
-      const COR_VERMELHO_BD = [232, 190, 184];
-      const COR_VERMELHO_TXT = [153, 62, 51];
-      const textoObs = 'As unidades apresentadas nesta tabela possuem personalização ainda em definição. Os valores podem sofrer alterações até a confirmação final do orçamento.';
-      doc.setFontSize(10); doc.setFont('helvetica','normal');
-      const obsPrevisao = doc.splitTextToSize(textoObs, cw - 16);
-      const alturaBox = obsPrevisao.length * 5 + 12;
-      if (y + alturaBox > 280) { doc.addPage(); y = 20; }
-      doc.setFillColor(...COR_VERMELHO_BG); doc.setDrawColor(...COR_VERMELHO_BD); doc.setLineWidth(0.3);
-      doc.roundedRect(ml, y, cw, alturaBox, 2, 2, 'FD');
-      doc.setTextColor(...COR_VERMELHO_TXT);
-      doc.text(obsPrevisao, ml + 8, y + 8);
+      if (mostrarNota) {
+        y += 10;
+        const COR_VERMELHO_BG = [253, 237, 235];
+        const COR_VERMELHO_BD = [232, 190, 184];
+        const COR_VERMELHO_TXT = [153, 62, 51];
+        const textoObs = 'As unidades apresentadas nesta tabela possuem personalização ainda em definição. Os valores podem sofrer alterações até a confirmação final do orçamento.';
+        doc.setFontSize(10); doc.setFont('helvetica','normal');
+        const obsPrevisao = doc.splitTextToSize(textoObs, cw - 16);
+        const alturaBox = obsPrevisao.length * 5 + 12;
+        if (y + alturaBox > 280) { doc.addPage(); y = 20; }
+        doc.setFillColor(...COR_VERMELHO_BG); doc.setDrawColor(...COR_VERMELHO_BD); doc.setLineWidth(0.3);
+        doc.roundedRect(ml, y, cw, alturaBox, 2, 2, 'FD');
+        doc.setTextColor(...COR_VERMELHO_TXT);
+        doc.text(obsPrevisao, ml + 8, y + 8);
+        y += alturaBox;
+      }
+    }
+
+    const { definido, aberto } = _calcularSituacaoTodosApartamentos();
+    if (definido.length || aberto.length) {
+      doc.addPage();
+      y = 20;
+      if (definido.length) desenharTabelaPrevisao('Previsão Definida', definido, false);
+      if (aberto.length) {
+        y += 14;
+        if (y > 250) { doc.addPage(); y = 20; }
+        desenharTabelaPrevisao('Previsão em Aberto', aberto, true);
+      }
     }
 
     // RODAPÉ na última página
