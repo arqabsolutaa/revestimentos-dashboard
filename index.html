@@ -5995,9 +5995,6 @@ async function gerarPDFRelatorioConta(contaKey) {
       y = 20;
       doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
       doc.text('Previsão', ml, y);
-      y += 5;
-      doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
-      doc.text('Apês que ainda vão ter pagamento (só a última revisão de cada, já descontando o recebido)', ml, y);
       y += 8;
       doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
       doc.line(ml, y, W - mr, y);
