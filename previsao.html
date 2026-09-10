@@ -28,14 +28,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 button{font-family:'Inter',sans-serif;cursor:pointer;border:none;outline:none}
 input{font-family:'Inter',sans-serif;outline:none}
 
-#capa{position:fixed;inset:0;z-index:1000;cursor:pointer;background:url('https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/assets/capa_entrada_essence.jpg') center center/cover no-repeat;background-color:#1a2419}
-
-#lock{position:fixed;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:var(--accent-dark);z-index:999}
-#lock img{height:40px;margin-bottom:8px}
-#lock p.titulo{color:#e8dfc4;font-size:15px;letter-spacing:1px}
-#lock input{width:220px;text-align:center;padding:11px 16px;border-radius:10px;border:1px solid rgba(178,152,89,0.6);background:rgba(245,240,228,0.08);color:#e8dfc4;font-size:14px}
-#lock button{padding:11px 28px;border-radius:10px;background:var(--accent);color:#1a1814;font-weight:600;font-size:13px}
-#lock-erro{color:#e0958a;font-size:12px;display:none}
+#capa{position:fixed;inset:0;z-index:1000;background:url('https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/assets/capa_entrada_essence.jpg') center center/cover no-repeat;background-color:#1a2419;display:flex;align-items:flex-end;justify-content:center;padding-bottom:9vh}
+#capa-acesso{display:flex;flex-direction:column;align-items:center;gap:12px}
+#btn-acessar{padding:15px 46px;border-radius:30px;background:var(--accent);color:#1a1814;font-weight:700;font-size:14px;letter-spacing:1.5px}
+#senha-caixa{display:none;flex-direction:column;align-items:center;gap:10px}
+#senha-caixa input{width:220px;text-align:center;padding:13px 16px;border-radius:26px;border:1px solid rgba(201,168,76,0.6);background:rgba(20,20,15,0.55);color:#e8dfc4;font-size:14px}
+#senha-caixa button{padding:12px 30px;border-radius:26px;background:var(--accent);color:#1a1814;font-weight:600;font-size:13px}
+#lock-erro{display:none;color:#ffb4a8;font-size:12px}
 
 #app{display:none;max-width:1100px;margin:0 auto;padding:28px 24px 60px}
 .header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:6px}
@@ -70,13 +69,15 @@ td{font-size:13px;padding:8px;border-bottom:1px solid var(--border)}
 </head>
 <body>
 
-<div id="capa" onclick="mostrarSenha()"></div>
-
-<div id="lock">
-  <p class="titulo">ESSENCE RESIDENCE · PREVISÃO DE COBRANÇAS</p>
-  <input type="password" id="senha-input" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')entrar()">
-  <button onclick="entrar()">Entrar</button>
-  <p id="lock-erro">Senha incorreta</p>
+<div id="capa">
+  <div id="capa-acesso">
+    <button id="btn-acessar" onclick="mostrarSenha()">ACESSAR</button>
+    <div id="senha-caixa">
+      <input type="password" id="senha-input" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')entrar()">
+      <button onclick="entrar()">Entrar</button>
+    </div>
+    <p id="lock-erro">Senha incorreta</p>
+  </div>
 </div>
 
 <div id="app">
@@ -102,19 +103,19 @@ td{font-size:13px;padding:8px;border-bottom:1px solid var(--border)}
 </div>
 
 <script>
-const SENHA = 'diretora2026@';
+const SENHA = '40275';
 const DATA_URL = 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/data.json';
 
 function mostrarSenha() {
-  document.getElementById('capa').style.display = 'none';
-  document.getElementById('lock').style.display = 'flex';
+  document.getElementById('btn-acessar').style.display = 'none';
+  document.getElementById('senha-caixa').style.display = 'flex';
   document.getElementById('senha-input').focus();
 }
 
 function entrar() {
   const senha = document.getElementById('senha-input').value;
   if (senha === SENHA) {
-    document.getElementById('lock').style.display = 'none';
+    document.getElementById('capa').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     carregar();
   } else {
