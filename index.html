@@ -5833,6 +5833,7 @@ function _calcularSituacaoTodosApartamentos() {
 
   const totalPorAp = {};
   const clientePorAp = {};
+  const statusPorAp = {};
   Object.values(maisRecente).forEach(p => {
     const ap = String(p.ap || '');
     let total = parseFloat(p.total_valor);
@@ -5840,6 +5841,8 @@ function _calcularSituacaoTodosApartamentos() {
     totalPorAp[ap] = (totalPorAp[ap] || 0) + total;
     const nomeBase = (p.cliente || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
     if (nomeBase) clientePorAp[ap] = nomeBase;
+    const statusModulo = String(p.status || '').trim().toLowerCase();
+    if (statusModulo !== 'confirmado') statusPorAp[ap] = true; // pelo menos um modulo ainda em definicao
   });
 
   const recebidoPorAp = {};
@@ -5859,10 +5862,11 @@ function _calcularSituacaoTodosApartamentos() {
     const recebido = recebidoPorAp[ap] || 0;
     const falta = total - recebido;
     const cliente = clientePorAp[ap] || '—';
+    const emDefinicao = !!statusPorAp[ap];
     if (falta > 0.5) {
-      pendentes.push({ ap, cliente, total, recebido, falta });
+      pendentes.push({ ap, cliente, total, recebido, falta, emDefinicao });
     } else if (recebido > 0.5) {
-      quitados.push({ ap, cliente, total, recebido, data: (ultimoPagamentoPorAp[ap] || {}).data || '' });
+      quitados.push({ ap, cliente, total, recebido, data: (ultimoPagamentoPorAp[ap] || {}).data || '', emDefinicao });
     }
   });
   pendentes.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
@@ -6011,10 +6015,11 @@ async function gerarPDFRelatorioConta(contaKey) {
 
       doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_CINZA);
       doc.text('APARTAMENTO', ml + 2, y);
-      doc.text('CLIENTE', ml + 30, y);
-      doc.text('TOTAL', ml + 108, y, { align: 'right' });
-      doc.text('RECEBIDO', ml + 142, y, { align: 'right' });
-      doc.text('FALTA', W - mr - 2, y, { align: 'right' });
+      doc.text('CLIENTE', ml + 24, y);
+      doc.text('TOTAL', ml + 96, y, { align: 'right' });
+      doc.text('RECEBIDO', ml + 122, y, { align: 'right' });
+      doc.text('FALTA', ml + 148, y, { align: 'right' });
+      doc.text('PERSONALIZE', W - mr - 2, y, { align: 'right' });
       y += 2;
       doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
       y += 5;
@@ -6024,13 +6029,17 @@ async function gerarPDFRelatorioConta(contaKey) {
         if (y > 280) { doc.addPage(); y = 20; }
         doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
         doc.text(String(l.ap), ml + 2, y);
-        const nomeCurto = doc.splitTextToSize(l.cliente, 72)[0];
-        doc.text(nomeCurto, ml + 30, y);
+        const nomeCurto = doc.splitTextToSize(l.cliente, 64)[0];
+        doc.text(nomeCurto, ml + 24, y);
         doc.setTextColor(...COR_CINZA);
-        doc.text(fmt(l.total), ml + 108, y, { align: 'right' });
-        doc.text(fmt(l.recebido), ml + 142, y, { align: 'right' });
+        doc.text(fmt(l.total), ml + 96, y, { align: 'right' });
+        doc.text(fmt(l.recebido), ml + 122, y, { align: 'right' });
         doc.setFont('helvetica','bold'); doc.setTextColor(...COR_DOURADO);
-        doc.text(fmt(l.falta), W - mr - 2, y, { align: 'right' });
+        doc.text(fmt(l.falta), ml + 148, y, { align: 'right' });
+        if (l.emDefinicao) {
+          doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
+          doc.text('Em definição', W - mr - 2, y, { align: 'right' });
+        }
         totalGeralFalta += l.falta;
         y += 6;
       });
@@ -6039,9 +6048,9 @@ async function gerarPDFRelatorioConta(contaKey) {
       doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
       y += 6;
       doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
-      doc.text('Total ainda a receber:', ml + 108, y, { align: 'right' });
+      doc.text('Total ainda a receber:', ml + 96, y, { align: 'right' });
       doc.setTextColor(...COR_DOURADO);
-      doc.text(fmt(totalGeralFalta), W - mr - 2, y, { align: 'right' });
+      doc.text(fmt(totalGeralFalta), ml + 148, y, { align: 'right' });
     }
 
     // RODAPÉ na última página
