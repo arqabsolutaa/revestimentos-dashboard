@@ -6047,11 +6047,19 @@ async function gerarPDFRelatorioConta(contaKey) {
       doc.setTextColor(...COR_DOURADO);
       doc.text(fmt(totalGeralFalta), W - mr - 2, y, { align: 'right' });
 
-      y += 12;
-      if (y > 275) { doc.addPage(); y = 20; }
-      doc.setFontSize(8); doc.setFont('helvetica','italic'); doc.setTextColor(...COR_CINZA);
-      const obsPrevisao = doc.splitTextToSize('As unidades apresentadas nesta tabela possuem personalização ainda em definição. Os valores podem sofrer alterações até a confirmação final do orçamento.', cw);
-      doc.text(obsPrevisao, ml, y);
+      y += 10;
+      const COR_VERMELHO_BG = [253, 237, 235];
+      const COR_VERMELHO_BD = [232, 190, 184];
+      const COR_VERMELHO_TXT = [153, 62, 51];
+      const textoObs = 'As unidades apresentadas nesta tabela possuem personalização ainda em definição. Os valores podem sofrer alterações até a confirmação final do orçamento.';
+      doc.setFontSize(10); doc.setFont('helvetica','normal');
+      const obsPrevisao = doc.splitTextToSize(textoObs, cw - 16);
+      const alturaBox = obsPrevisao.length * 5 + 12;
+      if (y + alturaBox > 280) { doc.addPage(); y = 20; }
+      doc.setFillColor(...COR_VERMELHO_BG); doc.setDrawColor(...COR_VERMELHO_BD); doc.setLineWidth(0.3);
+      doc.roundedRect(ml, y, cw, alturaBox, 2, 2, 'FD');
+      doc.setTextColor(...COR_VERMELHO_TXT);
+      doc.text(obsPrevisao, ml + 8, y + 8);
     }
 
     // RODAPÉ na última página
