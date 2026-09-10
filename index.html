@@ -5817,7 +5817,7 @@ function _calcularTotalDeSelecoesObj(selecoesRaw) {
 
 // Previsão: todos os apês que ainda têm saldo a receber, sem contar duas vezes a mesma
 // revisão (fica só com a mais recente de cada módulo), descontando o que já foi recebido de verdade.
-function _calcularPrevisaoTodosApartamentos() {
+function _calcularSituacaoTodosApartamentos() {
   const maisRecente = {};
   (dadosPersonalizar || []).forEach(p => {
     if (String(p.arquivado).toLowerCase() === 'true') return;
@@ -5843,22 +5843,31 @@ function _calcularPrevisaoTodosApartamentos() {
   });
 
   const recebidoPorAp = {};
+  const ultimoPagamentoPorAp = {};
   (dadosEntradasPers || []).forEach(en => {
     const ap = String(en.apartamento || '');
     recebidoPorAp[ap] = (recebidoPorAp[ap] || 0) + _valorLiquidoEntrada(en);
+    const dt = _dataOrdenavelPersonalizacao(en);
+    if (!ultimoPagamentoPorAp[ap] || dt > ultimoPagamentoPorAp[ap]._dt) {
+      ultimoPagamentoPorAp[ap] = { _dt: dt, data: en.data || en.criado_em || '' };
+    }
   });
 
-  const linhas = [];
+  const pendentes = [], quitados = [];
   Object.keys(totalPorAp).forEach(ap => {
     const total = totalPorAp[ap];
     const recebido = recebidoPorAp[ap] || 0;
     const falta = total - recebido;
+    const cliente = clientePorAp[ap] || '—';
     if (falta > 0.5) {
-      linhas.push({ ap, cliente: clientePorAp[ap] || '—', total, recebido, falta });
+      pendentes.push({ ap, cliente, total, recebido, falta });
+    } else if (recebido > 0.5) {
+      quitados.push({ ap, cliente, total, recebido, data: (ultimoPagamentoPorAp[ap] || {}).data || '' });
     }
   });
-  linhas.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
-  return linhas;
+  pendentes.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
+  quitados.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
+  return { pendentes, quitados };
 }
 
 async function loadContasTotais() {
@@ -5988,9 +5997,9 @@ async function gerarPDFRelatorioConta(contaKey) {
     });
 
     // PREVISÃO — todos os apês que ainda vão ter pagamento (só a última revisão de cada,
-    // descontando o que já foi recebido de verdade)
-    const previsao = _calcularPrevisaoTodosApartamentos();
-    if (previsao.length) {
+    // descontando o que já foi recebido de verdade) + QUITADOS — os que já fecharam 100%
+    const { pendentes, quitados } = _calcularSituacaoTodosApartamentos();
+    if (pendentes.length) {
       doc.addPage();
       y = 20;
       doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
@@ -6011,7 +6020,7 @@ async function gerarPDFRelatorioConta(contaKey) {
       y += 5;
 
       let totalGeralFalta = 0;
-      previsao.forEach(l => {
+      pendentes.forEach(l => {
         if (y > 280) { doc.addPage(); y = 20; }
         doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
         doc.text(String(l.ap), ml + 2, y);
@@ -6033,6 +6042,49 @@ async function gerarPDFRelatorioConta(contaKey) {
       doc.text('Total ainda a receber:', ml + 108, y, { align: 'right' });
       doc.setTextColor(...COR_DOURADO);
       doc.text(fmt(totalGeralFalta), W - mr - 2, y, { align: 'right' });
+    }
+
+    if (quitados.length) {
+      doc.addPage();
+      y = 20;
+      const COR_VERDE = [45, 106, 79];
+      doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
+      doc.text('Quitados', ml, y);
+      y += 8;
+      doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
+      doc.line(ml, y, W - mr, y);
+      y += 8;
+
+      doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_CINZA);
+      doc.text('APARTAMENTO', ml + 2, y);
+      doc.text('CLIENTE', ml + 30, y);
+      doc.text('VALOR TOTAL (R$)', ml + 130, y, { align: 'right' });
+      doc.text('SITUAÇÃO', W - mr - 2, y, { align: 'right' });
+      y += 2;
+      doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
+      y += 5;
+
+      let totalGeralQuitado = 0;
+      quitados.forEach(l => {
+        if (y > 280) { doc.addPage(); y = 20; }
+        doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
+        doc.text(String(l.ap), ml + 2, y);
+        const nomeCurto = doc.splitTextToSize(l.cliente, 90)[0];
+        doc.text(nomeCurto, ml + 30, y);
+        doc.text(fmt(l.total), ml + 130, y, { align: 'right' });
+        doc.setFont('helvetica','bold'); doc.setTextColor(...COR_VERDE);
+        doc.text('Quitado', W - mr - 2, y, { align: 'right' });
+        totalGeralQuitado += l.total;
+        y += 6;
+      });
+
+      y += 3;
+      doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
+      y += 6;
+      doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
+      doc.text('Total já quitado:', ml + 130, y, { align: 'right' });
+      doc.setTextColor(...COR_VERDE);
+      doc.text(fmt(totalGeralQuitado), W - mr - 2, y, { align: 'right' });
     }
 
     // RODAPÉ na última página
