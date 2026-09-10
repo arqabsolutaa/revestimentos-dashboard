@@ -6430,80 +6430,117 @@ function _toggleDetalheCustoPers(id, chevronEl) {
   if (chevronEl) chevronEl.textContent = aberto ? '▸' : '▾';
 }
 
+function _chaveMesAno(dataStr) {
+  if (!dataStr || !String(dataStr).includes('/')) return '0000-00';
+  const partes = String(dataStr).split('/');
+  if (partes.length !== 3) return '0000-00';
+  return partes[2] + '-' + partes[1].padStart(2,'0');
+}
+const _MESES_PT = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+function _labelMesAno(chave) {
+  const [ano, mes] = chave.split('-');
+  if (ano === '0000') return 'Sem data';
+  const nome = _MESES_PT[parseInt(mes,10)-1] || '';
+  return nome.charAt(0).toUpperCase() + nome.slice(1) + ' de ' + ano;
+}
+function _agruparPorMesHTML(lista, dataFn, cardFn) {
+  const grupos = {};
+  lista.forEach(item => {
+    const chave = _chaveMesAno(dataFn(item));
+    (grupos[chave] = grupos[chave] || []).push(item);
+  });
+  const chaves = Object.keys(grupos).sort((a,b) => b.localeCompare(a));
+  return chaves.map(chave => {
+    const itens = grupos[chave];
+    const totalMes = itens.reduce((s,it) => s + (it._totalParaSoma || 0), 0);
+    return `<div style="margin:18px 0 8px;display:flex;justify-content:space-between;align-items:baseline">
+        <span style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">${_labelMesAno(chave)}</span>
+        <span style="font-size:11px;color:var(--text3)">${_fmtR$(totalMes)}</span>
+      </div>` + itens.map(cardFn).join('');
+  }).join('');
+}
+
 function renderCustoPersonalizacoes() {
   const contE = document.getElementById('custopers-entradas-lista');
   const contS = document.getElementById('custopers-saidas-lista');
 
-  contE.innerHTML = !dadosEntradasPers.length ? '<div class="empty-state"><strong>Nenhuma entrada lançada</strong></div>' :
-    dadosEntradasPers.map(en => {
-      const vinc = _valorVinculadoEntrada(en.id);
-      const total = parseFloat(en.valor)||0;
-      const totalLiquido = _valorLiquidoEntrada(en);
-      const jurosVal = parseFloat(en.valor_juros)||0;
-      const temJuros = jurosVal > 0.005;
-      const detalheId = 'entrada-detalhe-' + en.id;
-      return `<div class="card" style="padding:0;overflow:hidden">
-        <div style="padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px" onclick="_toggleDetalheCustoPers('${detalheId}', this.querySelector('.chevron'))">
-          <div style="min-width:0">
-            <strong style="font-size:13px">Apto ${en.apartamento||'—'} — ${_nomeClienteLimpo(en.cliente)||'—'}</strong>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${en.data||''} · ${_badgeSaldo(totalLiquido, vinc)}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-            <strong style="font-size:14px;color:var(--accent2)">${_fmtR$(totalLiquido)}</strong>
-            <span class="chevron" style="color:var(--text3);font-size:12px">▸</span>
+  function cardEntradaHTML(en) {
+    const vinc = _valorVinculadoEntrada(en.id);
+    const total = parseFloat(en.valor)||0;
+    const totalLiquido = _valorLiquidoEntrada(en);
+    const jurosVal = parseFloat(en.valor_juros)||0;
+    const temJuros = jurosVal > 0.005;
+    const detalheId = 'entrada-detalhe-' + en.id;
+    return `<div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px" onclick="_toggleDetalheCustoPers('${detalheId}', this.querySelector('.chevron'))">
+        <div style="min-width:0">
+          <strong style="font-size:13px">Apto ${en.apartamento||'—'} — ${_nomeClienteLimpo(en.cliente)||'—'}</strong>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${en.data||''} · ${_badgeSaldo(totalLiquido, vinc)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <strong style="font-size:14px;color:var(--accent2)">${_fmtR$(totalLiquido)}</strong>
+          <span class="chevron" style="color:var(--text3);font-size:12px">▸</span>
+        </div>
+      </div>
+      <div id="${detalheId}" style="display:none;padding:0 16px 14px">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${en.categoria||''} · ${en.data||''}${en.condicao_pagamento && en.condicao_pagamento !== 'avista' ? ' · ' + en.condicao_pagamento.replace('credito','Crédito ').replace('boleto1','Boleto à Vista').replace('boleto','Boleto ').replace('pix','PIX ') : ''}</div>
+        ${temJuros ? `<div style="font-size:11px;color:var(--text3);margin-top:4px">valor bruto cobrado do cliente: <strong>${_fmtR$(total)}</strong> · <span style="color:var(--warn)">juros da maquininha ${_fmtR$(jurosVal)} (repasse, não conta como saldo)</span></div>` : ''}
+        ${_comprovantesLinksHTML(en.comprovante_url)}
+        ${_linhasVinculoEntradaHTML(en.id)}
+        <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+          ${_badgeSaldo(totalLiquido, vinc)}
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('entrada','${en.id}')">Vincular a saída</button>
+            <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px" onclick="abrirModalEditarEntradaPers('${en.id}')" title="Editar entrada">✏️</button>
+            <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirEntradaPers('${en.id}')" title="Excluir entrada">🗑️</button>
           </div>
         </div>
-        <div id="${detalheId}" style="display:none;padding:0 16px 14px">
-          <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${en.categoria||''} · ${en.data||''}${en.condicao_pagamento && en.condicao_pagamento !== 'avista' ? ' · ' + en.condicao_pagamento.replace('credito','Crédito ').replace('boleto1','Boleto à Vista').replace('boleto','Boleto ').replace('pix','PIX ') : ''}</div>
-          ${temJuros ? `<div style="font-size:11px;color:var(--text3);margin-top:4px">valor bruto cobrado do cliente: <strong>${_fmtR$(total)}</strong> · <span style="color:var(--warn)">juros da maquininha ${_fmtR$(jurosVal)} (repasse, não conta como saldo)</span></div>` : ''}
-          ${_comprovantesLinksHTML(en.comprovante_url)}
-          ${_linhasVinculoEntradaHTML(en.id)}
-          <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
-            ${_badgeSaldo(totalLiquido, vinc)}
-            <div style="display:flex;gap:6px">
-              <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('entrada','${en.id}')">Vincular a saída</button>
-              <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px" onclick="abrirModalEditarEntradaPers('${en.id}')" title="Editar entrada">✏️</button>
-              <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirEntradaPers('${en.id}')" title="Excluir entrada">🗑️</button>
-            </div>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
+      </div>
+    </div>`;
+  }
 
-  const saidasParaExibir = [...dadosSaidasObra, ..._saidasAutomaticasRevestimento()];
+  const entradasComTotal = dadosEntradasPers.map(en => ({ ...en, _totalParaSoma: _valorLiquidoEntrada(en) }));
+  entradasComTotal.sort((a,b) => _chaveMesAno(b.data).localeCompare(_chaveMesAno(a.data)));
+  contE.innerHTML = !entradasComTotal.length ? '<div class="empty-state"><strong>Nenhuma entrada lançada</strong></div>' :
+    _agruparPorMesHTML(entradasComTotal, en => en.data, cardEntradaHTML);
+
+  function cardSaidaHTML(sa) {
+    const vinc = _valorVinculadoSaida(sa.id);
+    const total = parseFloat(sa.valor)||0;
+    const detalheId = 'saida-detalhe-' + sa.id;
+    return `<div class="card" style="padding:0;overflow:hidden${sa.automatica ? ';background:var(--surface2)' : ''}">
+      <div style="padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px" onclick="_toggleDetalheCustoPers('${detalheId}', this.querySelector('.chevron'))">
+        <div style="min-width:0">
+          <strong style="font-size:13px">${sa.descricao||'—'}</strong>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📅 ${sa.data||'sem data'} · ${_badgeSaldo(total, vinc)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <strong style="font-size:14px;color:#8c6f3f">${_fmtR$(total)}</strong>
+          <span class="chevron" style="color:var(--text3);font-size:12px">▸</span>
+        </div>
+      </div>
+      <div id="${detalheId}" style="display:none;padding:0 16px 14px">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${sa.categoria||''}${sa.categoria?' · ':''}<strong style="color:var(--text)">📅 ${sa.data||'sem data'}</strong> ${sa.apartamento ? '<span class="badge badge-info" style="margin-left:4px">Apto '+sa.apartamento+'</span>' : ''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''} ${sa.automatica ? '<span class="badge" style="background:#E8E4DE;color:#555;margin-left:4px">⚙ Automático (revestimento)</span>' : ''}${sa.condicao_pagamento && sa.condicao_pagamento !== 'avista' ? ' · ' + _labelCondicaoPagamento(sa.condicao_pagamento) : ''}</div>
+        ${_comprovantesLinksHTML(sa.comprovante_url)}
+        ${sa.automatica ? '' : _linhasVinculoSaidaHTML(sa.id)}
+        <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+          ${_badgeSaldo(total, vinc)}
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('saida','${sa.id}')">Vincular a entrada</button>
+            ${sa.automatica ? '' : `<button class="btn btn-secondary" style="font-size:11px;padding:4px 8px" onclick="abrirModalEditarSaidaObra('${sa.id}')" title="Editar saída">✏️</button>`}
+            ${sa.automatica ? '' : `<button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirSaidaObra('${sa.id}')" title="Excluir saída">🗑️</button>`}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  const saidasParaExibir = [...dadosSaidasObra, ..._saidasAutomaticasRevestimento()].map(sa => ({ ...sa, _totalParaSoma: parseFloat(sa.valor)||0 }));
   window._saidasParaExibir = saidasParaExibir;
+  saidasParaExibir.sort((a,b) => _chaveMesAno(b.data).localeCompare(_chaveMesAno(a.data)));
 
   contS.innerHTML = !saidasParaExibir.length ? '<div class="empty-state"><strong>Nenhuma saída lançada</strong></div>' :
-    saidasParaExibir.map(sa => {
-      const vinc = _valorVinculadoSaida(sa.id);
-      const total = parseFloat(sa.valor)||0;
-      const detalheId = 'saida-detalhe-' + sa.id;
-      return `<div class="card" style="padding:0;overflow:hidden${sa.automatica ? ';background:var(--surface2)' : ''}">
-        <div style="padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px" onclick="_toggleDetalheCustoPers('${detalheId}', this.querySelector('.chevron'))">
-          <div style="min-width:0">
-            <strong style="font-size:13px">${sa.descricao||'—'}</strong>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📅 ${sa.data||'sem data'} · ${_badgeSaldo(total, vinc)}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-            <strong style="font-size:14px;color:#8c6f3f">${_fmtR$(total)}</strong>
-            <span class="chevron" style="color:var(--text3);font-size:12px">▸</span>
-          </div>
-        </div>
-        <div id="${detalheId}" style="display:none;padding:0 16px 14px">
-          <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${sa.categoria||''}${sa.categoria?' · ':''}<strong style="color:var(--text)">📅 ${sa.data||'sem data'}</strong> ${sa.apartamento ? '<span class="badge badge-info" style="margin-left:4px">Apto '+sa.apartamento+'</span>' : ''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''} ${sa.automatica ? '<span class="badge" style="background:#E8E4DE;color:#555;margin-left:4px">⚙ Automático (revestimento)</span>' : ''}${sa.condicao_pagamento && sa.condicao_pagamento !== 'avista' ? ' · ' + _labelCondicaoPagamento(sa.condicao_pagamento) : ''}</div>
-          ${_comprovantesLinksHTML(sa.comprovante_url)}
-          ${sa.automatica ? '' : _linhasVinculoSaidaHTML(sa.id)}
-          <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
-            ${_badgeSaldo(total, vinc)}
-            <div style="display:flex;gap:6px">
-              <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalVincular('saida','${sa.id}')">Vincular a entrada</button>
-              ${sa.automatica ? '' : `<button class="btn btn-secondary" style="font-size:11px;padding:4px 8px" onclick="abrirModalEditarSaidaObra('${sa.id}')" title="Editar saída">✏️</button>`}
-              ${sa.automatica ? '' : `<button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirSaidaObra('${sa.id}')" title="Excluir saída">🗑️</button>`}
-            </div>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
+    _agruparPorMesHTML(saidasParaExibir, sa => sa.data, cardSaidaHTML);
 }
 
 function _apartamentosConhecidos() {
