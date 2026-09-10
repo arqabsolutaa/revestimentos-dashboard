@@ -5974,7 +5974,8 @@ async function gerarPDFRelatorioConta(contaKey) {
     doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_CINZA);
     doc.text('APARTAMENTO', ml + 2, y);
     doc.text('CLIENTE', ml + 32, y);
-    doc.text('DATA', ml + 110, y);
+    doc.text('DATA', ml + 96, y);
+    doc.text('PAGAMENTO', ml + 128, y);
     doc.text('VALOR (R$)', W - mr - 2, y, { align: 'right' });
     y += 2;
     doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
@@ -5985,9 +5986,12 @@ async function gerarPDFRelatorioConta(contaKey) {
       if (y > 280) { doc.addPage(); y = 20; }
       doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
       doc.text(String(en.apartamento || '—'), ml + 2, y);
-      const nomeCurto = doc.splitTextToSize(_nomeClienteLimpo(en.cliente) || '—', 74)[0];
+      const nomeCurto = doc.splitTextToSize(_nomeClienteLimpo(en.cliente) || '—', 62)[0];
       doc.text(nomeCurto, ml + 32, y);
-      doc.text(en.data || '', ml + 110, y);
+      doc.text(en.data || '', ml + 96, y);
+      doc.setTextColor(...COR_CINZA);
+      doc.text(_labelCondicaoPagamento(en.condicao_pagamento) || '—', ml + 128, y);
+      doc.setTextColor(...COR_TEXTO);
       doc.text(fmt(_valorLiquidoEntrada(en)), W - mr - 2, y, { align: 'right' });
       y += 6;
     });
@@ -5995,7 +5999,7 @@ async function gerarPDFRelatorioConta(contaKey) {
     // PREVISÃO DEFINIDA e PREVISÃO EM ABERTO — apês que ainda vão ter pagamento (só a última
     // revisão de cada, descontando o que já foi recebido), sem contar quem já está com
     // pagamento em andamento nem quem já quitou
-    function desenharTabelaPrevisao(titulo, itens, mostrarNota) {
+    function desenharTabelaPrevisao(titulo, itens, mostrarNota, mostrarColunaPagamento) {
       doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
       doc.text(titulo, ml, y);
       y += 8;
@@ -6005,10 +6009,11 @@ async function gerarPDFRelatorioConta(contaKey) {
 
       doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_CINZA);
       doc.text('APARTAMENTO', ml + 2, y);
-      doc.text('CLIENTE', ml + 30, y);
-      doc.text('TOTAL', ml + 108, y, { align: 'right' });
-      doc.text('RECEBIDO', ml + 142, y, { align: 'right' });
-      doc.text('FALTA', W - mr - 2, y, { align: 'right' });
+      doc.text('CLIENTE', ml + 26, y);
+      doc.text('TOTAL', ml + 84, y, { align: 'right' });
+      doc.text('RECEBIDO', ml + 108, y, { align: 'right' });
+      doc.text('FALTA', ml + 130, y, { align: 'right' });
+      if (mostrarColunaPagamento) doc.text('PAGAMENTO', W - mr - 2, y, { align: 'right' });
       y += 2;
       doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
       y += 5;
@@ -6018,13 +6023,17 @@ async function gerarPDFRelatorioConta(contaKey) {
         if (y > 280) { doc.addPage(); y = 20; }
         doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
         doc.text(String(l.ap), ml + 2, y);
-        const nomeCurto = doc.splitTextToSize(l.cliente, 72)[0];
-        doc.text(nomeCurto, ml + 30, y);
+        const nomeCurto = doc.splitTextToSize(l.cliente, 54)[0];
+        doc.text(nomeCurto, ml + 26, y);
         doc.setTextColor(...COR_CINZA);
-        doc.text(fmt(l.total), ml + 108, y, { align: 'right' });
-        doc.text(fmt(l.recebido), ml + 142, y, { align: 'right' });
+        doc.text(fmt(l.total), ml + 84, y, { align: 'right' });
+        doc.text(fmt(l.recebido), ml + 108, y, { align: 'right' });
         doc.setFont('helvetica','bold'); doc.setTextColor(...COR_DOURADO);
-        doc.text(fmt(l.falta), W - mr - 2, y, { align: 'right' });
+        doc.text(fmt(l.falta), ml + 130, y, { align: 'right' });
+        if (mostrarColunaPagamento) {
+          doc.setFontSize(9); doc.setFont('helvetica','italic'); doc.setTextColor(...COR_CINZA);
+          doc.text('A definir', W - mr - 2, y, { align: 'right' });
+        }
         totalGeralFalta += l.falta;
         y += 6;
       });
@@ -6033,9 +6042,9 @@ async function gerarPDFRelatorioConta(contaKey) {
       doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
       y += 6;
       doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
-      doc.text('Total ainda a receber:', ml + 108, y, { align: 'right' });
+      doc.text('Total ainda a receber:', ml + 84, y, { align: 'right' });
       doc.setTextColor(...COR_DOURADO);
-      doc.text(fmt(totalGeralFalta), W - mr - 2, y, { align: 'right' });
+      doc.text(fmt(totalGeralFalta), ml + 130, y, { align: 'right' });
 
       if (mostrarNota) {
         y += 10;
@@ -6059,11 +6068,11 @@ async function gerarPDFRelatorioConta(contaKey) {
     if (definido.length || aberto.length) {
       doc.addPage();
       y = 20;
-      if (definido.length) desenharTabelaPrevisao('Previsão Definida', definido, false);
+      if (definido.length) desenharTabelaPrevisao('Previsão Definida', definido, false, true);
       if (aberto.length) {
         y += 14;
         if (y > 250) { doc.addPage(); y = 20; }
-        desenharTabelaPrevisao('Previsão em Aberto', aberto, true);
+        desenharTabelaPrevisao('Previsão em Aberto', aberto, true, false);
       }
     }
 
