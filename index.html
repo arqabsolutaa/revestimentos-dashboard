@@ -5998,7 +5998,7 @@ async function gerarPDFRelatorioConta(contaKey) {
 
     // PREVISÃO — todos os apês que ainda vão ter pagamento (só a última revisão de cada,
     // descontando o que já foi recebido de verdade) + QUITADOS — os que já fecharam 100%
-    const { pendentes, quitados } = _calcularSituacaoTodosApartamentos();
+    const { pendentes } = _calcularSituacaoTodosApartamentos();
     if (pendentes.length) {
       doc.addPage();
       y = 20;
@@ -6042,49 +6042,6 @@ async function gerarPDFRelatorioConta(contaKey) {
       doc.text('Total ainda a receber:', ml + 108, y, { align: 'right' });
       doc.setTextColor(...COR_DOURADO);
       doc.text(fmt(totalGeralFalta), W - mr - 2, y, { align: 'right' });
-    }
-
-    if (quitados.length) {
-      doc.addPage();
-      y = 20;
-      const COR_VERDE = [45, 106, 79];
-      doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
-      doc.text('Quitados', ml, y);
-      y += 8;
-      doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
-      doc.line(ml, y, W - mr, y);
-      y += 8;
-
-      doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_CINZA);
-      doc.text('APARTAMENTO', ml + 2, y);
-      doc.text('CLIENTE', ml + 30, y);
-      doc.text('VALOR TOTAL (R$)', ml + 130, y, { align: 'right' });
-      doc.text('SITUAÇÃO', W - mr - 2, y, { align: 'right' });
-      y += 2;
-      doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
-      y += 5;
-
-      let totalGeralQuitado = 0;
-      quitados.forEach(l => {
-        if (y > 280) { doc.addPage(); y = 20; }
-        doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
-        doc.text(String(l.ap), ml + 2, y);
-        const nomeCurto = doc.splitTextToSize(l.cliente, 90)[0];
-        doc.text(nomeCurto, ml + 30, y);
-        doc.text(fmt(l.total), ml + 130, y, { align: 'right' });
-        doc.setFont('helvetica','bold'); doc.setTextColor(...COR_VERDE);
-        doc.text('Quitado', W - mr - 2, y, { align: 'right' });
-        totalGeralQuitado += l.total;
-        y += 6;
-      });
-
-      y += 3;
-      doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
-      y += 6;
-      doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
-      doc.text('Total já quitado:', ml + 130, y, { align: 'right' });
-      doc.setTextColor(...COR_VERDE);
-      doc.text(fmt(totalGeralQuitado), W - mr - 2, y, { align: 'right' });
     }
 
     // RODAPÉ na última página
