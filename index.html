@@ -7906,6 +7906,15 @@ async function loadPagamentos(forcarFresco) {
     renderPagamentos(pers);
   } catch(e) {
     document.getElementById('pgto-lista').innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
+    return;
+  }
+  if (!forcarFresco) {
+    // Corrige sozinho em segundo plano, direto da planilha
+    lerDados(true).then(dados => {
+      if (dados && dados.personalizar) {
+        renderPagamentos(dados.personalizar.filter(p => p.arquivado !== 'true'));
+      }
+    }).catch(()=>{});
   }
 }
 
@@ -7918,6 +7927,14 @@ async function loadPagamentosArquivados(forcarFresco) {
     renderPagamentosArquivados(pers);
   } catch(e) {
     document.getElementById('pgto-lista-arq').innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
+    return;
+  }
+  if (!forcarFresco) {
+    lerDados(true).then(dados => {
+      if (dados && dados.personalizar) {
+        renderPagamentosArquivados(dados.personalizar.filter(p => p.arquivado === 'true'));
+      }
+    }).catch(()=>{});
   }
 }
 
@@ -9721,15 +9738,28 @@ async function salvarSelecao() {
 
 // ===================== PERSONALIZAR =====================
 async function loadPersonalizar() {
-  if (dadosPersonalizar.length) { renderPersonalizar(dadosPersonalizar); return; }
-  document.getElementById('personalizar-lista').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
-  try {
-    const dados = await lerDados();
-    dadosPersonalizar = dados.personalizar || [];
+  const contEl = document.getElementById('personalizar-lista');
+  if (dadosPersonalizar.length) {
     renderPersonalizar(dadosPersonalizar);
-  } catch(e) {
-    document.getElementById('personalizar-lista').innerHTML = `<div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div>`;
+  } else {
+    contEl.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+    try {
+      const dados = await lerDados();
+      dadosPersonalizar = dados.personalizar || [];
+      renderPersonalizar(dadosPersonalizar);
+    } catch(e) {
+      contEl.innerHTML = `<div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div>`;
+      return;
+    }
   }
+  // Corrige sozinho em segundo plano, direto da planilha — garante que nunca fica
+  // desatualizado por causa do cache do arquivo espelhado no GitHub
+  lerDados(true).then(dados => {
+    if (dados && dados.personalizar) {
+      dadosPersonalizar = dados.personalizar;
+      renderPersonalizar(dadosPersonalizar);
+    }
+  }).catch(()=>{});
 }
 function renderPersonalizar(d) {
   if (!d.length) { document.getElementById('personalizar-lista').innerHTML = '<div class="empty-state"><strong>Nenhuma personalização salva</strong><p>Use o botão "Inserir seus dados" na tela inicial</p></div>'; return; }
