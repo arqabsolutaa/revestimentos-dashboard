@@ -8903,24 +8903,30 @@ function renderVgPendencias(personalizacoes) {
 }
 
 async function loadEstoque() {
-  if (dadosRevestimentos.length) {
-    dadosEstoque = dadosRevestimentos;
+  function _aplicarEstoque(lista) {
+    dadosEstoque = lista;
+    dadosRevestimentos = lista;
     renderEstoque(dadosEstoque);
     if (document.getElementById('painel-ultimas-saidas')?.style.display !== 'none') renderUltimasSaidas();
     renderStatsEstoque(dadosEstoque);
     popularFiltroObra(dadosEstoque, 'filtro-estoque-obra');
-    return;
   }
-  document.getElementById('estoque-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
-  try {
-    const dados = await lerDados();
-    dadosEstoque = dados.revestimentos || [];
-    dadosRevestimentos = dadosEstoque;
-    renderEstoque(dadosEstoque);
-    if (document.getElementById('painel-ultimas-saidas')?.style.display !== 'none') renderUltimasSaidas();
-    renderStatsEstoque(dadosEstoque);
-    popularFiltroObra(dadosEstoque, 'filtro-estoque-obra');
-  } catch(e) { document.getElementById('estoque-tbody').innerHTML = `<tr><td colspan="8"><div class="empty-state"><strong>Erro ao carregar</strong><p>${e.message}</p></div></td></tr>`; }
+  if (dadosRevestimentos.length) {
+    _aplicarEstoque(dadosRevestimentos);
+  } else {
+    document.getElementById('estoque-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
+    try {
+      const dados = await lerDados();
+      _aplicarEstoque(dados.revestimentos || []);
+    } catch(e) {
+      document.getElementById('estoque-tbody').innerHTML = `<tr><td colspan="8"><div class="empty-state"><strong>Erro ao carregar</strong><p>${e.message}</p></div></td></tr>`;
+      return;
+    }
+  }
+  // Corrige sozinho em segundo plano, direto da planilha
+  lerDados(true).then(dados => {
+    if (dados && dados.revestimentos) _aplicarEstoque(dados.revestimentos);
+  }).catch(()=>{});
 }
 function renderStatsEstoque(d) {
   const total = d.reduce((a, r) => a + (parseFloat(r.estoque_m2) || 0), 0);
@@ -8982,14 +8988,29 @@ function popularFiltroObra(d, selectId) {
 
 // ===================== SAIDAS =====================
 async function loadSaidas() {
-  if (dadosSaidas.length) { renderSaidas(dadosSaidas); popularFiltroLocal(dadosSaidas); return; }
-  document.getElementById('saidas-tbody').innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
-  try {
-    const dados = await lerDados();
-    dadosSaidas = dados.saidas || [];
+  if (dadosSaidas.length) {
     renderSaidas(dadosSaidas);
     popularFiltroLocal(dadosSaidas);
-  } catch(e) { document.getElementById('saidas-tbody').innerHTML = `<tr><td colspan="7"><div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div></td></tr>`; }
+  } else {
+    document.getElementById('saidas-tbody').innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
+    try {
+      const dados = await lerDados();
+      dadosSaidas = dados.saidas || [];
+      renderSaidas(dadosSaidas);
+      popularFiltroLocal(dadosSaidas);
+    } catch(e) {
+      document.getElementById('saidas-tbody').innerHTML = `<tr><td colspan="7"><div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div></td></tr>`;
+      return;
+    }
+  }
+  // Corrige sozinho em segundo plano, direto da planilha
+  lerDados(true).then(dados => {
+    if (dados && dados.saidas) {
+      dadosSaidas = dados.saidas;
+      renderSaidas(dadosSaidas);
+      popularFiltroLocal(dadosSaidas);
+    }
+  }).catch(()=>{});
 }
 function renderSaidas(d) {
   if (!d.length) { document.getElementById('saidas-tbody').innerHTML = '<tr><td colspan="8"><div class="empty-state"><strong>Nenhuma saída registrada</strong></div></td></tr>'; return; }
