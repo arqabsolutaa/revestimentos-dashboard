@@ -5504,11 +5504,11 @@ function _tempoDecorrido(dataStr) {
   return anos === 1 ? '1 ano' : anos + ' anos';
 }
 
-async function loadVisaoGeralValores() {
+async function loadVisaoGeralValores(forcado) {
   if (!vgValoresDesbloqueado) return;
   try {
-    const usarCache = dadosPersonalizar.length && dadosRevestimentos.length;
-    const dados = usarCache ? {} : await lerDados();
+    const usarCache = !forcado && dadosPersonalizar.length && dadosRevestimentos.length;
+    const dados = usarCache ? {} : await lerDados(forcado);
     const personalizacoes = usarCache ? dadosPersonalizar : (dados.personalizar || []);
     const revestimentos = usarCache ? dadosRevestimentos : (dados.revestimentos || []);
 
@@ -5606,6 +5606,14 @@ async function loadVisaoGeralValores() {
         </tr>`).join('')}</tbody>
       </table></div>
     `;
+    if (usarCache) {
+      // Corrige sozinho em segundo plano, direto da planilha
+      lerDados(true).then(dadosFrescos => {
+        if (dadosFrescos.personalizar) dadosPersonalizar = dadosFrescos.personalizar;
+        if (dadosFrescos.revestimentos) dadosRevestimentos = dadosFrescos.revestimentos;
+        loadVisaoGeralValores(true);
+      }).catch(()=>{});
+    }
   } catch(e) {
     showToast('Erro ao carregar valores: ' + e.message, 'error');
   }
@@ -6105,11 +6113,10 @@ async function loadPrevisaoCobrancas() {
   const cont = document.getElementById('previsaocobrancas-lista');
   cont.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
   try {
-    if (!dadosEntradasPers.length || !dadosSaidasObra.length) {
-      const dados = await lerDados();
-      dadosEntradasPers = dados.entradasPersonalizacao || [];
-      dadosSaidasObra = dados.saidasObra || [];
-    }
+    // Tela financeira — sempre busca fresco, direto da planilha
+    const dados = await lerDados(true);
+    if (dados.entradasPersonalizacao) dadosEntradasPers = dados.entradasPersonalizacao;
+    if (dados.saidasObra) dadosSaidasObra = dados.saidasObra;
   } catch(e) {}
 
   const parcelas = _calcularParcelasFuturas();
@@ -8721,10 +8728,10 @@ async function exportarMateriaisExcel() {
 // ===================== VISÃO GERAL =====================
 let chartConclusao = null, chartAmbientes = null, chartStatus = null;
 
-async function loadVisaoGeral() {
+async function loadVisaoGeral(forcado) {
   try {
-    const usarCache = dadosParedes.length && dadosPersonalizar.length && dadosRevestimentos.length;
-    const dados = usarCache ? {} : await lerDados();
+    const usarCache = !forcado && dadosParedes.length && dadosPersonalizar.length && dadosRevestimentos.length;
+    const dados = usarCache ? {} : await lerDados(forcado);
     const personalizacoes = usarCache ? dadosPersonalizar : (dados.personalizar || []);
     const paredes = usarCache ? dadosParedes : (dados.paredes || []);
     const revestimentos = usarCache ? dadosRevestimentos : (dados.revestimentos || []);
@@ -8866,6 +8873,14 @@ async function loadVisaoGeral() {
       ['#E8E4DE','Não iniciados',naoIniciados,'('+Math.round(naoIniciados/Math.max(totalAps,1)*100)+'%)']
     ].map(([c,l,v,p]) => `<span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:${c};border:1px solid var(--border);flex-shrink:0"></span><span style="color:var(--text2);font-size:11px">${l} <strong style="color:var(--text)">${v}</strong> ${p}</span></span>`).join('');
 
+    if (usarCache) {
+      lerDados(true).then(dadosFrescos => {
+        if (dadosFrescos.personalizar) dadosPersonalizar = dadosFrescos.personalizar;
+        if (dadosFrescos.paredes) dadosParedes = dadosFrescos.paredes;
+        if (dadosFrescos.revestimentos) dadosRevestimentos = dadosFrescos.revestimentos;
+        loadVisaoGeral(true);
+      }).catch(()=>{});
+    }
   } catch(e) {
     showToast('Erro ao carregar visão geral: ' + e.message, 'error');
   }
@@ -9233,14 +9248,28 @@ async function excluirSaida(id) {
 
 // ===================== PAREDES =====================
 async function loadParedes() {
-  if (dadosParedes.length) { renderParedes(dadosParedes); popularFiltrosParedes(dadosParedes); return; }
-  document.getElementById('paredes-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
-  try {
-    const dados = await lerDados();
-    dadosParedes = dados.paredes || [];
+  if (dadosParedes.length) {
     renderParedes(dadosParedes);
     popularFiltrosParedes(dadosParedes);
-  } catch(e) { document.getElementById('paredes-tbody').innerHTML = `<tr><td colspan="8"><div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div></td></tr>`; }
+  } else {
+    document.getElementById('paredes-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
+    try {
+      const dados = await lerDados();
+      dadosParedes = dados.paredes || [];
+      renderParedes(dadosParedes);
+      popularFiltrosParedes(dadosParedes);
+    } catch(e) {
+      document.getElementById('paredes-tbody').innerHTML = `<tr><td colspan="8"><div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div></td></tr>`;
+      return;
+    }
+  }
+  lerDados(true).then(dados => {
+    if (dados && dados.paredes) {
+      dadosParedes = dados.paredes;
+      renderParedes(dadosParedes);
+      popularFiltrosParedes(dadosParedes);
+    }
+  }).catch(()=>{});
 }
 function renderParedes(d) {
   if (!d.length) { document.getElementById('paredes-tbody').innerHTML = '<tr><td colspan="8"><div class="empty-state"><strong>Nenhuma parede configurada</strong></div></td></tr>'; return; }
@@ -9303,13 +9332,26 @@ async function excluirParede(id) {
 
 // ===================== REVESTIMENTOS =====================
 async function loadRevestimentos() {
-  if (dadosRevestimentos.length) { renderRevestimentos(dadosRevestimentos); popularFiltroObra(dadosRevestimentos, 'filtro-obra'); return; }
-  document.getElementById('revestimentos-tbody').innerHTML = '<tr><td colspan="10"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
-  try {
-    const dados = await lerDados();
-    dadosRevestimentos = dados.revestimentos || [];
+  if (dadosRevestimentos.length) {
     renderRevestimentos(dadosRevestimentos);
-  } catch(e) { document.getElementById('revestimentos-tbody').innerHTML = `<tr><td colspan="10"><div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div></td></tr>`; }
+    popularFiltroObra(dadosRevestimentos, 'filtro-obra');
+  } else {
+    document.getElementById('revestimentos-tbody').innerHTML = '<tr><td colspan="10"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
+    try {
+      const dados = await lerDados();
+      dadosRevestimentos = dados.revestimentos || [];
+      renderRevestimentos(dadosRevestimentos);
+    } catch(e) {
+      document.getElementById('revestimentos-tbody').innerHTML = `<tr><td colspan="10"><div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div></td></tr>`;
+      return;
+    }
+  }
+  lerDados(true).then(dados => {
+    if (dados && dados.revestimentos) {
+      dadosRevestimentos = dados.revestimentos;
+      renderRevestimentos(dadosRevestimentos);
+    }
+  }).catch(()=>{});
 }
 function renderRevestimentos(d) {
   if (!d.length) { document.getElementById('revestimentos-tbody').innerHTML = '<tr><td colspan="10"><div class="empty-state"><strong>Nenhum revestimento cadastrado</strong></div></td></tr>'; return; }
@@ -9922,7 +9964,7 @@ async function confirmarSaidaPersonalizar(id) {
     await apiAction('confirmarSaida', idReal);
     showToast('Saída confirmada e estoque atualizado!', 'success');
     // Atualizar memória mantendo status confirmado
-    const dadosNovos = await lerDados();
+    const dadosNovos = await lerDados(true);
     if (dadosNovos.personalizar) dadosPersonalizar = dadosNovos.personalizar;
     if (dadosNovos.revestimentos) dadosRevestimentos = dadosNovos.revestimentos;
     // Garantir que o item aparece como confirmado mesmo se data.json ainda não atualizou
@@ -10012,7 +10054,7 @@ async function salvarRevExterno() {
     };
     dadosRevestimentos.push(revEmMemoria);
     // Recarregar dados mas preservar o novo revestimento se ainda não vier no data.json
-    const novos = await lerDados();
+    const novos = await lerDados(true);
     if (novos.revestimentos) {
       dadosRevestimentos = novos.revestimentos;
       // Se o novo ainda não veio no data.json, garante que está em memória
