@@ -9532,6 +9532,7 @@ function selecionarAp() {
   });
   let html = '';
   const localKeys = Object.keys(locais);
+  const chavesUsadas = new Set();
   for (let lidx = 0; lidx < localKeys.length; lidx++) {
     const local = localKeys[lidx];
     const paredes = locais[local];
@@ -9577,6 +9578,7 @@ function selecionarAp() {
       const pisoPre = selPreVal?.piso || '';
       // Registrar na calcSelecoes se já tem seleção
       if (selPreVal) { calcSelecoes[key] = { m2: parseFloat(m2), piso: pisoPre }; }
+      if (selPreKey) chavesUsadas.add(selPreKey);
       const opcoesRev = dadosRevestimentos.map(r => {
         const estoque = parseFloat(r.estoque_m2) || 0;
         const isExterno = (r.obs||'').toLowerCase().includes('externo');
@@ -9605,6 +9607,43 @@ function selecionarAp() {
       </div>`;
     });
     html += '</div></div></div></div>';
+  }
+  // Paredes adicionais/personalizadas (adicionadas com "+ Adicionar parede personalizada"),
+  // que não fazem parte da lista padrão da aba Paredes — precisam ser reconstruídas à parte
+  // na edição, senão desaparecem da tela mesmo continuando salvas e contando no total
+  if (window._selecoesParaRestaurar) {
+    const extras = Object.entries(window._selecoesParaRestaurar).filter(([k]) => !chavesUsadas.has(k));
+    if (extras.length) {
+      html += '<div style="margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">' +
+        '<div style="padding:10px 14px;background:var(--surface2)"><span style="font-size:13px;font-weight:600;color:var(--text)">Paredes adicionais</span></div>' +
+        '<div style="padding:12px;background:var(--surface)"><div class="wall-grid">';
+      extras.forEach(([key, val]) => {
+        const partes = key.split('-');
+        const nomeParede = partes[partes.length - 2] || 'Parede';
+        const m2 = parseFloat(val.m2) || 0;
+        calcSelecoes[key] = { m2, piso: val.piso };
+        const opcoesRevExtra = dadosRevestimentos.map(r => {
+          const selected = (String(r.id||r.codigo) === String(val.piso)) ? 'selected' : '';
+          return `<option value="${r.id||r.codigo}" ${selected}>${r.nome} [${r.tamanho||''}]</option>`;
+        }).join('');
+        html += `<div class="wall-item checked" id="wi-${key}" onclick="toggleWall('${key}', ${m2}, this)">
+          <div class="wall-check" id="wc-${key}">
+            <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="wall-info">
+            <p>${nomeParede}</p>
+            <span>${m2.toFixed(2)} m²</span>
+            <div class="floor-select-row" onclick="event.stopPropagation()">
+              <select class="form-control" id="fs-${key}" style="font-size:12px;padding:4px 8px;width:100%" onchange="atualizarResumo()">
+                <option value="">— Piso —</option>
+                ${opcoesRevExtra}
+              </select>
+            </div>
+          </div>
+        </div>`;
+      });
+      html += '</div></div></div>';
+    }
   }
   document.getElementById('calc-paredes-container').innerHTML = html;
   document.getElementById('calc-step2').style.display = 'block';
