@@ -4673,12 +4673,10 @@ async function forcarAtualizarDados() {
   const btn = document.getElementById('btn-atualizar');
   if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; btn.textContent = 'Atualizando...'; }
   try {
-    // Forçar Apps Script sincronizar com GitHub primeiro
-    try { await jsonp(SCRIPT_URL + '?action=forcarAtualizar'); } catch(e) {}
-    // Aguardar 1s para o GitHub processar
-    await new Promise(r => setTimeout(r, 1000));
-    // Buscar dados atualizados
-    const dados = await lerDados();
+    // Também aciona a sincronização pro GitHub (bom pra quem abrir depois), mas a leitura
+    // abaixo já vai direto na planilha ao vivo — não depende de esperar isso propagar
+    jsonp(SCRIPT_URL + '?action=forcarAtualizar').catch(()=>{});
+    const dados = await lerDados(true);
     if (dados.revestimentos) dadosRevestimentos = dados.revestimentos;
     if (dados.paredes) dadosParedes = dados.paredes;
     if (dados.saidas) dadosSaidas = dados.saidas;
@@ -4856,6 +4854,22 @@ window.onload = async () => {
     if (dados.instalacoes) dadosInstalacoes = dados.instalacoes;
     if (dados.lotes) dadosLotes = dados.lotes;
   } catch(e) {}
+  // Corrige tudo isso sozinho em segundo plano, direto da planilha (sem esperar) — garante
+  // que nenhuma tela comece com dados desatualizados por causa do cache do data.json
+  lerDados(true).then(dados => {
+    if (dados.revestimentos) dadosRevestimentos = dados.revestimentos;
+    if (dados.paredes) dadosParedes = dados.paredes;
+    if (dados.saidas) dadosSaidas = dados.saidas;
+    if (dados.personalizar) dadosPersonalizar = dados.personalizar;
+    if (dados.orcamentos) dadosOrcamentos = dados.orcamentos;
+    if (dados.instalacoes) dadosInstalacoes = dados.instalacoes;
+    if (dados.lotes) dadosLotes = dados.lotes;
+    // Se a tela atual já estiver mostrando alguma dessas listas, re-renderiza com o dado certo
+    const telaAtual = document.querySelector('.screen[style*="display: block"], .screen.active')?.id;
+    if (telaAtual === 'personalizar-screen' && typeof renderPersonalizar === 'function') renderPersonalizar(dadosPersonalizar);
+    if (telaAtual === 'estoque-screen' && typeof renderEstoque === 'function') { dadosEstoque = dadosRevestimentos; renderEstoque(dadosEstoque); }
+    if (telaAtual === 'saidas-screen' && typeof renderSaidas === 'function') renderSaidas(dadosSaidas);
+  }).catch(()=>{});
 };
 
 // ===================== NAVEGAÇÃO =====================
