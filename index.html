@@ -228,6 +228,8 @@ async function salvarVinilico() {
 // ===================== MARMORARIA =====================
 let dadosMarmoraria = [], dadosBancadas = [], marmSelecoes = [], marmApAtual = '';
 let dadosMetais = [], metaisItens = [], metaisApAtual = '', metaisPdfOriginalUrl = '';
+let dadosCivil = [], dadosArCondicionado = [], arCondicionadoValorPonto = 0;
+let _editandoCivilId = null, _editandoACId = null;
 let dadosMarmCatalogo = [];
 
 async function loadMarmoraria() {
@@ -2056,6 +2058,14 @@ body.mobile-mode #main{padding-bottom:72px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6 7 17l-5-5"/><path d="M22 10 12 20l-2-2"/></svg>
       Metais
     </button>
+    <button class="nav-btn" onclick="showScreen('civil')" id="nav-civil">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l8-4 8 4v14M9 9h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1"/></svg>
+      Civil
+    </button>
+    <button class="nav-btn" onclick="showScreen('arcondicionado')" id="nav-arcondicionado">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="8" rx="2"/><path d="M6 17v2M10 17v2M14 17v2M18 17v2"/></svg>
+      Ar-Condicionado
+    </button>
     </div>
     <div id="nav-group-controle" style="display:none">
     <button class="nav-btn active" onclick="showScreen('visaogeralvalores')" id="nav-visaogeralvalores">
@@ -2681,6 +2691,46 @@ body.mobile-mode #main{padding-bottom:72px}
   </div>
   <div class="page-content">
     <div id="metais-lista" style="display:flex;flex-direction:column;gap:12px">
+      <div class="empty-state"><strong>Carregando...</strong></div>
+    </div>
+  </div>
+</div>
+
+<div id="civil-screen" class="screen" style="display:none">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Civil</h1>
+      <p>Orçamentos de serviços de obra civil por apartamento</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="abrirModalCivil()">+ Novo Orçamento</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div id="civil-lista" style="display:flex;flex-direction:column;gap:12px">
+      <div class="empty-state"><strong>Carregando...</strong></div>
+    </div>
+  </div>
+</div>
+
+<div id="arcondicionado-screen" class="screen" style="display:none">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Ar-Condicionado</h1>
+      <p>Orçamentos de pontos adicionais de ar-condicionado por apartamento</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="abrirModalArCondicionado()">+ Novo Ponto Adicional</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="card" style="padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <label class="form-label" style="margin:0">Valor do ponto adicional (R$)</label>
+      <input type="number" step="0.01" class="form-control" id="ac-valor-ponto-input" style="width:140px" placeholder="0,00">
+      <button class="btn btn-secondary" style="font-size:12px" onclick="salvarValorPontoAC()">Salvar valor</button>
+      <span id="ac-valor-ponto-status" style="font-size:12px;color:var(--text3)"></span>
+    </div>
+    <div id="arcondicionado-lista" style="display:flex;flex-direction:column;gap:12px">
       <div class="empty-state"><strong>Carregando...</strong></div>
     </div>
   </div>
@@ -3402,6 +3452,169 @@ body.mobile-mode #main{padding-bottom:72px}
 </div>
 
 <!-- MODAL METAIS -->
+<div id="modal-civil" class="modal-overlay">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h2 id="modal-civil-titulo">Novo Orçamento — Civil</h2>
+      <button class="modal-close" onclick="fecharModal('modal-civil')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Apartamento</label>
+        <select class="form-control" id="civil-apto" onchange="preencherClienteCivil()">
+          <option value="">— Selecione o apartamento —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cliente</label>
+        <input class="form-control" id="civil-cliente" placeholder="Nome do cliente">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Serviço</label>
+        <textarea class="form-control" id="civil-servico" rows="3" placeholder="Descreva o serviço de obra civil a ser executado"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Valor (R$)</label>
+        <input type="number" step="0.01" class="form-control" id="civil-valor" placeholder="0,00" oninput="atualizarCalculoJurosCivil()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Forma de pagamento</label>
+        <select class="form-control" id="civil-condicao" onchange="atualizarCalculoJurosCivil()">
+          <option value="avista">À Vista</option>
+          <option value="pix">PIX</option>
+          <option value="pixparc2">PIX Parcelado 2x</option>
+          <option value="pixparc3">PIX Parcelado 3x</option>
+          <option value="pixparc4">PIX Parcelado 4x</option>
+          <option value="pixparc5">PIX Parcelado 5x</option>
+          <option value="pixparc6">PIX Parcelado 6x</option>
+          <option value="pixparc7">PIX Parcelado 7x</option>
+          <option value="pixparc8">PIX Parcelado 8x</option>
+          <option value="pixparc9">PIX Parcelado 9x</option>
+          <option value="pixparc10">PIX Parcelado 10x</option>
+          <option value="pixparc11">PIX Parcelado 11x</option>
+          <option value="pixparc12">PIX Parcelado 12x</option>
+          <option value="debito">Cartão Débito (+0,75%)</option>
+          <option value="boleto1">Boleto à Vista</option>
+          <option value="boleto2">Boleto 2x</option>
+          <option value="boleto3">Boleto 3x</option>
+          <option value="boleto4">Boleto 4x</option>
+          <option value="boleto5">Boleto 5x</option>
+          <option value="boleto6">Boleto 6x</option>
+          <option value="boleto7">Boleto 7x</option>
+          <option value="boleto8">Boleto 8x</option>
+          <option value="boleto9">Boleto 9x</option>
+          <option value="boleto10">Boleto 10x</option>
+          <option value="boleto11">Boleto 11x</option>
+          <option value="boleto12">Boleto 12x</option>
+          <option value="credito1">Crédito à Vista (+2,69%)</option>
+          <option value="credito2">Crédito 2x (+3,94%)</option>
+          <option value="credito3">Crédito 3x (+4,46%)</option>
+          <option value="credito4">Crédito 4x (+4,98%)</option>
+          <option value="credito5">Crédito 5x (+5,49%)</option>
+          <option value="credito6">Crédito 6x (+5,99%)</option>
+          <option value="credito7">Crédito 7x (+6,51%)</option>
+          <option value="credito8">Crédito 8x (+6,99%)</option>
+          <option value="credito9">Crédito 9x (+7,51%)</option>
+          <option value="credito10">Crédito 10x (+7,99%)</option>
+          <option value="credito11">Crédito 11x (+8,49%)</option>
+          <option value="credito12">Crédito 12x (+8,99%)</option>
+        </select>
+      </div>
+      <div id="civil-juros-resumo" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:12px"></div>
+      <div class="form-group">
+        <label class="form-label">Observação (opcional)</label>
+        <input class="form-control" id="civil-obs" placeholder="Observações">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-civil')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarCivil()">Salvar Orçamento</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-arcondicionado" class="modal-overlay">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h2 id="modal-ac-titulo">Novo Ponto Adicional — Ar-Condicionado</h2>
+      <button class="modal-close" onclick="fecharModal('modal-arcondicionado')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Apartamento</label>
+        <select class="form-control" id="ac-apto" onchange="preencherClienteAC()">
+          <option value="">— Selecione o apartamento —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cliente</label>
+        <input class="form-control" id="ac-cliente" placeholder="Nome do cliente">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quantidade de pontos adicionais</label>
+        <input type="number" min="1" step="1" class="form-control" id="ac-qtd-pontos" placeholder="1" oninput="atualizarCalculoJurosAC()">
+        <p style="font-size:11px;color:var(--text3);margin-top:4px">Valor por ponto: <strong id="ac-valor-ponto-exibicao">R$ 0,00</strong> (configurável no topo da tela)</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Valor total (R$)</label>
+        <input type="number" step="0.01" class="form-control" id="ac-valor" placeholder="0,00" readonly style="background:var(--surface2)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Forma de pagamento</label>
+        <select class="form-control" id="ac-condicao" onchange="atualizarCalculoJurosAC()">
+          <option value="avista">À Vista</option>
+          <option value="pix">PIX</option>
+          <option value="pixparc2">PIX Parcelado 2x</option>
+          <option value="pixparc3">PIX Parcelado 3x</option>
+          <option value="pixparc4">PIX Parcelado 4x</option>
+          <option value="pixparc5">PIX Parcelado 5x</option>
+          <option value="pixparc6">PIX Parcelado 6x</option>
+          <option value="pixparc7">PIX Parcelado 7x</option>
+          <option value="pixparc8">PIX Parcelado 8x</option>
+          <option value="pixparc9">PIX Parcelado 9x</option>
+          <option value="pixparc10">PIX Parcelado 10x</option>
+          <option value="pixparc11">PIX Parcelado 11x</option>
+          <option value="pixparc12">PIX Parcelado 12x</option>
+          <option value="debito">Cartão Débito (+0,75%)</option>
+          <option value="boleto1">Boleto à Vista</option>
+          <option value="boleto2">Boleto 2x</option>
+          <option value="boleto3">Boleto 3x</option>
+          <option value="boleto4">Boleto 4x</option>
+          <option value="boleto5">Boleto 5x</option>
+          <option value="boleto6">Boleto 6x</option>
+          <option value="boleto7">Boleto 7x</option>
+          <option value="boleto8">Boleto 8x</option>
+          <option value="boleto9">Boleto 9x</option>
+          <option value="boleto10">Boleto 10x</option>
+          <option value="boleto11">Boleto 11x</option>
+          <option value="boleto12">Boleto 12x</option>
+          <option value="credito1">Crédito à Vista (+2,69%)</option>
+          <option value="credito2">Crédito 2x (+3,94%)</option>
+          <option value="credito3">Crédito 3x (+4,46%)</option>
+          <option value="credito4">Crédito 4x (+4,98%)</option>
+          <option value="credito5">Crédito 5x (+5,49%)</option>
+          <option value="credito6">Crédito 6x (+5,99%)</option>
+          <option value="credito7">Crédito 7x (+6,51%)</option>
+          <option value="credito8">Crédito 8x (+6,99%)</option>
+          <option value="credito9">Crédito 9x (+7,51%)</option>
+          <option value="credito10">Crédito 10x (+7,99%)</option>
+          <option value="credito11">Crédito 11x (+8,49%)</option>
+          <option value="credito12">Crédito 12x (+8,99%)</option>
+        </select>
+      </div>
+      <div id="ac-juros-resumo" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:12px"></div>
+      <div class="form-group">
+        <label class="form-label">Observação (opcional)</label>
+        <input class="form-control" id="ac-obs" placeholder="Observações">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-arcondicionado')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarArCondicionado()">Salvar Orçamento</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-metais" class="modal-overlay">
   <div class="modal">
     <div class="modal-header">
@@ -4900,6 +5113,8 @@ function showScreen(name) {
   if (name === 'marmoraria') loadMarmoraria();
   if (name === 'banheiras') loadBanheiras();
   if (name === 'metais') loadMetais();
+  if (name === 'civil') loadCivil();
+  if (name === 'arcondicionado') loadArCondicionado();
   if (name === 'vagasdep') { if (!vagasDepDesbloqueado) { document.getElementById('vagasdep-lock').style.display = 'flex'; document.getElementById('vagasdep-conteudo').style.display = 'none'; } else loadVagasDep(); }
   if (name === 'margemlucro') { if (!margemLucroDesbloqueado) { document.getElementById('margemlucro-lock').style.display = 'flex'; document.getElementById('margemlucro-conteudo').style.display = 'none'; } else { document.getElementById('margemlucro-lock').style.display = 'none'; document.getElementById('margemlucro-conteudo').style.display = 'block'; loadMargemLucro(); } }
   if (name === 'custopersonalizacoes') { if (!custoPersDesbloqueado) { document.getElementById('custopers-lock').style.display = 'flex'; document.getElementById('custopers-conteudo').style.display = 'none'; } else { document.getElementById('custopers-lock').style.display = 'none'; document.getElementById('custopers-conteudo').style.display = 'block'; loadCustoPersonalizacoes(true); } }
@@ -10807,6 +11022,335 @@ async function excluirMetais(id) {
     invalidarCacheExtra('metais');
     loadMetais();
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+// ===================== CIVIL =====================
+async function loadCivil() {
+  const el = document.getElementById('civil-lista');
+  if (dadosCivil.length) {
+    renderCivil();
+  } else {
+    el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+    try {
+      const dados = await lerDados();
+      dadosCivil = dados.civil || [];
+      renderCivil();
+    } catch(e) {
+      el.innerHTML = `<div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div>`;
+      return;
+    }
+  }
+  lerDados(true).then(dados => {
+    if (dados && dados.civil) { dadosCivil = dados.civil; renderCivil(); }
+  }).catch(()=>{});
+}
+
+function renderCivil() {
+  const el = document.getElementById('civil-lista');
+  const ativos = dadosCivil.filter(c => String(c.arquivado||'').toLowerCase() !== 'true');
+  if (!ativos.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de civil ainda</strong></div>'; return; }
+  el.innerHTML = ativos.slice().reverse().map(c => {
+    const status = c.status_pgto || 'pendente';
+    const valor = parseFloat(c.valor) || 0;
+    return `<div class="card" style="padding:14px 16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div>
+          <strong style="font-size:14px">Apto ${c.ap||'—'} — ${c.cliente||'—'}</strong>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">${c.servico||''}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${c.criado_em||''}${c.condicao_pagamento ? ' · ' + _labelCondicaoPagamento(c.condicao_pagamento) : ''}</div>
+        </div>
+        <strong style="font-size:16px;color:var(--accent2)">${_fmtR$(valor)}</strong>
+      </div>
+      <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;gap:6px">
+          <button class="status-pgto-badge ${status==='pendente'?'status-pendente':''}" onclick="alterarStatusCivil('${c.id}','pendente')" style="${status==='pendente'?'':'opacity:0.4'}">Pendente</button>
+          <button class="status-pgto-badge status-parcial" onclick="alterarStatusCivil('${c.id}','parcial')" style="${status==='parcial'?'':'opacity:0.4'}">Parcial</button>
+          <button class="status-pgto-badge status-pago" onclick="alterarStatusCivil('${c.id}','pago')" style="${status==='pago'?'':'opacity:0.4'}">Pago</button>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="gerarPDFCivil('${c.id}')">📄 PDF</button>
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirCivil('${c.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function abrirModalCivil() {
+  _editandoCivilId = null;
+  document.getElementById('modal-civil-titulo').textContent = 'Novo Orçamento — Civil';
+  ['civil-cliente','civil-servico','civil-valor','civil-obs'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('civil-condicao').value = 'avista';
+  document.getElementById('civil-juros-resumo').style.display = 'none';
+  const sel = document.getElementById('civil-apto');
+  sel.innerHTML = '<option value="">— Selecione o apartamento —</option>' +
+    _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('');
+  sel.value = '';
+  abrirModal('modal-civil');
+}
+
+function preencherClienteCivil() {
+  const ap = document.getElementById('civil-apto').value;
+  const item = _apartamentosConhecidos().find(a => String(a.ap) === String(ap));
+  if (item && item.cliente) document.getElementById('civil-cliente').value = item.cliente;
+}
+
+function atualizarCalculoJurosCivil() {
+  const valorAvista = parseFloat(document.getElementById('civil-valor').value) || 0;
+  const condicao = document.getElementById('civil-condicao').value;
+  const resumo = document.getElementById('civil-juros-resumo');
+  if (!valorAvista) { resumo.style.display = 'none'; return; }
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const { total, juros } = calcularTotalComPagamento(valorAvista, condicao);
+  resumo.style.display = 'block';
+  resumo.innerHTML = juros > 0.005
+    ? `Valor: <strong>${fmt(total)}</strong> · <span style="color:var(--warn)">acréscimo ${fmt(juros)}</span>`
+    : `Valor: <strong>${fmt(total)}</strong> · sem acréscimo`;
+}
+
+async function salvarCivil() {
+  const ap = document.getElementById('civil-apto').value;
+  const cliente = document.getElementById('civil-cliente').value.trim();
+  const servico = document.getElementById('civil-servico').value.trim();
+  const valorAvista = parseFloat(document.getElementById('civil-valor').value) || 0;
+  const condicao = document.getElementById('civil-condicao').value;
+  const obs = document.getElementById('civil-obs').value.trim();
+  if (!ap || !servico || !valorAvista) { showToast('Preencha apartamento, serviço e valor', 'error'); return; }
+  const { total, juros } = calcularTotalComPagamento(valorAvista, condicao);
+  const dados = { ap, cliente, servico, valor: total, valor_avista: valorAvista, condicao_pagamento: condicao, valor_juros: juros, obs };
+  try {
+    if (_editandoCivilId) {
+      await apiPost('updateCivilOrcamento', { id: _editandoCivilId, ...dados });
+      const idx = dadosCivil.findIndex(c => c.id === _editandoCivilId);
+      if (idx >= 0) dadosCivil[idx] = { ...dadosCivil[idx], ...dados };
+      showToast('Orçamento atualizado!', 'success');
+    } else {
+      const resultado = await apiPost('addCivilOrcamento', dados);
+      dadosCivil.push({ id: resultado.id, ...dados, status_pgto: 'pendente', criado_em: new Date().toLocaleDateString('pt-BR') });
+      showToast('Orçamento salvo!', 'success');
+    }
+    renderCivil();
+    fecharModal('modal-civil');
+    loadCivil();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function alterarStatusCivil(id, status) {
+  try {
+    await apiPost('updateCivilOrcamento', { id, status_pgto: status });
+    const idx = dadosCivil.findIndex(c => c.id === id);
+    if (idx >= 0) dadosCivil[idx].status_pgto = status;
+    renderCivil();
+    showToast('Status atualizado!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function excluirCivil(id) {
+  if (!confirm('Excluir este orçamento de civil?')) return;
+  try {
+    await apiAction('deleteCivilOrcamento', id);
+    dadosCivil = dadosCivil.filter(c => c.id !== id);
+    renderCivil();
+    showToast('Excluído!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function gerarPDFCivil(id) {
+  const c = dadosCivil.find(x => x.id === id);
+  if (!c) return;
+  showToast('Gerando PDF...', 'success');
+  try {
+    const JsPDFClass = getJsPDF();
+    const doc = new JsPDFClass();
+    _pdfCapa(doc, null, 'ORÇAMENTO — CIVIL');
+    let y = 60;
+    doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,40);
+    doc.text('Orçamento de Serviço Civil', 14, y);
+    y += 10;
+    doc.setFontSize(11); doc.setFont('helvetica','normal');
+    doc.text('Apartamento: ' + (c.ap||'—'), 14, y); y += 7;
+    doc.text('Cliente: ' + (c.cliente||'—'), 14, y); y += 7;
+    doc.text('Data: ' + (c.criado_em||''), 14, y); y += 10;
+    doc.setFont('helvetica','bold'); doc.text('Serviço:', 14, y); y += 6;
+    doc.setFont('helvetica','normal');
+    const linhasServico = doc.splitTextToSize(c.servico||'', 180);
+    doc.text(linhasServico, 14, y); y += linhasServico.length * 6 + 8;
+    doc.setFont('helvetica','bold');
+    doc.text('Forma de pagamento: ' + _labelCondicaoPagamento(c.condicao_pagamento), 14, y); y += 8;
+    doc.setFontSize(15);
+    doc.text('Valor total: ' + _fmtR$(parseFloat(c.valor)||0), 14, y);
+    doc.save('Civil-Apto' + (c.ap||'') + '-Orcamento.pdf');
+    showToast('PDF gerado!', 'success');
+  } catch(e) { showToast('Erro ao gerar PDF: ' + e.message, 'error'); }
+}
+
+// ===================== AR-CONDICIONADO =====================
+async function loadArCondicionado() {
+  const el = document.getElementById('arcondicionado-lista');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  try {
+    const dados = await lerDados(true);
+    dadosArCondicionado = dados.arCondicionado || [];
+    const config = dados.arCondicionadoConfig || [];
+    const linhaValor = config.find(c => c.chave === 'valor_ponto_adicional');
+    arCondicionadoValorPonto = linhaValor ? parseFloat(linhaValor.valor)||0 : 0;
+    document.getElementById('ac-valor-ponto-input').value = arCondicionadoValorPonto || '';
+    renderArCondicionado();
+  } catch(e) {
+    el.innerHTML = `<div class="empty-state"><strong>Erro</strong><p>${e.message}</p></div>`;
+  }
+}
+
+async function salvarValorPontoAC() {
+  const valor = parseFloat(document.getElementById('ac-valor-ponto-input').value) || 0;
+  try {
+    await apiPost('setArCondicionadoValorPonto', { valor });
+    arCondicionadoValorPonto = valor;
+    document.getElementById('ac-valor-ponto-status').textContent = 'Salvo!';
+    setTimeout(() => { document.getElementById('ac-valor-ponto-status').textContent = ''; }, 2000);
+    showToast('Valor do ponto adicional atualizado!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+function renderArCondicionado() {
+  const el = document.getElementById('arcondicionado-lista');
+  const ativos = dadosArCondicionado.filter(c => String(c.arquivado||'').toLowerCase() !== 'true');
+  if (!ativos.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de ar-condicionado ainda</strong></div>'; return; }
+  el.innerHTML = ativos.slice().reverse().map(c => {
+    const status = c.status_pgto || 'pendente';
+    const valor = parseFloat(c.valor) || 0;
+    return `<div class="card" style="padding:14px 16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div>
+          <strong style="font-size:14px">Apto ${c.ap||'—'} — ${c.cliente||'—'}</strong>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">${c.qtd_pontos||0} ponto(s) adicional(is) · ${_fmtR$(parseFloat(c.valor_unitario)||0)}/ponto</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${c.criado_em||''}${c.condicao_pagamento ? ' · ' + _labelCondicaoPagamento(c.condicao_pagamento) : ''}</div>
+        </div>
+        <strong style="font-size:16px;color:var(--accent2)">${_fmtR$(valor)}</strong>
+      </div>
+      <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;gap:6px">
+          <button class="status-pgto-badge ${status==='pendente'?'status-pendente':''}" onclick="alterarStatusAC('${c.id}','pendente')" style="${status==='pendente'?'':'opacity:0.4'}">Pendente</button>
+          <button class="status-pgto-badge status-parcial" onclick="alterarStatusAC('${c.id}','parcial')" style="${status==='parcial'?'':'opacity:0.4'}">Parcial</button>
+          <button class="status-pgto-badge status-pago" onclick="alterarStatusAC('${c.id}','pago')" style="${status==='pago'?'':'opacity:0.4'}">Pago</button>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="gerarPDFAC('${c.id}')">📄 PDF</button>
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirAC('${c.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function abrirModalArCondicionado() {
+  if (!arCondicionadoValorPonto) { showToast('Defina o valor do ponto adicional antes de criar um orçamento', 'error'); return; }
+  _editandoACId = null;
+  document.getElementById('modal-ac-titulo').textContent = 'Novo Ponto Adicional — Ar-Condicionado';
+  ['ac-cliente','ac-qtd-pontos','ac-valor','ac-obs'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('ac-condicao').value = 'avista';
+  document.getElementById('ac-juros-resumo').style.display = 'none';
+  document.getElementById('ac-valor-ponto-exibicao').textContent = _fmtR$(arCondicionadoValorPonto);
+  const sel = document.getElementById('ac-apto');
+  sel.innerHTML = '<option value="">— Selecione o apartamento —</option>' +
+    _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('');
+  sel.value = '';
+  abrirModal('modal-arcondicionado');
+}
+
+function preencherClienteAC() {
+  const ap = document.getElementById('ac-apto').value;
+  const item = _apartamentosConhecidos().find(a => String(a.ap) === String(ap));
+  if (item && item.cliente) document.getElementById('ac-cliente').value = item.cliente;
+}
+
+function atualizarCalculoJurosAC() {
+  const qtd = parseInt(document.getElementById('ac-qtd-pontos').value) || 0;
+  const valorAvista = qtd * arCondicionadoValorPonto;
+  document.getElementById('ac-valor').value = valorAvista ? valorAvista.toFixed(2) : '';
+  const condicao = document.getElementById('ac-condicao').value;
+  const resumo = document.getElementById('ac-juros-resumo');
+  if (!valorAvista) { resumo.style.display = 'none'; return; }
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const { total, juros } = calcularTotalComPagamento(valorAvista, condicao);
+  resumo.style.display = 'block';
+  resumo.innerHTML = juros > 0.005
+    ? `Valor: <strong>${fmt(total)}</strong> · <span style="color:var(--warn)">acréscimo ${fmt(juros)}</span>`
+    : `Valor: <strong>${fmt(total)}</strong> · sem acréscimo`;
+}
+
+async function salvarArCondicionado() {
+  const ap = document.getElementById('ac-apto').value;
+  const cliente = document.getElementById('ac-cliente').value.trim();
+  const qtd = parseInt(document.getElementById('ac-qtd-pontos').value) || 0;
+  const condicao = document.getElementById('ac-condicao').value;
+  const obs = document.getElementById('ac-obs').value.trim();
+  if (!ap || !qtd) { showToast('Preencha apartamento e quantidade de pontos', 'error'); return; }
+  const valorAvista = qtd * arCondicionadoValorPonto;
+  const { total, juros } = calcularTotalComPagamento(valorAvista, condicao);
+  const dados = { ap, cliente, qtd_pontos: qtd, valor_unitario: arCondicionadoValorPonto, valor: total, valor_avista: valorAvista, condicao_pagamento: condicao, valor_juros: juros, obs };
+  try {
+    if (_editandoACId) {
+      await apiPost('updateArCondicionadoOrcamento', { id: _editandoACId, ...dados });
+      const idx = dadosArCondicionado.findIndex(c => c.id === _editandoACId);
+      if (idx >= 0) dadosArCondicionado[idx] = { ...dadosArCondicionado[idx], ...dados };
+      showToast('Orçamento atualizado!', 'success');
+    } else {
+      const resultado = await apiPost('addArCondicionadoOrcamento', dados);
+      dadosArCondicionado.push({ id: resultado.id, ...dados, status_pgto: 'pendente', criado_em: new Date().toLocaleDateString('pt-BR') });
+      showToast('Orçamento salvo!', 'success');
+    }
+    renderArCondicionado();
+    fecharModal('modal-arcondicionado');
+    loadArCondicionado();
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function alterarStatusAC(id, status) {
+  try {
+    await apiPost('updateArCondicionadoOrcamento', { id, status_pgto: status });
+    const idx = dadosArCondicionado.findIndex(c => c.id === id);
+    if (idx >= 0) dadosArCondicionado[idx].status_pgto = status;
+    renderArCondicionado();
+    showToast('Status atualizado!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function excluirAC(id) {
+  if (!confirm('Excluir este orçamento de ar-condicionado?')) return;
+  try {
+    await apiAction('deleteArCondicionadoOrcamento', id);
+    dadosArCondicionado = dadosArCondicionado.filter(c => c.id !== id);
+    renderArCondicionado();
+    showToast('Excluído!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+async function gerarPDFAC(id) {
+  const c = dadosArCondicionado.find(x => x.id === id);
+  if (!c) return;
+  showToast('Gerando PDF...', 'success');
+  try {
+    const JsPDFClass = getJsPDF();
+    const doc = new JsPDFClass();
+    _pdfCapa(doc, null, 'ORÇAMENTO — AR-CONDICIONADO');
+    let y = 60;
+    doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,40);
+    doc.text('Orçamento de Ponto Adicional de Ar-Condicionado', 14, y);
+    y += 10;
+    doc.setFontSize(11); doc.setFont('helvetica','normal');
+    doc.text('Apartamento: ' + (c.ap||'—'), 14, y); y += 7;
+    doc.text('Cliente: ' + (c.cliente||'—'), 14, y); y += 7;
+    doc.text('Data: ' + (c.criado_em||''), 14, y); y += 10;
+    doc.text('Quantidade de pontos adicionais: ' + (c.qtd_pontos||0), 14, y); y += 7;
+    doc.text('Valor por ponto: ' + _fmtR$(parseFloat(c.valor_unitario)||0), 14, y); y += 10;
+    doc.setFont('helvetica','bold');
+    doc.text('Forma de pagamento: ' + _labelCondicaoPagamento(c.condicao_pagamento), 14, y); y += 8;
+    doc.setFontSize(15);
+    doc.text('Valor total: ' + _fmtR$(parseFloat(c.valor)||0), 14, y);
+    doc.save('ArCondicionado-Apto' + (c.ap||'') + '-Orcamento.pdf');
+    showToast('PDF gerado!', 'success');
+  } catch(e) { showToast('Erro ao gerar PDF: ' + e.message, 'error'); }
 }
 </script>
 
