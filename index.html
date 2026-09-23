@@ -8605,11 +8605,14 @@ function _materiaisAgrupados() {
     const linhas = Object.entries(sel).map(([chave, v]) => {
       const { ambiente, item } = _quebrarChaveSelecao(chave, ap);
       const rev = dadosRevestimentos.find(r => String(r.id) === String(v.piso) || String(r.codigo) === String(v.piso));
+      const m2 = parseFloat(v.m2)||0;
+      const m2PorCaixa = rev ? parseFloat(rev.m2_por_caixa) : 0;
       return {
         ambiente, item,
         material: rev ? rev.nome : (v.piso ? '(revestimento não encontrado: ' + v.piso + ')' : '—'),
         tamanho: rev ? rev.tamanho : '',
-        m2: parseFloat(v.m2)||0
+        m2,
+        caixas: m2PorCaixa > 0 ? Math.ceil(m2 / m2PorCaixa) : null
       };
     }).sort((a,b) => a.ambiente.localeCompare(b.ambiente) || a.item.localeCompare(b.item));
     const totalM2 = linhas.reduce((s,l) => s + l.m2, 0);
@@ -8650,7 +8653,7 @@ function _abrirModalMaterialApto(id) {
       <div style="padding:8px 0;border-bottom:1px solid var(--border)">
         <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:2px">
           <span>${l.ambiente} · ${l.item}</span>
-          <span style="font-weight:600;color:var(--text)">${l.m2.toFixed(2)} m²</span>
+          <span style="font-weight:600;color:var(--text)">${l.m2.toFixed(2)} m²${l.caixas != null ? ' · ' + l.caixas + ' cx' : ''}</span>
         </div>
         <div style="font-size:13px">${l.material}${l.tamanho ? ' <span style="color:var(--text2)">('+l.tamanho+')</span>' : ''}</div>
       </div>
@@ -8681,13 +8684,13 @@ async function exportarMaterialApto(id) {
     });
   }
 
-  const linhas = [['Apartamento','Cliente','Ambiente','Item','Material','Tamanho','m²']];
-  g.linhas.forEach(l => linhas.push([g.ap, g.cliente, l.ambiente, l.item, l.material, l.tamanho, Number(l.m2.toFixed(2))]));
-  linhas.push([g.ap, g.cliente, '', '', 'TOTAL DO APARTAMENTO', '', Number(g.totalM2.toFixed(2))]);
+  const linhas = [['Apartamento','Cliente','Ambiente','Item','Material','Tamanho','m²','Caixas']];
+  g.linhas.forEach(l => linhas.push([g.ap, g.cliente, l.ambiente, l.item, l.material, l.tamanho, Number(l.m2.toFixed(2)), l.caixas != null ? l.caixas : '']));
+  linhas.push([g.ap, g.cliente, '', '', 'TOTAL DO APARTAMENTO', '', Number(g.totalM2.toFixed(2)), '']);
 
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(linhas);
-  ws['!cols'] = [{wch:12},{wch:24},{wch:22},{wch:16},{wch:32},{wch:14},{wch:10}];
+  ws['!cols'] = [{wch:12},{wch:24},{wch:22},{wch:16},{wch:32},{wch:14},{wch:10},{wch:9}];
   XLSX.utils.book_append_sheet(wb, ws, 'Apto ' + (g.ap || ''));
   XLSX.writeFile(wb, 'Essence-Apto-' + (g.ap || 'sn') + '-Materiais.xlsx');
 }
@@ -8750,7 +8753,8 @@ function _desenharMateriaisPDF(doc, grupos) {
         const desc = '• ' + (l.item ? l.item + ' — ' : '') + l.material + (l.tamanho ? ' (' + l.tamanho + ')' : '');
         doc.text(desc, ml + 6, y);
         doc.setTextColor(...COR_CINZA);
-        doc.text(fmt(l.m2), W - mr - 2, y, { align: 'right' });
+        const caixasTxt = l.caixas != null ? ' · ' + l.caixas + ' cx' : '';
+        doc.text(fmt(l.m2) + caixasTxt, W - mr - 2, y, { align: 'right' });
         y += 5.5;
       });
       y += 2;
@@ -8809,18 +8813,18 @@ async function exportarMateriaisExcel() {
     });
   }
 
-  const linhas = [['Apartamento','Cliente','Ambiente','Item','Material','Tamanho','m²']];
+  const linhas = [['Apartamento','Cliente','Ambiente','Item','Material','Tamanho','m²','Caixas']];
   grupos.forEach(g => {
     g.linhas.forEach(l => {
-      linhas.push([g.ap, g.cliente, l.ambiente, l.item, l.material, l.tamanho, Number(l.m2.toFixed(2))]);
+      linhas.push([g.ap, g.cliente, l.ambiente, l.item, l.material, l.tamanho, Number(l.m2.toFixed(2)), l.caixas != null ? l.caixas : '']);
     });
-    linhas.push([g.ap, g.cliente, '', '', 'TOTAL DO APARTAMENTO', '', Number(g.totalM2.toFixed(2))]);
+    linhas.push([g.ap, g.cliente, '', '', 'TOTAL DO APARTAMENTO', '', Number(g.totalM2.toFixed(2)), '']);
     linhas.push([]);
   });
 
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(linhas);
-  ws['!cols'] = [{wch:12},{wch:24},{wch:22},{wch:16},{wch:32},{wch:14},{wch:10}];
+  ws['!cols'] = [{wch:12},{wch:24},{wch:22},{wch:16},{wch:32},{wch:14},{wch:10},{wch:9}];
   XLSX.utils.book_append_sheet(wb, ws, 'Materiais por Apto');
   const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
   XLSX.writeFile(wb, 'Essence-Materiais-Obra-' + dataHoje + '.xlsx');
