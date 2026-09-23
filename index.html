@@ -2416,6 +2416,10 @@ body.mobile-mode #main{padding-bottom:72px}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           Exportar Excel
         </button>
+        <button class="btn btn-secondary" onclick="exportarMateriaisPDF()" style="margin-right:4px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Exportar PDF
+        </button>
       </div>
     </div>
     <div class="page-content">
@@ -8655,6 +8659,10 @@ function _abrirModalMaterialApto(id) {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Exportar este apartamento (Excel)
     </button>
+    <button class="btn btn-secondary" onclick="exportarMaterialAptoPdf('${g.id}')" style="width:100%;margin-top:8px;justify-content:center">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Exportar este apartamento (PDF)
+    </button>
   `;
   document.getElementById('modal-material-apto').classList.add('open');
 }
@@ -8691,6 +8699,100 @@ function filtrarOrcamentos() {
     g.cliente.toLowerCase().includes(busca) || String(g.ap).toLowerCase().includes(busca)
   );
   renderOrcamentos(f);
+}
+
+function _agruparPorAmbiente(linhas) {
+  const grupos = {};
+  linhas.forEach(l => {
+    if (!grupos[l.ambiente]) grupos[l.ambiente] = [];
+    grupos[l.ambiente].push(l);
+  });
+  return grupos;
+}
+
+function _desenharMateriaisPDF(doc, grupos) {
+  const W = 210, ml = 18, mr = 18, cw = W - ml - mr;
+  const COR_TEXTO = [44,44,44], COR_CINZA = [136,136,136], COR_DOURADO = [176,128,64], COR_BEGE_BD = [229,224,213], COR_BEGE_BG = [248,245,240];
+  const fmt = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' m²';
+  const hoje = new Date().toLocaleDateString('pt-BR');
+
+  let y = 20;
+  doc.setFontSize(17); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
+  doc.text('Materiais por Apartamento', ml, y);
+  y += 5;
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
+  doc.text('Essence Residence · ' + hoje, ml, y);
+  y += 8;
+  doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
+  doc.line(ml, y, W - mr, y);
+  y += 10;
+
+  grupos.forEach(g => {
+    if (y > 260) { doc.addPage(); y = 20; }
+
+    doc.setFillColor(...COR_BEGE_BG); doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
+    doc.roundedRect(ml, y, cw, 14, 2, 2, 'FD');
+    doc.setFontSize(13); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
+    doc.text('Apartamento ' + (g.ap || '—') + ' — ' + g.cliente, ml + 5, y + 9);
+    doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_DOURADO);
+    doc.text(fmt(g.totalM2), W - mr - 5, y + 9, { align: 'right' });
+    y += 20;
+
+    const porAmbiente = _agruparPorAmbiente(g.linhas);
+    Object.entries(porAmbiente).forEach(([ambiente, linhas]) => {
+      if (y > 275) { doc.addPage(); y = 20; }
+      doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_DOURADO);
+      doc.text(ambiente, ml + 3, y);
+      y += 5;
+      linhas.forEach(l => {
+        if (y > 280) { doc.addPage(); y = 20; }
+        doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
+        const desc = '• ' + l.material + (l.tamanho ? ' (' + l.tamanho + ')' : '');
+        doc.text(desc, ml + 6, y);
+        doc.setTextColor(...COR_CINZA);
+        doc.text(fmt(l.m2), W - mr - 2, y, { align: 'right' });
+        y += 5.5;
+      });
+      y += 2;
+    });
+    y += 8;
+  });
+
+  doc.setFontSize(7); doc.setTextColor(...COR_CINZA);
+  doc.text('Absoluta Construtora e Incorporadora · Essence Residence · São Bernardo do Campo/SP', W/2, 292, { align: 'center' });
+}
+
+async function exportarMateriaisPDF() {
+  const grupos = _materiaisAgrupados();
+  if (!grupos.length) { showToast('Nenhum dado para exportar', 'error'); return; }
+  showToast('Gerando PDF...', 'success');
+  try {
+    const JsPDFClass = getJsPDF();
+    if (!JsPDFClass) throw new Error('Biblioteca de PDF não carregou (jsPDF)');
+    const doc = new JsPDFClass({ unit: 'mm', format: 'a4' });
+    _desenharMateriaisPDF(doc, grupos);
+    const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
+    doc.save('Essence-Materiais-Obra-' + dataHoje + '.pdf');
+    showToast('PDF gerado!', 'success');
+  } catch(erro) {
+    showToast('Erro ao gerar PDF: ' + erro.message, 'error');
+  }
+}
+
+async function exportarMaterialAptoPdf(id) {
+  const g = (window._materiaisGrupos || []).find(x => x.id === id);
+  if (!g) return;
+  showToast('Gerando PDF...', 'success');
+  try {
+    const JsPDFClass = getJsPDF();
+    if (!JsPDFClass) throw new Error('Biblioteca de PDF não carregou (jsPDF)');
+    const doc = new JsPDFClass({ unit: 'mm', format: 'a4' });
+    _desenharMateriaisPDF(doc, [g]);
+    doc.save('Essence-Apto-' + (g.ap || 'sn') + '-Materiais.pdf');
+    showToast('PDF gerado!', 'success');
+  } catch(erro) {
+    showToast('Erro ao gerar PDF: ' + erro.message, 'error');
+  }
 }
 
 async function exportarMateriaisExcel() {
