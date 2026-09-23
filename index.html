@@ -8747,7 +8747,7 @@ function _desenharMateriaisPDF(doc, grupos) {
       linhas.forEach(l => {
         if (y > 280) { doc.addPage(); y = 20; }
         doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
-        const desc = '• ' + l.material + (l.tamanho ? ' (' + l.tamanho + ')' : '');
+        const desc = '• ' + (l.item ? l.item + ' — ' : '') + l.material + (l.tamanho ? ' (' + l.tamanho + ')' : '');
         doc.text(desc, ml + 6, y);
         doc.setTextColor(...COR_CINZA);
         doc.text(fmt(l.m2), W - mr - 2, y, { align: 'right' });
