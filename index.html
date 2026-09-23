@@ -848,6 +848,32 @@ const ESSENCE_PALETAS = {
     preto:      [14, 14, 14],
     rodape:     [200, 195, 180],
   },
+  civil: {
+    primaria:   [67, 51, 30],      // #43331e marrom escuro
+    secundaria: [140, 132, 103],   // #8c8467 dourado
+    dourado:    [140, 132, 103],
+    marrom:     [67, 51, 30],
+    fundo:      [240, 238, 232],   // #f0eee8 bege claro
+    texto:      [67, 51, 30],
+    cinza:      [120, 118, 112],
+    cinzaClaro: [220, 218, 212],
+    branco:     [255, 255, 255],
+    preto:      [14, 14, 14],
+    rodape:     [200, 195, 180],
+  },
+  arcondicionado: {
+    primaria:   [140, 132, 103],   // #8c8467 dourado/bege
+    secundaria: [67, 51, 30],      // #43331e marrom
+    dourado:    [140, 132, 103],
+    marrom:     [67, 51, 30],
+    fundo:      [240, 238, 232],   // #f0eee8 bege claro
+    texto:      [67, 51, 30],
+    cinza:      [140, 132, 103],
+    cinzaClaro: [220, 218, 212],
+    branco:     [255, 255, 255],
+    preto:      [14, 14, 14],
+    rodape:     [200, 195, 180],
+  },
 };
 const ESSENCE_CORES = ESSENCE_PALETAS.vinilico; // fallback
 const ESSENCE_ASSETS = 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/assets/';
@@ -11155,6 +11181,7 @@ async function excluirCivil(id) {
 async function gerarPDFCivil(id) {
   const c = dadosCivil.find(x => x.id === id);
   if (!c) return;
+  const CORES = ESSENCE_PALETAS.civil;
   showToast('Gerando PDF...', 'success');
   try {
     const JsPDFClass = getJsPDF();
@@ -11162,23 +11189,36 @@ async function gerarPDFCivil(id) {
     try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa_civil_ac.png'); } catch(e) {}
     const doc = new JsPDFClass();
     _pdfCapa(doc, imgData, null);
-    let y = 60;
-    doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,40);
-    doc.text('Orçamento de Serviço Civil', 14, y);
-    y += 10;
-    doc.setFontSize(11); doc.setFont('helvetica','normal');
-    doc.text('Apartamento: ' + (c.ap||'—'), 14, y); y += 7;
-    doc.text('Cliente: ' + (c.cliente||'—'), 14, y); y += 7;
-    doc.text('Data: ' + (c.criado_em||''), 14, y); y += 10;
-    doc.setFont('helvetica','bold'); doc.text('Serviço:', 14, y); y += 6;
-    doc.setFont('helvetica','normal');
-    const linhasServico = doc.splitTextToSize(c.servico||'', 180);
-    doc.text(linhasServico, 14, y); y += linhasServico.length * 6 + 8;
-    doc.setFont('helvetica','bold');
-    doc.text('Forma de pagamento: ' + _labelCondicaoPagamento(c.condicao_pagamento), 14, y); y += 8;
-    doc.setFontSize(15);
-    doc.text('Valor total: ' + _fmtR$(parseFloat(c.valor)||0), 14, y);
-    doc.save('Civil-Apto' + (c.ap||'') + '-Orcamento.pdf');
+    _pdfInfoCliente(doc, c.ap, c.cliente, c.criado_em, 50, CORES);
+
+    let y = 88;
+    _pdfTabelaHeader(doc, y, [
+      {label:'S E R V I Ç O', x:8},
+      {label:'V A L O R', x:202, align:'right'},
+    ], CORES);
+    y += 12;
+
+    const linhasServico = doc.splitTextToSize(c.servico || '—', 150);
+    const alturaLinha = Math.max(18, linhasServico.length * 5 + 8);
+    doc.setFillColor(255,255,255); doc.rect(0, y, 210, alturaLinha, 'F');
+    doc.setFillColor(...CORES.secundaria); doc.rect(0, y, 2.5, alturaLinha, 'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...CORES.preto);
+    doc.text(linhasServico, 8, y + 8);
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...CORES.dourado);
+    doc.text(_fmtR$(parseFloat(c.valor)||0), 202, y + 8, {align:'right'});
+    doc.setDrawColor(...CORES.cinzaClaro); doc.setLineWidth(0.2);
+    doc.line(0, y+alturaLinha, 210, y+alturaLinha);
+    y += alturaLinha + 6;
+
+    _pdfTotal(doc, y, 0, parseFloat(c.valor)||0, 'Apto '+c.ap, CORES, _labelCondicaoPagamento(c.condicao_pagamento));
+
+    const total = doc.getNumberOfPages();
+    for (let i=1;i<=total;i++) {
+      doc.setPage(i);
+      doc.setTextColor(...CORES.cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+      doc.text('Pág. '+i+' / '+total, 202, 292, {align:'right'});
+    }
+    doc.save('Civil-Ap'+(c.ap||'')+'-'+nomeArquivoLimpo(c.cliente||'')+'.pdf');
     showToast('PDF gerado!', 'success');
   } catch(e) { showToast('Erro ao gerar PDF: ' + e.message, 'error'); }
 }
@@ -11322,6 +11362,7 @@ async function excluirAC(id) {
 async function gerarPDFAC(id) {
   const c = dadosArCondicionado.find(x => x.id === id);
   if (!c) return;
+  const CORES = ESSENCE_PALETAS.arcondicionado;
   showToast('Gerando PDF...', 'success');
   try {
     const JsPDFClass = getJsPDF();
@@ -11329,21 +11370,34 @@ async function gerarPDFAC(id) {
     try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa_civil_ac.png'); } catch(e) {}
     const doc = new JsPDFClass();
     _pdfCapa(doc, imgData, null);
-    let y = 60;
-    doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,40);
-    doc.text('Orçamento de Ponto Adicional de Ar-Condicionado', 14, y);
-    y += 10;
-    doc.setFontSize(11); doc.setFont('helvetica','normal');
-    doc.text('Apartamento: ' + (c.ap||'—'), 14, y); y += 7;
-    doc.text('Cliente: ' + (c.cliente||'—'), 14, y); y += 7;
-    doc.text('Data: ' + (c.criado_em||''), 14, y); y += 10;
-    doc.text('Quantidade de pontos adicionais: ' + (c.qtd_pontos||0), 14, y); y += 7;
-    doc.text('Valor por ponto: ' + _fmtR$(parseFloat(c.valor_unitario)||0), 14, y); y += 10;
-    doc.setFont('helvetica','bold');
-    doc.text('Forma de pagamento: ' + _labelCondicaoPagamento(c.condicao_pagamento), 14, y); y += 8;
-    doc.setFontSize(15);
-    doc.text('Valor total: ' + _fmtR$(parseFloat(c.valor)||0), 14, y);
-    doc.save('ArCondicionado-Apto' + (c.ap||'') + '-Orcamento.pdf');
+    _pdfInfoCliente(doc, c.ap, c.cliente, c.criado_em, 50, CORES);
+
+    let y = 88;
+    _pdfTabelaHeader(doc, y, [
+      {label:'D E S C R I Ç Ã O', x:8},
+      {label:'Q T D', x:150},
+      {label:'V A L O R', x:202, align:'right'},
+    ], CORES);
+    y += 12;
+
+    const valorUnit = parseFloat(c.valor_unitario)||0;
+    _pdfLinha(doc, y, [
+      {valor: 'Ponto adicional de ar-condicionado', x:8, bold:true, dy:8},
+      {valor: _fmtR$(valorUnit) + '/ponto', x:8, bold:false, size:7.5, cor:CORES.cinza, dy:15},
+      {valor: String(c.qtd_pontos||0), x:150, dy:10, cor:CORES.preto},
+      {valor: _fmtR$(parseFloat(c.valor)||0), x:202, align:'right', bold:true, dy:10, cor:CORES.dourado},
+    ], false, CORES);
+    y += 24;
+
+    _pdfTotal(doc, y, 0, parseFloat(c.valor)||0, 'Apto '+c.ap, CORES, _labelCondicaoPagamento(c.condicao_pagamento));
+
+    const total = doc.getNumberOfPages();
+    for (let i=1;i<=total;i++) {
+      doc.setPage(i);
+      doc.setTextColor(...CORES.cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+      doc.text('Pág. '+i+' / '+total, 202, 292, {align:'right'});
+    }
+    doc.save('ArCondicionado-Ap'+(c.ap||'')+'-'+nomeArquivoLimpo(c.cliente||'')+'.pdf');
     showToast('PDF gerado!', 'success');
   } catch(e) { showToast('Erro ao gerar PDF: ' + e.message, 'error'); }
 }
