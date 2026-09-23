@@ -11164,7 +11164,7 @@ async function gerarPDFCivil(id) {
     let imgData = null;
     try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa_civil_ac.png'); } catch(e) {}
     const doc = new JsPDFClass();
-    _pdfCapa(doc, imgData, 'ORÇAMENTO — CIVIL');
+    _pdfCapa(doc, imgData, null);
     let y = 60;
     doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,40);
     doc.text('Orçamento de Serviço Civil', 14, y);
@@ -11337,7 +11337,7 @@ async function gerarPDFAC(id) {
     let imgData = null;
     try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa_civil_ac.png'); } catch(e) {}
     const doc = new JsPDFClass();
-    _pdfCapa(doc, imgData, 'ORÇAMENTO — AR-CONDICIONADO');
+    _pdfCapa(doc, imgData, null);
     let y = 60;
     doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,40);
     doc.text('Orçamento de Ponto Adicional de Ar-Condicionado', 14, y);
