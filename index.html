@@ -8653,7 +8653,7 @@ function _abrirModalMaterialApto(id) {
       <div style="padding:8px 0;border-bottom:1px solid var(--border)">
         <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:2px">
           <span>${l.ambiente} · ${l.item}</span>
-          <span style="font-weight:600;color:var(--text)">${l.m2.toFixed(2)} m²${l.caixas != null ? ' · ' + l.caixas + ' cx' : ''}</span>
+          <span style="font-weight:600;color:var(--text)">${l.m2.toFixed(2)} m²</span>
         </div>
         <div style="font-size:13px">${l.material}${l.tamanho ? ' <span style="color:var(--text2)">('+l.tamanho+')</span>' : ''}</div>
       </div>
@@ -8730,6 +8730,9 @@ function _desenharMateriaisPDF(doc, grupos) {
   doc.line(ml, y, W - mr, y);
   y += 10;
 
+  // Acumula por revestimento (nome + tamanho) pra montar o resumo de caixas no final
+  const resumoCaixas = {};
+
   grupos.forEach(g => {
     if (y > 260) { doc.addPage(); y = 20; }
 
@@ -8753,9 +8756,14 @@ function _desenharMateriaisPDF(doc, grupos) {
         const desc = '• ' + (l.item ? l.item + ' — ' : '') + l.material + (l.tamanho ? ' (' + l.tamanho + ')' : '');
         doc.text(desc, ml + 6, y);
         doc.setTextColor(...COR_CINZA);
-        const caixasTxt = l.caixas != null ? ' · ' + l.caixas + ' cx' : '';
-        doc.text(fmt(l.m2) + caixasTxt, W - mr - 2, y, { align: 'right' });
+        doc.text(fmt(l.m2), W - mr - 2, y, { align: 'right' });
         y += 5.5;
+
+        // Acumula pro resumo final (chave = material + tamanho, pra nao misturar tamanhos diferentes do mesmo nome)
+        const chave = l.material + '||' + (l.tamanho || '');
+        if (!resumoCaixas[chave]) resumoCaixas[chave] = { material: l.material, tamanho: l.tamanho, m2: 0, temCaixa: false };
+        resumoCaixas[chave].m2 += l.m2;
+        if (l.caixas != null) resumoCaixas[chave].temCaixa = true;
       });
       y += 2;
     });
@@ -8764,6 +8772,54 @@ function _desenharMateriaisPDF(doc, grupos) {
 
   doc.setFontSize(7); doc.setTextColor(...COR_CINZA);
   doc.text('Absoluta Construtora e Incorporadora · Essence Residence · São Bernardo do Campo/SP', W/2, 292, { align: 'center' });
+
+  // ===== PÁGINA FINAL: Resumo de caixas por revestimento =====
+  const itensResumo = Object.values(resumoCaixas).filter(r => r.temCaixa);
+  if (itensResumo.length) {
+    doc.addPage();
+    y = 20;
+    doc.setFontSize(17); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_TEXTO);
+    doc.text('Resumo de Caixas por Revestimento', ml, y);
+    y += 5;
+    doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_CINZA);
+    doc.text('Total considerando todos os apartamentos deste relatório', ml, y);
+    y += 8;
+    doc.setDrawColor(...COR_BEGE_BD); doc.setLineWidth(0.3);
+    doc.line(ml, y, W - mr, y);
+    y += 10;
+
+    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...COR_CINZA);
+    doc.text('REVESTIMENTO', ml + 2, y);
+    doc.text('METRAGEM TOTAL', ml + 120, y, { align: 'right' });
+    doc.text('CAIXAS', W - mr - 2, y, { align: 'right' });
+    y += 2;
+    doc.setDrawColor(...COR_BEGE_BD); doc.line(ml, y, W - mr, y);
+    y += 6;
+
+    // recalcula caixas por revestimento com base no rev original (m2_por_caixa), somando o m2 total primeiro
+    itensResumo
+      .map(r => {
+        const rev = dadosRevestimentos.find(rv => rv.nome === r.material && (rv.tamanho||'') === (r.tamanho||''));
+        const m2PorCaixa = rev ? parseFloat(rev.m2_por_caixa) : 0;
+        const caixas = m2PorCaixa > 0 ? Math.ceil(r.m2 / m2PorCaixa) : null;
+        return { ...r, caixas };
+      })
+      .filter(r => r.caixas != null)
+      .sort((a,b) => b.caixas - a.caixas)
+      .forEach(r => {
+        if (y > 280) { doc.addPage(); y = 20; }
+        doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...COR_TEXTO);
+        doc.text(r.material + (r.tamanho ? ' (' + r.tamanho + ')' : ''), ml + 2, y);
+        doc.setTextColor(...COR_CINZA);
+        doc.text(fmt(r.m2), ml + 120, y, { align: 'right' });
+        doc.setFont('helvetica','bold'); doc.setTextColor(...COR_DOURADO);
+        doc.text(String(r.caixas) + ' cx', W - mr - 2, y, { align: 'right' });
+        y += 6.5;
+      });
+
+    doc.setFontSize(7); doc.setTextColor(...COR_CINZA);
+    doc.text('Absoluta Construtora e Incorporadora · Essence Residence · São Bernardo do Campo/SP', W/2, 292, { align: 'center' });
+  }
 }
 
 async function exportarMateriaisPDF() {
