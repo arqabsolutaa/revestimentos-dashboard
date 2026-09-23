@@ -971,25 +971,25 @@ function _pdfTotal(doc, y, totalM2, totalValor, label, cores, pagamentoTexto) {
   const primaria = C.primaria || [67,51,30];
   const secundaria = C.secundaria || [140,132,103];
   // Forma de pagamento
-  doc.setFillColor(...fundo); doc.rect(0, y, 210, 20, 'F');
-  doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
-  doc.text('F O R M A   D E   P A G A M E N T O', 8, y+10);
-  doc.setTextColor(...preto); doc.setFontSize(9.5); doc.setFont('helvetica','bold');
-  doc.text(pagamentoTexto || 'À Vista', 8, y+18);
-  y += 26;
+  doc.setFillColor(...fundo); doc.rect(0, y, 210, 14, 'F');
+  doc.setTextColor(...cinza); doc.setFontSize(6.5); doc.setFont('helvetica','normal');
+  doc.text('F O R M A   D E   P A G A M E N T O', 8, y+6);
+  doc.setTextColor(...preto); doc.setFontSize(8.5); doc.setFont('helvetica','bold');
+  doc.text(pagamentoTexto || 'À Vista', 8, y+12);
+  y += 17;
   // Total geral
-  doc.setFillColor(...primaria); doc.rect(0, y, 210, 28, 'F');
+  doc.setFillColor(...primaria); doc.rect(0, y, 210, 18, 'F');
   const sobrePrimaria = primaria[0] > 200 ? preto : [200,195,180];
-  doc.setTextColor(...sobrePrimaria); doc.setFontSize(7); doc.setFont('helvetica','normal');
-  doc.text('T O T A L   G E R A L', 8, y+10);
-  doc.setFontSize(8);
-  if (totalM2) doc.text(totalM2.toFixed(2)+' m²', 8, y+22);
+  doc.setTextColor(...sobrePrimaria); doc.setFontSize(6.5); doc.setFont('helvetica','normal');
+  doc.text('T O T A L   G E R A L', 8, y+8);
+  doc.setFontSize(7.5);
+  if (totalM2) doc.text(totalM2.toFixed(2)+' m²', 8, y+15);
   if (totalValor > 0) {
-    doc.setTextColor(...secundaria); doc.setFontSize(16); doc.setFont('helvetica','bold');
-    doc.text('R$ '+totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}), 200, y+22, {align:'right'});
+    doc.setTextColor(...secundaria); doc.setFontSize(13); doc.setFont('helvetica','bold');
+    doc.text('R$ '+totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}), 200, y+14, {align:'right'});
   }
   doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
-  doc.text('Empreendimento Essence Residence · '+label, 8, y+34);
+  doc.text('Empreendimento Essence Residence · '+label, 8, y+25);
 }
 
 
