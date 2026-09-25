@@ -3571,21 +3571,9 @@ body.mobile-mode #main{padding-bottom:72px}
         <input class="form-control" id="ac-cliente" placeholder="Nome do cliente">
       </div>
       <div class="form-group">
-        <label class="form-label">Quantidade de pontos adicionais</label>
-        <input type="number" min="1" step="1" class="form-control" id="ac-qtd-pontos" placeholder="1" oninput="atualizarCalculoJurosAC()">
-      </div>
-      <div class="form-group">
-        <label class="form-label">BTUs da máquina</label>
-        <select class="form-control" id="ac-btu">
-          <option value="">— Selecione —</option>
-          <option value="9000">9.000 BTUs</option>
-          <option value="12000">12.000 BTUs</option>
-          <option value="24000">24.000 BTUs</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Valor por ponto (R$)</label>
-        <input type="number" step="0.01" class="form-control" id="ac-valor-unitario" placeholder="0,00" oninput="atualizarCalculoJurosAC()">
+        <label class="form-label">Máquinas</label>
+        <div id="ac-maquinas-lista" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px"></div>
+        <button type="button" class="btn btn-secondary" style="font-size:12px" onclick="adicionarMaquinaAC()">+ Adicionar máquina</button>
       </div>
       <div class="form-group">
         <label class="form-label">Valor total (R$)</label>
@@ -11257,6 +11245,8 @@ function _labelBtu(btu) {
   return (parseInt(btu)/1000) + '.000 BTUs';
 }
 
+let acMaquinas = [];
+
 function renderArCondicionado() {
   const el = document.getElementById('arcondicionado-lista');
   const ativos = dadosArCondicionado.filter(c => String(c.arquivado||'').toLowerCase() !== 'true');
@@ -11264,11 +11254,14 @@ function renderArCondicionado() {
   el.innerHTML = ativos.slice().reverse().map(c => {
     const status = c.status_pgto || 'pendente';
     const valor = parseFloat(c.valor) || 0;
+    let itens = [];
+    try { itens = typeof c.itens === 'string' ? JSON.parse(c.itens||'[]') : (c.itens||[]); } catch(e) {}
+    const resumoMaquinas = itens.map(it => _labelBtu(it.btu)).filter(Boolean).join(', ') || (c.qtd_pontos||0) + ' máquina(s)';
     return `<div class="card" style="padding:14px 16px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
         <div>
           <strong style="font-size:14px">Apto ${c.ap||'—'} — ${c.cliente||'—'}</strong>
-          <div style="font-size:12px;color:var(--text2);margin-top:2px">${c.qtd_pontos||0} ponto(s) adicional(is)${c.btu ? ' · ' + _labelBtu(c.btu) : ''} · ${_fmtR$(parseFloat(c.valor_unitario)||0)}/ponto</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">${itens.length || c.qtd_pontos || 0} máquina(s) · ${resumoMaquinas}</div>
           <div style="font-size:11px;color:var(--text3);margin-top:2px">${c.criado_em||''}${c.condicao_pagamento ? ' · ' + _labelCondicaoPagamento(c.condicao_pagamento) : ''}</div>
         </div>
         <strong style="font-size:16px;color:var(--accent2)">${_fmtR$(valor)}</strong>
@@ -11288,14 +11281,46 @@ function renderArCondicionado() {
   }).join('');
 }
 
+function adicionarMaquinaAC() {
+  acMaquinas.push({ btu: '', valor: parseFloat(localStorage.getItem('ac_ultimo_valor_ponto')) || 0 });
+  renderMaquinasAC();
+}
+
+function removerMaquinaAC(idx) {
+  acMaquinas.splice(idx, 1);
+  renderMaquinasAC();
+}
+
+function atualizarMaquinaAC(idx, campo, valor) {
+  acMaquinas[idx][campo] = campo === 'valor' ? (parseFloat(valor)||0) : valor;
+  atualizarCalculoJurosAC();
+}
+
+function renderMaquinasAC() {
+  const el = document.getElementById('ac-maquinas-lista');
+  el.innerHTML = acMaquinas.map((m, idx) => `
+    <div style="display:flex;gap:8px;align-items:center">
+      <select class="form-control" style="flex:1.3" onchange="atualizarMaquinaAC(${idx},'btu',this.value)">
+        <option value="" ${!m.btu?'selected':''}>— BTU —</option>
+        <option value="9000" ${m.btu==='9000'?'selected':''}>9.000 BTUs</option>
+        <option value="12000" ${m.btu==='12000'?'selected':''}>12.000 BTUs</option>
+        <option value="24000" ${m.btu==='24000'?'selected':''}>24.000 BTUs</option>
+      </select>
+      <input class="form-control" type="number" step="0.01" placeholder="Valor" value="${m.valor||''}" oninput="atualizarMaquinaAC(${idx},'valor',this.value)" style="flex:1">
+      <button type="button" onclick="removerMaquinaAC(${idx})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px">×</button>
+    </div>
+  `).join('');
+  atualizarCalculoJurosAC();
+}
+
 function abrirModalArCondicionado() {
   _editandoACId = null;
   document.getElementById('modal-ac-titulo').textContent = 'Novo Ponto Adicional — Ar-Condicionado';
-  ['ac-cliente','ac-qtd-pontos','ac-valor','ac-obs'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('ac-btu').value = '';
-  document.getElementById('ac-valor-unitario').value = localStorage.getItem('ac_ultimo_valor_ponto') || '';
+  ['ac-cliente','ac-valor','ac-obs'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('ac-condicao').value = 'avista';
   document.getElementById('ac-juros-resumo').style.display = 'none';
+  acMaquinas = [];
+  adicionarMaquinaAC();
   const sel = document.getElementById('ac-apto');
   sel.innerHTML = '<option value="">— Selecione o apartamento —</option>' +
     _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('');
@@ -11310,9 +11335,7 @@ function preencherClienteAC() {
 }
 
 function atualizarCalculoJurosAC() {
-  const qtd = parseInt(document.getElementById('ac-qtd-pontos').value) || 0;
-  const valorUnitario = parseFloat(document.getElementById('ac-valor-unitario').value) || 0;
-  const valorAvista = qtd * valorUnitario;
+  const valorAvista = acMaquinas.reduce((s,m) => s + (parseFloat(m.valor)||0), 0);
   document.getElementById('ac-valor').value = valorAvista ? valorAvista.toFixed(2) : '';
   const condicao = document.getElementById('ac-condicao').value;
   const resumo = document.getElementById('ac-juros-resumo');
@@ -11328,15 +11351,14 @@ function atualizarCalculoJurosAC() {
 async function salvarArCondicionado() {
   const ap = document.getElementById('ac-apto').value;
   const cliente = document.getElementById('ac-cliente').value.trim();
-  const qtd = parseInt(document.getElementById('ac-qtd-pontos').value) || 0;
-  const btu = document.getElementById('ac-btu').value;
-  const valorUnitario = parseFloat(document.getElementById('ac-valor-unitario').value) || 0;
   const condicao = document.getElementById('ac-condicao').value;
   const obs = document.getElementById('ac-obs').value.trim();
-  if (!ap || !qtd || !btu || !valorUnitario) { showToast('Preencha apartamento, quantidade de pontos, BTU e valor por ponto', 'error'); return; }
-  const valorAvista = qtd * valorUnitario;
+  const maquinasValidas = acMaquinas.filter(m => m.btu && m.valor > 0);
+  if (!ap) { showToast('Selecione o apartamento', 'error'); return; }
+  if (!maquinasValidas.length) { showToast('Adicione pelo menos uma máquina com BTU e valor', 'error'); return; }
+  const valorAvista = maquinasValidas.reduce((s,m) => s + (parseFloat(m.valor)||0), 0);
   const { total, juros } = calcularTotalComPagamento(valorAvista, condicao);
-  const dados = { ap, cliente, qtd_pontos: qtd, btu, valor_unitario: valorUnitario, valor: total, valor_avista: valorAvista, condicao_pagamento: condicao, valor_juros: juros, obs };
+  const dados = { ap, cliente, qtd_pontos: maquinasValidas.length, itens: maquinasValidas, valor: total, valor_avista: valorAvista, condicao_pagamento: condicao, valor_juros: juros, obs };
   try {
     if (_editandoACId) {
       await apiPost('updateArCondicionadoOrcamento', { id: _editandoACId, ...dados });
@@ -11348,7 +11370,7 @@ async function salvarArCondicionado() {
       dadosArCondicionado.push({ id: resultado.id, ...dados, status_pgto: 'pendente', criado_em: new Date().toLocaleDateString('pt-BR') });
       showToast('Orçamento salvo!', 'success');
     }
-    localStorage.setItem('ac_ultimo_valor_ponto', String(valorUnitario));
+    if (maquinasValidas.length) localStorage.setItem('ac_ultimo_valor_ponto', String(maquinasValidas[maquinasValidas.length-1].valor));
     renderArCondicionado();
     fecharModal('modal-arcondicionado');
     loadArCondicionado();
@@ -11381,6 +11403,9 @@ async function gerarPDFAC(id) {
   const CORES = ESSENCE_PALETAS.arcondicionado;
   showToast('Gerando PDF...', 'success');
   try {
+    let itens = [];
+    try { itens = typeof c.itens === 'string' ? JSON.parse(c.itens||'[]') : (c.itens||[]); } catch(e) {}
+    if (!itens.length) itens = [{ btu: c.btu||'', valor: parseFloat(c.valor_unitario)||0 }]; // compatibilidade com orçamentos antigos
     const JsPDFClass = getJsPDF();
     let imgData = null;
     try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa_civil_ac.png'); } catch(e) {}
@@ -11390,20 +11415,23 @@ async function gerarPDFAC(id) {
 
     let y = 88;
     _pdfTabelaHeader(doc, y, [
-      {label:'D E S C R I Ç Ã O', x:8},
-      {label:'Q T D', x:150},
+      {label:'M Á Q U I N A', x:8},
       {label:'V A L O R', x:202, align:'right'},
     ], CORES);
     y += 12;
 
-    const valorUnit = parseFloat(c.valor_unitario)||0;
-    _pdfLinha(doc, y, [
-      {valor: 'Ponto adicional de ar-condicionado' + (c.btu ? ' — ' + _labelBtu(c.btu) : ''), x:8, bold:true, dy:8},
-      {valor: _fmtR$(valorUnit) + '/ponto', x:8, bold:false, size:7.5, cor:CORES.cinza, dy:15},
-      {valor: String(c.qtd_pontos||0), x:150, dy:10, cor:CORES.preto},
-      {valor: _fmtR$(parseFloat(c.valor)||0), x:202, align:'right', bold:true, dy:10, cor:CORES.dourado},
-    ], false, CORES);
-    y += 24;
+    let alt = false;
+    itens.forEach((it, idx) => {
+      if (y > 260) { doc.addPage(); y = 15; }
+      _pdfLinha(doc, y, [
+        {valor: 'Ponto adicional de ar-condicionado ' + (idx+1), x:8, bold:true, dy:8},
+        {valor: it.btu ? _labelBtu(it.btu) : '—', x:8, bold:false, size:7.5, cor:CORES.cinza, dy:15},
+        {valor: _fmtR$(parseFloat(it.valor)||0), x:202, align:'right', bold:true, dy:10, cor:CORES.dourado},
+      ], alt, CORES);
+      alt = !alt;
+      y += 18;
+    });
+    y += 6;
 
     _pdfTotal(doc, y, 0, parseFloat(c.valor)||0, 'Apto '+c.ap, CORES, _labelCondicaoPagamento(c.condicao_pagamento));
 
