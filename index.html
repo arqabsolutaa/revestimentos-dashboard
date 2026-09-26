@@ -3882,7 +3882,9 @@ body.mobile-mode #main{padding-bottom:72px}
       <div class="form-grid">
         <div class="form-group">
           <label>Apartamento</label>
-          <input class="form-control" id="inst-ap" placeholder="Ex: 11">
+          <select class="form-control" id="inst-ap" onchange="preencherClienteInstalacao()">
+            <option value="">— Selecione —</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Data da instalação</label>
@@ -3894,21 +3896,17 @@ body.mobile-mode #main{padding-bottom:72px}
         </div>
         <div class="form-group span-2">
           <label>Revestimento instalado</label>
-          <select class="form-control" id="inst-revestimento" onchange="carregarLotesInstalacao()">
+          <select class="form-control" id="inst-revestimento">
             <option value="">— Selecione o revestimento —</option>
           </select>
         </div>
-        <div class="form-group span-2">
-          <label>Lote de fabricação</label>
-          <select class="form-control" id="inst-lote" onchange="atualizarInfoLote()">
-            <option value="">— Selecione o revestimento primeiro —</option>
-          </select>
-          <span id="inst-lote-info" style="font-size:11px;color:var(--accent);margin-top:5px;display:block;font-weight:500"></span>
+        <div class="form-group">
+          <label>Data do lote / fabricação <span style="font-weight:400;color:var(--text3)">(etiqueta da caixa/pallet)</span></label>
+          <input class="form-control" id="inst-data-lote" type="date">
         </div>
-        <div class="form-group span-2">
-          <label>Qtd de caixas utilizadas</label>
-          <input class="form-control" id="inst-qtd-cx" type="number" min="0" step="0.5" placeholder="0" oninput="verificarSaldoLote()">
-          <span id="inst-saldo-info" style="font-size:11px;margin-top:5px;display:block;font-weight:500"></span>
+        <div class="form-group">
+          <label>Qtd de caixas desse lote</label>
+          <input class="form-control" id="inst-qtd-cx" type="number" min="0" step="0.5" placeholder="0">
         </div>
         <div class="form-group span-2">
           <label>Observações <span style="font-weight:400;color:var(--text3)">(opcional)</span></label>
@@ -4726,75 +4724,28 @@ function filtrarInstalacoes() {
 }
 
 function abrirModalInstalacao() {
-  const sel = document.getElementById('inst-revestimento');
-  if (sel) {
-    // Mostrar só revestimentos que têm lotes cadastrados
-    const lotesDisponiveis = dadosLotes.filter(l => parseFloat(l.qtd_caixas) > 0);
-    const revComLote = [...new Map(lotesDisponiveis.map(l => [l.nome, l])).values()];
-    sel.innerHTML = '<option value="">— Selecione —</option>' +
-      revComLote.map(l => {
-        const rev = dadosRevestimentos.find(r => r.id === l.codigo_rev || r.codigo === l.codigo_rev);
-        const tamanho = rev?.tamanho || '';
-        return '<option value="' + l.nome + '">' + l.nome + (tamanho ? ' — ' + tamanho : '') + '</option>';
-      }).join('');
+  const selAp = document.getElementById('inst-ap');
+  if (selAp) {
+    selAp.innerHTML = '<option value="">— Selecione —</option>' +
+      _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('');
   }
-  document.getElementById('inst-lote').innerHTML = '<option value="">— Selecione o revestimento primeiro —</option>';
-  document.getElementById('inst-lote-info').textContent = '';
-  document.getElementById('inst-saldo-info').textContent = '';
-  document.getElementById('inst-ap').value = '';
+  const selRev = document.getElementById('inst-revestimento');
+  if (selRev) {
+    selRev.innerHTML = '<option value="">— Selecione —</option>' +
+      (dadosRevestimentos||[]).map(r => `<option value="${r.nome}" data-codigo="${r.id || r.codigo || ''}">${r.nome}${r.tamanho ? ' — ' + r.tamanho : ''}</option>`).join('');
+  }
   document.getElementById('inst-cliente').value = '';
   document.getElementById('inst-qtd-cx').value = '';
   document.getElementById('inst-obs').value = '';
+  document.getElementById('inst-data-lote').value = '';
   document.getElementById('inst-data').value = new Date().toISOString().split('T')[0];
   abrirModal('modal-instalacao');
 }
 
-function carregarLotesInstalacao() {
-  const nomeRev = document.getElementById('inst-revestimento').value;
-  const sel = document.getElementById('inst-lote');
-  const lotesFiltrados = dadosLotes.filter(l => l.nome === nomeRev && parseFloat(l.qtd_caixas) > 0);
-  if (!lotesFiltrados.length) {
-    sel.innerHTML = '<option value="">Nenhum lote disponível</option>';
-    document.getElementById('inst-lote-info').textContent = '';
-    return;
-  }
-  sel.innerHTML = '<option value="">— Selecione o lote —</option>' +
-    lotesFiltrados.map(l => `<option value="${l.id}" data-qtd="${l.qtd_caixas}" data-datafab="${l.data_fab}" data-m2cx="${l.m2_por_caixa}">
-      Fab: ${formatarDataDisplay(l.data_fab)} · ${parseFloat(l.qtd_caixas).toFixed(1)} cx disponíveis
-    </option>`).join('');
-}
-
-function atualizarInfoLote() {
-  const sel = document.getElementById('inst-lote');
-  const opt = sel.options[sel.selectedIndex];
-  const info = document.getElementById('inst-lote-info');
-  if (opt && opt.dataset.qtd) {
-    const qtd = parseFloat(opt.dataset.qtd);
-    const m2cx = parseFloat(opt.dataset.m2cx)||0;
-    info.textContent = `Saldo: ${qtd.toFixed(1)} caixas · ${(qtd*m2cx).toFixed(2)} m² disponíveis`;
-    info.style.color = qtd > 5 ? 'var(--accent)' : 'var(--warn)';
-  } else {
-    info.textContent = '';
-  }
-  verificarSaldoLote();
-}
-
-function verificarSaldoLote() {
-  const sel = document.getElementById('inst-lote');
-  const opt = sel.options[sel.selectedIndex];
-  const qtdInput = parseFloat(document.getElementById('inst-qtd-cx').value)||0;
-  const info = document.getElementById('inst-saldo-info');
-  if (!opt || !opt.dataset.qtd || !qtdInput) { info.textContent = ''; return; }
-  const saldo = parseFloat(opt.dataset.qtd)||0;
-  const m2cx = parseFloat(opt.dataset.m2cx)||0;
-  const restante = saldo - qtdInput;
-  if (restante < 0) {
-    info.textContent = `⚠️ Saldo insuficiente! Disponível: ${saldo.toFixed(1)} cx`;
-    info.style.color = 'var(--danger)';
-  } else {
-    info.textContent = `Restará: ${restante.toFixed(1)} cx · ${(qtdInput*m2cx).toFixed(2)} m² instalados`;
-    info.style.color = 'var(--text3)';
-  }
+function preencherClienteInstalacao() {
+  const sel = document.getElementById('inst-ap');
+  const encontrado = _apartamentosConhecidos().find(a => String(a.ap) === String(sel.value));
+  document.getElementById('inst-cliente').value = encontrado ? encontrado.cliente : '';
 }
 
 function fecharModalInstalacao() {
@@ -4802,34 +4753,48 @@ function fecharModalInstalacao() {
 }
 
 async function salvarInstalacao() {
-  const sel = document.getElementById('inst-lote');
-  const opt = sel.options[sel.selectedIndex];
   const revSel = document.getElementById('inst-revestimento');
-  const qtdUsada = parseFloat(document.getElementById('inst-qtd-cx').value)||0;
+  const revOpt = revSel.options[revSel.selectedIndex];
+  const qtdCx = parseFloat(document.getElementById('inst-qtd-cx').value)||0;
 
   const dados = {
     ap: document.getElementById('inst-ap').value.trim(),
     cliente: document.getElementById('inst-cliente').value.trim(),
     revestimento: revSel.value,
-    codigo_rev: dadosLotes.find(l => l.nome === revSel.value)?.codigo_rev || '',
-    lote_id: sel.value,
-    data_fab: opt?.dataset?.datafab || '',
-    qtd_caixas_usadas: qtdUsada,
+    codigo_rev: revOpt?.dataset?.codigo || '',
+    data_fab: document.getElementById('inst-data-lote').value,
+    qtd_caixas_usadas: qtdCx,
     data_inst: document.getElementById('inst-data').value,
     obs: document.getElementById('inst-obs').value.trim()
   };
 
-  if (!dados.ap || !dados.revestimento || !dados.lote_id) {
-    showToast('Preencha apartamento, revestimento e lote', 'error'); return;
+  if (!dados.ap || !dados.revestimento) {
+    showToast('Preencha apartamento e revestimento', 'error'); return;
   }
-  if (qtdUsada <= 0) {
-    showToast('Informe a quantidade de caixas usadas', 'error'); return;
+  if (!dados.data_fab) {
+    showToast('Selecione a data do lote/fabricação', 'error'); return;
+  }
+  if (qtdCx <= 0) {
+    showToast('Informe a quantidade de caixas', 'error'); return;
   }
 
-  // Atualizar lote na memória imediatamente
-  const lote = dadosLotes.find(l => l.id === dados.lote_id);
-  const qtdAnterior = lote ? parseFloat(lote.qtd_caixas) : 0;
-  if (lote) lote.qtd_caixas = String(Math.max(0, qtdAnterior - qtdUsada));
+  // Formalizar/atualizar o lote na memória imediatamente (sem mexer no estoque geral)
+  const m2cxRev = (dadosRevestimentos||[]).find(r => r.nome === dados.revestimento)?.m2_por_caixa || 0;
+  let loteExistente = dadosLotes.find(l => l.nome === dados.revestimento && l.data_fab === dados.data_fab);
+  let loteBackupQtd = null, loteNovoTemp = null;
+  if (loteExistente) {
+    loteBackupQtd = parseFloat(loteExistente.qtd_caixas)||0;
+    loteExistente.qtd_caixas = String(loteBackupQtd + qtdCx);
+    loteExistente.m2_total = String((parseFloat(loteExistente.qtd_caixas)||0) * (parseFloat(loteExistente.m2_por_caixa)||m2cxRev||0));
+  } else {
+    loteNovoTemp = {
+      id: 'tmp_' + Date.now(), codigo_rev: dados.codigo_rev, nome: dados.revestimento,
+      data_fab: dados.data_fab, qtd_caixas: String(qtdCx), m2_por_caixa: String(m2cxRev),
+      m2_total: String(qtdCx * (parseFloat(m2cxRev)||0)), localizacao: '', obs: 'Registrado via instalação'
+    };
+    dadosLotes.unshift(loteNovoTemp);
+  }
+  if (document.getElementById('lotes-lista')) renderLotes(dadosLotes);
 
   const novo = { ...dados, id: 'id_' + Date.now() };
   dadosInstalacoes.unshift(novo);
@@ -4839,9 +4804,17 @@ async function salvarInstalacao() {
   try {
     await api('addInstalacao', dados);
     showToast('Instalação registrada!', 'success');
+    lerDados(true).then(d => {
+      if (d.instalacoes) dadosInstalacoes = d.instalacoes;
+      if (d.lotes) dadosLotes = d.lotes;
+      renderInstalacoes(dadosInstalacoes);
+      if (document.getElementById('lotes-lista')) renderLotes(dadosLotes);
+    }).catch(()=>{});
   } catch(e) {
     // Reverter
-    if (lote) lote.qtd_caixas = String(qtdAnterior);
+    if (loteExistente) loteExistente.qtd_caixas = String(loteBackupQtd);
+    if (loteNovoTemp) dadosLotes = dadosLotes.filter(l => l.id !== loteNovoTemp.id);
+    if (document.getElementById('lotes-lista')) renderLotes(dadosLotes);
     dadosInstalacoes = dadosInstalacoes.filter(i => i.id !== novo.id);
     renderInstalacoes(dadosInstalacoes);
     showToast('Erro: ' + e.message, 'error');
