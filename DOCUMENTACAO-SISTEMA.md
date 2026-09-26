@@ -2,7 +2,7 @@
 
 > Este documento existe para ser colado no início de uma conversa nova com o Claude, junto com o `index.html`, o `Code.gs` e a autorização de acesso ao GitHub, para que a nova conversa entenda o sistema inteiro sem precisar reexplicar tudo do zero.
 >
-> Ele é atualizado sempre que uma mudança relevante é feita no sistema. Última atualização: **26/09/2026**.
+> Ele é atualizado sempre que uma mudança relevante é feita no sistema. Última atualização: **26/09/2026** (tarde).
 
 ## 1. Quem usa e para quê
 
@@ -64,7 +64,7 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - **Aba "Instalações"**: registra o que foi efetivamente instalado em obra, apartamento por apartamento.
   - **Fluxo antigo (descontinuado em 26/09/2026)**: o usuário pré-cadastrava o lote (data+quantidade) na aba Lotes, e ao criar uma instalação apenas *selecionava* qual lote pré-existente estava usando, o que descontava a quantidade daquele lote.
   - **Fluxo atual**: revestimentos grandes (ex: 20x270) vêm paletizados, não em caixa — a etiqueta com data de fabricação só é vista na hora da instalação, não antes. Por isso o fluxo foi **invertido**: agora é a tela "Nova Instalação" que **é a fonte** da informação de data/lote, não o contrário.
-    - Campos do modal: **Apartamento** (seleção, não mais texto livre), **Revestimento** (seleção — mostra todos, não só os que já têm lote), **Data do lote/fabricação** (calendário — a data da etiqueta da caixa/pallet visualizada em obra), **Qtd de caixas desse lote**, Cliente, Data da instalação, Observações.
+    - Campos do modal: **Apartamento** (seleção, não mais texto livre), **Revestimento** (seleção — mostra todos, não só os que já têm lote), **Data do lote/fabricação** (calendário — a data da etiqueta da caixa/pallet visualizada em obra), **Qtd de caixas desse lote**, **Qtd de peças desse lote**, Cliente, Data da instalação, Observações.
     - Ao salvar, a informação de data/lote **é formalizada automaticamente na aba Lotes** (soma a um lote já existente com mesmo revestimento+data, ou cria um novo) — **sem descontar nem somar ao estoque geral** do revestimento. É puramente um registro histórico de "esse lote com essa data foi usado nesse apartamento".
     - Essa decisão foi confirmada explicitamente pela Bárbara: a instalação só registra data/lote, não mexe em estoque; e sim, pode haver vários lotes/datas simultâneos por revestimento.
   - Função backend responsável: `addInstalacao(d)` chama `formalizarLoteViaInstalacao(d)` (não confundir com `addLote`, que é o fluxo antigo de entrada manual de estoque e continua existindo e funcionando como antes).
@@ -102,5 +102,5 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 
 ## 9. Itens em aberto / próximos passos conhecidos
 
-- Confirmar que o `Code.gs` mais recente (com o módulo de Instalações reformulado, e o schema `itens` do Ar-Condicionado) já foi colado e reimplantado no Apps Script pela Bárbara.
+- Confirmar que o `Code.gs` mais recente (com o módulo de Instalações reformulado — incluindo o campo de quantidade de peças — e o schema `itens` do Ar-Condicionado) já foi colado e reimplantado no Apps Script pela Bárbara.
 - Botão "Baixar documentação técnica" foi adicionado à tela de **Configurações** — baixa este mesmo arquivo direto do GitHub. Deve ser mantido atualizado a cada mudança relevante no sistema.

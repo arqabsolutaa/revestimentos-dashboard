@@ -3917,6 +3917,10 @@ body.mobile-mode #main{padding-bottom:72px}
           <label>Qtd de caixas desse lote</label>
           <input class="form-control" id="inst-qtd-cx" type="number" min="0" step="0.5" placeholder="0">
         </div>
+        <div class="form-group">
+          <label>Qtd de peças desse lote</label>
+          <input class="form-control" id="inst-qtd-pecas" type="number" min="0" step="1" placeholder="0">
+        </div>
         <div class="form-group span-2">
           <label>Observações <span style="font-weight:400;color:var(--text3)">(opcional)</span></label>
           <input class="form-control" id="inst-obs" placeholder="Ex: Parede A e B do Banho 01">
@@ -4580,6 +4584,7 @@ function renderLotes(d) {
             <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
               <span style="font-size:13px;font-weight:600;color:var(--text)">Fab: ${formatarDataDisplay(l.data_fab)||'—'}</span>
               <span style="font-size:12px;color:var(--text3)">${l.qtd_caixas} cx · ${parseFloat(l.m2_por_caixa).toFixed(2)} m²/cx</span>
+              ${parseFloat(l.qtd_pecas)>0 ? `<span style="font-size:12px;color:var(--text3)">${parseFloat(l.qtd_pecas)} peças</span>` : ''}
               <span style="font-size:13px;font-weight:600;color:var(--accent)">${parseFloat(l.m2_total).toFixed(2)} m²</span>
               ${l.localizacao ? `<span style="font-size:11px;color:var(--text3)">📍 ${l.localizacao}</span>` : ''}
               ${l.obs ? `<span style="font-size:11px;color:var(--text3)">${l.obs}</span>` : ''}
@@ -4711,6 +4716,7 @@ function renderInstalacoes(d) {
         <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:6px">
           <span style="font-size:11px;color:var(--text3)">Lote Fab: <strong style="color:var(--accent)">${formatarDataDisplay(i.data_fab)||'—'}</strong></span>
           ${i.qtd_caixas_usadas ? `<span style="font-size:11px;color:var(--text3)">Caixas: <strong style="color:var(--text2)">${i.qtd_caixas_usadas}</strong></span>` : ''}
+          ${i.qtd_pecas_usadas ? `<span style="font-size:11px;color:var(--text3)">Peças: <strong style="color:var(--text2)">${i.qtd_pecas_usadas}</strong></span>` : ''}
           <span style="font-size:11px;color:var(--text3)">Instalação: <strong style="color:var(--text2)">${formatarDataDisplay(i.data_inst)||'—'}</strong></span>
           ${i.obs ? `<span style="font-size:11px;color:var(--text3)">Obs: ${i.obs}</span>` : ''}
         </div>
@@ -4745,6 +4751,7 @@ function abrirModalInstalacao() {
   }
   document.getElementById('inst-cliente').value = '';
   document.getElementById('inst-qtd-cx').value = '';
+  document.getElementById('inst-qtd-pecas').value = '';
   document.getElementById('inst-obs').value = '';
   document.getElementById('inst-data-lote').value = '';
   document.getElementById('inst-data').value = new Date().toISOString().split('T')[0];
@@ -4765,6 +4772,7 @@ async function salvarInstalacao() {
   const revSel = document.getElementById('inst-revestimento');
   const revOpt = revSel.options[revSel.selectedIndex];
   const qtdCx = parseFloat(document.getElementById('inst-qtd-cx').value)||0;
+  const qtdPecas = parseFloat(document.getElementById('inst-qtd-pecas').value)||0;
 
   const dados = {
     ap: document.getElementById('inst-ap').value.trim(),
@@ -4773,6 +4781,7 @@ async function salvarInstalacao() {
     codigo_rev: revOpt?.dataset?.codigo || '',
     data_fab: document.getElementById('inst-data-lote').value,
     qtd_caixas_usadas: qtdCx,
+    qtd_pecas_usadas: qtdPecas,
     data_inst: document.getElementById('inst-data').value,
     obs: document.getElementById('inst-obs').value.trim()
   };
@@ -4790,15 +4799,17 @@ async function salvarInstalacao() {
   // Formalizar/atualizar o lote na memória imediatamente (sem mexer no estoque geral)
   const m2cxRev = (dadosRevestimentos||[]).find(r => r.nome === dados.revestimento)?.m2_por_caixa || 0;
   let loteExistente = dadosLotes.find(l => l.nome === dados.revestimento && l.data_fab === dados.data_fab);
-  let loteBackupQtd = null, loteNovoTemp = null;
+  let loteBackupQtd = null, loteBackupPecas = null, loteNovoTemp = null;
   if (loteExistente) {
     loteBackupQtd = parseFloat(loteExistente.qtd_caixas)||0;
+    loteBackupPecas = parseFloat(loteExistente.qtd_pecas)||0;
     loteExistente.qtd_caixas = String(loteBackupQtd + qtdCx);
+    loteExistente.qtd_pecas = String(loteBackupPecas + qtdPecas);
     loteExistente.m2_total = String((parseFloat(loteExistente.qtd_caixas)||0) * (parseFloat(loteExistente.m2_por_caixa)||m2cxRev||0));
   } else {
     loteNovoTemp = {
       id: 'tmp_' + Date.now(), codigo_rev: dados.codigo_rev, nome: dados.revestimento,
-      data_fab: dados.data_fab, qtd_caixas: String(qtdCx), m2_por_caixa: String(m2cxRev),
+      data_fab: dados.data_fab, qtd_caixas: String(qtdCx), qtd_pecas: String(qtdPecas), m2_por_caixa: String(m2cxRev),
       m2_total: String(qtdCx * (parseFloat(m2cxRev)||0)), localizacao: '', obs: 'Registrado via instalação'
     };
     dadosLotes.unshift(loteNovoTemp);
@@ -4821,7 +4832,7 @@ async function salvarInstalacao() {
     }).catch(()=>{});
   } catch(e) {
     // Reverter
-    if (loteExistente) loteExistente.qtd_caixas = String(loteBackupQtd);
+    if (loteExistente) { loteExistente.qtd_caixas = String(loteBackupQtd); loteExistente.qtd_pecas = String(loteBackupPecas); }
     if (loteNovoTemp) dadosLotes = dadosLotes.filter(l => l.id !== loteNovoTemp.id);
     if (document.getElementById('lotes-lista')) renderLotes(dadosLotes);
     dadosInstalacoes = dadosInstalacoes.filter(i => i.id !== novo.id);
