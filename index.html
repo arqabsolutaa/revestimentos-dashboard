@@ -4662,7 +4662,7 @@ async function salvarLote() {
   renderLotes(dadosLotes);
   fecharModalLote();
   try {
-    await api('addLote', dados);
+    await apiPost('addLote', dados);
     showToast('Lote registrado!', 'success');
   } catch(e) {
     dadosLotes = dadosLotes.filter(l => l.id !== novo.id);
@@ -4837,7 +4837,7 @@ async function salvarInstalacao() {
   fecharModalInstalacao();
 
   try {
-    await api('addInstalacao', dados);
+    await apiPost('addInstalacao', dados);
     showToast('Instalação registrada!', 'success');
     lerDados(true).then(d => {
       if (d.instalacoes) dadosInstalacoes = d.instalacoes;
@@ -8839,7 +8839,7 @@ async function salvarOrcamentoHistorico({ ap, cliente, empresa, selecoes, data, 
   const totalComDesconto = totalValor * (1 - descontoPct/100);
   const pgInfo = calcularTotalComPagamento(totalComDesconto, pagamento||'avista');
   try {
-    await api('addOrcamento', {
+    await apiPost('addOrcamento', {
       ap, cliente, empresa,
       data: dataFormatada,
       totalM2: totalM2.toFixed(2),
