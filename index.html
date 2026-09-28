@@ -4741,6 +4741,10 @@ function renderInstalacoes(d) {
         <span style="font-weight:700;font-size:15px;color:var(--text)">Apto ${ap}</span>
         ${cliente ? `<span style="font-size:12px;color:var(--text3)">· ${cliente}</span>` : ''}
         <span style="font-size:11px;color:var(--text3);margin-left:auto">${itens.length} instalação${itens.length > 1 ? 'ões' : ''}</span>
+        <button class="btn btn-secondary" onclick="gerarPDFInstalacoesApto('${String(ap).replace(/'/g,"\\'")}')" style="padding:5px 10px;font-size:11px;display:flex;align-items:center;gap:5px" title="Gerar PDF desse apartamento">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          PDF
+        </button>
       </div>
       ${itens.map(i => `
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
@@ -11499,6 +11503,81 @@ async function gerarPDFAC(id) {
       doc.text('Pág. '+i+' / '+total, 202, 292, {align:'right'});
     }
     doc.save('ArCondicionado-Ap'+(c.ap||'')+'-'+nomeArquivoLimpo(c.cliente||'')+'.pdf');
+    showToast('PDF gerado!', 'success');
+  } catch(e) { showToast('Erro ao gerar PDF: ' + e.message, 'error'); }
+}
+
+// ===================== INSTALAÇÕES — RELATÓRIO POR UNIDADE (PDF) =====================
+async function gerarPDFInstalacoesApto(ap) {
+  const itens = (dadosInstalacoes||[]).filter(i => String(i.ap) === String(ap));
+  if (!itens.length) { showToast('Nenhuma instalação registrada para esse apartamento', 'error'); return; }
+  const CORES = ESSENCE_PALETAS.vinilico;
+  showToast('Gerando PDF...', 'success');
+  try {
+    const JsPDFClass = getJsPDF();
+    if (!JsPDFClass) { showToast('jsPDF não carregado', 'error'); return; }
+    let imgData = null;
+    try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa_civil_ac.png'); } catch(e) {}
+    const doc = new JsPDFClass();
+    _pdfCapa(doc, imgData, 'REGISTRO DE INSTALAÇÕES');
+    const cliente = itens.find(i => i.cliente)?.cliente || '';
+    _pdfInfoCliente(doc, ap, cliente, null, 50, CORES);
+
+    let y = 88;
+    _pdfTabelaHeader(doc, y, [
+      {label:'R E V E S T I M E N T O', x:8},
+      {label:'L O T E   F A B', x:95},
+      {label:'C A I X A S', x:135},
+      {label:'P E Ç A S', x:158},
+      {label:'I N S T A L A Ç Ã O', x:202, align:'right'},
+    ], CORES);
+    y += 12;
+
+    // Mais recentes primeiro
+    const ordenados = [...itens].sort((a,b) => String(b.criado_em||'').localeCompare(String(a.criado_em||'')));
+    let alt = false;
+    ordenados.forEach(i => {
+      const alturaLinha = i.obs ? 22 : 18;
+      if (y + alturaLinha > 265) { doc.addPage(); y = 15; }
+      doc.setFillColor(...(alt ? [245,244,240] : [255,255,255])); doc.rect(0, y, 210, alturaLinha, 'F');
+      doc.setFillColor(...CORES.secundaria); doc.rect(0, y, 2.5, alturaLinha, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...CORES.preto);
+      doc.text(String(i.revestimento||'—'), 8, y+9);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...CORES.texto);
+      doc.text(formatarDataDisplay(i.data_fab)||'—', 95, y+9);
+      doc.text(String(i.qtd_caixas_usadas||'0'), 135, y+9);
+      doc.text(String(i.qtd_pecas_usadas||'0'), 158, y+9);
+      doc.text(formatarDataDisplay(i.data_inst)||'—', 202, y+9, {align:'right'});
+      if (i.obs) {
+        doc.setFontSize(7.5); doc.setTextColor(...CORES.cinza);
+        doc.text('Obs: ' + i.obs, 8, y+17);
+      }
+      doc.setDrawColor(...CORES.cinzaClaro); doc.setLineWidth(0.2);
+      doc.line(0, y+alturaLinha, 210, y+alturaLinha);
+      alt = !alt;
+      y += alturaLinha;
+    });
+    y += 8;
+
+    if (y > 270) { doc.addPage(); y = 15; }
+    const totalCaixas = itens.reduce((s,i) => s + (parseFloat(i.qtd_caixas_usadas)||0), 0);
+    const totalPecas = itens.reduce((s,i) => s + (parseFloat(i.qtd_pecas_usadas)||0), 0);
+    doc.setFillColor(...CORES.primaria); doc.rect(0, y, 210, 18, 'F');
+    const sobrePrimaria = CORES.primaria[0] > 200 ? CORES.preto : [200,195,180];
+    doc.setTextColor(...sobrePrimaria); doc.setFontSize(6.5); doc.setFont('helvetica','normal');
+    doc.text('T O T A L   D E   I N S T A L A Ç Õ E S', 8, y+8);
+    doc.setFontSize(7.5);
+    doc.text(itens.length + (itens.length > 1 ? ' registros' : ' registro'), 8, y+15);
+    doc.setTextColor(...CORES.secundaria); doc.setFontSize(11); doc.setFont('helvetica','bold');
+    doc.text(totalCaixas.toFixed(0) + ' cx · ' + totalPecas.toFixed(0) + ' peças', 202, y+13, {align:'right'});
+
+    const totalPag = doc.getNumberOfPages();
+    for (let p=1;p<=totalPag;p++) {
+      doc.setPage(p);
+      doc.setTextColor(...CORES.cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+      doc.text('Pág. '+p+' / '+totalPag, 202, 292, {align:'right'});
+    }
+    doc.save('Instalacoes-Ap'+ap+(cliente ? '-'+nomeArquivoLimpo(cliente) : '')+'.pdf');
     showToast('PDF gerado!', 'success');
   } catch(e) { showToast('Erro ao gerar PDF: ' + e.message, 'error'); }
 }
