@@ -4693,7 +4693,22 @@ async function loadInstalacoes() {
   try {
     const dados = await lerDados();
     dadosInstalacoes = dados.instalacoes || [];
+    if (dados.lotes) dadosLotes = dados.lotes;
     renderInstalacoes(dadosInstalacoes);
+  } catch(e) { /* mantem o que ja estava na tela */ }
+  // Autocorreção em segundo plano: o data.json do GitHub pode estar com cache atrasado.
+  // Busca direto da planilha (forçado) e re-renderiza se vier diferente, sem travar a tela.
+  try {
+    const fresco = await lerDados(true);
+    if (fresco) {
+      dadosInstalacoes = fresco.instalacoes || [];
+      if (fresco.lotes) dadosLotes = fresco.lotes;
+      const telaAtual = document.querySelector('.screen[style*="display: block"], .screen.active')?.id;
+      if (telaAtual === 'instalacoes-screen') {
+        renderInstalacoes(dadosInstalacoes);
+        if (document.getElementById('lotes-lista')) renderLotes(dadosLotes);
+      }
+    }
   } catch(e) { /* mantem o que ja estava na tela */ }
 }
 
@@ -5099,6 +5114,10 @@ window.onload = async () => {
     if (telaAtual === 'personalizar-screen' && typeof renderPersonalizar === 'function') renderPersonalizar(dadosPersonalizar);
     if (telaAtual === 'estoque-screen' && typeof renderEstoque === 'function') { dadosEstoque = dadosRevestimentos; renderEstoque(dadosEstoque); }
     if (telaAtual === 'saidas-screen' && typeof renderSaidas === 'function') renderSaidas(dadosSaidas);
+    if (telaAtual === 'instalacoes-screen' && typeof renderInstalacoes === 'function') {
+      renderInstalacoes(dadosInstalacoes);
+      if (document.getElementById('lotes-lista')) renderLotes(dadosLotes);
+    }
   }).catch(()=>{});
 };
 
