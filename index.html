@@ -3108,7 +3108,7 @@ body.mobile-mode #main{padding-bottom:72px}
   <div class="page-content">
     <div class="card" style="background:var(--accent-bg);border-color:var(--accent);margin-bottom:20px;padding:14px 18px">
       <p style="font-size:13px;color:var(--text);margin:0;line-height:1.6">
-        Boleto e PIX Parcelado aparecem separados do <strong>Crédito</strong> (que cai sozinho na maquininha todo mês). Assim você vê rapidinho o que precisa gerar e mandar, sem perder a visão do que já está garantido no cartão.
+        Aqui aparece só o que realmente vai virar uma cobrança/depósito em data futura: <strong>Boleto</strong> e <strong>PIX Parcelado</strong>. <strong>Crédito</strong> não entra nessa lista — ele cai pra você de uma vez só (antecipado), mesmo quando o cliente parcela no cartão dele.
       </p>
     </div>
     <div id="previsaocobrancas-atrasadas"></div>
@@ -6051,7 +6051,12 @@ function _calcularParcelasFuturas(incluirAtrasadas) {
   (dadosEntradasPers || []).forEach(en => {
     const n = _numeroParcelas(en.condicao_pagamento);
     const ehCredito = (en.condicao_pagamento||'').startsWith('credito');
-    if (n <= 1 && !ehCredito) return; // pagamento a vista/pix/debito nao gera cobranca futura
+    // Crédito (maquininha) cai pra gente de uma vez só, antecipado — mesmo quando o cliente parcela
+    // no cartão dele. O "N x" do crédito é só pra calcular o desconto/juros (valor_avista), não
+    // representa dinheiro chegando mês a mês. Só Boleto e PIX Parcelado geram parcela futura de verdade,
+    // porque aí sim cada parcela é uma cobrança/depósito separado em datas diferentes.
+    if (ehCredito) return;
+    if (n <= 1) return; // pagamento a vista/pix/debito nao gera cobranca futura
     const dataBase = _parseDataBR(en.data);
     if (!dataBase) return;
     const total = parseFloat(en.valor) || 0;
@@ -6466,7 +6471,7 @@ async function loadPrevisaoCobrancas() {
 
   const parcelas = _calcularParcelasFuturas();
   if (!parcelas.length) {
-    cont.innerHTML = '<div class="empty-state"><strong>Nenhuma cobrança futura encontrada</strong><p>Lance entradas ou saídas parceladas (Boleto, PIX Parcelado ou Crédito) em Custo Personalizações pra elas aparecerem aqui</p></div>';
+    cont.innerHTML = '<div class="empty-state"><strong>Nenhuma cobrança futura encontrada</strong><p>Lance entradas ou saídas em Boleto ou PIX Parcelado em Custo Personalizações pra elas aparecerem aqui (Crédito não gera parcela futura — cai de uma vez)</p></div>';
     return;
   }
 
