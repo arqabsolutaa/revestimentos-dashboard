@@ -60,11 +60,19 @@ async function loadVinilico() {
     const d = await lerDadosExtra('vinilico');
     dadosVinilico = d.personalizar || [];
     dadosViniProdutos = d.produtos || [];
-  } catch(e) { 
+  } catch(e) {
     console.log('Vinilico:', e.message);
     dadosVinilico = [];
   }
   renderVinilico();
+  // Corrige sozinho em segundo plano, direto da planilha — assim uma edição feita direto no Sheets
+  // (fora do sistema) aparece sem precisar dar F5 ou clicar em "Atualizar"
+  lerDadosExtra('vinilico', true).then(d => {
+    dadosVinilico = d.personalizar || [];
+    dadosViniProdutos = d.produtos || [];
+    const telaAtual = document.querySelector('.screen[style*="display: block"], .screen.active')?.id;
+    if (telaAtual === 'vinilico-screen') renderVinilico();
+  }).catch(()=>{});
 }
 
 function renderVinilico() {
@@ -237,11 +245,19 @@ async function loadMarmoraria() {
     const d = await lerDadosExtra('marmoraria');
     dadosMarmoraria = d.personalizar || [];
     dadosMarmCatalogo = d.catalogo || [];
-  } catch(e) { 
+  } catch(e) {
     console.log('Marmoraria:', e.message);
     dadosMarmoraria = [];
   }
   renderMarmoraria();
+  // Corrige sozinho em segundo plano, direto da planilha — assim uma edição feita direto no Sheets
+  // (fora do sistema) aparece sem precisar dar F5 ou clicar em "Atualizar"
+  lerDadosExtra('marmoraria', true).then(d => {
+    dadosMarmoraria = d.personalizar || [];
+    dadosMarmCatalogo = d.catalogo || [];
+    const telaAtual = document.querySelector('.screen[style*="display: block"], .screen.active')?.id;
+    if (telaAtual === 'marmoraria-screen') renderMarmoraria();
+  }).catch(()=>{});
 }
 
 function renderMarmoraria() {
@@ -409,11 +425,19 @@ async function loadBanheiras() {
     const d = await lerDadosExtra('banheiras');
     dadosBanheiras = d.personalizar || [];
     dadosBanhCatalogo = d.catalogo || [];
-  } catch(e) { 
+  } catch(e) {
     console.log('Banheiras:', e.message);
     dadosBanheiras = [];
   }
   renderBanheiras();
+  // Corrige sozinho em segundo plano, direto da planilha — assim uma edição feita direto no Sheets
+  // (fora do sistema) aparece sem precisar dar F5 ou clicar em "Atualizar"
+  lerDadosExtra('banheiras', true).then(d => {
+    dadosBanheiras = d.personalizar || [];
+    dadosBanhCatalogo = d.catalogo || [];
+    const telaAtual = document.querySelector('.screen[style*="display: block"], .screen.active')?.id;
+    if (telaAtual === 'banheiras-screen') renderBanheiras();
+  }).catch(()=>{});
 }
 
 function renderBanheiras() {
