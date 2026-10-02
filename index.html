@@ -343,11 +343,31 @@ async function carregarBancadasMarmoraria() {
   renderBancadasMarmoraria();
 }
 
+// Monta os <optgroup> do seletor de pedra agrupando por QUALQUER categoria que existir na planilha
+// (Marmoraria_Catalogo), não só "Construtora"/"Absoluta" — assim uma categoria nova (ex: "Externo",
+// pedra que o próprio cliente está trazendo) aparece no sistema sem precisar mexer em código de novo.
+function _optionsCatalogoMarmoraria(pedraSelecionada) {
+  const LABELS_FIXOS = { 'Construtora': 'Construtora (Incluso)', 'Absoluta': 'Sugestões Absoluta' };
+  const ORDEM_FIXA = ['Construtora', 'Absoluta'];
+  const porCategoria = {};
+  dadosMarmCatalogo.forEach(p => {
+    const cat = String(p.categoria || '').trim() || 'Outras';
+    if (!porCategoria[cat]) porCategoria[cat] = [];
+    porCategoria[cat].push(p);
+  });
+  const chaves = Object.keys(porCategoria).sort((a, b) => {
+    const ia = ORDEM_FIXA.indexOf(a), ib = ORDEM_FIXA.indexOf(b);
+    if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    return a.localeCompare(b, 'pt-BR');
+  });
+  return chaves.map(cat => `<optgroup label="${LABELS_FIXOS[cat] || cat}">${porCategoria[cat].map(p => {
+    const est = parseFloat(p.estoque_m2) || 0;
+    return `<option value="${p.id}" ${pedraSelecionada === String(p.id) ? 'selected' : ''}>${p.nome}${est > 0 ? ' (' + est.toFixed(1) + 'm²)' : ''}</option>`;
+  }).join('')}</optgroup>`).join('');
+}
+
 function renderBancadasMarmoraria() {
-  const opcoesPedras = dadosMarmCatalogo.map(p =>
-    `<option value="${p.id}">${p.nome} ${p.categoria === 'Construtora' ? '(Incluso)' : ''}</option>`
-  ).join('');
-  
+
   const lista = document.getElementById('marm-bancadas-lista');
   lista.innerHTML = marmSelecoes.map((b, idx) => `
     <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;border:1px solid var(--border)">
@@ -365,8 +385,7 @@ function renderBancadasMarmoraria() {
           <label style="font-size:11px;color:var(--text3)">Pedra</label>
           <select class="form-control" style="font-size:12px" onchange="marmSelecoes[${idx}].pedra=this.value;atualizarResumoMarm()">
             <option value="">— Selecione —</option>
-            <optgroup label="Construtora (Incluso)">${dadosMarmCatalogo.filter(p=>p.categoria==='Construtora').map(p=>{const est=parseFloat(p.estoque_m2)||0;return `<option value="${p.id}" ${b.pedra===String(p.id)?'selected':''}>${p.nome}${est>0?' ('+est.toFixed(1)+'m²)':''}</option>`;}).join('')}</optgroup>
-            <optgroup label="Sugestões Absoluta">${dadosMarmCatalogo.filter(p=>p.categoria==='Absoluta').map(p=>{const est=parseFloat(p.estoque_m2)||0;return `<option value="${p.id}" ${b.pedra===String(p.id)?'selected':''}>${p.nome}${est>0?' ('+est.toFixed(1)+'m²)':''}</option>`;}).join('')}</optgroup>
+            ${_optionsCatalogoMarmoraria(b.pedra)}
           </select>
         </div>
       </div>
