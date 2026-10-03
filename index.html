@@ -1398,7 +1398,7 @@ async function _gerarPDFMarmorariaInterno(ap, cliente, selecoes) {
   try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa-marmoraria.png'); } catch(e) {}
 
   const doc = new jsPDF();
-  _pdfCapa(doc, imgData, 'PERSONALIZE — MARMORARIA');
+  _pdfCapa(doc, imgData, 'PERSONALIZE');
   _pdfInfoCliente(doc, ap, cliente, null, 50, ESSENCE_CORES);
 
   let y = 88;
@@ -2147,7 +2147,7 @@ body.mobile-mode #main{padding-bottom:72px}
     </button>
     <button class="nav-btn" onclick="showScreen('necessidadecompra')" id="nav-necessidadecompra">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
-      Necessidade de Compra
+      Compras
     </button>
     <button class="nav-btn" onclick="showScreen('saidas')" id="nav-saidas">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -2378,7 +2378,7 @@ body.mobile-mode #main{padding-bottom:72px}
   <div id="necessidadecompra-screen" class="screen">
     <div class="page-header">
       <div class="page-header-left">
-        <h1>Necessidade de Compra</h1>
+        <h1>Compras</h1>
         <p>Revestimentos que faltam no estoque pra cobrir o que já foi personalizado nos apês (já com a margem de perda de cada item)</p>
       </div>
       <div class="header-actions">
@@ -9691,7 +9691,7 @@ function renderNecessidadeCompra() {
       <td>${fmt2(x.necessarioM2)} m²</td>
       <td><span class="badge badge-danger">${fmt2(x.saldoM2)} m²</span></td>
       <td style="font-weight:600">${x.caixasFaltam > 0 ? x.caixasFaltam + ' cx' : '—'}</td>
-      <td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px" onclick="abrirDetalheNecessidadeCompra(${i})">Ver apês</button></td>
+      <td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px" onclick="abrirDetalheNecessidadeCompra(${i})">Aptos</button></td>
     </tr>`).join('')}</tbody>
   </table></div>`;
 }
@@ -9728,7 +9728,7 @@ async function gerarPDFNecessidadeCompra() {
     let imgData = null;
     try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa_civil_ac.png'); } catch(e) {}
     const doc = new JsPDFClass();
-    _pdfCapa(doc, imgData, 'NECESSIDADE DE COMPRA');
+    _pdfCapa(doc, imgData, '');
 
     const W = 210, ml = 8, mr = 8;
     const fmt2 = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
