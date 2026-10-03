@@ -6308,15 +6308,34 @@ function _calcularNecessidadeCompra() {
     });
   });
 
+  // Soma o que já saiu do estoque via Saídas registradas (estoque_m2 já vem descontado disso,
+  // então pra saber o total que já foi comprado/disponibilizado pra cada revestimento a gente
+  // precisa somar de volta o que já saiu — senão material já retirado (ex.: síntese do apto 42
+  // que já teve a saída dada) continua aparecendo como "faltando comprar".
+  const saidaPorRevestimento = {};
+  (dadosSaidas || []).forEach(s => {
+    const codigo = String(s.codigo_rev || '').trim();
+    if (!codigo) return;
+    const rev = dadosRevestimentos.find(r => String(r.codigo) === codigo) || dadosRevestimentos.find(r => String(r.id) === codigo);
+    if (!rev) return;
+    const key = String(rev.id || rev.codigo);
+    const m2 = parseFloat(s.quantidade_m2) || 0;
+    saidaPorRevestimento[key] = (saidaPorRevestimento[key] || 0) + m2;
+  });
+
   const lista = Object.values(porRevestimento).map(e => {
     const estoque = parseFloat(e.rev.estoque_m2) || 0;
-    const saldo = e.necessarioM2 - estoque;
+    const key = String(e.rev.id || e.rev.codigo);
+    const saidaM2 = saidaPorRevestimento[key] || 0;
+    const disponivelTotal = estoque + saidaM2; // o que tem em estoque + o que já saiu (já foi comprado)
+    const saldo = e.necessarioM2 - disponivelTotal;
     const m2cx = parseFloat(e.rev.m2_por_caixa) || 0;
     const caixasFaltam = saldo > 0.01 && m2cx > 0 ? Math.ceil(saldo / m2cx) : 0;
     return {
       rev: e.rev,
       necessarioM2: e.necessarioM2,
       estoqueM2: estoque,
+      saidaM2,
       saldoM2: saldo,
       caixasFaltam,
       itens: e.itens.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0) || a.ambiente.localeCompare(b.ambiente,'pt-BR'))
@@ -9638,6 +9657,7 @@ async function loadNecessidadeCompra() {
     const dados = await lerDados(true); // sempre busca fresco, direto da planilha
     if (dados.personalizar) dadosPersonalizar = dados.personalizar;
     if (dados.revestimentos) dadosRevestimentos = dados.revestimentos;
+    if (dados.saidas) dadosSaidas = dados.saidas;
   } catch(e) { /* usa o que já tiver carregado */ }
   renderNecessidadeCompra();
 }
@@ -9662,11 +9682,12 @@ function renderNecessidadeCompra() {
 
   const fmt2 = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   cont.innerHTML = `<div class="table-wrap"><table>
-    <thead><tr><th>Código</th><th>Revestimento</th><th>Estoque Atual</th><th>Necessário</th><th>Faltam (m²)</th><th>Faltam (caixas)</th><th></th></tr></thead>
+    <thead><tr><th>Código</th><th>Revestimento</th><th>Estoque Atual</th><th>Já Retirado</th><th>Necessário</th><th>Faltam (m²)</th><th>Faltam (caixas)</th><th></th></tr></thead>
     <tbody>${faltando.map((x,i) => `<tr>
       <td><span class="badge badge-gray" style="font-family:var(--font-mono,monospace)">${x.rev.codigo||'-'}</span></td>
       <td style="font-weight:500">${x.rev.nome||'-'}</td>
       <td>${fmt2(x.estoqueM2)} m²</td>
+      <td>${fmt2(x.saidaM2||0)} m²</td>
       <td>${fmt2(x.necessarioM2)} m²</td>
       <td><span class="badge badge-danger">${fmt2(x.saldoM2)} m²</span></td>
       <td style="font-weight:600">${x.caixasFaltam > 0 ? x.caixasFaltam + ' cx' : '—'}</td>
@@ -9682,7 +9703,7 @@ function abrirDetalheNecessidadeCompra(idx) {
   const fmt2 = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   document.getElementById('necessidadecompra-detalhe-titulo').textContent = x.rev.nome + ' (' + (x.rev.codigo||'-') + ')';
   document.getElementById('necessidadecompra-detalhe-corpo').innerHTML = `
-    <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Estoque atual: <strong>${fmt2(x.estoqueM2)} m²</strong> · Necessário: <strong>${fmt2(x.necessarioM2)} m²</strong> · Faltam: <strong style="color:var(--danger)">${fmt2(x.saldoM2)} m²${x.caixasFaltam>0?' ('+x.caixasFaltam+' cx)':''}</strong></p>
+    <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Estoque atual: <strong>${fmt2(x.estoqueM2)} m²</strong> · Já retirado (saídas): <strong>${fmt2(x.saidaM2||0)} m²</strong> · Necessário: <strong>${fmt2(x.necessarioM2)} m²</strong> · Faltam: <strong style="color:var(--danger)">${fmt2(x.saldoM2)} m²${x.caixasFaltam>0?' ('+x.caixasFaltam+' cx)':''}</strong></p>
     <div class="table-wrap"><table>
       <thead><tr><th>Apto</th><th>Cliente</th><th>Ambiente</th><th style="text-align:right">m² (com perda)</th></tr></thead>
       <tbody>${x.itens.map(it => `<tr>
