@@ -3968,7 +3968,7 @@ body.mobile-mode #main{padding-bottom:72px}
 <div id="modal-instalacao" class="modal-overlay">
   <div class="modal">
     <div class="modal-header">
-      <h2>Nova Instalação</h2>
+      <h2 id="modal-instalacao-titulo">Nova Instalação</h2>
       <button class="modal-close" onclick="fecharModalInstalacao()">×</button>
     </div>
     <div class="modal-body">
@@ -4013,7 +4013,7 @@ body.mobile-mode #main{padding-bottom:72px}
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="fecharModalInstalacao()">Cancelar</button>
-      <button class="btn btn-primary" onclick="salvarInstalacao()">Salvar Instalação</button>
+      <button class="btn btn-primary" id="btn-salvar-instalacao" onclick="salvarInstalacao()">Salvar Instalação</button>
     </div>
   </div>
 </div>
@@ -4772,6 +4772,7 @@ async function excluirLote(id) {
 
 // ===================== INSTALAÇÕES =====================
 let dadosInstalacoes = [];
+let instalacaoEditandoId = null;
 
 async function loadInstalacoes() {
   try {
@@ -4842,9 +4843,14 @@ function renderInstalacoes(d) {
               ${i.obs ? `<span style="font-size:11px;color:var(--text3)">Obs: ${i.obs}</span>` : ''}
             </div>
           </div>
-          <button onclick="excluirInstalacao('${i.id}')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:4px" title="Excluir">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-          </button>
+          <div style="display:flex;gap:2px">
+            <button onclick="editarInstalacao('${i.id}')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:4px" title="Editar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button onclick="excluirInstalacao('${i.id}')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:4px" title="Excluir">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          </div>
         </div>
       `).join('')}
     </div>`;
@@ -4862,6 +4868,7 @@ function filtrarInstalacoes() {
 }
 
 function abrirModalInstalacao() {
+  instalacaoEditandoId = null;
   const selAp = document.getElementById('inst-ap');
   if (selAp) {
     selAp.innerHTML = '<option value="">— Selecione —</option>' +
@@ -4872,12 +4879,46 @@ function abrirModalInstalacao() {
     selRev.innerHTML = '<option value="">— Selecione —</option>' +
       (dadosRevestimentos||[]).map(r => `<option value="${r.nome}" data-codigo="${r.id || r.codigo || ''}">${r.nome}${r.tamanho ? ' — ' + r.tamanho : ''}</option>`).join('');
   }
+  document.getElementById('inst-ap').value = '';
   document.getElementById('inst-cliente').value = '';
   document.getElementById('inst-qtd-cx').value = '';
   document.getElementById('inst-qtd-pecas').value = '';
   document.getElementById('inst-obs').value = '';
   document.getElementById('inst-data-lote').value = '';
   document.getElementById('inst-data').value = new Date().toISOString().split('T')[0];
+  document.getElementById('modal-instalacao-titulo').textContent = 'Nova Instalação';
+  document.getElementById('btn-salvar-instalacao').textContent = 'Salvar Instalação';
+  abrirModal('modal-instalacao');
+}
+
+// Abre o mesmo modal da instalação, mas pré-preenchido com o registro existente, pra ela poder
+// corrigir quantidade de caixas/peças do lote (ex: quebrou peça na obra, quantidade errada, etc)
+// sem precisar excluir e lançar tudo de novo.
+function editarInstalacao(id) {
+  const inst = dadosInstalacoes.find(i => i.id === id);
+  if (!inst) { showToast('Instalação não encontrada', 'error'); return; }
+  instalacaoEditandoId = id;
+
+  const selAp = document.getElementById('inst-ap');
+  if (selAp) {
+    selAp.innerHTML = '<option value="">— Selecione —</option>' +
+      _apartamentosConhecidos().map(a => `<option value="${a.ap}">Apto ${a.ap}${a.cliente ? ' — ' + a.cliente : ''}</option>`).join('');
+    selAp.value = inst.ap || '';
+  }
+  const selRev = document.getElementById('inst-revestimento');
+  if (selRev) {
+    selRev.innerHTML = '<option value="">— Selecione —</option>' +
+      (dadosRevestimentos||[]).map(r => `<option value="${r.nome}" data-codigo="${r.id || r.codigo || ''}">${r.nome}${r.tamanho ? ' — ' + r.tamanho : ''}</option>`).join('');
+    selRev.value = inst.revestimento || '';
+  }
+  document.getElementById('inst-cliente').value = inst.cliente || '';
+  document.getElementById('inst-qtd-cx').value = inst.qtd_caixas_usadas || '';
+  document.getElementById('inst-qtd-pecas').value = inst.qtd_pecas_usadas || '';
+  document.getElementById('inst-obs').value = inst.obs || '';
+  document.getElementById('inst-data-lote').value = inst.data_fab || '';
+  document.getElementById('inst-data').value = inst.data_inst || '';
+  document.getElementById('modal-instalacao-titulo').textContent = 'Editar Instalação';
+  document.getElementById('btn-salvar-instalacao').textContent = 'Salvar Alterações';
   abrirModal('modal-instalacao');
 }
 
@@ -4889,6 +4930,7 @@ function preencherClienteInstalacao() {
 
 function fecharModalInstalacao() {
   fecharModal('modal-instalacao');
+  instalacaoEditandoId = null;
 }
 
 async function salvarInstalacao() {
@@ -4917,6 +4959,11 @@ async function salvarInstalacao() {
   }
   if (qtdCx <= 0) {
     showToast('Informe a quantidade de caixas', 'error'); return;
+  }
+
+  if (instalacaoEditandoId) {
+    await _salvarEdicaoInstalacao(instalacaoEditandoId, dados);
+    return;
   }
 
   // Formalizar/atualizar o lote na memória imediatamente (sem mexer no estoque geral)
@@ -4959,6 +5006,34 @@ async function salvarInstalacao() {
     if (loteNovoTemp) dadosLotes = dadosLotes.filter(l => l.id !== loteNovoTemp.id);
     if (document.getElementById('lotes-lista')) renderLotes(dadosLotes);
     dadosInstalacoes = dadosInstalacoes.filter(i => i.id !== novo.id);
+    renderInstalacoes(dadosInstalacoes);
+    showToast('Erro: ' + e.message, 'error');
+  }
+}
+
+// Salva a edição de uma instalação já existente (ex: corrigir qtd de peças porque quebrou uma na obra).
+// O lote (Lotes) que foi somado no lançamento original precisa ser corrigido pra refletir a diferença
+// (o backend reverte o efeito do lançamento antigo no lote e aplica o novo), por isso busca os dados
+// frescos depois de salvar em vez de tentar recalcular isso tudo aqui no navegador.
+async function _salvarEdicaoInstalacao(id, dados) {
+  const backup = dadosInstalacoes.find(i => i.id === id);
+  if (!backup) { showToast('Instalação não encontrada', 'error'); return; }
+  const atualizado = { ...backup, ...dados, id };
+  dadosInstalacoes = dadosInstalacoes.map(i => i.id === id ? atualizado : i);
+  renderInstalacoes(dadosInstalacoes);
+  fecharModalInstalacao();
+
+  try {
+    await apiPost('updateInstalacao', { ...dados, id });
+    showToast('Instalação atualizada!', 'success');
+    lerDados(true).then(d => {
+      if (d.instalacoes) dadosInstalacoes = d.instalacoes;
+      if (d.lotes) dadosLotes = d.lotes;
+      renderInstalacoes(dadosInstalacoes);
+      if (document.getElementById('lotes-lista')) renderLotes(dadosLotes);
+    }).catch(()=>{});
+  } catch(e) {
+    dadosInstalacoes = dadosInstalacoes.map(i => i.id === id ? backup : i);
     renderInstalacoes(dadosInstalacoes);
     showToast('Erro: ' + e.message, 'error');
   }
