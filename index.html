@@ -9767,15 +9767,14 @@ function renderNecessidadeCompra() {
 
   const fmt2 = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   cont.innerHTML = `<div class="table-wrap"><table>
-    <thead><tr><th>Código</th><th>Revestimento</th><th>Estoque Atual</th><th>Já Retirado</th><th>Necessário</th><th>Faltam (m²)</th><th>Faltam (caixas)</th><th></th></tr></thead>
+    <thead><tr><th>Revestimento</th><th>Medida</th><th>Estoque Atual</th><th>Já Retirado</th><th>Necessário</th><th>Faltam (m²)</th><th></th></tr></thead>
     <tbody>${faltando.map((x,i) => `<tr>
-      <td><span class="badge badge-gray" style="font-family:var(--font-mono,monospace)">${x.rev.codigo||'-'}</span></td>
       <td style="font-weight:500">${x.rev.nome||'-'}</td>
+      <td>${x.rev.tamanho||'—'}</td>
       <td>${fmt2(x.estoqueM2)} m²</td>
       <td>${fmt2(x.saidaM2||0)} m²</td>
       <td>${fmt2(x.necessarioM2)} m²</td>
       <td><span class="badge badge-danger">${fmt2(x.saldoM2)} m²</span></td>
-      <td style="font-weight:600">${x.caixasFaltam > 0 ? x.caixasFaltam + ' cx' : '—'}</td>
       <td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px" onclick="abrirDetalheNecessidadeCompra(${i})">Aptos</button></td>
     </tr>`).join('')}</tbody>
   </table></div>`;
@@ -9786,9 +9785,9 @@ function abrirDetalheNecessidadeCompra(idx) {
   const x = faltando[idx];
   if (!x) return;
   const fmt2 = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
-  document.getElementById('necessidadecompra-detalhe-titulo').textContent = x.rev.nome + ' (' + (x.rev.codigo||'-') + ')';
+  document.getElementById('necessidadecompra-detalhe-titulo').textContent = x.rev.nome + (x.rev.tamanho ? ' · ' + x.rev.tamanho : '');
   document.getElementById('necessidadecompra-detalhe-corpo').innerHTML = `
-    <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Estoque atual: <strong>${fmt2(x.estoqueM2)} m²</strong> · Já retirado (saídas): <strong>${fmt2(x.saidaM2||0)} m²</strong> · Necessário: <strong>${fmt2(x.necessarioM2)} m²</strong> · Faltam: <strong style="color:var(--danger)">${fmt2(x.saldoM2)} m²${x.caixasFaltam>0?' ('+x.caixasFaltam+' cx)':''}</strong></p>
+    <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Estoque atual: <strong>${fmt2(x.estoqueM2)} m²</strong> · Já retirado (saídas): <strong>${fmt2(x.saidaM2||0)} m²</strong> · Necessário: <strong>${fmt2(x.necessarioM2)} m²</strong> · Faltam: <strong style="color:var(--danger)">${fmt2(x.saldoM2)} m²</strong></p>
     <div class="table-wrap"><table>
       <thead><tr><th>Apto</th><th>Cliente</th><th>Ambiente</th><th style="text-align:right">m² (com perda)</th></tr></thead>
       <tbody>${x.itens.map(it => `<tr>
@@ -9824,10 +9823,10 @@ async function gerarPDFNecessidadeCompra() {
 
     _pdfTabelaHeader(doc, y, [
       {label:'R E V E S T I M E N T O', x:8},
-      {label:'E S T O Q U E', x:100},
-      {label:'N E C E S S Á R I O', x:130},
-      {label:'F A L T A M', x:165},
-      {label:'C A I X A S', x:202, align:'right'},
+      {label:'M E D I D A', x:95},
+      {label:'E S T O Q U E', x:122},
+      {label:'N E C E S S Á R I O', x:152},
+      {label:'F A L T A M', x:202, align:'right'},
     ], CORES);
     y += 12;
 
@@ -9837,15 +9836,14 @@ async function gerarPDFNecessidadeCompra() {
       doc.setFillColor(...(alt ? [245,244,240] : [255,255,255])); doc.rect(0, y, 210, 16, 'F');
       doc.setFillColor(...CORES.secundaria); doc.rect(0, y, 2.5, 16, 'F');
       doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...CORES.preto);
-      const nomeLinha = doc.splitTextToSize((x.rev.nome||'—') + ' (' + (x.rev.codigo||'-') + ')', 88)[0];
+      const nomeLinha = doc.splitTextToSize(x.rev.nome||'—', 82)[0];
       doc.text(nomeLinha, 8, y+9);
       doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...CORES.texto);
-      doc.text(fmt2(x.estoqueM2) + ' m²', 100, y+9);
-      doc.text(fmt2(x.necessarioM2) + ' m²', 130, y+9);
+      doc.text(String(x.rev.tamanho||'—'), 95, y+9);
+      doc.text(fmt2(x.estoqueM2) + ' m²', 122, y+9);
+      doc.text(fmt2(x.necessarioM2) + ' m²', 152, y+9);
       doc.setFont('helvetica','bold'); doc.setTextColor(...CORES.secundaria);
-      doc.text(fmt2(x.saldoM2) + ' m²', 165, y+9);
-      doc.setFont('helvetica','normal'); doc.setTextColor(...CORES.texto);
-      doc.text(x.caixasFaltam > 0 ? String(x.caixasFaltam) : '—', 202, y+9, {align:'right'});
+      doc.text(fmt2(x.saldoM2) + ' m²', 202, y+9, {align:'right'});
       doc.setDrawColor(...CORES.cinzaClaro); doc.setLineWidth(0.2);
       doc.line(0, y+16, 210, y+16);
       alt = !alt;
