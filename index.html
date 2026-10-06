@@ -2446,6 +2446,16 @@ body.mobile-mode #main{padding-bottom:72px}
     </div>
   </div>
 
+  <div class="modal-overlay" id="modal-saida-detalhe">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="saida-detalhe-titulo">Detalhes da saída</h2>
+        <button class="modal-close" onclick="fecharModal('modal-saida-detalhe')">&times;</button>
+      </div>
+      <div class="modal-body" id="saida-detalhe-corpo"></div>
+    </div>
+  </div>
+
   <!-- PAREDES -->
   <div id="paredes-screen" class="screen">
     <div class="page-header">
@@ -9985,8 +9995,42 @@ function renderSaidas(d) {
     <td>${r.local||'-'} ${r.apto ? '· Apto '+r.apto : ''}</td>
     <td><span class="badge badge-warn">${parseFloat(r.quantidade_m2||0).toFixed(2)} m²</span></td>
     <td>${r.destino||'-'}</td>
-    <td><button class="btn btn-danger" onclick="excluirSaida('${r.id}')" style="padding:4px 8px;font-size:11px">Excluir</button></td>
+    <td style="white-space:nowrap"><button class="btn btn-secondary" onclick="abrirDetalheSaida('${r.id}')" style="padding:4px 8px;font-size:11px;margin-right:4px">Detalhes</button><button class="btn btn-danger" onclick="excluirSaida('${r.id}')" style="padding:4px 8px;font-size:11px">Excluir</button></td>
   </tr>`).join('');
+}
+
+// Mostra o detalhe de uma saída: converte os m² em caixas/peças usando o cadastro do revestimento
+function abrirDetalheSaida(id) {
+  const s = dadosSaidas.find(x => String(x.id) === String(id));
+  if (!s) { showToast('Saída não encontrada', 'error'); return; }
+  const cod = String(s.codigo_rev || '').trim();
+  const rev = dadosRevestimentos.find(r => String(r.codigo) === cod) || dadosRevestimentos.find(r => String(r.id) === cod)
+    || dadosRevestimentos.find(r => (r.nome||'').trim() === (s.revestimento||'').trim());
+  const m2 = parseFloat(s.quantidade_m2) || 0;
+  const m2cx = parseFloat(rev?.m2_por_caixa) || 0;
+  const pcCx = parseFloat(rev?.pecas_por_caixa) || 0;
+  const fmt2 = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const caixasExatas = m2cx > 0 ? m2 / m2cx : 0;
+  const caixasInteiras = m2cx > 0 ? Math.ceil(caixasExatas - 1e-9) : 0;
+  const pecas = m2cx > 0 && pcCx > 0 ? Math.round(caixasExatas * pcCx) : 0;
+  const linha = (rotulo, valor) => `<tr><td style="color:var(--text3);width:42%">${rotulo}</td><td style="font-weight:500">${valor}</td></tr>`;
+  document.getElementById('saida-detalhe-titulo').textContent = s.revestimento || 'Detalhes da saída';
+  document.getElementById('saida-detalhe-corpo').innerHTML = `
+    <div class="table-wrap"><table><tbody>
+      ${linha('Data', formatarDataDisplay(s.data) || '—')}
+      ${linha('Código', s.codigo_rev || rev?.codigo || '—')}
+      ${linha('Tamanho', rev?.tamanho || '—')}
+      ${linha('Obra', s.obra || '—')}
+      ${linha('Local / Apto', (s.local || '—') + (s.apto ? ' · Apto ' + s.apto : ''))}
+      ${linha('Destino', s.destino || '—')}
+      ${linha('Quantidade (m²)', fmt2(m2) + ' m²')}
+      ${m2cx > 0 ? linha('m² por caixa', fmt2(m2cx) + ' m²') : linha('m² por caixa', '<span style="color:var(--danger)">não cadastrado na planilha</span>')}
+      ${m2cx > 0 ? linha('Caixas', '<strong>' + caixasInteiras + ' cx</strong>' + (Math.abs(caixasExatas - caixasInteiras) > 0.01 ? ' <span style="color:var(--text3)">(' + fmt2(caixasExatas) + ' exatas)</span>' : '')) : ''}
+      ${pecas > 0 ? linha('Peças', pecas + ' pç <span style="color:var(--text3)">(' + pcCx + ' por caixa)</span>') : ''}
+      ${s.obs ? linha('Observações', s.obs) : ''}
+      ${s.criado_em ? linha('Registrado em', formatarDataDisplay(s.criado_em) || s.criado_em) : ''}
+    </tbody></table></div>`;
+  abrirModal('modal-saida-detalhe');
 }
 
 function toggleAllSaidas(cb) {
