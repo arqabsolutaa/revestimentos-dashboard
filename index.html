@@ -5332,7 +5332,7 @@ async function confirmarSenhaModulo() {
     // A senha da Bárbara NÃO fica no código da página: é conferida no servidor (Apps Script).
     erroEl.style.display = 'none';
     try {
-      const r = await jsonp(SCRIPT_URL + '?action=verificarSenhaBarbara&senha=' + encodeURIComponent(senha));
+      const r = await jsonp(SCRIPT_URL + '?action=verificarSenhaBarbara&modulo=' + encodeURIComponent(tipo) + '&senha=' + encodeURIComponent(senha));
       if (r && r.error) {
         erroEl.textContent = /desconhecida/i.test(r.error) ? 'Atualize o Code.gs no Apps Script (nova implantação) para usar a senha da Bárbara' : (r.error);
         erroEl.style.display = 'block';
