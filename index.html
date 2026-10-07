@@ -5257,16 +5257,30 @@ const NOMES_MODULO = {
 };
 
 let _historicoLinhas = [];
-async function abrirHistoricoAlteracoes() {
+async function abrirHistoricoAlteracoes(senhaDigitada) {
   abrirModal('modal-historico');
-  document.getElementById('hist-corpo').innerHTML = '<p style="color:var(--text3)">Carregando...</p>';
+  const corpo = document.getElementById('hist-corpo');
+  const senha = senhaDigitada || window._senhaBarbara || '';
+  if (!senha) { _pedirSenhaHistorico(); return; }
+  corpo.innerHTML = '<p style="color:var(--text3)">Carregando...</p>';
   try {
-    const r = await api('getLog', { limite: 500 });
+    const r = await api('getLog', { limite: 500, senha });
+    window._senhaBarbara = senha;
     _historicoLinhas = (r && r.linhas) || [];
     renderHistoricoAlteracoes();
   } catch(e) {
-    document.getElementById('hist-corpo').innerHTML = '<p style="color:var(--danger)">Não consegui carregar o histórico: ' + (e.message||e) + '</p>';
+    window._senhaBarbara = '';
+    _pedirSenhaHistorico(/negado/i.test(e.message||'') ? 'Senha incorreta' : ('Não consegui carregar: ' + (e.message||e)));
   }
+}
+
+function _pedirSenhaHistorico(msg) {
+  document.getElementById('hist-corpo').innerHTML = `<div style="max-width:280px;margin:20px auto;text-align:center">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:10px">Digite a senha da Bárbara</p>
+    <input type="password" id="hist-senha" class="form-control" style="text-align:center" onkeydown="if(event.key==='Enter')abrirHistoricoAlteracoes(this.value)">
+    ${msg ? '<p style="color:var(--danger);font-size:12px;margin-top:8px">' + msg + '</p>' : ''}
+    <button class="btn btn-primary" style="margin-top:12px;width:100%;justify-content:center" onclick="abrirHistoricoAlteracoes(document.getElementById('hist-senha').value)">Entrar</button>
+  </div>`;
 }
 
 function renderHistoricoAlteracoes() {
@@ -5309,15 +5323,38 @@ function pedirSenhaModulo(tipo) {
   input.focus();
 }
 
-function confirmarSenhaModulo() {
+async function confirmarSenhaModulo() {
   const tipo = window._senhaModuloPendente;
   const senha = document.getElementById('escolha-senha-input').value;
-  if (senha === SENHAS_MODULO[tipo]) {
+  const erroEl = document.getElementById('escolha-senha-erro');
+  let ok = false;
+  if (getUsuarioAtual() === 'Bárbara') {
+    // A senha da Bárbara NÃO fica no código da página: é conferida no servidor (Apps Script).
+    erroEl.style.display = 'none';
+    try {
+      const r = await jsonp(SCRIPT_URL + '?action=verificarSenhaBarbara&senha=' + encodeURIComponent(senha));
+      if (r && r.error) {
+        erroEl.textContent = /desconhecida/i.test(r.error) ? 'Atualize o Code.gs no Apps Script (nova implantação) para usar a senha da Bárbara' : (r.error);
+        erroEl.style.display = 'block';
+        return;
+      }
+      ok = !!(r && r.data && r.data.ok);
+      if (ok) window._senhaBarbara = senha;
+    } catch(e) {
+      erroEl.textContent = 'Não consegui conferir a senha agora. Tente de novo.';
+      erroEl.style.display = 'block';
+      return;
+    }
+  } else {
+    ok = senha === SENHAS_MODULO[tipo];
+  }
+  if (ok) {
     sessionStorage.setItem('absoluta_area', tipo);
     cancelarSenhaModulo();
     escolherModulo(tipo);
   } else {
-    document.getElementById('escolha-senha-erro').style.display = 'block';
+    erroEl.textContent = 'Senha incorreta';
+    erroEl.style.display = 'block';
   }
 }
 
