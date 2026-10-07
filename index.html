@@ -11153,6 +11153,10 @@ async function gerarPDF() {
   const pagamentoAtual = calcPagamento || 'avista';
   const descontoAtual = calcDesconto || 0;
   const creditosAtual = _creditosValidos();
+  // Aviso: paredes marcadas sem revestimento escolhido saem como "Não definido" e R$ 0,00 no PDF,
+  // o que distorce o total (e o saldo, quando há abatimento). Melhor avisar antes de gerar.
+  const semRevest = Object.values(selecoesAtual).filter(v => !v || !v.piso || !dadosRevestimentos.find(r => String(r.id||r.codigo) === String(v.piso))).length;
+  if (semRevest > 0 && !confirm(semRevest + ' parede(s) estão sem revestimento escolhido e vão sair como "Não definido" e R$ 0,00 no PDF' + (creditosAtual.length ? ' (o saldo com o abatimento vai ficar errado)' : '') + '.\n\nGerar o PDF mesmo assim?')) return;
   try {
     await salvarOrcamentoHistorico({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual });
     showToast('Orçamento salvo!', 'success');
