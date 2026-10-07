@@ -5317,7 +5317,7 @@ function pedirSenhaModulo(tipo) {
   window._senhaModuloPendente = tipo;
   document.getElementById('escolha-botoes').style.display = 'none';
   document.getElementById('escolha-senha-bloco').style.display = 'flex';
-  document.getElementById('escolha-senha-titulo').textContent = 'Senha — ' + NOMES_MODULO[tipo];
+  document.getElementById('escolha-senha-titulo').textContent = '';
   document.getElementById('escolha-senha-erro').style.display = 'none';
   const input = document.getElementById('escolha-senha-input');
   input.value = '';
