@@ -2063,6 +2063,10 @@ body.mobile-mode #main{padding-bottom:72px}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
         Atualizar dados
       </button>
+      <button class="mode-btn" onclick="abrirHistoricoAlteracoes()" style="width:100%;justify-content:center;gap:6px;margin-top:6px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+        Histórico de alterações
+      </button>
     </div>
     <div class="nav-label">Principal</div>
     </div>
@@ -2222,7 +2226,7 @@ body.mobile-mode #main{padding-bottom:72px}
 <!-- ESCOLHA DE MÓDULO (pós-login) -->
 <div id="escolha-modulo" style="position:fixed;top:0;left:0;width:100%;height:100%;height:100dvh;z-index:9998;display:none;align-items:center;justify-content:center;background:#1a1712;overflow:hidden">
   <div style="position:relative;z-index:2;text-align:center;padding:24px">
-    <p style="color:#e8dfc4;opacity:0.6;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin:0 0 14px;font-family:'Inter',sans-serif">Quem está usando?</p>
+    <p style="color:#e8dfc4;opacity:0.6;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin:0 0 14px;font-family:'Inter',sans-serif">Usuário</p>
     <div id="escolha-usuarios" style="display:flex;gap:12px;justify-content:center;margin-bottom:34px">
       <button type="button" data-usuario="Bárbara" onclick="selecionarUsuario('Bárbara')" class="escolha-usuario-btn">Bárbara</button>
       <button type="button" data-usuario="Gabriel" onclick="selecionarUsuario('Gabriel')" class="escolha-usuario-btn">Gabriel</button>
@@ -2463,6 +2467,22 @@ body.mobile-mode #main{padding-bottom:72px}
         <button class="modal-close" onclick="fecharModal('modal-saida-detalhe')">&times;</button>
       </div>
       <div class="modal-body" id="saida-detalhe-corpo"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-historico">
+    <div class="modal" style="max-width:980px;width:96%">
+      <div class="modal-header">
+        <h2>Histórico de alterações</h2>
+        <button class="modal-close" onclick="fecharModal('modal-historico')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <select class="form-control" id="hist-filtro-usuario" onchange="renderHistoricoAlteracoes()" style="max-width:180px"><option value="">Todos os usuários</option><option>Bárbara</option><option>Gabriel</option><option>Sem identificar</option></select>
+          <input class="form-control" id="hist-filtro-texto" oninput="renderHistoricoAlteracoes()" placeholder="Buscar (apto, ação...)" style="max-width:240px">
+        </div>
+        <div id="hist-corpo"><p style="color:var(--text3)">Carregando...</p></div>
+      </div>
     </div>
   </div>
 
@@ -5235,6 +5255,31 @@ const NOMES_MODULO = {
   vagasdep: 'Vagas e Depósitos',
   controle: 'Controle'
 };
+
+let _historicoLinhas = [];
+async function abrirHistoricoAlteracoes() {
+  abrirModal('modal-historico');
+  document.getElementById('hist-corpo').innerHTML = '<p style="color:var(--text3)">Carregando...</p>';
+  try {
+    const r = await api('getLog', { limite: 500 });
+    _historicoLinhas = (r && r.linhas) || [];
+    renderHistoricoAlteracoes();
+  } catch(e) {
+    document.getElementById('hist-corpo').innerHTML = '<p style="color:var(--danger)">Não consegui carregar o histórico: ' + (e.message||e) + '</p>';
+  }
+}
+
+function renderHistoricoAlteracoes() {
+  const u = document.getElementById('hist-filtro-usuario').value;
+  const q = (document.getElementById('hist-filtro-texto').value || '').toLowerCase();
+  const esc = t => String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const linhas = _historicoLinhas.filter(l => (!u || (l.usuario||'Sem identificar') === u) &&
+    (!q || (l.acao+' '+l.referencia+' '+l.detalhe).toLowerCase().includes(q)));
+  if (!linhas.length) { document.getElementById('hist-corpo').innerHTML = '<div class="empty-state"><strong>Nenhuma alteração encontrada</strong></div>'; return; }
+  document.getElementById('hist-corpo').innerHTML = '<div class="table-wrap"><table><thead><tr><th>Data/hora</th><th>Usuário</th><th>Ação</th><th>Item</th><th>Detalhe</th></tr></thead><tbody>' +
+    linhas.map(l => `<tr><td style="white-space:nowrap">${esc(l.data_hora)}</td><td><strong>${esc(l.usuario||'—')}</strong></td><td>${esc(l.acao)}</td><td>${esc(l.referencia)}</td><td style="font-size:11px;color:var(--text3);max-width:320px;word-break:break-all">${esc((l.detalhe||'').substring(0,140))}</td></tr>`).join('') +
+    '</tbody></table></div>';
+}
 
 function getUsuarioAtual() { return sessionStorage.getItem('absoluta_usuario') || ''; }
 
