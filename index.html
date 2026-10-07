@@ -5194,7 +5194,7 @@ async function forcarAtualizarDados() {
   try {
     // Também aciona a sincronização pro GitHub (bom pra quem abrir depois), mas a leitura
     // abaixo já vai direto na planilha ao vivo — não depende de esperar isso propagar
-    jsonp(SCRIPT_URL + '?action=forcarAtualizar').catch(()=>{});
+    const _syncGit = jsonp(SCRIPT_URL + '?action=forcarAtualizar').catch(()=>null);
     const dados = await lerDados(true);
     if (dados.revestimentos) dadosRevestimentos = dados.revestimentos;
     if (dados.paredes) dadosParedes = dados.paredes;
@@ -5213,6 +5213,12 @@ async function forcarAtualizarDados() {
     const lastScreen = localStorage.getItem('last_screen');
     if (lastScreen) showScreen(lastScreen);
     showToast('Dados atualizados!', 'success');
+    try {
+      const rg = await _syncGit;
+      if (rg && rg.data && rg.data.ok === false && getUsuarioAtual() === 'Bárbara') {
+        showToast('Atenção: o espelho no GitHub (data.json) não atualizou — erro ' + (rg.data.status || rg.data.erro || ''), 'error');
+      }
+    } catch(_) {}
   } catch(e) {
     showToast('Erro ao atualizar', 'error');
   }
