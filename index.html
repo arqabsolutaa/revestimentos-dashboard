@@ -9798,6 +9798,10 @@ async function loadNecessidadeCompra() {
   renderNecessidadeCompra();
 }
 
+function _aptosDoItem(x) {
+  return [...new Set((x.itens||[]).map(it => String(it.ap)))].sort((a,b) => (parseInt(a)||0) - (parseInt(b)||0));
+}
+
 function renderNecessidadeCompra() {
   const cont = document.getElementById('necessidadecompra-lista');
   const statsEl = document.getElementById('necessidadecompra-stats');
@@ -9818,10 +9822,11 @@ function renderNecessidadeCompra() {
 
   const fmt2 = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   cont.innerHTML = `<div class="table-wrap"><table>
-    <thead><tr><th>Revestimento</th><th>Medida</th><th>Estoque Atual</th><th>Já Retirado</th><th>Necessário</th><th>Faltam (m²)</th><th></th></tr></thead>
+    <thead><tr><th>Revestimento</th><th>Medida</th><th>Aptos</th><th>Estoque Atual</th><th>Já Retirado</th><th>Necessário</th><th>Faltam (m²)</th><th></th></tr></thead>
     <tbody>${faltando.map((x,i) => `<tr>
       <td style="font-weight:500">${x.rev.nome||'-'}</td>
       <td>${x.rev.tamanho||'—'}</td>
+      <td>${_aptosDoItem(x).map(a => `<span class="badge badge-info" style="margin-right:3px">${a}</span>`).join('')}</td>
       <td>${fmt2(x.estoqueM2)} m²</td>
       <td>${fmt2(x.saidaM2||0)} m²</td>
       <td>${fmt2(x.necessarioM2)} m²</td>
@@ -9888,8 +9893,10 @@ async function gerarPDFNecessidadeCompra() {
       doc.setFillColor(...CORES.secundaria); doc.rect(0, y, 2.5, 16, 'F');
       doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...CORES.preto);
       const nomeLinha = doc.splitTextToSize(x.rev.nome||'—', 82)[0];
-      doc.text(nomeLinha, 8, y+9);
-      doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...CORES.texto);
+      doc.text(nomeLinha, 8, y+7);
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...CORES.cinza);
+      doc.text(doc.splitTextToSize('Aptos: ' + _aptosDoItem(x).join(', '), 82)[0], 8, y+12.5);
+      doc.setFontSize(8.5); doc.setTextColor(...CORES.texto);
       doc.text(String(x.rev.tamanho||'—'), 95, y+9);
       doc.text(fmt2(x.estoqueM2) + ' m²', 122, y+9);
       doc.text(fmt2(x.necessarioM2) + ' m²', 152, y+9);
