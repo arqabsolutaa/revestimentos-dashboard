@@ -4283,6 +4283,13 @@ body.mobile-mode #main{padding-bottom:72px}
             <span style="font-size:14px;font-weight:600;color:var(--accent2)" id="calc-total-final"></span>
           </div>
         </div>
+        <div id="calc-creditos-box" style="display:none;margin-top:10px;padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
+          <p style="font-size:11px;font-weight:500;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:4px">Abatimento — o que o cliente já pagou</p>
+          <p style="font-size:11px;color:var(--text3);margin-bottom:10px">Valores já pagos que serão descontados. Saem no PDF e o total vira "Saldo a pagar".</p>
+          <div id="calc-creditos-lista"></div>
+          <button class="btn btn-secondary" onclick="adicionarCreditoCalc()" style="font-size:11px;padding:5px 10px;margin-top:4px">+ Adicionar valor já pago</button>
+          <p id="calc-saldo-creditos" style="margin-top:10px;font-size:13px;font-weight:600;color:var(--accent2)"></p>
+        </div>
       </div>
     </div>
 
@@ -4478,17 +4485,60 @@ let calcDesconto = 0;
 function atualizarDesconto() {
   const pct = parseFloat(document.getElementById('calc-desconto-pct')?.value || 0);
   calcDesconto = pct;
-  let totalValor = 0;
-  for (const v of Object.values(calcSelecoes)) {
-    const rev = v.piso ? dadosRevestimentos.find(r => String(r.id||r.codigo) === String(v.piso)) : null;
-    totalValor += getPreco(rev) * (parseFloat(v.m2)||0);
-  }
+  const totalValor = calcularTotalValor(); // mesmo cálculo do PDF (com a perda de cada revestimento)
   const descVal = totalValor * (pct / 100);
   const totalFinal = totalValor - descVal;
   const el = document.getElementById('calc-desconto-val');
   const elFinal = document.getElementById('calc-total-final');
   if (el) el.textContent = pct > 0 ? '- R$ ' + descVal.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '';
   if (elFinal) elFinal.textContent = pct > 0 ? 'Total: R$ ' + totalFinal.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '';
+  if (typeof atualizarSaldoCreditos === 'function') atualizarSaldoCreditos();
+}
+
+// ===== Abatimento: valores que o cliente já pagou e serão descontados (saem no PDF como "Saldo a pagar") =====
+// Guardado no navegador por apartamento (não vai pra planilha), pra não se perder ao fechar a janela.
+let calcCreditos = [];
+let _creditosApCarregado = null;
+const _escAttr = t => String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+function _parseValorBR(t) {
+  let x = String(t == null ? '' : t).trim().replace(/[^\d.,-]/g,'');
+  if (x.includes(',')) x = x.replace(/\./g,'').replace(',','.');
+  return parseFloat(x) || 0;
+}
+function _chaveCreditosCalc() { return 'creditosCalc_' + (calcApAtual || ''); }
+function carregarCreditosCalc() {
+  try { calcCreditos = JSON.parse(localStorage.getItem(_chaveCreditosCalc()) || '[]') || []; } catch(e) { calcCreditos = []; }
+  _creditosApCarregado = calcApAtual;
+  renderCreditosCalc();
+}
+function salvarCreditosCalc() { try { localStorage.setItem(_chaveCreditosCalc(), JSON.stringify(calcCreditos)); } catch(e) {} }
+function adicionarCreditoCalc() { calcCreditos.push({ descricao: '', valor: '' }); salvarCreditosCalc(); renderCreditosCalc(); }
+function removerCreditoCalc(i) { calcCreditos.splice(i, 1); salvarCreditosCalc(); renderCreditosCalc(); }
+function editarCreditoCalc(i, campo, val) { if (!calcCreditos[i]) return; calcCreditos[i][campo] = val; salvarCreditosCalc(); atualizarSaldoCreditos(); }
+function _creditosValidos() {
+  return calcCreditos.map(c => ({ descricao: String(c.descricao || '').trim(), valor: _parseValorBR(c.valor) })).filter(c => c.valor > 0);
+}
+function renderCreditosCalc() {
+  const el = document.getElementById('calc-creditos-lista');
+  if (!el) return;
+  el.innerHTML = calcCreditos.map((c, i) => `<div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
+    <input class="form-control" style="flex:1" placeholder="Ex: A.S 120x120 já paga" value="${_escAttr(c.descricao)}" oninput="editarCreditoCalc(${i},'descricao',this.value)">
+    <input class="form-control" style="width:130px" inputmode="decimal" placeholder="0,00" value="${_escAttr(c.valor)}" oninput="editarCreditoCalc(${i},'valor',this.value)">
+    <button onclick="removerCreditoCalc(${i})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;line-height:1;padding:0 4px" title="Remover">×</button>
+  </div>`).join('');
+  atualizarSaldoCreditos();
+}
+function atualizarSaldoCreditos() {
+  const el = document.getElementById('calc-saldo-creditos');
+  if (!el) return;
+  const cred = _creditosValidos();
+  if (!cred.length) { el.textContent = ''; return; }
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const base = calcularTotalValor() * (1 - (calcDesconto || 0) / 100);
+  const total = calcularTotalComPagamento(base, calcPagamento).total;
+  const pago = cred.reduce((a, c) => a + c.valor, 0);
+  const saldo = total - pago;
+  el.textContent = fmt(total) + ' − ' + fmt(pago) + ' já pago = ' + (saldo >= 0 ? 'Saldo a pagar: ' + fmt(saldo) : 'Crédito a favor do cliente: ' + fmt(-saldo));
 }
 
 let calcPagamento = 'avista';
@@ -4560,6 +4610,7 @@ function atualizarParcela() {
   const vp = total / parcelas;
   const label = pixParcelado ? 'PIX ' : 'Crédito ';
   el.textContent = label + parcelas + 'x de ' + fmt(vp) + ' (total ' + fmt(total) + ')';
+  if (typeof atualizarSaldoCreditos === 'function') atualizarSaldoCreditos();
 }
 
 function setMobileNav(name) {
@@ -10749,6 +10800,9 @@ function atualizarResumo() {
   document.getElementById('calc-btn-pdf').style.display = temSelecao ? 'inline-flex' : 'none';
   const pgtoBox = document.getElementById('calc-desconto-box');
   if (pgtoBox) pgtoBox.style.display = temSelecao ? 'block' : 'none';
+  const credBox = document.getElementById('calc-creditos-box');
+  if (credBox) credBox.style.display = temSelecao ? 'block' : 'none';
+  if (temSelecao && _creditosApCarregado !== calcApAtual) carregarCreditosCalc();
   if (temSelecao) { atualizarParcela(); atualizarDesconto(); }
 }
 async function salvarNovaVersao() {
@@ -11098,6 +11152,7 @@ async function gerarPDF() {
   const selecoesAtual = JSON.parse(JSON.stringify(calcSelecoes));
   const pagamentoAtual = calcPagamento || 'avista';
   const descontoAtual = calcDesconto || 0;
+  const creditosAtual = _creditosValidos();
   try {
     await salvarOrcamentoHistorico({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual });
     showToast('Orçamento salvo!', 'success');
@@ -11105,7 +11160,7 @@ async function gerarPDF() {
   } catch(e) {
     console.error('Erro ao salvar orçamento:', e);
   }
-  gerarPDFDados({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual, comValor: true });
+  gerarPDFDados({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual, comValor: true, creditos: creditosAtual });
 }
 function gerarPDFPersonalizar(id) {
   const p = dadosPersonalizar.find(x => String(x.id) === String(id));
@@ -11114,7 +11169,7 @@ function gerarPDFPersonalizar(id) {
   gerarPDFDados({ ap: p.ap, cliente: p.cliente, empresa: p.empresa||localStorage.getItem(STORAGE_KEY_EMPRESA)||'Absoluta', selecoes, data: p.data, comValor: false, pagamento: 'avista', desconto: 0 });
 }
 
-function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, desconto, comValor = true, quitado = false, formaPagamentoReal = '' }) {
+function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, desconto, comValor = true, quitado = false, formaPagamentoReal = '', creditos = [] }) {
   const jsPDF = getJsPDF();
   const doc = new jsPDF();
   const preto = [14, 14, 14];
@@ -11332,6 +11387,48 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     y += 18;
   }
 
+  // ===== ABATIMENTO: o que o cliente já pagou =====
+  const creditosPDF = (comValor && Array.isArray(creditos)) ? creditos.filter(c => (parseFloat(c.valor) || 0) > 0) : [];
+  const somaCreditos = creditosPDF.reduce((a, c) => a + (parseFloat(c.valor) || 0), 0);
+  const saldoFinalPDF = totalValorFinalPDF - somaCreditos;
+  const temCred = creditosPDF.length > 0;
+  const rotuloBarra = temCred ? (saldoFinalPDF >= 0 ? 'SALDO A PAGAR' : 'CRÉDITO A FAVOR DO CLIENTE') : 'TOTAL GERAL';
+  const valorBarra = temCred ? Math.abs(saldoFinalPDF) : totalValorFinalPDF;
+  if (temCred) {
+    const fmtC = v => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    y += 4;
+    if (y > 240) { _pdfFooter(doc, verdeEscuro, dourado, empresa, ap); doc.addPage(); y = 20; }
+    doc.setFillColor(...bege); doc.rect(0, y, 210, 13, 'F');
+    doc.setFillColor(...dourado); doc.rect(0, y, 3, 13, 'F');
+    doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+    doc.setCharSpace(1); doc.text('VALOR DA SELEÇÃO ATUAL', 8, y + 8); doc.setCharSpace(0);
+    doc.setTextColor(...preto); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text(fmtC(totalValorFinalPDF), 200, y + 8.5, { align: 'right' });
+    y += 17;
+    doc.setTextColor(...cinza); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+    doc.setCharSpace(1); doc.text('JÁ PAGO PELO CLIENTE — VALORES ABATIDOS', 8, y); doc.setCharSpace(0);
+    y += 4;
+    creditosPDF.forEach(c => {
+      if (y > 262) { _pdfFooter(doc, verdeEscuro, dourado, empresa, ap); doc.addPage(); y = 20; }
+      doc.setFillColor(252, 249, 240); doc.rect(0, y, 210, 11, 'F');
+      doc.setFillColor(...dourado); doc.rect(0, y, 3, 11, 'F');
+      doc.setTextColor(...preto); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+      doc.text(doc.splitTextToSize(c.descricao || 'Valor já pago', 140)[0], 8, y + 7);
+      doc.setTextColor(176, 58, 46); doc.setFont('helvetica', 'bold');
+      doc.text('- ' + fmtC(parseFloat(c.valor) || 0), 200, y + 7, { align: 'right' });
+      doc.setDrawColor(...cinzaClaro); doc.setLineWidth(0.2); doc.line(0, y + 11, 210, y + 11);
+      y += 11;
+    });
+    if (creditosPDF.length > 1) {
+      if (y > 262) { _pdfFooter(doc, verdeEscuro, dourado, empresa, ap); doc.addPage(); y = 20; }
+      doc.setTextColor(...cinza); doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+      doc.text('Total já pago', 8, y + 7);
+      doc.setTextColor(176, 58, 46); doc.setFont('helvetica', 'bold');
+      doc.text('- ' + fmtC(somaCreditos), 200, y + 7, { align: 'right' });
+      y += 10;
+    }
+  }
+
   // ===== TOTAL GERAL =====
   y += 4;
   if (y > 262) { _pdfFooter(doc, verdeEscuro, dourado, empresa, ap); doc.addPage(); y = 20; }
@@ -11342,7 +11439,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.setFillColor(46, 125, 63); doc.rect(0, y, 3, 22, 'F');
     doc.setTextColor(...textoMedio); doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
     doc.setCharSpace(1.5);
-    doc.text('TOTAL GERAL', 8, y + 8);
+    doc.text(rotuloBarra, 8, y + 8);
     doc.setCharSpace(0);
     doc.setTextColor(...textoMedio); doc.setFontSize(7);
     doc.text('Empreendimento Essence Residence · Apto ' + ap, 8, y + 15);
@@ -11350,7 +11447,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.text(totalM2.toFixed(2) + ' m²', 152, y + 14, { align: 'right' });
     if (comValor) {
       doc.setTextColor(...textoEscuro); doc.setFontSize(15); doc.setFont('helvetica', 'bold');
-      doc.text('R$ ' + totalValorFinalPDF.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 200, y + 15, { align: 'right' });
+      doc.text('R$ ' + valorBarra.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 200, y + 15, { align: 'right' });
     }
   } else {
     doc.setFillColor(...verdeEscuro);
@@ -11358,7 +11455,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.setFillColor(...dourado); doc.rect(0, y, 3, 22, 'F');
     doc.setTextColor(180, 210, 190); doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
     doc.setCharSpace(1.5);
-    doc.text('TOTAL GERAL', 8, y + 8);
+    doc.text(rotuloBarra, 8, y + 8);
     doc.setCharSpace(0);
     doc.setTextColor(160, 195, 175); doc.setFontSize(7);
     doc.text('Empreendimento Essence Residence · Apto ' + ap, 8, y + 15);
@@ -11366,7 +11463,7 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.text(totalM2.toFixed(2) + ' m²', 152, y + 14, { align: 'right' });
     if (comValor) {
       doc.setTextColor(...dourado); doc.setFontSize(15); doc.setFont('helvetica', 'bold');
-      doc.text('R$ ' + totalValorFinalPDF.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 200, y + 15, { align: 'right' });
+      doc.text('R$ ' + valorBarra.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 200, y + 15, { align: 'right' });
     }
   }
 
