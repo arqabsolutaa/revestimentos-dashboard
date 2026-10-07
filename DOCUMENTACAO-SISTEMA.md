@@ -102,7 +102,7 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 
 ## 9. Itens em aberto / próximos passos conhecidos
 
-- **07/10/2026**: confirmar que o `Code.gs` da seção 10 foi colado e reimplantado, que `definirSenhasBarbara` e `criarGatilhoBackupDiario` foram executados, e que o espelho `data.json` voltou a atualizar.
+- **07/10/2026**: confirmar que o `Code.gs` da seção 10 foi colado e reimplantado, que `criarGatilhoBackupDiario` foi executado, e que o espelho `data.json` voltou a atualizar.
 - Confirmar que o `Code.gs` mais recente (com o módulo de Instalações reformulado — incluindo o campo de quantidade de peças, o auto-reparo do cabeçalho — e o schema `itens` do Ar-Condicionado) já foi colado e reimplantado no Apps Script pela Bárbara.
 - **28/09/2026**: achado e corrigido um bug real que fazia `salvarInstalacao()`, `salvarLote()` e `addOrcamento()` gravarem linhas em branco na planilha (usavam `api()` em vez de `apiPost()` — ver seção 8). Vale conferir se há outras chamadas antigas no arquivo com o mesmo problema (`grep` por `await api('add` ou `await api('update` e comparar com o que o `Code.gs` espera em cada ação).
 - Botão "Baixar documentação técnica" foi adicionado à tela de **Configurações** — baixa este mesmo arquivo direto do GitHub. Deve ser mantido atualizado a cada mudança relevante no sistema.
@@ -116,13 +116,12 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - **Abatimento no PDF do cliente**: caixa "Já pago / abatimento" no passo 3 da calculadora; o PDF mostra "SALDO A PAGAR" (ou "CRÉDITO A FAVOR DO CLIENTE").
 - **Bug "Não definido" no PDF (corrigido)**: `apiPost()` chama `invalidarCacheDados()` que zera `dadosRevestimentos`; o PDF era gerado logo depois de salvar o orçamento e perdia os nomes. `gerarPDF()` agora guarda um snapshot antes e restaura depois. Há também um aviso se existir parede sem revestimento escolhido.
 - **Usuários**: o menu principal tem o seletor **Usuário** (Bárbara / Gabriel). O nome vai em toda requisição (`&usuario=`, via `jsonp()`; nos uploads, no corpo do POST). Sem escolher o nome não entra em módulo.
-- **Senhas**: Gabriel usa as senhas de módulo já existentes no `SENHAS_MODULO` (no código da página). **Bárbara usa senhas próprias por módulo, conferidas SÓ no servidor** (`verificarSenhaBarbara`; hashes em Script Properties; trava 10 min após 5 erros). Nunca colocar as senhas dela no index.html nem em documentação.
+- **Senhas**: Gabriel usa as senhas de módulo já existentes no `SENHAS_MODULO` (no código da página). **Bárbara usa senhas próprias por módulo, conferidas SÓ no servidor** (`verificarSenhaBarbara`; hashes SHA-256 embutidos no Code.gs (`HASHES_SENHA_BARBARA`), sem nada para executar; trava 10 min após 5 erros). Nunca colocar as senhas dela no index.html nem em documentação.
 - **Histórico de alterações**: botão no menu lateral, visível só para o usuário Bárbara e protegido por senha no servidor (`getLog` exige senha). Lê a aba `Log`.
 
 **Backend (Code.gs) — exige colar e reimplantar:**
 - `registrarLog(acao, ref, dados, usuario)` agora grava a coluna `usuario` na aba `Log`.
 - **Auditoria escondida** (os outros usuários não devem saber que existe): aba `Auditoria_Excluidos` (só cresce; guarda a linha completa de tudo que for excluído, incl. comprovantes removidos, e quem fez), pasta `Backup_Essence_Auditoria` no Drive com cópias da planilha: uma antes de qualquer exclusão/arquivamento (máx. 1 a cada 10 min) e uma diária (`criarGatilhoBackupDiario`, rodar uma vez). Nada disso aparece no app nem entra no `data.json`.
-- `definirSenhasBarbara()`: rodar uma vez no editor do Apps Script e depois apagar as senhas do texto.
 - `atualizarGithub()` agora devolve/loga o status HTTP (antes engolia erros em silêncio).
 
 **Armadilhas conhecidas:**
