@@ -7592,7 +7592,7 @@ async function _enviarComprovante(action, campos) {
   const response = await fetch(SCRIPT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ action, dados: campos })
+    body: JSON.stringify({ action, dados: campos, usuario: getUsuarioAtual() || 'Sem identificar' })
   });
   const result = await response.json();
   if (result.error) throw new Error(result.error);
@@ -8808,6 +8808,7 @@ async function uploadComprovante(id, inputEl) {
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
         action: 'uploadComprovante',
+        usuario: getUsuarioAtual() || 'Sem identificar',
         dados: { id, filename: file.name, mimeType: file.type, base64data }
       })
     });
