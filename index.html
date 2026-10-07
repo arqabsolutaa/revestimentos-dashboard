@@ -11157,6 +11157,10 @@ async function gerarPDF() {
   // o que distorce o total (e o saldo, quando há abatimento). Melhor avisar antes de gerar.
   const semRevest = Object.values(selecoesAtual).filter(v => !v || !v.piso || !dadosRevestimentos.find(r => String(r.id||r.codigo) === String(v.piso))).length;
   if (semRevest > 0 && !confirm(semRevest + ' parede(s) estão sem revestimento escolhido e vão sair como "Não definido" e R$ 0,00 no PDF' + (creditosAtual.length ? ' (o saldo com o abatimento vai ficar errado)' : '') + '.\n\nGerar o PDF mesmo assim?')) return;
+  // Salvar o orçamento (apiPost) limpa o cache em memória (invalidarCacheDados), inclusive o catálogo de
+  // revestimentos e as paredes. Sem guardar uma cópia antes, o PDF saía com "Não definido" e R$ 0,00
+  // mesmo com tudo selecionado na tela. Guarda aqui e devolve depois, pois salvar o orçamento não muda isso.
+  const revestimentosAntes = dadosRevestimentos, paredesAntes = dadosParedes;
   try {
     await salvarOrcamentoHistorico({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual });
     showToast('Orçamento salvo!', 'success');
@@ -11164,6 +11168,8 @@ async function gerarPDF() {
   } catch(e) {
     console.error('Erro ao salvar orçamento:', e);
   }
+  if (!dadosRevestimentos.length) dadosRevestimentos = revestimentosAntes;
+  if (!dadosParedes.length) dadosParedes = paredesAntes;
   gerarPDFDados({ ap: apAtual, cliente, empresa, selecoes: selecoesAtual, pagamento: pagamentoAtual, desconto: descontoAtual, comValor: true, creditos: creditosAtual });
 }
 function gerarPDFPersonalizar(id) {
