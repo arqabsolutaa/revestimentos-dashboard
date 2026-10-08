@@ -2481,6 +2481,7 @@ body.mobile-mode #main{padding-bottom:72px}
           <select class="form-control" id="hist-filtro-usuario" onchange="renderHistoricoAlteracoes()" style="max-width:180px"><option value="">Todos os usuários</option><option>Bárbara</option><option>Gabriel</option><option>Sem identificar</option></select>
           <input class="form-control" id="hist-filtro-texto" oninput="renderHistoricoAlteracoes()" placeholder="Buscar (apto, ação...)" style="max-width:240px">
         </div>
+        <div style="margin-bottom:12px"><button class="btn btn-secondary" onclick="gerarPDFAuditoria()">Gerar PDF de auditoria</button></div>
         <div id="hist-corpo"><p style="color:var(--text3)">Carregando...</p></div>
       </div>
     </div>
@@ -5262,6 +5263,94 @@ const NOMES_MODULO = {
   controle: 'Controle',
   financeiro: 'Financeiro'
 };
+
+
+const _ROTULO_ACAO = {
+  addSaida:'Registrou saída', deleteSaida:'Excluiu saída', addPersonalizar:'Criou personalização', updatePersonalizar:'Editou personalização',
+  deletePersonalizar:'Excluiu personalização', arquivarPersonalizacao:'Arquivou/desarquivou personalização', addOrcamento:'Salvou orçamento',
+  deleteOrcamento:'Excluiu orçamento', addRevestimento:'Cadastrou revestimento', deleteRevestimento:'Excluiu revestimento',
+  addInstalacao:'Registrou instalação', updateInstalacao:'Editou instalação', deleteInstalacao:'Excluiu instalação',
+  addLote:'Cadastrou lote', updateLote:'Editou lote', deleteLote:'Excluiu lote', deleteComprovante:'Removeu comprovante',
+  uploadComprovante:'Anexou comprovante', addParede:'Cadastrou parede', updateParede:'Editou parede', deleteParede:'Excluiu parede',
+  confirmarPagamentoComValor:'Confirmou pagamento', updateStatusPgto:'Alterou status de pagamento'
+};
+
+function _resumoLinhaExcluida(txt) {
+  let o; try { o = JSON.parse(txt); } catch(e) { return String(txt||'').substring(0, 120); }
+  const pref = ['ap','cliente','nome','codigo','descricao','categoria','valor','data','quantidade_m2','obra'];
+  const partes = [];
+  pref.forEach(k => { if (o[k] !== undefined && String(o[k]).trim() !== '' && partes.length < 5) partes.push(k + ': ' + String(o[k]).substring(0, 40)); });
+  if (!partes.length) Object.keys(o).filter(k => k !== 'id' && String(o[k]).trim() !== '' && String(o[k]).length < 40).slice(0,4).forEach(k => partes.push(k + ': ' + o[k]));
+  return partes.join(' · ');
+}
+
+async function gerarPDFAuditoria() {
+  const senha = window._senhaBarbara;
+  if (!senha) { showToast('Digite a senha da Bárbara no histórico primeiro', 'error'); return; }
+  showToast('Gerando PDF de auditoria...', 'success');
+  try {
+    const r = await api('getAuditoria', { senha, limite: 2000 });
+    const log = r.log || [], excl = r.excluidos || [];
+    const JsPDFClass = getJsPDF();
+    if (!JsPDFClass) throw new Error('jsPDF não carregado');
+    const doc = new JsPDFClass();
+    const M = 14, W = 210;
+    let y = 20;
+    const nova = (h) => { if (y + h > 282) { doc.addPage(); y = 18; } };
+    doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(67,51,30);
+    doc.text('Relatório de Auditoria — Essence Residence', M, y); y += 7;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(110,110,110);
+    doc.text('Gerado em ' + new Date().toLocaleString('pt-BR') + ' por Bárbara · Documento confidencial', M, y); y += 9;
+
+    // Resumo por usuário
+    const cont = {};
+    log.forEach(l => { const u = l.usuario || 'Sem identificar'; cont[u] = (cont[u]||0) + 1; });
+    const contEx = {};
+    excl.forEach(l => { const u = l.usuario || 'Sem identificar'; contEx[u] = (contEx[u]||0) + 1; });
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(40,40,40);
+    doc.text('Resumo', M, y); y += 6;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+    const users = [...new Set([...Object.keys(cont), ...Object.keys(contEx)])];
+    users.forEach(u => { doc.text(`${u}: ${cont[u]||0} alteração(ões) registrada(s) · ${contEx[u]||0} exclusão(ões)`, M, y); y += 5; });
+    if (!users.length) { doc.text('Nenhum registro.', M, y); y += 5; }
+    y += 5;
+
+    // Exclusões
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(40,40,40);
+    doc.text('Exclusões (itens apagados — conteúdo preservado)', M, y); y += 6;
+    doc.setFontSize(8.5);
+    if (!excl.length) { doc.setFont('helvetica','normal'); doc.text('Nenhuma exclusão registrada.', M, y); y += 6; }
+    excl.forEach(l => {
+      const cab = `${l.data_hora}  ·  ${l.usuario||'—'}  ·  ${l.aba||''}  ·  ${l.o_que_aconteceu||''}`;
+      let det = _resumoLinhaExcluida(l.conteudo_da_linha);
+      const linhas1 = doc.splitTextToSize(cab, W - 2*M);
+      const linhas2 = doc.splitTextToSize(det, W - 2*M - 4);
+      nova(linhas1.length*4 + linhas2.length*4 + 4);
+      doc.setFont('helvetica','bold'); doc.setTextColor(60,40,20); doc.text(linhas1, M, y); y += linhas1.length*4;
+      doc.setFont('helvetica','normal'); doc.setTextColor(90,90,90); doc.text(linhas2, M+4, y); y += linhas2.length*4 + 3;
+    });
+    y += 4; nova(20);
+
+    // Alterações
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(40,40,40);
+    doc.text('Alterações registradas (mais recentes primeiro)', M, y); y += 6;
+    doc.setFontSize(8.5);
+    log.forEach(l => {
+      const acao = _ROTULO_ACAO[l.acao] || l.acao;
+      const linha = `${l.data_hora}  ·  ${l.usuario||'Sem identificar'}  ·  ${acao}${l.referencia ? '  ·  ' + l.referencia : ''}`;
+      const ls = doc.splitTextToSize(linha, W - 2*M);
+      nova(ls.length*4 + 1);
+      doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60); doc.text(ls, M, y); y += ls.length*4 + 1;
+    });
+
+    const n = doc.getNumberOfPages();
+    for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFontSize(8); doc.setTextColor(150,150,150); doc.text(`Página ${i} de ${n}`, W - M, 291, {align:'right'}); }
+    doc.save(nomeArquivoLimpo('Auditoria-Essence-' + new Date().toLocaleDateString('pt-BR')) + '.pdf');
+    showToast('PDF de auditoria gerado!', 'success');
+  } catch(e) {
+    showToast('Erro ao gerar auditoria: ' + (e.message||e), 'error');
+  }
+}
 
 let _historicoLinhas = [];
 async function abrirHistoricoAlteracoes(senhaDigitada) {

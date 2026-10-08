@@ -117,7 +117,7 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - **Bug "Não definido" no PDF (corrigido)**: `apiPost()` chama `invalidarCacheDados()` que zera `dadosRevestimentos`; o PDF era gerado logo depois de salvar o orçamento e perdia os nomes. `gerarPDF()` agora guarda um snapshot antes e restaura depois. Há também um aviso se existir parede sem revestimento escolhido.
 - **Usuários**: o menu principal tem o seletor **Usuário** (Bárbara / Gabriel). O nome vai em toda requisição (`&usuario=`, via `jsonp()`; nos uploads, no corpo do POST). Sem escolher o nome não entra em módulo.
 - **Senhas**: Gabriel usa as senhas de módulo já existentes no `SENHAS_MODULO` (no código da página). **Bárbara usa senhas próprias por módulo, conferidas SÓ no servidor** (`verificarSenhaBarbara`; hashes SHA-256 embutidos no Code.gs (`HASHES_SENHA_BARBARA`), sem nada para executar; trava 10 min após 5 erros). Nunca colocar as senhas dela no index.html nem em documentação.
-- **Histórico de alterações**: botão no menu lateral, visível só para o usuário Bárbara e protegido por senha no servidor (`getLog` exige senha). Lê a aba `Log`.
+- **Histórico de alterações**: botão no menu lateral, visível só para o usuário Bárbara e protegido por senha no servidor (`getLog` exige senha). Lê a aba `Log`. Tem o botão **Gerar PDF de auditoria** (usa a ação `getAuditoria`, também protegida por senha): resumo por usuário, exclusões com o conteúdo preservado e lista de alterações.
 
 **Backend (Code.gs) — exige colar e reimplantar:**
 - `registrarLog(acao, ref, dados, usuario)` agora grava a coluna `usuario` na aba `Log`.
