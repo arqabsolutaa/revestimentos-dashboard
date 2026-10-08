@@ -9229,12 +9229,14 @@ function renderPagamentos(lista) {
           <input class="form-control" placeholder="Observação (parcelas, etc)" id="obs-${p.id}" style="font-size:11px;padding:4px 8px;flex:1" value="${p.obs_pgto||''}">
           <button onclick="salvarObsPgtoBtn('${p.id}')" style="padding:4px 8px;border-radius:6px;border:1px solid var(--accent);background:none;color:var(--accent);font-size:11px;cursor:pointer;white-space:nowrap">✓ Salvar</button>
         </div>
-        <div style="display:flex;gap:6px">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
           <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
           <button class="btn btn-secondary" onclick="abrirModalOutraCondicao('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF outra condição</button>
           <button class="btn btn-secondary" onclick="abrirModalPdfQuitado('${p.id}')" style="font-size:11px;padding:4px 10px;color:#2e7d3f;border-color:#2e7d3f">✓ Gerar PDF Quitado</button>
           <button class="btn btn-secondary" onclick="editarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
           <button class="btn btn-secondary" onclick="arquivarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">🗄 Arquivar</button>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:100%">
           ${renderComprovantesHTML(p.comprovante_url, p.id, null, `document.getElementById('file-comprovante-${p.id}').click()`)}
           <input type="file" id="file-comprovante-${p.id}" accept="image/*,.pdf" style="display:none" onchange="uploadComprovante('${p.id}', this)">
         </div>
