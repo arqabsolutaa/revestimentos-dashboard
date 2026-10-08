@@ -2478,7 +2478,7 @@ body.mobile-mode #main{padding-bottom:72px}
       </div>
       <div class="modal-body">
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-          <select class="form-control" id="hist-visao" onchange="renderHistoricoAlteracoes()" style="max-width:200px"><option value="acoes">Ações</option><option value="valores">Valores alterados</option></select>
+          
           <select class="form-control" id="hist-filtro-usuario" onchange="renderHistoricoAlteracoes()" style="max-width:180px"><option value="">Todos os usuários</option><option>Bárbara</option><option>Gabriel</option><option>Sem identificar</option></select>
           <input class="form-control" id="hist-filtro-texto" oninput="renderHistoricoAlteracoes()" placeholder="Buscar (apto, ação...)" style="max-width:240px">
         </div>
@@ -5332,27 +5332,12 @@ async function gerarPDFAuditoria() {
     });
     y += 4; nova(20);
 
-    // Valores alterados (antes -> depois)
-    const alt = r.alteracoes || [];
-    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(40,40,40);
-    nova(14); doc.text('Valores alterados (antes e depois)', M, y); y += 6;
-    doc.setFontSize(8.5);
-    if (!alt.length) { doc.setFont('helvetica','normal'); doc.text('Nenhuma alteração de valor registrada.', M, y); y += 6; }
-    alt.slice(0, 400).forEach(l => {
-      const t = `${l.data_hora}  ·  ${l.usuario||'—'}  ·  ${l.aba} (${l.id_linha})  ·  ${l.campo}:  ${String(l.valor_antes||'—').substring(0,70)}   PARA   ${String(l.valor_depois||'—').substring(0,70)}`;
-      const ls = doc.splitTextToSize(t, W - 2*M);
-      nova(ls.length*4 + 1);
-      doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60); doc.text(ls, M, y); y += ls.length*4 + 1;
-    });
-    y += 4; nova(20);
-
     // Alterações
     doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(40,40,40);
     doc.text('Alterações registradas (mais recentes primeiro)', M, y); y += 6;
     doc.setFontSize(8.5);
-    log.forEach(l => {
-      const acao = _ROTULO_ACAO[l.acao] || l.acao;
-      const linha = `${l.data_hora}  ·  ${l.usuario||'Sem identificar'}  ·  ${acao}${l.referencia ? '  ·  ' + l.referencia : ''}`;
+    _unirHistorico(log, r.alteracoes || [], '   PARA   ').slice(0, 1500).forEach(l => {
+      const linha = `${l.data_hora}  ·  ${l.usuario}  ·  ${l.acao}${l.item ? '  ·  ' + l.item : ''}${l.detalhe && l.acao.indexOf('Alterou') === 0 ? '  ·  ' + l.detalhe : ''}`;
       const ls = doc.splitTextToSize(linha, W - 2*M);
       nova(ls.length*4 + 1);
       doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60); doc.text(ls, M, y); y += ls.length*4 + 1;
@@ -5396,25 +5381,27 @@ function _pedirSenhaHistorico(msg) {
   </div>`;
 }
 
+function _dataParaOrdem(t) {
+  const m = String(t||'').match(/(\d{2})\/(\d{2})\/(\d{4})[ ,]*(\d{2}):(\d{2})(?::(\d{2}))?/);
+  return m ? Date.UTC(+m[3], +m[2]-1, +m[1], +m[4], +m[5], +(m[6]||0)) : 0;
+}
+
+// Junta ações e mudanças de campo numa lista só, da mais recente para a mais antiga.
+function _unirHistorico(log, alt, seta) {
+  const a = (log||[]).map(l => ({ data_hora:l.data_hora, usuario:l.usuario||'Sem identificar', acao:_ROTULO_ACAO[l.acao]||l.acao, item:l.referencia||'', detalhe:(l.detalhe||'').substring(0,140) }));
+  const b = (alt||[]).map(l => ({ data_hora:l.data_hora, usuario:l.usuario||'Sem identificar', acao:'Alterou ' + (l.campo||''), item:(l.aba||'') + ' · ' + (l.id_linha||''), detalhe:String(l.valor_antes||'—').substring(0,120) + seta + String(l.valor_depois||'—').substring(0,120) }));
+  return a.concat(b).sort((x,y) => _dataParaOrdem(y.data_hora) - _dataParaOrdem(x.data_hora));
+}
+
 function renderHistoricoAlteracoes() {
   const u = document.getElementById('hist-filtro-usuario').value;
   const q = (document.getElementById('hist-filtro-texto').value || '').toLowerCase();
-  const visao = (document.getElementById('hist-visao') || {}).value || 'acoes';
   const esc = t => String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-  if (visao === 'valores') {
-    const lv = _historicoValores.filter(l => (!u || (l.usuario||'Sem identificar') === u) &&
-      (!q || (l.acao+' '+l.aba+' '+l.id_linha+' '+l.campo+' '+l.valor_antes+' '+l.valor_depois).toLowerCase().includes(q)));
-    if (!lv.length) { document.getElementById('hist-corpo').innerHTML = '<div class="empty-state"><strong>Nenhum valor alterado encontrado</strong></div>'; return; }
-    document.getElementById('hist-corpo').innerHTML = '<div class="table-wrap"><table><thead><tr><th>Data/hora</th><th>Usuário</th><th>Onde</th><th>Campo</th><th>Antes</th><th>Depois</th></tr></thead><tbody>' +
-      lv.map(l => `<tr><td style="white-space:nowrap">${esc(l.data_hora)}</td><td><strong>${esc(l.usuario||'—')}</strong></td><td>${esc(l.aba)} · ${esc(l.id_linha)}</td><td>${esc(l.campo)}</td><td style="max-width:200px;word-break:break-all;color:var(--danger)">${esc((l.valor_antes||'').substring(0,120))}</td><td style="max-width:200px;word-break:break-all">${esc((l.valor_depois||'').substring(0,120))}</td></tr>`).join('') +
-      '</tbody></table></div>';
-    return;
-  }
-  const linhas = _historicoLinhas.filter(l => (!u || (l.usuario||'Sem identificar') === u) &&
-    (!q || (l.acao+' '+l.referencia+' '+l.detalhe).toLowerCase().includes(q)));
+  const linhas = _unirHistorico(_historicoLinhas, _historicoValores, '  →  ').filter(l => (!u || l.usuario === u) &&
+    (!q || (l.acao+' '+l.item+' '+l.detalhe).toLowerCase().includes(q)));
   if (!linhas.length) { document.getElementById('hist-corpo').innerHTML = '<div class="empty-state"><strong>Nenhuma alteração encontrada</strong></div>'; return; }
   document.getElementById('hist-corpo').innerHTML = '<div class="table-wrap"><table><thead><tr><th>Data/hora</th><th>Usuário</th><th>Ação</th><th>Item</th><th>Detalhe</th></tr></thead><tbody>' +
-    linhas.map(l => `<tr><td style="white-space:nowrap">${esc(l.data_hora)}</td><td><strong>${esc(l.usuario||'—')}</strong></td><td>${esc(_ROTULO_ACAO[l.acao] || l.acao)}</td><td>${esc(l.referencia)}</td><td style="font-size:11px;color:var(--text3);max-width:320px;word-break:break-all">${esc((l.detalhe||'').substring(0,140))}</td></tr>`).join('') +
+    linhas.slice(0, 800).map(l => `<tr><td style="white-space:nowrap">${esc(l.data_hora)}</td><td><strong>${esc(l.usuario)}</strong></td><td>${esc(l.acao)}</td><td>${esc(l.item)}</td><td style="font-size:11px;color:var(--text3);max-width:340px;word-break:break-all">${esc(l.detalhe)}</td></tr>`).join('') +
     '</tbody></table></div>';
 }
 
