@@ -8897,7 +8897,9 @@ function _calcularAReceber() {
     const ap = String(p.ap);
     let total = parseFloat(p.total_valor);
     if (!total || isNaN(total)) total = _calcularTotalDeSelecoesObj(p.selecoes);
-    if (!porAp[ap]) porAp[ap] = { ap, cliente: '', total: 0, pagoCard: 0, obs: [] };
+    if (!porAp[ap]) porAp[ap] = { ap, cliente: '', total: 0, pagoCard: 0, obs: [], cards: 0, cardsPagos: 0 };
+    porAp[ap].cards++;
+    if (String(p.status_pgto).toLowerCase() === 'pago') porAp[ap].cardsPagos++;
     porAp[ap].total += total;
     porAp[ap].cliente = (p.cliente || '').replace(/\s*\([^)]*\)\s*$/, '').trim() || porAp[ap].cliente;
     if (String(p.status_pgto).toLowerCase() === 'pago') porAp[ap].pagoCard += parseFloat(p.valor_pago) || total;
@@ -8913,9 +8915,14 @@ function _calcularAReceber() {
     const recebido = entradas > 0 ? entradas : r.pagoCard;
     const falta = Math.max(0, r.total - recebido);
     let status = 'sem';
-    if (falta <= 0.5) status = 'quitado';
+    let faltaFinal = falta;
+    // Se TODOS os cards do apartamento estão marcados como "Pago", vale o que a Bárbara marcou:
+    // a diferença (ex.: troca de revestimento com pequena diferença de valor) não é cobrada.
+    const marcadoPago = r.cards > 0 && r.cardsPagos === r.cards;
+    if (marcadoPago) { status = 'quitado'; faltaFinal = 0; }
+    else if (falta <= 0.5) status = 'quitado';
     else if (recebido > 0.5) status = 'parcial';
-    return { ap: r.ap, cliente: r.cliente || '—', total: r.total, recebido, falta, status, obs: r.obs.join(' · ') };
+    return { ap: r.ap, cliente: r.cliente || '—', total: r.total, recebido, falta: faltaFinal, status, obs: r.obs.join(' · ') };
   });
   linhas.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
   return linhas;
