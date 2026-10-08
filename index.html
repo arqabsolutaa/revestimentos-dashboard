@@ -2478,6 +2478,7 @@ body.mobile-mode #main{padding-bottom:72px}
       </div>
       <div class="modal-body">
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <select class="form-control" id="hist-visao" onchange="renderHistoricoAlteracoes()" style="max-width:200px"><option value="acoes">Ações</option><option value="valores">Valores alterados</option></select>
           <select class="form-control" id="hist-filtro-usuario" onchange="renderHistoricoAlteracoes()" style="max-width:180px"><option value="">Todos os usuários</option><option>Bárbara</option><option>Gabriel</option><option>Sem identificar</option></select>
           <input class="form-control" id="hist-filtro-texto" oninput="renderHistoricoAlteracoes()" placeholder="Buscar (apto, ação...)" style="max-width:240px">
         </div>
@@ -5331,6 +5332,20 @@ async function gerarPDFAuditoria() {
     });
     y += 4; nova(20);
 
+    // Valores alterados (antes -> depois)
+    const alt = r.alteracoes || [];
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(40,40,40);
+    nova(14); doc.text('Valores alterados (antes e depois)', M, y); y += 6;
+    doc.setFontSize(8.5);
+    if (!alt.length) { doc.setFont('helvetica','normal'); doc.text('Nenhuma alteração de valor registrada.', M, y); y += 6; }
+    alt.slice(0, 400).forEach(l => {
+      const t = `${l.data_hora}  ·  ${l.usuario||'—'}  ·  ${l.aba} (${l.id_linha})  ·  ${l.campo}:  ${String(l.valor_antes||'—').substring(0,70)}   PARA   ${String(l.valor_depois||'—').substring(0,70)}`;
+      const ls = doc.splitTextToSize(t, W - 2*M);
+      nova(ls.length*4 + 1);
+      doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60); doc.text(ls, M, y); y += ls.length*4 + 1;
+    });
+    y += 4; nova(20);
+
     // Alterações
     doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(40,40,40);
     doc.text('Alterações registradas (mais recentes primeiro)', M, y); y += 6;
@@ -5353,6 +5368,7 @@ async function gerarPDFAuditoria() {
 }
 
 let _historicoLinhas = [];
+let _historicoValores = [];
 async function abrirHistoricoAlteracoes(senhaDigitada) {
   abrirModal('modal-historico');
   const corpo = document.getElementById('hist-corpo');
@@ -5360,9 +5376,10 @@ async function abrirHistoricoAlteracoes(senhaDigitada) {
   if (!senha) { _pedirSenhaHistorico(); return; }
   corpo.innerHTML = '<p style="color:var(--text3)">Carregando...</p>';
   try {
-    const r = await api('getLog', { limite: 500, senha });
+    const r = await api('getAuditoria', { limite: 500, senha });
     window._senhaBarbara = senha;
-    _historicoLinhas = (r && r.linhas) || [];
+    _historicoLinhas = (r && r.log) || [];
+    _historicoValores = (r && r.alteracoes) || [];
     renderHistoricoAlteracoes();
   } catch(e) {
     window._senhaBarbara = '';
@@ -5382,12 +5399,22 @@ function _pedirSenhaHistorico(msg) {
 function renderHistoricoAlteracoes() {
   const u = document.getElementById('hist-filtro-usuario').value;
   const q = (document.getElementById('hist-filtro-texto').value || '').toLowerCase();
+  const visao = (document.getElementById('hist-visao') || {}).value || 'acoes';
   const esc = t => String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  if (visao === 'valores') {
+    const lv = _historicoValores.filter(l => (!u || (l.usuario||'Sem identificar') === u) &&
+      (!q || (l.acao+' '+l.aba+' '+l.id_linha+' '+l.campo+' '+l.valor_antes+' '+l.valor_depois).toLowerCase().includes(q)));
+    if (!lv.length) { document.getElementById('hist-corpo').innerHTML = '<div class="empty-state"><strong>Nenhum valor alterado encontrado</strong></div>'; return; }
+    document.getElementById('hist-corpo').innerHTML = '<div class="table-wrap"><table><thead><tr><th>Data/hora</th><th>Usuário</th><th>Onde</th><th>Campo</th><th>Antes</th><th>Depois</th></tr></thead><tbody>' +
+      lv.map(l => `<tr><td style="white-space:nowrap">${esc(l.data_hora)}</td><td><strong>${esc(l.usuario||'—')}</strong></td><td>${esc(l.aba)} · ${esc(l.id_linha)}</td><td>${esc(l.campo)}</td><td style="max-width:200px;word-break:break-all;color:var(--danger)">${esc((l.valor_antes||'').substring(0,120))}</td><td style="max-width:200px;word-break:break-all">${esc((l.valor_depois||'').substring(0,120))}</td></tr>`).join('') +
+      '</tbody></table></div>';
+    return;
+  }
   const linhas = _historicoLinhas.filter(l => (!u || (l.usuario||'Sem identificar') === u) &&
     (!q || (l.acao+' '+l.referencia+' '+l.detalhe).toLowerCase().includes(q)));
   if (!linhas.length) { document.getElementById('hist-corpo').innerHTML = '<div class="empty-state"><strong>Nenhuma alteração encontrada</strong></div>'; return; }
   document.getElementById('hist-corpo').innerHTML = '<div class="table-wrap"><table><thead><tr><th>Data/hora</th><th>Usuário</th><th>Ação</th><th>Item</th><th>Detalhe</th></tr></thead><tbody>' +
-    linhas.map(l => `<tr><td style="white-space:nowrap">${esc(l.data_hora)}</td><td><strong>${esc(l.usuario||'—')}</strong></td><td>${esc(l.acao)}</td><td>${esc(l.referencia)}</td><td style="font-size:11px;color:var(--text3);max-width:320px;word-break:break-all">${esc((l.detalhe||'').substring(0,140))}</td></tr>`).join('') +
+    linhas.map(l => `<tr><td style="white-space:nowrap">${esc(l.data_hora)}</td><td><strong>${esc(l.usuario||'—')}</strong></td><td>${esc(_ROTULO_ACAO[l.acao] || l.acao)}</td><td>${esc(l.referencia)}</td><td style="font-size:11px;color:var(--text3);max-width:320px;word-break:break-all">${esc((l.detalhe||'').substring(0,140))}</td></tr>`).join('') +
     '</tbody></table></div>';
 }
 

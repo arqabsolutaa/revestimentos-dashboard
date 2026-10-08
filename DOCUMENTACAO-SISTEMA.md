@@ -130,3 +130,5 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - Seleções em `Personalizar.selecoes` guardam o **id** do revestimento (`piso`); ids numéricos curtos (ex.: "85") são arriscados para Localizar e substituir.
 - Alguns pedidos antigos referenciam ids de revestimento que não existem mais no catálogo (apto 81 R02, apto 91 R01): o PDF mostraria o id cru.
 - Revestimentos sem `m2_por_caixa` cadastrado não têm conversão para caixas.
+
+**Registro de valores antes/depois (07/10/2026):** em toda ação de escrita o Code.gs tira uma foto das abas antes e compara depois (`_snapshotPlanilha` / `_registrarDiferencas`), gravando cada célula alterada (usuário, aba, id da linha, campo, valor antes, valor depois) na aba `Alteracoes_Detalhe`. O Histórico de alterações tem a visão "Valores alterados" e o PDF tem a seção correspondente. Custo: cada gravação lê todas as abas duas vezes (alguns segundos a mais).
