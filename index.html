@@ -1074,11 +1074,11 @@ let pgtoTabAtiva = 'revestimentos';
 function trocarTabPgto(tab) {
   pgtoTabAtiva = tab;
   // Atualizar visual das tabs
-  ['rev','vin','marm','banh','arq'].forEach(t => {
+  ['rev','vin','marm','banh','arq','areceber'].forEach(t => {
     const el = document.getElementById('pgto-tab-' + t);
     if (el) el.classList.remove('pgto-tab-ativo');
   });
-  const map = {revestimentos:'rev', vinilico:'vin', marmoraria:'marm', banheiras:'banh', arquivados:'arq'};
+  const map = {revestimentos:'rev', vinilico:'vin', marmoraria:'marm', banheiras:'banh', arquivados:'arq', areceber:'areceber'};
   const tabEl = document.getElementById('pgto-tab-' + map[tab]);
   if (tabEl) tabEl.classList.add('pgto-tab-ativo');
   // Mostrar/ocultar listas
@@ -1087,6 +1087,7 @@ function trocarTabPgto(tab) {
   document.getElementById('pgto-lista-marm').style.display = tab === 'marmoraria' ? 'block' : 'none';
   document.getElementById('pgto-lista-banh').style.display = tab === 'banheiras' ? 'block' : 'none';
   document.getElementById('pgto-lista-arq').style.display = tab === 'arquivados' ? 'block' : 'none';
+  document.getElementById('pgto-lista-areceber').style.display = tab === 'areceber' ? 'block' : 'none';
   loadPagamentosAtivo();
 }
 
@@ -1102,6 +1103,8 @@ async function loadPagamentosAtivo() {
     loadPagamentosBanheiras();
   } else if (pgtoTabAtiva === 'arquivados') {
     loadPagamentosArquivados();
+  } else if (pgtoTabAtiva === 'areceber') {
+    loadAReceber();
   }
 }
 
@@ -2748,6 +2751,7 @@ body.mobile-mode #main{padding-bottom:72px}
         <button id="pgto-tab-vin" class="pgto-tab" onclick="trocarTabPgto('vinilico')">Vinílico</button>
         <button id="pgto-tab-marm" class="pgto-tab" onclick="trocarTabPgto('marmoraria')">Marmoraria</button>
         <button id="pgto-tab-banh" class="pgto-tab" onclick="trocarTabPgto('banheiras')">Banheiras</button>
+        <button id="pgto-tab-areceber" class="pgto-tab" onclick="trocarTabPgto('areceber')">A receber</button>
         <button id="pgto-tab-arq" class="pgto-tab" onclick="trocarTabPgto('arquivados')">Arquivados</button>
       </div>
       <div class="page-content">
@@ -2756,6 +2760,7 @@ body.mobile-mode #main{padding-bottom:72px}
         <div id="pgto-lista-marm" style="display:none"></div>
         <div id="pgto-lista-banh" style="display:none"></div>
         <div id="pgto-lista-arq" style="display:none"></div>
+        <div id="pgto-lista-areceber" style="display:none"></div>
       </div>
     </div>
   </div>
@@ -8868,6 +8873,152 @@ async function loadPagamentos(forcarFresco) {
       }
     }).catch(()=>{});
   }
+}
+
+
+// ===================== A RECEBER (quem ainda falta pagar) =====================
+let _aReceberFiltro = 'faltam';
+
+// Uma linha por apartamento: total da última revisão de cada módulo (não arquivada) menos o que já entrou
+// em "Entradas de Personalização" (valor líquido). Se não houver entradas mas o card estiver como "pago",
+// considera o valor pago registrado.
+function _calcularAReceber() {
+  const maisRecente = {};
+  (dadosPersonalizar || []).forEach(p => {
+    if (String(p.arquivado).toLowerCase() === 'true') return;
+    const ap = String(p.ap || '');
+    if (!ap) return;
+    const chave = ap + '|' + _chaveModuloPersonalizacao(p.cliente);
+    const dt = _dataOrdenavelPersonalizacao(p);
+    if (!maisRecente[chave] || dt > maisRecente[chave]._dt) maisRecente[chave] = { ...p, _dt: dt };
+  });
+  const porAp = {};
+  Object.values(maisRecente).forEach(p => {
+    const ap = String(p.ap);
+    let total = parseFloat(p.total_valor);
+    if (!total || isNaN(total)) total = _calcularTotalDeSelecoesObj(p.selecoes);
+    if (!porAp[ap]) porAp[ap] = { ap, cliente: '', total: 0, pagoCard: 0, obs: [] };
+    porAp[ap].total += total;
+    porAp[ap].cliente = (p.cliente || '').replace(/\s*\([^)]*\)\s*$/, '').trim() || porAp[ap].cliente;
+    if (String(p.status_pgto).toLowerCase() === 'pago') porAp[ap].pagoCard += parseFloat(p.valor_pago) || total;
+    if (p.obs_pgto) porAp[ap].obs.push(p.obs_pgto);
+  });
+  const entradasPorAp = {};
+  (dadosEntradasPers || []).forEach(en => {
+    const ap = String(en.apartamento || '');
+    entradasPorAp[ap] = (entradasPorAp[ap] || 0) + _valorLiquidoEntrada(en);
+  });
+  const linhas = Object.values(porAp).map(r => {
+    const entradas = entradasPorAp[r.ap] || 0;
+    const recebido = entradas > 0 ? entradas : r.pagoCard;
+    const falta = Math.max(0, r.total - recebido);
+    let status = 'sem';
+    if (falta <= 0.5) status = 'quitado';
+    else if (recebido > 0.5) status = 'parcial';
+    return { ap: r.ap, cliente: r.cliente || '—', total: r.total, recebido, falta, status, obs: r.obs.join(' · ') };
+  });
+  linhas.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
+  return linhas;
+}
+
+async function loadAReceber() {
+  const el = document.getElementById('pgto-lista-areceber');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  try {
+    const dados = await lerDados(true);
+    if (dados.entradasPersonalizacao) dadosEntradasPers = dados.entradasPersonalizacao;
+    if (dados.personalizar) dadosPersonalizar = dados.personalizar;
+    if (dados.revestimentos) dadosRevestimentos = dados.revestimentos;
+  } catch(e) { /* usa o que já estiver carregado */ }
+  renderAReceber();
+}
+
+function setFiltroAReceber(f) { _aReceberFiltro = f; renderAReceber(); }
+
+function renderAReceber() {
+  const el = document.getElementById('pgto-lista-areceber');
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const todas = _calcularAReceber();
+  const filtros = [['faltam','Falta pagar'],['sem','Sem pagamento'],['parcial','Parcial'],['quitado','Quitados'],['todos','Todos']];
+  const passa = l => _aReceberFiltro === 'todos' ? true : _aReceberFiltro === 'faltam' ? l.status !== 'quitado' : l.status === _aReceberFiltro;
+  const lista = todas.filter(passa);
+  const totFalta = todas.reduce((s,l) => s + l.falta, 0);
+  const totRec = todas.reduce((s,l) => s + l.recebido, 0);
+  const rotulo = { sem:'Sem pagamento', parcial:'Parcial', quitado:'Quitado' };
+  const cor = { sem:'#B03A2E', parcial:'#B8953F', quitado:'#2e7d3f' };
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px">
+      <div class="card" style="padding:14px 16px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase">Falta receber</div><div style="font-size:20px;font-weight:700;color:#B03A2E;margin-top:4px">${fmt(totFalta)}</div></div>
+      <div class="card" style="padding:14px 16px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase">Já recebido</div><div style="font-size:20px;font-weight:700;color:#2e7d3f;margin-top:4px">${fmt(totRec)}</div></div>
+      <div class="card" style="padding:14px 16px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase">Apartamentos com saldo</div><div style="font-size:20px;font-weight:700;margin-top:4px">${todas.filter(l => l.status !== 'quitado').length}</div></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+      ${filtros.map(([k,t]) => `<button class="btn ${_aReceberFiltro === k ? 'btn-primary' : 'btn-secondary'}" style="font-size:12px;padding:6px 12px" onclick="setFiltroAReceber('${k}')">${t}</button>`).join('')}
+      <button class="btn btn-secondary" style="font-size:12px;padding:6px 12px;margin-left:auto" onclick="gerarPDFAReceber()">📄 Gerar PDF</button>
+    </div>
+    ${lista.length ? `<div class="table-wrap"><table>
+      <thead><tr><th>Apto</th><th>Cliente</th><th style="text-align:right">Valor total</th><th style="text-align:right">Recebido</th><th style="text-align:right">Falta pagar</th><th>Situação</th></tr></thead>
+      <tbody>${lista.map(l => `<tr>
+        <td><span class="badge badge-info">Apto ${l.ap}</span></td>
+        <td style="font-weight:500">${l.cliente}${l.obs ? `<div style="font-size:11px;color:var(--text3);font-weight:400">${String(l.obs).replace(/</g,'&lt;').substring(0,120)}</div>` : ''}</td>
+        <td style="text-align:right">${fmt(l.total)}</td>
+        <td style="text-align:right;color:#2e7d3f">${fmt(l.recebido)}</td>
+        <td style="text-align:right;font-weight:700;color:${l.falta > 0.5 ? '#B03A2E' : 'var(--text3)'}">${fmt(l.falta)}</td>
+        <td><span style="font-size:12px;font-weight:600;color:${cor[l.status]}">${rotulo[l.status]}</span></td>
+      </tr>`).join('')}</tbody></table></div>` : '<div class="empty-state"><strong>Nada nesta lista</strong></div>'}`;
+}
+
+async function gerarPDFAReceber() {
+  const lista = _calcularAReceber().filter(l => _aReceberFiltro === 'todos' ? true : _aReceberFiltro === 'faltam' ? l.status !== 'quitado' : l.status === _aReceberFiltro);
+  if (!lista.length) { showToast('Nada para gerar nesta lista', 'error'); return; }
+  showToast('Gerando PDF...', 'success');
+  try {
+    const CORES = ESSENCE_PALETAS.vinilico;
+    const JsPDFClass = getJsPDF();
+    if (!JsPDFClass) throw new Error('jsPDF não carregado');
+    let imgData = null;
+    try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa_civil_ac.png'); } catch(e) {}
+    const doc = new JsPDFClass();
+    _pdfCapa(doc, imgData, '');
+    const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const ml = 8;
+    let y = 58;
+    doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...CORES.cinza);
+    doc.text('Essence Residence · ' + new Date().toLocaleDateString('pt-BR'), ml, y);
+    y += 10;
+    _pdfTabelaHeader(doc, y, [
+      {label:'A P T O', x:8},
+      {label:'C L I E N T E', x:30},
+      {label:'V A L O R   T O T A L', x:100},
+      {label:'R E C E B I D O', x:140},
+      {label:'F A L T A', x:202, align:'right'},
+    ], CORES);
+    y += 12;
+    let alt = false;
+    lista.forEach(l => {
+      if (y + 14 > 270) { doc.addPage(); y = 15; }
+      doc.setFillColor(...(alt ? [245,244,240] : [255,255,255])); doc.rect(0, y, 210, 14, 'F');
+      doc.setFillColor(...CORES.secundaria); doc.rect(0, y, 2.5, 14, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...CORES.preto);
+      doc.text(String(l.ap), 8, y+8);
+      doc.setFont('helvetica','normal'); doc.setTextColor(...CORES.texto);
+      doc.text(doc.splitTextToSize(l.cliente, 66)[0], 30, y+8);
+      doc.setFontSize(8.5);
+      doc.text(fmt(l.total), 100, y+8);
+      doc.text(fmt(l.recebido), 140, y+8);
+      doc.setFont('helvetica','bold'); doc.setTextColor(...CORES.secundaria);
+      doc.text(fmt(l.falta), 202, y+8, {align:'right'});
+      doc.setDrawColor(...CORES.cinzaClaro); doc.setLineWidth(0.2); doc.line(0, y+14, 210, y+14);
+      alt = !alt; y += 14;
+    });
+    y += 6;
+    if (y + 12 > 285) { doc.addPage(); y = 20; }
+    const totFalta = lista.reduce((s,l) => s + l.falta, 0);
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...CORES.preto);
+    doc.text('TOTAL QUE FALTA RECEBER: ' + fmt(totFalta), 202, y, {align:'right'});
+    doc.save(nomeArquivoLimpo('A-Receber-Essence-' + new Date().toLocaleDateString('pt-BR')) + '.pdf');
+    showToast('PDF gerado!', 'success');
+  } catch(e) { showToast('Erro ao gerar PDF: ' + (e.message||e), 'error'); }
 }
 
 async function loadPagamentosArquivados(forcarFresco) {

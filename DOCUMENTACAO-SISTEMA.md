@@ -132,3 +132,5 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - Revestimentos sem `m2_por_caixa` cadastrado não têm conversão para caixas.
 
 **Registro de valores antes/depois (07/10/2026):** em toda ação de escrita o Code.gs tira uma foto das abas antes e compara depois (`_snapshotPlanilha` / `_registrarDiferencas`), gravando cada célula alterada (usuário, aba, id da linha, campo, valor antes, valor depois) na aba `Alteracoes_Detalhe`. O Histórico de alterações tem a visão "Valores alterados" e o PDF tem a seção correspondente. Custo: cada gravação lê todas as abas duas vezes (alguns segundos a mais).
+
+**Aba "A receber" (08/10/2026):** em Financeiro → Controle de Pagamentos, nova sub-aba que lista por apartamento valor total (última revisão não arquivada de cada módulo), recebido (soma líquida de `Entradas de Personalização`; se não houver entradas e o card estiver "pago", usa o valor pago) e falta pagar, com filtros (Falta pagar / Sem pagamento / Parcial / Quitados / Todos) e botão Gerar PDF. Funções: `_calcularAReceber`, `loadAReceber`, `renderAReceber`, `gerarPDFAReceber`. Só frontend.
