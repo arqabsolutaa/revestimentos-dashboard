@@ -11793,10 +11793,8 @@ function gerarPDFDados({ ap, cliente, empresa, selecoes, data, pagamento, descon
     doc.text(pgTexto, 8, y + 11);
     y += 18;
   }
-  // Se for quitado, o total ainda precisa refletir o parcelamento (caso tenha sido informado)
-  if (quitado && pagamento && pagamento.startsWith('credito')) {
-    totalValorFinalPDF = calcularTotalComPagamento(totalFinal, pagamento).total;
-  }
+  // PDF Quitado: sempre o valor bruto, sem juros de cartão/parcelamento (igual ao que aparece na tela)
+  if (quitado) totalValorFinalPDF = totalFinal;
 
   // ===== STATUS: QUITADO/PAGO =====
   if (quitado) {
