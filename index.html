@@ -8919,10 +8919,12 @@ function _calcularAReceber() {
     // Se TODOS os cards do apartamento estão marcados como "Pago", vale o que a Bárbara marcou:
     // a diferença (ex.: troca de revestimento com pequena diferença de valor) não é cobrada.
     const marcadoPago = r.cards > 0 && r.cardsPagos === r.cards;
-    if (marcadoPago) { status = 'quitado'; faltaFinal = 0; }
+    let recebidoFinal = recebido;
+    // Pago com juros (cartão/boleto parcelado): aqui conta só o valor bruto do orçamento, sem os juros.
+    if (marcadoPago) { status = 'quitado'; faltaFinal = 0; recebidoFinal = r.total; }
     else if (falta <= 0.5) status = 'quitado';
     else if (recebido > 0.5) status = 'parcial';
-    return { ap: r.ap, cliente: r.cliente || '—', total: r.total, recebido, falta: faltaFinal, status, obs: r.obs.join(' · ') };
+    return { ap: r.ap, cliente: r.cliente || '—', total: r.total, recebido: recebidoFinal, falta: faltaFinal, status, obs: r.obs.join(' · ') };
   });
   linhas.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
   return linhas;
