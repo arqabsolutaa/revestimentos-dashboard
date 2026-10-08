@@ -7735,7 +7735,7 @@ function atualizarCalculoJurosEntrada() {
     resumo.innerHTML = `Valor recebido: <strong>${fmt(valorAvista)}</strong> · sem taxa`;
   } else if (condicao === 'debito') {
     resumo.style.display = 'block';
-    resumo.innerHTML = `Total recebido: <strong>${fmt(total)}</strong> · Taxa da maquininha: <strong style="color:var(--warn)">${fmt(juros)}</strong>`;
+    resumo.innerHTML = `Valor recebido: <strong>${fmt(valorAvista)}</strong> <span style="color:var(--text3)">· cliente paga ${fmt(total)} na maquininha (taxa de ${fmt(juros)} não entra no valor recebido)</span>`;
   } else if (boleto || pixParcelado) {
     resumo.style.display = 'block';
     const vp = total / parcelas;
@@ -7746,7 +7746,7 @@ function atualizarCalculoJurosEntrada() {
   } else {
     resumo.style.display = 'block';
     const vp = total / parcelas;
-    resumo.innerHTML = `${parcelas}x de ${fmt(vp)} · Total recebido: <strong>${fmt(total)}</strong> · Juros: <strong style="color:var(--warn)">${fmt(juros)}</strong>`;
+    resumo.innerHTML = `Valor recebido: <strong>${fmt(valorAvista)}</strong> <span style="color:var(--text3)">· cliente paga ${parcelas}x de ${fmt(vp)} = ${fmt(total)} (juros de ${fmt(juros)} não entram no valor recebido)</span>`;
   }
 }
 
@@ -8902,7 +8902,7 @@ function _calcularAReceber() {
     if (String(p.status_pgto).toLowerCase() === 'pago') porAp[ap].cardsPagos++;
     porAp[ap].total += total;
     porAp[ap].cliente = (p.cliente || '').replace(/\s*\([^)]*\)\s*$/, '').trim() || porAp[ap].cliente;
-    if (String(p.status_pgto).toLowerCase() === 'pago') porAp[ap].pagoCard += parseFloat(p.valor_pago) || total;
+    if (String(p.status_pgto).toLowerCase() === 'pago') porAp[ap].pagoCard += _valorBrutoPago(p, total);
     if (p.obs_pgto) porAp[ap].obs.push(p.obs_pgto);
   });
   const entradasPorAp = {};
@@ -9193,6 +9193,16 @@ function selecionarCondicaoModal(pagamento) {
   });
 }
 
+// Valor "de verdade" recebido de um orçamento pago: o bruto, sem juros de cartão/boleto parcelado
+// (juros ficam com a maquininha, não entram como recebido). Prefere o valor à vista confirmado.
+function _valorBrutoPago(p, totalCalculado) {
+  const avista = parseFloat(p.valor_avista_confirmado);
+  if (avista > 0.005) return avista;
+  const total = parseFloat(p.total_valor) || totalCalculado || 0;
+  const pago = parseFloat(p.valor_pago) || 0;
+  return total > 0 && pago > total ? total : (pago || total);
+}
+
 function renderPagamentos(lista) {
   if (!lista.length) {
     document.getElementById('pgto-lista').innerHTML = '<div class="empty-state"><strong>Nenhum orçamento encontrado</strong></div>';
@@ -9218,7 +9228,7 @@ function renderPagamentos(lista) {
         <p style="font-weight:600;font-size:14px">${p.cliente||'—'}</p>
         <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
         <p style="font-size:13px;font-weight:500;color:var(--accent2);margin-top:4px">R$ ${totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})} · ${totalM2.toFixed(2)} m²</p>
-        ${p.valor_pago && parseFloat(p.valor_pago) > 0 ? `<p style="font-size:12px;color:#2e7d3f;margin-top:2px">✓ Pago: R$ ${parseFloat(p.valor_pago).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}${p.condicao_pagamento_confirmada ? ' · ' + _labelCondicaoPagamento(p.condicao_pagamento_confirmada) : ''}</p>` : ''}
+        ${p.valor_pago && parseFloat(p.valor_pago) > 0 ? `<p style="font-size:12px;color:#2e7d3f;margin-top:2px">✓ Pago: R$ ${_valorBrutoPago(p, totalValor).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}${p.condicao_pagamento_confirmada ? ' · ' + _labelCondicaoPagamento(p.condicao_pagamento_confirmada) : ''}</p>` : ''}
         ${p.obs_pgto ? `<p style="font-size:12px;color:var(--text2);margin-top:4px">Obs: ${p.obs_pgto}</p>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
