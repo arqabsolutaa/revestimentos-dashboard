@@ -5250,6 +5250,7 @@ function entrarSistema() {
   setMode(isMobileDevice() ? 'mobile' : 'desktop');
   const escolha = document.getElementById('escolha-modulo');
   if (escolha) { escolha.style.pointerEvents = 'auto'; escolha.style.opacity = '1'; escolha.style.display = 'flex'; }
+  aquecerAppsScript();
 }
 
 const SENHAS_MODULO = {
@@ -5407,7 +5408,17 @@ function renderHistoricoAlteracoes() {
 
 function getUsuarioAtual() { return sessionStorage.getItem('absoluta_usuario') || ''; }
 
+// O Apps Script "dorme" quando fica parado e a primeira chamada demora vários segundos.
+// Esta chamada leve, feita assim que a tela do menu aparece, acorda ele antes de digitarem a senha.
+let _appsScriptAquecido = false;
+function aquecerAppsScript() {
+  if (_appsScriptAquecido || !SCRIPT_URL) return;
+  _appsScriptAquecido = true;
+  jsonp(SCRIPT_URL + '?action=ping').catch(() => { _appsScriptAquecido = false; });
+}
+
 function selecionarUsuario(nome) {
+  aquecerAppsScript();
   sessionStorage.setItem('absoluta_usuario', nome);
   marcarUsuarioNaTela();
   const er = document.getElementById('escolha-usuario-erro');
@@ -5442,16 +5453,22 @@ async function confirmarSenhaModulo() {
   if (getUsuarioAtual() === 'Bárbara') {
     // A senha da Bárbara NÃO fica no código da página: é conferida no servidor (Apps Script).
     erroEl.style.display = 'none';
+    const btnEntrar = document.querySelector('#escolha-senha-bloco button');
+    const txtBtn = btnEntrar ? btnEntrar.textContent : '';
+    if (btnEntrar) { btnEntrar.disabled = true; btnEntrar.textContent = 'Verificando...'; }
     try {
       const r = await jsonp(SCRIPT_URL + '?action=verificarSenhaBarbara&modulo=' + encodeURIComponent(tipo) + '&senha=' + encodeURIComponent(senha));
       if (r && r.error) {
         erroEl.textContent = /desconhecida/i.test(r.error) ? 'Atualize o Code.gs no Apps Script (nova implantação) para usar a senha da Bárbara' : (r.error);
         erroEl.style.display = 'block';
+        if (btnEntrar) { btnEntrar.disabled = false; btnEntrar.textContent = txtBtn; }
         return;
       }
       ok = !!(r && r.data && r.data.ok);
       if (ok) window._senhaBarbara = senha;
+      if (btnEntrar) { btnEntrar.disabled = false; btnEntrar.textContent = txtBtn; }
     } catch(e) {
+      if (btnEntrar) { btnEntrar.disabled = false; btnEntrar.textContent = txtBtn; }
       erroEl.textContent = 'Não consegui conferir a senha agora. Tente de novo.';
       erroEl.style.display = 'block';
       return;
