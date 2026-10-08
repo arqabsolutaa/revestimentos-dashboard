@@ -2481,7 +2481,7 @@ body.mobile-mode #main{padding-bottom:72px}
           <select class="form-control" id="hist-filtro-usuario" onchange="renderHistoricoAlteracoes()" style="max-width:180px"><option value="">Todos os usuários</option><option>Bárbara</option><option>Gabriel</option><option>Sem identificar</option></select>
           <input class="form-control" id="hist-filtro-texto" oninput="renderHistoricoAlteracoes()" placeholder="Buscar (apto, ação...)" style="max-width:240px">
         </div>
-        <div style="margin-bottom:12px"><button class="btn btn-secondary" onclick="gerarPDFAuditoria()">Gerar PDF de auditoria</button></div>
+        <div style="margin-bottom:12px"><button class="btn btn-secondary" onclick="gerarPDFAuditoria()">Gerar PDF</button></div>
         <div id="hist-corpo"><p style="color:var(--text3)">Carregando...</p></div>
       </div>
     </div>
@@ -5287,7 +5287,7 @@ function _resumoLinhaExcluida(txt) {
 async function gerarPDFAuditoria() {
   const senha = window._senhaBarbara;
   if (!senha) { showToast('Digite a senha da Bárbara no histórico primeiro', 'error'); return; }
-  showToast('Gerando PDF de auditoria...', 'success');
+  showToast('Gerando PDF...', 'success');
   try {
     const r = await api('getAuditoria', { senha, limite: 2000 });
     const log = r.log || [], excl = r.excluidos || [];
@@ -5298,7 +5298,7 @@ async function gerarPDFAuditoria() {
     let y = 20;
     const nova = (h) => { if (y + h > 282) { doc.addPage(); y = 18; } };
     doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(67,51,30);
-    doc.text('Relatório de Auditoria — Essence Residence', M, y); y += 7;
+    doc.text('Histórico de Alterações — Essence Residence', M, y); y += 7;
     doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(110,110,110);
     doc.text('Gerado em ' + new Date().toLocaleString('pt-BR') + ' por Bárbara · Documento confidencial', M, y); y += 9;
 
@@ -5345,10 +5345,10 @@ async function gerarPDFAuditoria() {
 
     const n = doc.getNumberOfPages();
     for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFontSize(8); doc.setTextColor(150,150,150); doc.text(`Página ${i} de ${n}`, W - M, 291, {align:'right'}); }
-    doc.save(nomeArquivoLimpo('Auditoria-Essence-' + new Date().toLocaleDateString('pt-BR')) + '.pdf');
-    showToast('PDF de auditoria gerado!', 'success');
+    doc.save(nomeArquivoLimpo('Historico-Alteracoes-Essence-' + new Date().toLocaleDateString('pt-BR')) + '.pdf');
+    showToast('PDF gerado!', 'success');
   } catch(e) {
-    showToast('Erro ao gerar auditoria: ' + (e.message||e), 'error');
+    showToast('Erro ao gerar PDF: ' + (e.message||e), 'error');
   }
 }
 
