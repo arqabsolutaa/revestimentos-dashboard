@@ -5300,7 +5300,7 @@ async function gerarPDFAuditoria() {
     doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(67,51,30);
     doc.text('Histórico de Alterações — Essence Residence', M, y); y += 7;
     doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(110,110,110);
-    doc.text('Gerado em ' + new Date().toLocaleString('pt-BR') + ' por Bárbara · Documento confidencial', M, y); y += 9;
+    doc.text('Gerado em ' + new Date().toLocaleString('pt-BR') + '', M, y); y += 9;
 
     // Resumo por usuário
     const cont = {};
@@ -5317,7 +5317,7 @@ async function gerarPDFAuditoria() {
 
     // Exclusões
     doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(40,40,40);
-    doc.text('Exclusões (itens apagados — conteúdo preservado)', M, y); y += 6;
+    doc.text('Itens excluídos', M, y); y += 6;
     doc.setFontSize(8.5);
     if (!excl.length) { doc.setFont('helvetica','normal'); doc.text('Nenhuma exclusão registrada.', M, y); y += 6; }
     excl.forEach(l => {
