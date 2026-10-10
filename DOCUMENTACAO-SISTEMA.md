@@ -136,3 +136,5 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 **Aba "A receber" (08/10/2026):** em Financeiro → Controle de Pagamentos, nova sub-aba que lista por apartamento valor total (última revisão não arquivada de cada módulo), recebido (soma líquida de `Entradas de Personalização`; se não houver entradas e o card estiver "pago", usa o valor pago) e falta pagar, com filtros (Falta pagar / Sem pagamento / Parcial / Quitados / Todos) e botão Gerar PDF. Funções: `_calcularAReceber`, `loadAReceber`, `renderAReceber`, `gerarPDFAReceber`. Só frontend.
 
 - 08/10: capa do PDF "Relatório de Conta" (`assets/capa_relatorio_contas_essence.jpg`) agora diz "RELATÓRIO PERSONALIZE" (antes "COMPRA REVESTIMENTOS"). Só imagem; sem mudança de código.
+
+- 10/10: ícone do app ao "Adicionar à tela inicial" (logo Essence Residence): `assets/icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png`, `manifest.json` na raiz e tags no `<head>` do index.html. Só frontend.
