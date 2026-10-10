@@ -137,4 +137,4 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 
 - 08/10: capa do PDF "Relatório de Conta" (`assets/capa_relatorio_contas_essence.jpg`) agora diz "RELATÓRIO PERSONALIZE" (antes "COMPRA REVESTIMENTOS"). Só imagem; sem mudança de código.
 
-- 10/10: ícone do app ao "Adicionar à tela inicial": logo "PERSONALIZE — Essence Residence" (fundo verde) enviado pela Bárbara, em `assets/icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png`, `manifest.json` (any+maskable) e tags no `<head>`. Só frontend.
+- 10/10: ícone do app ao "Adicionar à tela inicial": logo "PERSONALIZE — Essence Residence" em versão bege (fundo claro, letras verdes) enviado pela Bárbara, em `assets/icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png`, `manifest.json` (any+maskable) e tags no `<head>`. Só frontend.
