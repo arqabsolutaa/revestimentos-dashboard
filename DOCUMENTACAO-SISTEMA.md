@@ -137,4 +137,4 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 
 - 08/10: capa do PDF "Relatório de Conta" (`assets/capa_relatorio_contas_essence.jpg`) agora diz "RELATÓRIO PERSONALIZE" (antes "COMPRA REVESTIMENTOS"). Só imagem; sem mudança de código.
 
-- 10/10: ícone do app ao "Adicionar à tela inicial" (logo Essence Residence): `assets/icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png`, `manifest.json` na raiz e tags no `<head>` do index.html. Só frontend.
+- 10/10: ícone do app ao "Adicionar à tela inicial": monograma CE (bege) sobre fundo verde, tela cheia (`assets/icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png`, `manifest.json` com purpose any+maskable e tags no `<head>`). Só frontend.
