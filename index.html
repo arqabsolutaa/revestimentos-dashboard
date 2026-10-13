@@ -6775,6 +6775,28 @@ function _calcularNecessidadeCompra() {
       itens: e.itens.sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0) || a.ambiente.localeCompare(b.ambiente,'pt-BR'))
     };
   });
+  // Revestimentos que têm reserva técnica mas não aparecem em nenhuma personalização ativa: entram na lista
+  // só se o estoque físico não cobre a reserva (a reserva precisa existir de verdade na prateleira).
+  const jaNaLista = new Set(lista.map(x => String(x.rev.id || x.rev.codigo)));
+  const reservadosSemPers = {};
+  (dadosReservas || []).forEach(x => {
+    const rev = dadosRevestimentos.find(r => String(r.codigo) === String(x.codigo_rev)) || dadosRevestimentos.find(r => String(r.id) === String(x.codigo_rev));
+    if (!rev || jaNaLista.has(String(rev.id || rev.codigo))) return;
+    const k = String(rev.id || rev.codigo);
+    (reservadosSemPers[k] = reservadosSemPers[k] || { rev, itens: [] }).itens.push(x);
+  });
+  Object.values(reservadosSemPers).forEach(e => {
+    const estoque = parseFloat(e.rev.estoque_m2) || 0;
+    const m2cx = parseFloat(e.rev.m2_por_caixa) || 0;
+    const reservadoM2 = _reservadoM2(e.rev);
+    const saldo = reservadoM2 - estoque;
+    if (saldo <= 0.01) return;
+    lista.push({
+      rev: e.rev, necessarioM2: 0, estoqueM2: estoque, reservadoM2, saidaM2: 0, saldoM2: saldo,
+      caixasFaltam: m2cx > 0 ? Math.ceil(saldo / m2cx) : 0,
+      itens: e.itens.map(x => ({ ap: String(x.ap), cliente: 'Reserva técnica', ambiente: 'Reserva técnica', m2: (parseFloat(x.qtd_caixas)||0) * m2cx, m2comPerda: (parseFloat(x.qtd_caixas)||0) * m2cx }))
+    });
+  });
   lista.sort((a,b) => b.saldoM2 - a.saldoM2);
   return lista;
 }
