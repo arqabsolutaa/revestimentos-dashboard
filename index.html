@@ -4827,13 +4827,13 @@ function renderLotes() {
     const cel = (v, cor, bold) => `<div style="text-align:right;font-size:13px;${bold ? 'font-weight:700;' : ''}${cor ? 'color:' + cor + ';' : ''}">${v}</div>`;
     const grid = 'display:grid;grid-template-columns:minmax(90px,1.3fr) repeat(4,minmax(52px,1fr)) 28px;gap:8px;align-items:center;padding:9px 16px;border-top:1px solid var(--border)';
     const rows = linhas.map(x => {
-      const semEntrada = x.entrada === 0 && x.instalado > 0;
+      const semEntrada = x.entrada === 0;
       const neg = x.saldo < 0 && !semEntrada;
       const corSaldo = semEntrada ? 'var(--text3)' : (neg ? 'var(--danger)' : 'var(--accent)');
       const del = x.entradas.length ? x.entradas.map(e => `<button onclick="excluirLote('${e.id}')" title="Excluir entrada de ${_fmtCx(e.qtd)} cx" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:2px;font-size:15px;line-height:1">×</button>`).join('') : '';
       return `<div style="${grid}">
         <div style="font-size:13px;font-weight:600">Fab: ${x.data}</div>
-        ${cel(_fmtCx(x.entrada))}${cel(x.instalado ? '− ' + _fmtCx(x.instalado) : '—')}${cel(x.reservado ? _fmtCx(x.reservado) : '—')}
+        ${cel(x.entrada ? _fmtCx(x.entrada) : '—')}${cel(x.instalado ? '− ' + _fmtCx(x.instalado) : '—')}${cel(x.reservado ? _fmtCx(x.reservado) : '—')}
         ${cel(semEntrada ? '—' : _fmtCx(x.disponivel), corSaldo, true)}
         <div>${del}</div></div>`;
     }).join('');
@@ -10648,7 +10648,7 @@ function atualizarFormReserva() {
   const lotes = new Set();
   const loteRev = String(rev.lote || '').trim();
   if (loteRev && !/^n\s*\/\s*i/i.test(loteRev)) lotes.add(loteRev);
-  _saldoLotesRev(rev).lista.filter(x => x.disponivel > 0).forEach(x => lotes.add(x.data));
+  _saldoLotesRev(rev).lista.forEach(x => lotes.add(x.data));
   dl.innerHTML = [...lotes].map(l => `<option value="${l.replace(/"/g,'&quot;')}">`).join('');
   const total = _qtdCaixasRev(rev), res = _reservadoCaixas(rev);
   info.innerHTML = `Em estoque: <strong>${_fmtCx(total)} cx</strong> · já reservado: <strong>${_fmtCx(res)} cx</strong> · disponível: <strong style="${total - res < 0 ? 'color:var(--danger)' : ''}">${_fmtCx(total - res)} cx</strong>`;

@@ -153,3 +153,4 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - Instalação casa com revestimento pelo id (campo codigo_rev da instalação = id do revestimento); lote casa por código/id, ou por nome apenas se o nome for único.
 - A sugestão de lote na Reserva Técnica lista só datas com sobra disponível.
 - Mudança só no index.html (sem novo deploy do Code.gs).
+- (ajuste 13/10) A data de fabricação só é conhecida na instalação; "Entrou" é opcional (só se ela anotar). Datas só com instalação mostram "Instalado" e Sobra "—". Reserva técnica aceita lote/data digitado à mão (a data pode ainda não ter instalação); a data reservada aparece na coluna "Reserv." em Estoque por Data para ela separar na pilha quando achar o lote. Sugestões de lote na reserva listam todas as datas conhecidas.
