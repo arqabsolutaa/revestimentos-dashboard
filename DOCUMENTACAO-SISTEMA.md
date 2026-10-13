@@ -145,3 +145,11 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
   - A reserva **não altera** o estoque da planilha (`estoque_m2`/`qtd_caixas`); ela só é subtraída do **disponível** na tela: Estoque ganhou colunas "Reserva técnica" e "Disponível (cx)" + card "Reserva técnica"; **Compras** desconta a reserva (`reservadoM2` em `_calcularNecessidadeCompra`); **Saídas** avisa (confirm) se a saída usa material reservado; **PDF do Estoque** tem colunas Caixas/Reserva/Disp. e uma página final "Reservas técnicas por apartamento".
   - Front: `dadosReservas`, `_reservadoCaixas(rev)`, `_reservadoM2(rev)`, `abrirReservasTecnicas()`, `salvarReservaTecnica()`, `excluirReservaTecnica()`.
 - 13/10 (Compras + reserva): revestimento com reserva técnica **sem personalização ativa** também entra em Compras quando o estoque físico não cobre a reserva (item "Reserva técnica" na lista de aptos). Regra da Compras: `falta = necessário (com perda) − (estoque + já saiu) + reserva técnica`. Ao **usar** a reserva (reposição), registrar a Saída **e excluir/reduzir a reserva**, senão desconta duas vezes. Guia didático: `Guia_Reserva_Tecnica.pdf`.
+
+## Estoque por Data de Fabricação — saldo por data (13/10/2026)
+- A tela agora mostra, por revestimento e por data de fabricação: **Entrou** (lotes cadastrados em "Novo Lote") − **Instalado** (tela Instalações, mesma data) − **Reservado** (reservas técnicas com essa data) = **Sobra**.
+- A linha "Sem data informada" é o estoque total do revestimento menos o que está distribuído nas datas. Se as datas somam mais que o estoque, aparece um aviso.
+- Linhas da planilha Lotes com obs "Registrado via instalação" (criadas pelo sistema antigo) são ignoradas na tela: eram o instalado, não o saldo. O backend ainda as cria/ajusta; a tela não usa. Excluir instalação agora corrige o saldo sozinho, pois o instalado vem direto da aba Instalações.
+- Instalação casa com revestimento pelo id (campo codigo_rev da instalação = id do revestimento); lote casa por código/id, ou por nome apenas se o nome for único.
+- A sugestão de lote na Reserva Técnica lista só datas com sobra disponível.
+- Mudança só no index.html (sem novo deploy do Code.gs).
