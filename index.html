@@ -2386,7 +2386,7 @@ body.mobile-mode #main{padding-bottom:72px}
       <div class="page-header">
         <div class="page-header-left">
           <h1>Estoque por Data de Fabricação</h1>
-          <p>Cada instalação registra a data de fabricação e as caixas usadas. O que ainda não foi instalado fica em "Ainda sem data"</p>
+          <p>Cada instalação registra a data de fabricação e as caixas usadas. O que ainda não foi instalado fica em "Restante em estoque"</p>
         </div>
         <div class="header-actions">
           <button class="btn btn-primary" onclick="abrirModalLote()">
@@ -4838,7 +4838,7 @@ function renderLotes() {
         <div>${del}</div></div>`;
     }).join('');
     const semDataRow = !fData && r.semData > 0 ? `<div style="${grid};background:var(--surface2)">
-        <div style="font-size:13px;color:var(--text2)">Ainda sem data (não instalado)</div>${cel('')}${cel('')}${cel('')}${cel(_fmtCx(r.semData), 'var(--text2)', true)}<div></div></div>` : '';
+        <div style="font-size:13px;color:var(--text2)">Restante em estoque (data não identificada)</div>${cel('')}${cel('')}${cel('')}${cel(_fmtCx(r.semData), 'var(--text2)', true)}<div></div></div>` : '';
     const tam = rev.tamanho ? ' — ' + rev.tamanho : '';
     return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden">
       <div style="padding:14px 16px;background:var(--surface2);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
