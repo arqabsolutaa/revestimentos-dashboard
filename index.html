@@ -2338,6 +2338,10 @@ body.mobile-mode #main{padding-bottom:72px}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Exportar Excel
         </button>
+        <button class="btn btn-secondary" onclick="abrirReservasTecnicas()" style="margin-right:4px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
+          Reservas Técnicas
+        </button>
         <button class="btn btn-secondary" onclick="exportarEstoquePDF()" style="margin-right:4px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           Exportar PDF
@@ -2369,9 +2373,9 @@ body.mobile-mode #main{padding-bottom:72px}
       <div class="table-wrap">
         <table>
           <thead><tr>
-            <th>Código</th><th>Nome</th><th>Obra</th><th>m²/cx</th><th>Qtd Caixas</th><th>Estoque (m²)</th><th>Lote</th><th>Popularidade</th>
+            <th>Código</th><th>Nome</th><th>Obra</th><th>m²/cx</th><th>Qtd Caixas</th><th>Reserva técnica</th><th>Disponível (cx)</th><th>Estoque (m²)</th><th>Lote</th><th>Popularidade</th>
           </tr></thead>
-          <tbody id="estoque-tbody"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr></tbody>
+          <tbody id="estoque-tbody"><tr><td colspan="10"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr></tbody>
         </table>
       </div>
     </div>
@@ -2469,6 +2473,36 @@ body.mobile-mode #main{padding-bottom:72px}
           </tr></thead>
           <tbody id="saidas-tbody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-reservas">
+    <div class="modal" style="max-width:900px;width:96%">
+      <div class="modal-header">
+        <h2>Reservas Técnicas</h2>
+        <button class="modal-close" onclick="fecharModal('modal-reservas')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Caixas guardadas por apartamento, ligadas ao revestimento (modelo) e ao lote. Elas continuam no estoque físico, mas saem do <strong>disponível</strong>: o Estoque, as Compras e o aviso das Saídas passam a descontar a reserva.</p>
+        <div style="display:grid;grid-template-columns:90px minmax(0,2fr) minmax(0,1.2fr) 100px;gap:10px;align-items:end;margin-bottom:8px">
+          <div class="form-group" style="margin:0;min-width:0"><label>Apto</label><input class="form-control" style="width:100%" id="res-ap" list="res-ap-list" placeholder="Ex.: 31" autocomplete="off"><datalist id="res-ap-list"></datalist></div>
+          <div class="form-group" style="margin:0"><label>Revestimento (modelo)</label><select class="form-control" id="res-rev" onchange="atualizarFormReserva()"></select></div>
+          <div class="form-group" style="margin:0"><label>Lote</label><input class="form-control" id="res-lote" list="res-lote-list" placeholder="Lote / data de fabricação" autocomplete="off"><datalist id="res-lote-list"></datalist></div>
+          <div class="form-group" style="margin:0"><label>Caixas</label><input class="form-control" style="width:100%" id="res-qtd" type="number" min="0" step="0.5" placeholder="0"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-bottom:6px">
+          <div class="form-group" style="margin:0"><label>Observação (opcional)</label><input class="form-control" id="res-obs" placeholder="Ex.: reposição do banho master"></div>
+          <button class="btn btn-primary" id="res-btn-salvar" onclick="salvarReservaTecnica()">+ Adicionar reserva</button>
+        </div>
+        <p id="res-info" style="font-size:12px;color:var(--text3);min-height:18px;margin-bottom:12px"></p>
+        <div class="filter-bar" style="margin-bottom:8px"><input class="filter-input" id="res-filtro" placeholder="Filtrar por apto ou revestimento..." oninput="renderReservasTecnicas()" style="width:300px"></div>
+        <div class="table-wrap" style="max-height:340px;overflow:auto">
+          <table>
+            <thead><tr><th>Apto</th><th>Revestimento</th><th>Lote</th><th>Caixas</th><th>m²</th><th>Obs</th><th></th></tr></thead>
+            <tbody id="res-tbody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -5728,13 +5762,13 @@ async function lerDados(forcarFresco) {
         ? 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/data.json'
         : '/data.json';
       const r = await fetch(baseUrl + '?t=' + Date.now());
-      if (r.ok) return await r.json();
+      if (r.ok) { const j = await r.json(); if (Array.isArray(j.reservasTecnicas)) dadosReservas = j.reservasTecnicas; return j; }
     } catch(e) {}
   }
   // Apps Script direto (sempre fresco, sem cache de CDN)
   try {
     const result = await jsonp(SCRIPT_URL + '?action=getDados');
-    if (result && result.data) return result.data;
+    if (result && result.data) { if (Array.isArray(result.data.reservasTecnicas)) dadosReservas = result.data.reservasTecnicas; return result.data; }
   } catch(e) {}
   // Se a busca fresca falhar (ou vier vazia), NUNCA retorna objeto vazio —
   // isso faria a tela apagar listas que já estavam certas. Lança erro pra quem
@@ -6416,6 +6450,7 @@ const SENHA_CUSTOPERS = SENHA_PGTO; // mesma senha do Controle de Pagamentos
 let custoPersDesbloqueado = true; // senha interna removida - a senha da tela inicial (Controle) ja protege o acesso
 let dadosEntradasPers = [], dadosSaidasObra = [], dadosVinculosPers = [];
 let dadosBaixasParcelas = [];
+let dadosReservas = []; // reservas técnicas (caixas guardadas por apto, ligadas a revestimento e lote)
 // Guarda itens recem-adicionados localmente ate confirmar que o servidor ja os tem —
 // assim a sincronizacao em segundo plano nunca "some" com algo que acabou de aparecer na tela.
 const _entradasOtimistas = {};
@@ -6724,7 +6759,8 @@ function _calcularNecessidadeCompra() {
     const estoque = parseFloat(e.rev.estoque_m2) || 0;
     const key = String(e.rev.id || e.rev.codigo);
     const saidaM2 = saidaPorRevestimento[key] || 0;
-    const disponivelTotal = estoque + saidaM2; // o que tem em estoque + o que já saiu (já foi comprado)
+    const reservadoM2 = _reservadoM2(e.rev); // reserva técnica: está no estoque mas não pode ser usada nas personalizações
+    const disponivelTotal = estoque + saidaM2 - reservadoM2; // estoque + o que já saiu (já foi comprado) − reserva técnica
     const saldo = e.necessarioM2 - disponivelTotal;
     const m2cx = parseFloat(e.rev.m2_por_caixa) || 0;
     const caixasFaltam = saldo > 0.01 && m2cx > 0 ? Math.ceil(saldo / m2cx) : 0;
@@ -6732,6 +6768,7 @@ function _calcularNecessidadeCompra() {
       rev: e.rev,
       necessarioM2: e.necessarioM2,
       estoqueM2: estoque,
+      reservadoM2,
       saidaM2,
       saldoM2: saldo,
       caixasFaltam,
@@ -9593,36 +9630,43 @@ async function exportarEstoquePDF() {
       _pdfTabelaHeader(doc, y, [
         {label:'C Ó D.', x:8},
         {label:'R E V E S T I M E N T O', x:30},
-        {label:'O B R A', x:104},
-        {label:'M² / C X', x:140, align:'right'},
-        {label:'C A I X A S', x:165, align:'right'},
-        {label:'E S T O Q U E', x:202, align:'right'},
+        {label:'M² / C X', x:116, align:'right'},
+        {label:'C A I X A S', x:138, align:'right'},
+        {label:'R E S E R V A', x:160, align:'right'},
+        {label:'D I S P.', x:178, align:'right'},
+        {label:'M²', x:202, align:'right'},
       ], CORES);
       y += 12;
     };
     cab();
-    let alt = false, totCx = 0, totM2 = 0;
+    let alt = false, totCx = 0, totRes = 0, totM2 = 0;
     lista.forEach(r => {
       if (y + 12 > 275) { doc.addPage(); y = 15; cab(); alt = false; }
       const est = parseFloat(r.estoque_m2) || 0;
       const m2cx = parseFloat(r.m2_por_caixa) || 0;
-      const qtdCx = parseFloat(r.qtd_caixas) || (m2cx > 0 ? Math.round(est/m2cx*100)/100 : 0);
-      totCx += qtdCx; totM2 += est;
+      const qtdCx = _qtdCaixasRev(r);
+      const resCx = _reservadoCaixas(r);
+      totCx += qtdCx; totRes += resCx; totM2 += est;
       doc.setFillColor(...(alt ? [245,244,240] : [255,255,255])); doc.rect(0, y, 210, 12, 'F');
       doc.setFillColor(...CORES.secundaria); doc.rect(0, y, 2.5, 12, 'F');
       doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...CORES.cinza);
       doc.text(doc.splitTextToSize(String(r.codigo||'—'), 20)[0], 8, y+7.5);
       doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...CORES.preto);
-      doc.text(doc.splitTextToSize(r.nome||'—', 70)[0], 30, y+5.5);
+      doc.text(doc.splitTextToSize(r.nome||'—', 80)[0], 30, y+5.5);
       doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...CORES.cinza);
-      doc.text([r.tamanho, r.lote && !/^n\s*\/\s*i/i.test(String(r.lote).trim()) ? 'Lote ' + String(r.lote).trim() : ''].filter(Boolean).join(' · '), 30, y+9.5);
+      const loteTxt = r.lote && !/^n\s*\/\s*i/i.test(String(r.lote).trim()) ? 'Lote ' + String(r.lote).trim() : '';
+      doc.text(doc.splitTextToSize([r.tamanho, r.obra, loteTxt].filter(Boolean).join(' · '), 80)[0], 30, y+9.5);
       doc.setFontSize(8); doc.setTextColor(...CORES.texto);
-      doc.text(doc.splitTextToSize(r.obra||'—', 34)[0], 104, y+7.5);
-      doc.text(m2cx > 0 ? fmt2(m2cx) : '—', 140, y+7.5, {align:'right'});
+      doc.text(m2cx > 0 ? fmt2(m2cx) : '—', 116, y+7.5, {align:'right'});
       doc.setFont('helvetica','bold'); doc.setTextColor(...CORES.preto);
-      doc.text(qtdCx > 0 ? fmtCx(qtdCx) + ' cx' : '—', 165, y+7.5, {align:'right'});
-      doc.setTextColor(...(est <= 0 ? [176,58,46] : CORES.secundaria));
-      doc.text(fmt2(est) + ' m²', 202, y+7.5, {align:'right'});
+      doc.text(qtdCx > 0 ? fmtCx(qtdCx) : '—', 138, y+7.5, {align:'right'});
+      doc.setFont('helvetica','normal'); doc.setTextColor(...CORES.cinza);
+      doc.text(resCx > 0 ? fmtCx(resCx) : '—', 160, y+7.5, {align:'right'});
+      const dispCx = qtdCx - resCx;
+      doc.setFont('helvetica','bold'); doc.setTextColor(...(dispCx < 0 ? [176,58,46] : CORES.secundaria));
+      doc.text(qtdCx > 0 ? fmtCx(dispCx) : '—', 178, y+7.5, {align:'right'});
+      doc.setTextColor(...(est <= 0 ? [176,58,46] : CORES.texto));
+      doc.text(fmt2(est), 202, y+7.5, {align:'right'});
       doc.setDrawColor(...CORES.cinzaClaro); doc.setLineWidth(0.2); doc.line(0, y+12, 210, y+12);
       alt = !alt; y += 12;
     });
@@ -9634,8 +9678,44 @@ async function exportarEstoquePDF() {
     doc.text('T O T A L   E M   E S T O Q U E', 8, y+8);
     doc.setFontSize(7.5); doc.text(lista.length + (lista.length > 1 ? ' revestimentos' : ' revestimento'), 8, y+15);
     doc.setTextColor(...CORES.secundaria); doc.setFontSize(12); doc.setFont('helvetica','bold');
-    doc.text(fmtCx(totCx) + ' cx', 165, y+12, {align:'right'});
-    doc.text(fmt2(totM2) + ' m²', 202, y+12, {align:'right'});
+    doc.text(fmtCx(totCx) + ' cx', 138, y+12, {align:'right'});
+    doc.text(fmtCx(totRes), 160, y+12, {align:'right'});
+    doc.text(fmtCx(totCx - totRes), 178, y+12, {align:'right'});
+    doc.text(fmt2(totM2), 202, y+12, {align:'right'});
+    y += 18;
+    // Reservas técnicas por apartamento (quando houver)
+    const reservasPdf = (dadosReservas || []).slice().sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0) || String(a.revestimento||'').localeCompare(String(b.revestimento||''),'pt-BR'));
+    if (reservasPdf.length) {
+      doc.addPage(); y = 18;
+      doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...CORES.preto);
+      doc.text('Reservas técnicas por apartamento', 8, y); y += 8;
+      doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...CORES.cinza);
+      doc.text('Caixas guardadas para reposição, ligadas ao revestimento e ao lote. Continuam no estoque físico, mas não contam como disponível.', 8, y); y += 8;
+      const cabR = () => { _pdfTabelaHeader(doc, y, [
+        {label:'A P T O', x:8}, {label:'R E V E S T I M E N T O', x:28}, {label:'L O T E', x:128}, {label:'C A I X A S', x:202, align:'right'}
+      ], CORES); y += 12; };
+      cabR();
+      let altR = false, totR = 0;
+      reservasPdf.forEach(x => {
+        if (y + 11 > 275) { doc.addPage(); y = 15; cabR(); altR = false; }
+        const cx = parseFloat(x.qtd_caixas) || 0; totR += cx;
+        doc.setFillColor(...(altR ? [245,244,240] : [255,255,255])); doc.rect(0, y, 210, 11, 'F');
+        doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...CORES.preto);
+        doc.text(String(x.ap), 8, y+7);
+        doc.text(doc.splitTextToSize(x.revestimento || '—', 96)[0], 28, y+5.5);
+        doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...CORES.cinza);
+        doc.text(doc.splitTextToSize((x.codigo_rev || '') + (x.obs ? ' · ' + x.obs : ''), 96)[0], 28, y+9);
+        doc.setFontSize(8.5); doc.setTextColor(...CORES.texto);
+        doc.text(doc.splitTextToSize(x.lote || '—', 46)[0], 128, y+7);
+        doc.setFont('helvetica','bold'); doc.setTextColor(...CORES.secundaria);
+        doc.text(fmtCx(cx) + ' cx', 202, y+7, {align:'right'});
+        doc.setDrawColor(...CORES.cinzaClaro); doc.setLineWidth(0.2); doc.line(0, y+11, 210, y+11);
+        altR = !altR; y += 11;
+      });
+      y += 6;
+      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...CORES.preto);
+      doc.text('Total reservado: ' + fmtCx(totR) + ' cx', 202, y, {align:'right'});
+    }
     const totalPag = doc.getNumberOfPages();
     for (let pg=1; pg<=totalPag; pg++) {
       doc.setPage(pg);
@@ -10342,7 +10422,7 @@ function renderNecessidadeCompra() {
       <td style="font-weight:500">${x.rev.nome||'-'}</td>
       <td>${x.rev.tamanho||'—'}</td>
       <td>${_aptosDoItem(x).map(a => `<span class="badge badge-info" style="margin-right:3px">${a}</span>`).join('')}</td>
-      <td>${fmt2(x.estoqueM2)} m²</td>
+      <td>${fmt2(x.estoqueM2)} m²${x.reservadoM2 > 0.005 ? `<div style="font-size:10px;color:var(--warn)">− ${fmt2(x.reservadoM2)} m² de reserva técnica</div>` : ''}</td>
       <td>${fmt2(x.saidaM2||0)} m²</td>
       <td>${fmt2(x.necessarioM2)} m²</td>
       <td><span class="badge badge-danger">${fmt2(x.saldoM2)} m²</span></td>
@@ -10358,7 +10438,7 @@ function abrirDetalheNecessidadeCompra(idx) {
   const fmt2 = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   document.getElementById('necessidadecompra-detalhe-titulo').textContent = x.rev.nome + (x.rev.tamanho ? ' · ' + x.rev.tamanho : '');
   document.getElementById('necessidadecompra-detalhe-corpo').innerHTML = `
-    <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Estoque atual: <strong>${fmt2(x.estoqueM2)} m²</strong> · Já retirado (saídas): <strong>${fmt2(x.saidaM2||0)} m²</strong> · Necessário: <strong>${fmt2(x.necessarioM2)} m²</strong> · Faltam: <strong style="color:var(--danger)">${fmt2(x.saldoM2)} m²</strong></p>
+    <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Estoque atual: <strong>${fmt2(x.estoqueM2)} m²</strong>${x.reservadoM2 > 0.005 ? ' (reserva técnica: <strong>' + fmt2(x.reservadoM2) + ' m²</strong>, não conta como disponível)' : ''} · Já retirado (saídas): <strong>${fmt2(x.saidaM2||0)} m²</strong> · Necessário: <strong>${fmt2(x.necessarioM2)} m²</strong> · Faltam: <strong style="color:var(--danger)">${fmt2(x.saldoM2)} m²</strong></p>
     <div class="table-wrap"><table>
       <thead><tr><th>Apto</th><th>Cliente</th><th>Ambiente</th><th style="text-align:right">m² (com perda)</th></tr></thead>
       <tbody>${x.itens.map(it => `<tr>
@@ -10414,6 +10494,7 @@ async function gerarPDFNecessidadeCompra() {
       doc.setFontSize(8.5); doc.setTextColor(...CORES.texto);
       doc.text(String(x.rev.tamanho||'—'), 95, y+9);
       doc.text(fmt2(x.estoqueM2) + ' m²', 122, y+9);
+      if (x.reservadoM2 > 0.005) { doc.setFontSize(6.5); doc.setTextColor(...CORES.cinza); doc.text('reserva técnica: ' + fmt2(x.reservadoM2) + ' m²', 122, y+13); doc.setFontSize(8.5); doc.setTextColor(...CORES.texto); }
       doc.text(fmt2(x.necessarioM2) + ' m²', 152, y+9);
       doc.setFont('helvetica','bold'); doc.setTextColor(...CORES.secundaria);
       doc.text(fmt2(x.saldoM2) + ' m²', 202, y+9, {align:'right'});
@@ -10480,10 +10561,25 @@ function renderStatsEstoque(d) {
     <div class="stat-card"><div class="stat-label">Total em Estoque</div><div class="stat-value">${total.toFixed(1)} m²</div></div>
     <div class="stat-card"><div class="stat-label">Tipos de Revestimento</div><div class="stat-value">${tipos}</div></div>
     <div class="stat-card"><div class="stat-label">Obras Ativas</div><div class="stat-value">${obras}</div></div>
+    <div class="stat-card"><div class="stat-label">Reserva técnica</div><div class="stat-value">${_fmtCx((dadosReservas||[]).reduce((a,x)=>a+(parseFloat(x.qtd_caixas)||0),0))} cx</div></div>
   `;
 }
+// ===================== RESERVAS TÉCNICAS =====================
+// Caixas guardadas por apartamento. Não mexem no estoque da planilha: só saem do "disponível".
+function _reservasDoRev(rev) {
+  const cod = String(rev.codigo || '').trim(), id = String(rev.id || '').trim();
+  return (dadosReservas || []).filter(x => { const c = String(x.codigo_rev || '').trim(); return c && (c === cod || c === id); });
+}
+function _reservadoCaixas(rev) { return _reservasDoRev(rev).reduce((a, x) => a + (parseFloat(x.qtd_caixas) || 0), 0); }
+function _qtdCaixasRev(rev) {
+  const est = parseFloat(rev.estoque_m2) || 0, m2cx = parseFloat(rev.m2_por_caixa) || 0;
+  return parseFloat(rev.qtd_caixas) || (m2cx > 0 ? Math.round(est / m2cx * 100) / 100 : 0);
+}
+function _reservadoM2(rev) { return _reservadoCaixas(rev) * (parseFloat(rev.m2_por_caixa) || 0); }
+const _fmtCx = v => (Math.round(v * 100) / 100).toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:2});
+
 function renderEstoque(d) {
-  if (!d.length) { document.getElementById('estoque-tbody').innerHTML = '<tr><td colspan="8"><div class="empty-state"><strong>Nenhum item encontrado</strong><p>Cadastre revestimentos primeiro</p></div></td></tr>'; return; }
+  if (!d.length) { document.getElementById('estoque-tbody').innerHTML = '<tr><td colspan="10"><div class="empty-state"><strong>Nenhum item encontrado</strong><p>Cadastre revestimentos primeiro</p></div></td></tr>'; return; }
   document.getElementById('estoque-tbody').innerHTML = d.map(r => {
     const est = parseFloat(r.estoque_m2) || 0;
     const badge = est <= 0 ? 'badge-danger' : est < 5 ? 'badge-warn' : 'badge-green';
@@ -10491,18 +10587,133 @@ function renderEstoque(d) {
     const stars = '●'.repeat(Math.min(5, Math.ceil(pop/2))) + '○'.repeat(Math.max(0, 5 - Math.ceil(pop/2)));
     const m2cx = parseFloat(r.m2_por_caixa)||0;
     const qtdCx = parseFloat(r.qtd_caixas) || (m2cx > 0 ? Math.round(est/m2cx*100)/100 : 0);
+    const reservCx = _reservadoCaixas(r);
+    const dispCx = qtdCx - reservCx;
     return `<tr>
       <td><span class="badge badge-gray" style="font-family:var(--font-mono,monospace)">${r.codigo||'-'}</span></td>
       <td style="font-weight:500">${r.nome||'-'}</td>
       <td>${r.obra||'-'}</td>
       <td>${r.m2_por_caixa||'-'}</td>
       <td style="font-weight:600">${qtdCx > 0 ? qtdCx.toFixed(1) + ' cx' : '-'}</td>
+      <td>${reservCx > 0 ? `<span class="badge badge-warn" title="Reservado para: ${_reservasDoRev(r).map(x => 'Apto ' + x.ap + ' (' + _fmtCx(parseFloat(x.qtd_caixas)||0) + ' cx)').join(', ')}">${_fmtCx(reservCx)} cx</span>` : '<span style="color:var(--text3)">—</span>'}</td>
+      <td style="font-weight:600;${dispCx < 0 ? 'color:var(--danger)' : ''}">${qtdCx > 0 ? _fmtCx(dispCx) + ' cx' : '-'}</td>
       <td><span class="badge ${badge}">${est.toFixed(2)} m²</span></td>
       <td><span class="badge badge-info">${r.lote||'-'}</span></td>
       <td style="font-size:11px;letter-spacing:1px;color:var(--warn)">${stars}</td>
     </tr>`;
   }).join('');
 }
+function abrirReservasTecnicas() {
+  const sel = document.getElementById('res-rev');
+  const lista = (dadosEstoque.length ? dadosEstoque : dadosRevestimentos).slice().sort((a,b) => String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR'));
+  sel.innerHTML = '<option value="">— Escolha o revestimento —</option>' + lista.map(r => `<option value="${String(r.codigo||r.id).replace(/"/g,'&quot;')}">${(r.nome||'-')} · ${r.codigo||''}${r.tamanho ? ' · ' + r.tamanho : ''}${r.obra ? ' · ' + r.obra : ''}</option>`).join('');
+  const aps = new Set();
+  (dadosParedes||[]).forEach(x => x.apartamento && aps.add(String(x.apartamento)));
+  (dadosPersonalizar||[]).forEach(x => x.ap && aps.add(String(x.ap)));
+  (dadosReservas||[]).forEach(x => x.ap && aps.add(String(x.ap)));
+  document.getElementById('res-ap-list').innerHTML = [...aps].sort((a,b) => (parseInt(a)||0) - (parseInt(b)||0)).map(a => `<option value="${a}">`).join('');
+  ['res-ap','res-lote','res-qtd','res-obs'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('res-filtro').value = '';
+  atualizarFormReserva();
+  renderReservasTecnicas();
+  abrirModal('modal-reservas');
+}
+function _revDaReserva() {
+  const cod = document.getElementById('res-rev').value;
+  return (dadosEstoque.length ? dadosEstoque : dadosRevestimentos).find(r => String(r.codigo||r.id) === cod);
+}
+function atualizarFormReserva() {
+  const rev = _revDaReserva();
+  const dl = document.getElementById('res-lote-list'), info = document.getElementById('res-info');
+  if (!rev) { dl.innerHTML = ''; info.textContent = ''; return; }
+  const lotes = new Set();
+  const loteRev = String(rev.lote || '').trim();
+  if (loteRev && !/^n\s*\/\s*i/i.test(loteRev)) lotes.add(loteRev);
+  (dadosLotes||[]).filter(l => String(l.codigo_rev) === String(rev.codigo)).forEach(l => { const d = String(l.data_fab||'').trim(); if (d && !/^n\s*\/\s*d/i.test(d)) lotes.add(d); });
+  dl.innerHTML = [...lotes].map(l => `<option value="${l.replace(/"/g,'&quot;')}">`).join('');
+  const total = _qtdCaixasRev(rev), res = _reservadoCaixas(rev);
+  info.innerHTML = `Em estoque: <strong>${_fmtCx(total)} cx</strong> · já reservado: <strong>${_fmtCx(res)} cx</strong> · disponível: <strong style="${total - res < 0 ? 'color:var(--danger)' : ''}">${_fmtCx(total - res)} cx</strong>`;
+}
+function renderReservasTecnicas() {
+  const f = (document.getElementById('res-filtro')?.value || '').toLowerCase();
+  const lista = (dadosReservas||[]).filter(x => !f || String(x.ap).toLowerCase().includes(f) || String(x.revestimento||'').toLowerCase().includes(f) || String(x.codigo_rev||'').toLowerCase().includes(f))
+    .slice().sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0) || String(a.revestimento||'').localeCompare(String(b.revestimento||''),'pt-BR'));
+  const tb = document.getElementById('res-tbody');
+  if (!lista.length) { tb.innerHTML = '<tr><td colspan="7"><div class="empty-state"><strong>Nenhuma reserva técnica cadastrada</strong></div></td></tr>'; return; }
+  tb.innerHTML = lista.map(x => {
+    const rev = (dadosEstoque.length ? dadosEstoque : dadosRevestimentos).find(r => String(r.codigo) === String(x.codigo_rev) || String(r.id) === String(x.codigo_rev));
+    const cx = parseFloat(x.qtd_caixas) || 0, m2 = cx * (parseFloat(rev?.m2_por_caixa) || 0);
+    return `<tr>
+      <td><span class="badge badge-info">${x.ap}</span></td>
+      <td style="font-weight:500">${x.revestimento || rev?.nome || '-'} <span style="color:var(--text3);font-size:11px">${x.codigo_rev||''}</span></td>
+      <td>${x.lote || '<span style="color:var(--text3)">—</span>'}</td>
+      <td style="font-weight:600">${_fmtCx(cx)} cx</td>
+      <td>${m2 > 0 ? m2.toFixed(2) + ' m²' : '-'}</td>
+      <td style="font-size:12px;color:var(--text3)">${x.obs || ''}</td>
+      <td style="white-space:nowrap"><button class="btn btn-secondary" onclick="editarReservaTecnica('${x.id}')" style="padding:4px 8px;font-size:11px;margin-right:4px">Editar</button><button class="btn btn-danger" onclick="excluirReservaTecnica('${x.id}')" style="padding:4px 8px;font-size:11px">Excluir</button></td>
+    </tr>`;
+  }).join('');
+}
+let _reservaEditandoId = null;
+async function salvarReservaTecnica() {
+  const rev = _revDaReserva();
+  const ap = document.getElementById('res-ap').value.trim();
+  const lote = document.getElementById('res-lote').value.trim();
+  const qtd = parseFloat(document.getElementById('res-qtd').value) || 0;
+  const obs = document.getElementById('res-obs').value.trim();
+  if (!ap) { showToast('Informe o apartamento', 'error'); return; }
+  if (!rev) { showToast('Escolha o revestimento', 'error'); return; }
+  if (qtd <= 0) { showToast('Informe a quantidade de caixas', 'error'); return; }
+  const outrasDoMesmo = _reservadoCaixas(rev) - (_reservaEditandoId ? (parseFloat((dadosReservas.find(x => String(x.id) === String(_reservaEditandoId))||{}).qtd_caixas) || 0) : 0);
+  if (qtd + outrasDoMesmo > _qtdCaixasRev(rev) + 1e-9) {
+    if (!confirm('Essa reserva passa do que tem em estoque (' + _fmtCx(_qtdCaixasRev(rev)) + ' cx, já reservado em outras: ' + _fmtCx(outrasDoMesmo) + ' cx). Salvar assim mesmo?')) return;
+  }
+  const dados = { ap, codigo_rev: String(rev.codigo || rev.id), revestimento: rev.nome || '', lote, qtd_caixas: qtd, obs };
+  const btn = document.getElementById('res-btn-salvar'); btn.disabled = true;
+  try {
+    if (_reservaEditandoId) {
+      await apiPost('updateReservaTecnica', { ...dados, id: _reservaEditandoId });
+      const i = dadosReservas.findIndex(x => String(x.id) === String(_reservaEditandoId));
+      if (i >= 0) dadosReservas[i] = { ...dadosReservas[i], ...dados };
+      showToast('Reserva atualizada!', 'success');
+    } else {
+      const r = await apiPost('addReservaTecnica', dados);
+      dadosReservas.push({ id: (r && (r.id || (r.data && r.data.id))) || ('tmp_' + Date.now()), ...dados, criado_em: new Date().toLocaleDateString('pt-BR') });
+      showToast('Reserva salva!', 'success');
+    }
+    _reservaEditandoId = null;
+    document.getElementById('res-btn-salvar').textContent = '+ Adicionar reserva';
+    ['res-ap','res-lote','res-qtd','res-obs'].forEach(i => document.getElementById(i).value = '');
+    atualizarFormReserva(); renderReservasTecnicas();
+    if (document.getElementById('estoque-tbody')) { renderEstoque(dadosEstoque); renderStatsEstoque(dadosEstoque); }
+    // confirma com a planilha em segundo plano (pega o id real da reserva nova)
+    lerDados(true).then(() => { renderReservasTecnicas(); atualizarFormReserva(); if (dadosEstoque.length) { renderEstoque(dadosEstoque); renderStatsEstoque(dadosEstoque); } }).catch(()=>{});
+  } catch(e) {
+    showToast(/desconhecida/i.test(e.message) ? 'Atualize o Code.gs no Apps Script (nova implantação) para usar as reservas técnicas' : 'Erro: ' + e.message, 'error');
+  } finally { btn.disabled = false; }
+}
+function editarReservaTecnica(id) {
+  const x = dadosReservas.find(r => String(r.id) === String(id)); if (!x) return;
+  _reservaEditandoId = id;
+  document.getElementById('res-ap').value = x.ap || '';
+  document.getElementById('res-rev').value = String(x.codigo_rev || '');
+  atualizarFormReserva();
+  document.getElementById('res-lote').value = x.lote || '';
+  document.getElementById('res-qtd').value = x.qtd_caixas || '';
+  document.getElementById('res-obs').value = x.obs || '';
+  document.getElementById('res-btn-salvar').textContent = 'Salvar alteração';
+  document.getElementById('res-qtd').focus();
+}
+async function excluirReservaTecnica(id) {
+  if (!confirm('Excluir esta reserva técnica? As caixas voltam para o disponível.')) return;
+  const backup = [...dadosReservas];
+  dadosReservas = dadosReservas.filter(x => String(x.id) !== String(id));
+  renderReservasTecnicas(); atualizarFormReserva();
+  if (dadosEstoque.length) { renderEstoque(dadosEstoque); renderStatsEstoque(dadosEstoque); }
+  try { await apiAction('deleteReservaTecnica', id); showToast('Reserva excluída', 'success'); }
+  catch(e) { dadosReservas = backup; renderReservasTecnicas(); if (dadosEstoque.length) { renderEstoque(dadosEstoque); renderStatsEstoque(dadosEstoque); } showToast('Erro: ' + e.message, 'error'); }
+}
+
 function calcularEstoqueModal() {
   const qtd = parseFloat(document.getElementById('rev-qtd')?.value)||0;
   const m2cx = parseFloat(document.getElementById('rev-m2cx')?.value)||0;
@@ -10772,6 +10983,18 @@ async function salvarSaida() {
     apto: document.getElementById('si-apto-' + i.id)?.value
   })).filter(i => i.revestimento_codigo && i.quantidade_m2 > 0);
   if (!itens.length) { showToast('Adicione pelo menos um item', 'error'); return; }
+  const avisos = [];
+  const somaPorRev = {};
+  itens.forEach(i => { somaPorRev[i.revestimento_codigo] = (somaPorRev[i.revestimento_codigo] || 0) + i.quantidade_m2; });
+  Object.entries(somaPorRev).forEach(([cod, m2]) => {
+    const rev = dadosRevestimentos.find(r => String(r.codigo) === String(cod)) || dadosRevestimentos.find(r => String(r.id) === String(cod));
+    if (!rev) return;
+    const resM2 = _reservadoM2(rev);
+    if (resM2 > 0 && m2 > (parseFloat(rev.estoque_m2) || 0) - resM2 + 1e-6) {
+      avisos.push((rev.nome || cod) + ': ' + _fmtCx(_reservadoCaixas(rev)) + ' cx (' + resM2.toFixed(2) + ' m²) estão reservadas como reserva técnica; disponível ' + Math.max(0, (parseFloat(rev.estoque_m2) || 0) - resM2).toFixed(2) + ' m², saída pedida ' + m2.toFixed(2) + ' m²');
+    }
+  });
+  if (avisos.length && !confirm('Atenção: esta saída usa material de reserva técnica.\n\n' + avisos.join('\n') + '\n\nRegistrar mesmo assim?')) return;
   try {
     await apiPost('addSaida', { obra, local, data, destino, obs, apto: document.getElementById('saida-apto').value, itens });
     showToast('Saída registrada!', 'success');
