@@ -4829,10 +4829,10 @@ function renderLotes() {
     const rows = linhas.map(x => {
       const semEntrada = x.entrada === 0 && x.instalado > 0;
       const neg = x.saldo < 0 && !semEntrada;
-      const corSaldo = semEntrada ? 'var(--warning,#b7791f)' : (neg ? 'var(--danger)' : 'var(--accent)');
+      const corSaldo = semEntrada ? 'var(--text3)' : (neg ? 'var(--danger)' : 'var(--accent)');
       const del = x.entradas.length ? x.entradas.map(e => `<button onclick="excluirLote('${e.id}')" title="Excluir entrada de ${_fmtCx(e.qtd)} cx" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:2px;font-size:15px;line-height:1">×</button>`).join('') : '';
       return `<div style="${grid}">
-        <div style="font-size:13px;font-weight:600">Fab: ${x.data}${semEntrada ? '<div style="font-size:11px;font-weight:400;color:' + corSaldo + '">entrada não cadastrada</div>' : ''}</div>
+        <div style="font-size:13px;font-weight:600">Fab: ${x.data}${semEntrada ? '<div style="font-size:11px;font-weight:400;color:var(--text3)">só instalação, sem lote lançado</div>' : ''}</div>
         ${cel(_fmtCx(x.entrada))}${cel(x.instalado ? '− ' + _fmtCx(x.instalado) : '—')}${cel(x.reservado ? _fmtCx(x.reservado) : '—')}
         ${cel(semEntrada ? '—' : _fmtCx(x.disponivel), corSaldo, true)}
         <div>${del}</div></div>`;
