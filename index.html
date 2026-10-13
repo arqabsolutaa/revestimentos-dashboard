@@ -2386,7 +2386,7 @@ body.mobile-mode #main{padding-bottom:72px}
       <div class="page-header">
         <div class="page-header-left">
           <h1>Estoque por Data de Fabricação</h1>
-          <p>Controle de lotes por data para garantir uniformidade na instalação</p>
+          <p>Quanto entrou, quanto já foi instalado e quanto sobrou de cada data. Para registrar uma entrada, use "Novo Lote"</p>
         </div>
         <div class="header-actions">
           <button class="btn btn-primary" onclick="abrirModalLote()">
@@ -4779,61 +4779,81 @@ function trocarTabEstoque(tab) {
   }
 }
 
-function renderLotes(d) {
-  const el = document.getElementById('lotes-lista');
-  if (!el) return;
-  if (!d.length) {
-    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3)">Nenhum lote registrado</div>';
-    return;
-  }
-  // Agrupar por revestimento
-  const grupos = {};
-  d.forEach(l => {
-    const key = l.nome || l.codigo_rev;
-    if (!grupos[key]) grupos[key] = [];
-    grupos[key].push(l);
+// ---- Saldo por data de fabricação ----
+// Entrada (lotes cadastrados à mão) − Instalado (da tela Instalações) = Saldo da data.
+// Linhas "Registrado via instalação" (criadas pelo sistema antigo) são ignoradas: elas mostravam o que foi instalado, não o que sobrou.
+const _normNome = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
+const _dataFabValida = v => { const d = String(v || '').trim(); return d && !/^n\s*\/\s*[di]/i.test(d) ? d : ''; };
+function _saldoLotesRev(rev) {
+  const cod = String(rev.codigo || '').trim(), id = String(rev.id || '').trim(), nome = _normNome(rev.nome);
+  const nomeUnico = (dadosRevestimentos || []).filter(r => _normNome(r.nome) === nome).length <= 1; // só casa por nome quando não há dois itens com o mesmo nome
+  const porData = {};
+  const get = dt => (porData[dt] = porData[dt] || { data: dt, entradas: [], entrada: 0, instalado: 0, reservado: 0 });
+  (dadosLotes || []).forEach(l => {
+    if (String(l.obs || '').trim() === 'Registrado via instalação') return;
+    const c = String(l.codigo_rev || '').trim();
+    if (!((c && (c === cod || c === id)) || (nomeUnico && _normNome(l.nome) === nome))) return;
+    const dt = _dataFabValida(l.data_fab); if (!dt) return;
+    const x = get(dt), q = parseFloat(l.qtd_caixas) || 0;
+    x.entrada += q; x.entradas.push({ id: l.id, qtd: q });
   });
-  el.innerHTML = Object.entries(grupos).map(([nome, lotes]) => {
-    const totalM2 = lotes.reduce((s, l) => s + (parseFloat(l.m2_total)||0), 0);
-    const rev = dadosRevestimentos.find(r => r.id === lotes[0].codigo_rev || r.codigo === lotes[0].codigo_rev);
-    const tamanho = rev?.tamanho || '';
-    const tituloLote = tamanho ? nome + ' — ' + tamanho : nome;
-    return `
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden">
-      <div style="padding:14px 16px;background:var(--surface2);display:flex;justify-content:space-between;align-items:center">
-        <span style="font-weight:600;font-size:14px">${tituloLote}</span>
-        <span style="font-size:12px;color:var(--accent);font-weight:600">${totalM2.toFixed(2)} m² total</span>
-      </div>
-      ${lotes.map(l => `
-        <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px">
-          <div style="flex:1">
-            <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
-              <span style="font-size:13px;font-weight:600;color:var(--text)">Fab: ${formatarDataDisplay(l.data_fab)||'—'}</span>
-              <span style="font-size:12px;color:var(--text3)">${l.qtd_caixas} cx · ${parseFloat(l.m2_por_caixa).toFixed(2)} m²/cx</span>
-              ${parseFloat(l.qtd_pecas)>0 ? `<span style="font-size:12px;color:var(--text3)">${parseFloat(l.qtd_pecas)} peças</span>` : ''}
-              <span style="font-size:13px;font-weight:600;color:var(--accent)">${parseFloat(l.m2_total).toFixed(2)} m²</span>
-              ${l.localizacao ? `<span style="font-size:11px;color:var(--text3)">📍 ${l.localizacao}</span>` : ''}
-              ${l.obs ? `<span style="font-size:11px;color:var(--text3)">${l.obs}</span>` : ''}
-            </div>
-          </div>
-          <button onclick="excluirLote('${l.id}')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:4px" title="Excluir">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-          </button>
-        </div>
-      `).join('')}
-    </div>`;
-  }).join('');
+  (dadosInstalacoes || []).forEach(i => {
+    const ci = String(i.codigo_rev || '').trim();
+    if (!((ci && (ci === id || ci === cod)) || (nomeUnico && _normNome(i.revestimento) === nome))) return;
+    const dt = _dataFabValida(i.data_fab); if (!dt) return;
+    get(dt).instalado += parseFloat(i.qtd_caixas_usadas) || 0;
+  });
+  _reservasDoRev(rev).forEach(r => { const dt = _dataFabValida(r.lote); if (dt) get(dt).reservado += parseFloat(r.qtd_caixas) || 0; });
+  const lista = Object.values(porData).map(x => ({ ...x, saldo: x.entrada - x.instalado, disponivel: x.entrada - x.instalado - x.reservado }));
+  const ordem = v => { const m = String(v).match(/(\d{2})\/(\d{2})\/(\d{4})/); return m ? +(m[3] + m[2] + m[1]) : 0; };
+  lista.sort((a, b) => ordem(a.data) - ordem(b.data));
+  const somaDatas = lista.reduce((a, x) => a + Math.max(0, x.saldo), 0);
+  const total = _qtdCaixasRev(rev);
+  return { lista, total, semData: Math.max(0, total - somaDatas), somaDatas };
 }
 
-function filtrarLotes() {
-  const nome = document.getElementById('filtro-lote-nome')?.value.toLowerCase() || '';
-  const data = document.getElementById('filtro-lote-data')?.value.toLowerCase() || '';
-  const filtrado = dadosLotes.filter(l =>
-    (!nome || (l.nome||'').toLowerCase().includes(nome)) &&
-    (!data || (l.data_fab||'').toLowerCase().includes(data))
-  );
-  renderLotes(filtrado);
+function renderLotes() {
+  const el = document.getElementById('lotes-lista');
+  if (!el) return;
+  const fNome = (document.getElementById('filtro-lote-nome')?.value || '').toLowerCase();
+  const fData = (document.getElementById('filtro-lote-data')?.value || '').toLowerCase();
+  const revs = (dadosRevestimentos || []).filter(r => !fNome || String(r.nome || '').toLowerCase().includes(fNome) || String(r.codigo || '').toLowerCase().includes(fNome));
+  const cards = revs.map(rev => {
+    const r = _saldoLotesRev(rev);
+    const linhas = r.lista.filter(x => !fData || x.data.toLowerCase().includes(fData));
+    if (!linhas.length && (fData || _qtdCaixasRev(rev) <= 0)) return '';
+    if (!linhas.length && !r.total) return '';
+    const th = 'font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em';
+    const cel = (v, cor, bold) => `<div style="text-align:right;font-size:13px;${bold ? 'font-weight:700;' : ''}${cor ? 'color:' + cor + ';' : ''}">${v}</div>`;
+    const grid = 'display:grid;grid-template-columns:minmax(90px,1.3fr) repeat(4,minmax(52px,1fr)) 28px;gap:8px;align-items:center;padding:9px 16px;border-top:1px solid var(--border)';
+    const rows = linhas.map(x => {
+      const semEntrada = x.entrada === 0 && x.instalado > 0;
+      const neg = x.saldo < 0 && !semEntrada;
+      const corSaldo = semEntrada ? 'var(--warning,#b7791f)' : (neg ? 'var(--danger)' : 'var(--accent)');
+      const del = x.entradas.length ? x.entradas.map(e => `<button onclick="excluirLote('${e.id}')" title="Excluir entrada de ${_fmtCx(e.qtd)} cx" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:2px;font-size:15px;line-height:1">×</button>`).join('') : '';
+      return `<div style="${grid}">
+        <div style="font-size:13px;font-weight:600">Fab: ${x.data}${semEntrada ? '<div style="font-size:11px;font-weight:400;color:' + corSaldo + '">entrada não cadastrada</div>' : ''}</div>
+        ${cel(_fmtCx(x.entrada))}${cel(x.instalado ? '− ' + _fmtCx(x.instalado) : '—')}${cel(x.reservado ? _fmtCx(x.reservado) : '—')}
+        ${cel(semEntrada ? '—' : _fmtCx(x.disponivel), corSaldo, true)}
+        <div>${del}</div></div>`;
+    }).join('');
+    const semDataRow = !fData && r.semData > 0 ? `<div style="${grid};background:var(--surface2)">
+        <div style="font-size:13px;color:var(--text2)">Sem data informada</div>${cel('')}${cel('')}${cel('')}${cel(_fmtCx(r.semData), 'var(--text2)', true)}<div></div></div>` : '';
+    const tam = rev.tamanho ? ' — ' + rev.tamanho : '';
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden">
+      <div style="padding:14px 16px;background:var(--surface2);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-weight:600;font-size:14px">${rev.nome}${tam}</span>
+        <span style="font-size:12px;color:var(--accent);font-weight:600">${_fmtCx(r.total)} cx em estoque</span>
+      </div>
+      <div style="${grid};border-top:none;padding-top:8px;padding-bottom:6px"><div style="${th}">Data</div><div style="${th};text-align:right">Entrou</div><div style="${th};text-align:right">Instalado</div><div style="${th};text-align:right">Reserv.</div><div style="${th};text-align:right">Sobra</div><div></div></div>
+      ${rows}${semDataRow}
+      ${!fData && r.somaDatas > r.total + 0.01 ? `<div style="padding:8px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--warning,#b7791f)">As datas somam ${_fmtCx(r.somaDatas)} cx, mais que o estoque (${_fmtCx(r.total)} cx). Confira se faltou lançar uma saída ou se uma entrada está duplicada.</div>` : ''}
+    </div>`;
+  }).filter(Boolean);
+  el.innerHTML = cards.length ? cards.join('') : '<div style="text-align:center;padding:40px;color:var(--text3)">Nenhum lote registrado</div>';
 }
+
+function filtrarLotes() { renderLotes(); }
 
 function abrirModalLote() {
   const sel = document.getElementById('lote-revestimento');
@@ -5108,26 +5128,6 @@ async function salvarInstalacao() {
     return;
   }
 
-  // Formalizar/atualizar o lote na memória imediatamente (sem mexer no estoque geral)
-  const m2cxRev = (dadosRevestimentos||[]).find(r => r.nome === dados.revestimento)?.m2_por_caixa || 0;
-  let loteExistente = dadosLotes.find(l => l.nome === dados.revestimento && l.data_fab === dados.data_fab);
-  let loteBackupQtd = null, loteBackupPecas = null, loteNovoTemp = null;
-  if (loteExistente) {
-    loteBackupQtd = parseFloat(loteExistente.qtd_caixas)||0;
-    loteBackupPecas = parseFloat(loteExistente.qtd_pecas)||0;
-    loteExistente.qtd_caixas = String(loteBackupQtd + qtdCx);
-    loteExistente.qtd_pecas = String(loteBackupPecas + qtdPecas);
-    loteExistente.m2_total = String((parseFloat(loteExistente.qtd_caixas)||0) * (parseFloat(loteExistente.m2_por_caixa)||m2cxRev||0));
-  } else {
-    loteNovoTemp = {
-      id: 'tmp_' + Date.now(), codigo_rev: dados.codigo_rev, nome: dados.revestimento,
-      data_fab: dados.data_fab, qtd_caixas: String(qtdCx), qtd_pecas: String(qtdPecas), m2_por_caixa: String(m2cxRev),
-      m2_total: String(qtdCx * (parseFloat(m2cxRev)||0)), localizacao: '', obs: 'Registrado via instalação'
-    };
-    dadosLotes.unshift(loteNovoTemp);
-  }
-  if (document.getElementById('lotes-lista')) renderLotes(dadosLotes);
-
   const novo = { ...dados, id: 'id_' + Date.now() };
   dadosInstalacoes.unshift(novo);
   renderInstalacoes(dadosInstalacoes);
@@ -5144,9 +5144,6 @@ async function salvarInstalacao() {
     }).catch(()=>{});
   } catch(e) {
     // Reverter
-    if (loteExistente) { loteExistente.qtd_caixas = String(loteBackupQtd); loteExistente.qtd_pecas = String(loteBackupPecas); }
-    if (loteNovoTemp) dadosLotes = dadosLotes.filter(l => l.id !== loteNovoTemp.id);
-    if (document.getElementById('lotes-lista')) renderLotes(dadosLotes);
     dadosInstalacoes = dadosInstalacoes.filter(i => i.id !== novo.id);
     renderInstalacoes(dadosInstalacoes);
     showToast('Erro: ' + e.message, 'error');
@@ -10651,7 +10648,7 @@ function atualizarFormReserva() {
   const lotes = new Set();
   const loteRev = String(rev.lote || '').trim();
   if (loteRev && !/^n\s*\/\s*i/i.test(loteRev)) lotes.add(loteRev);
-  (dadosLotes||[]).filter(l => String(l.codigo_rev) === String(rev.codigo)).forEach(l => { const d = String(l.data_fab||'').trim(); if (d && !/^n\s*\/\s*d/i.test(d)) lotes.add(d); });
+  _saldoLotesRev(rev).lista.filter(x => x.disponivel > 0).forEach(x => lotes.add(x.data));
   dl.innerHTML = [...lotes].map(l => `<option value="${l.replace(/"/g,'&quot;')}">`).join('');
   const total = _qtdCaixasRev(rev), res = _reservadoCaixas(rev);
   info.innerHTML = `Em estoque: <strong>${_fmtCx(total)} cx</strong> · já reservado: <strong>${_fmtCx(res)} cx</strong> · disponível: <strong style="${total - res < 0 ? 'color:var(--danger)' : ''}">${_fmtCx(total - res)} cx</strong>`;
