@@ -2338,6 +2338,10 @@ body.mobile-mode #main{padding-bottom:72px}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Exportar Excel
         </button>
+        <button class="btn btn-secondary" onclick="exportarEstoquePDF()" style="margin-right:4px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Exportar PDF
+        </button>
         <button class="btn btn-secondary" onclick="loadEstoque()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
           Atualizar
@@ -9555,6 +9559,92 @@ function renderUltimasSaidas() {
       <span class="badge badge-warn" style="flex-shrink:0">${parseFloat(s.quantidade_m2||0).toFixed(2)} m²</span>
     </div>
   `).join('');
+}
+
+// PDF do Estoque: respeita a busca e o filtro de obra que estão na tela. Mostra caixas e m² de cada revestimento.
+async function exportarEstoquePDF() {
+  if (!dadosEstoque.length) {
+    try { dadosEstoque = (await lerDados()).revestimentos || []; } catch(e) {}
+  }
+  const busca = (document.getElementById('filtro-estoque')?.value || '').toLowerCase();
+  const obraSel = document.getElementById('filtro-estoque-obra')?.value || '';
+  const lista = dadosEstoque.filter(r =>
+    (!busca || (r.nome||'').toLowerCase().includes(busca) || (r.codigo||'').toLowerCase().includes(busca)) &&
+    (!obraSel || r.obra === obraSel)
+  ).slice().sort((a,b) => String(a.obra||'').localeCompare(String(b.obra||''),'pt-BR') || String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR'));
+  if (!lista.length) { showToast('Nenhum item para exportar', 'error'); return; }
+  showToast('Gerando PDF...', 'success');
+  try {
+    const CORES = ESSENCE_PALETAS.vinilico;
+    const JsPDFClass = getJsPDF();
+    if (!JsPDFClass) throw new Error('jsPDF não carregado');
+    let imgData = null;
+    try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa_civil_ac.png'); } catch(e) {}
+    const doc = new JsPDFClass();
+    _pdfCapa(doc, imgData, '');
+    const fmt2 = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const fmtCx = v => v.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:2});
+    const ml = 8;
+    let y = 58;
+    doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...CORES.cinza);
+    doc.text('Estoque de revestimentos · Essence Residence · ' + new Date().toLocaleDateString('pt-BR') + (obraSel ? ' · ' + obraSel : ''), ml, y);
+    y += 10;
+    const cab = () => {
+      _pdfTabelaHeader(doc, y, [
+        {label:'C Ó D.', x:8},
+        {label:'R E V E S T I M E N T O', x:30},
+        {label:'O B R A', x:104},
+        {label:'M² / C X', x:140, align:'right'},
+        {label:'C A I X A S', x:165, align:'right'},
+        {label:'E S T O Q U E', x:202, align:'right'},
+      ], CORES);
+      y += 12;
+    };
+    cab();
+    let alt = false, totCx = 0, totM2 = 0;
+    lista.forEach(r => {
+      if (y + 12 > 275) { doc.addPage(); y = 15; cab(); alt = false; }
+      const est = parseFloat(r.estoque_m2) || 0;
+      const m2cx = parseFloat(r.m2_por_caixa) || 0;
+      const qtdCx = parseFloat(r.qtd_caixas) || (m2cx > 0 ? Math.round(est/m2cx*100)/100 : 0);
+      totCx += qtdCx; totM2 += est;
+      doc.setFillColor(...(alt ? [245,244,240] : [255,255,255])); doc.rect(0, y, 210, 12, 'F');
+      doc.setFillColor(...CORES.secundaria); doc.rect(0, y, 2.5, 12, 'F');
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...CORES.cinza);
+      doc.text(doc.splitTextToSize(String(r.codigo||'—'), 20)[0], 8, y+7.5);
+      doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...CORES.preto);
+      doc.text(doc.splitTextToSize(r.nome||'—', 70)[0], 30, y+5.5);
+      doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...CORES.cinza);
+      doc.text([r.tamanho, r.lote && !/^n\s*\/\s*i/i.test(String(r.lote).trim()) ? 'Lote ' + String(r.lote).trim() : ''].filter(Boolean).join(' · '), 30, y+9.5);
+      doc.setFontSize(8); doc.setTextColor(...CORES.texto);
+      doc.text(doc.splitTextToSize(r.obra||'—', 34)[0], 104, y+7.5);
+      doc.text(m2cx > 0 ? fmt2(m2cx) : '—', 140, y+7.5, {align:'right'});
+      doc.setFont('helvetica','bold'); doc.setTextColor(...CORES.preto);
+      doc.text(qtdCx > 0 ? fmtCx(qtdCx) + ' cx' : '—', 165, y+7.5, {align:'right'});
+      doc.setTextColor(...(est <= 0 ? [176,58,46] : CORES.secundaria));
+      doc.text(fmt2(est) + ' m²', 202, y+7.5, {align:'right'});
+      doc.setDrawColor(...CORES.cinzaClaro); doc.setLineWidth(0.2); doc.line(0, y+12, 210, y+12);
+      alt = !alt; y += 12;
+    });
+    y += 8;
+    if (y > 262) { doc.addPage(); y = 15; }
+    doc.setFillColor(...CORES.primaria); doc.rect(0, y, 210, 18, 'F');
+    const sobre = CORES.primaria[0] > 200 ? CORES.preto : [200,195,180];
+    doc.setTextColor(...sobre); doc.setFontSize(6.5); doc.setFont('helvetica','normal');
+    doc.text('T O T A L   E M   E S T O Q U E', 8, y+8);
+    doc.setFontSize(7.5); doc.text(lista.length + (lista.length > 1 ? ' revestimentos' : ' revestimento'), 8, y+15);
+    doc.setTextColor(...CORES.secundaria); doc.setFontSize(12); doc.setFont('helvetica','bold');
+    doc.text(fmtCx(totCx) + ' cx', 165, y+12, {align:'right'});
+    doc.text(fmt2(totM2) + ' m²', 202, y+12, {align:'right'});
+    const totalPag = doc.getNumberOfPages();
+    for (let pg=1; pg<=totalPag; pg++) {
+      doc.setPage(pg);
+      doc.setTextColor(...CORES.cinza); doc.setFontSize(7); doc.setFont('helvetica','normal');
+      doc.text('Pág. '+pg+' / '+totalPag, 202, 292, {align:'right'});
+    }
+    doc.save('Estoque-' + new Date().toISOString().slice(0,10) + '.pdf');
+    showToast('PDF gerado!', 'success');
+  } catch(e) { showToast('Erro ao gerar PDF: ' + e.message, 'error'); }
 }
 
 async function exportarEstoqueExcel() {
