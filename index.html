@@ -1297,6 +1297,8 @@ async function uploadComprovanteModulo(id, inputEl, modulo) {
   const file = inputEl.files[0];
   if (!file) return;
   if (file.size > 10 * 1024 * 1024) { showToast('Arquivo muito grande (máx 10MB)', 'error'); return; }
+  const dataPgto = _perguntarDataPagamento();
+  if (!dataPgto) { inputEl.value = ''; return; }
   showToast('Enviando comprovante...', 'success');
   try {
     const base64data = await new Promise((resolve, reject) => {
@@ -1305,7 +1307,7 @@ async function uploadComprovanteModulo(id, inputEl, modulo) {
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
-    const result = await apiPost('uploadComprovanteExtra', { id, filename: file.name, mimeType: file.type, base64data, modulo });
+    const result = await apiPost('uploadComprovanteExtra', { id, filename: file.name, mimeType: file.type, base64data, modulo, data_pagamento: dataPgto });
     invalidarCacheExtra(modulo);
     loadPagamentosAtivo();
     showToast('Comprovante anexado!', 'success');
@@ -7879,7 +7881,7 @@ async function salvarNovaEntradaPers() {
       if (arquivo) {
         showToast('Entrada atualizada! Enviando comprovante...', 'success');
         const base64data = await _lerArquivoBase64(arquivo);
-        const resComp = await _enviarComprovante('uploadComprovanteEntradaPersonalizacao', { id: editandoId, filename: arquivo.name, mimeType: arquivo.type, base64data });
+        const resComp = await _enviarComprovante('uploadComprovanteEntradaPersonalizacao', { id: editandoId, filename: arquivo.name, mimeType: arquivo.type, base64data, data_pagamento: _dataBRde(dados.data) });
         if (resComp && resComp.comprovantes && entradaAtualizada) entradaAtualizada.comprovante_url = JSON.stringify(resComp.comprovantes);
         showToast('Comprovante anexado!', 'success');
       } else {
@@ -7897,7 +7899,7 @@ async function salvarNovaEntradaPers() {
     if (arquivo) {
       showToast('Entrada salva! Enviando comprovante...', 'success');
       const base64data = await _lerArquivoBase64(arquivo);
-      const resComp = await _enviarComprovante('uploadComprovanteEntradaPersonalizacao', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
+      const resComp = await _enviarComprovante('uploadComprovanteEntradaPersonalizacao', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data, data_pagamento: _dataBRde(dados.data) });
       if (resComp && resComp.comprovantes) novaEntrada.comprovante_url = JSON.stringify(resComp.comprovantes);
       showToast('Comprovante anexado!', 'success');
     } else {
@@ -8097,7 +8099,7 @@ async function salvarNovaSaidaObra() {
       if (arquivo) {
         showToast('Saída atualizada! Enviando comprovante...', 'success');
         const base64data = await _lerArquivoBase64(arquivo);
-        const resComp = await _enviarComprovante('uploadComprovanteSaidaObra', { id: editandoId, filename: arquivo.name, mimeType: arquivo.type, base64data });
+        const resComp = await _enviarComprovante('uploadComprovanteSaidaObra', { id: editandoId, filename: arquivo.name, mimeType: arquivo.type, base64data, data_pagamento: _dataBRde(dados.data) });
         if (resComp && resComp.comprovantes && saidaAtualizada) saidaAtualizada.comprovante_url = JSON.stringify(resComp.comprovantes);
         showToast('Comprovante anexado!', 'success');
       } else {
@@ -8115,7 +8117,7 @@ async function salvarNovaSaidaObra() {
     if (arquivo) {
       showToast('Saída salva! Enviando comprovante...', 'success');
       const base64data = await _lerArquivoBase64(arquivo);
-      const resComp = await _enviarComprovante('uploadComprovanteSaidaObra', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data });
+      const resComp = await _enviarComprovante('uploadComprovanteSaidaObra', { id: resultado.id, filename: arquivo.name, mimeType: arquivo.type, base64data, data_pagamento: _dataBRde(dados.data) });
       if (resComp && resComp.comprovantes) novaSaida.comprovante_url = JSON.stringify(resComp.comprovantes);
       showToast('Comprovante anexado!', 'success');
     } else {
@@ -9174,19 +9176,58 @@ function parseComprovantes(raw) {
   }
 }
 
+// Pergunta o dia em que o cliente pagou (vem preenchido com hoje). Retorna "dd/mm/aaaa" ou null se cancelar.
+function _perguntarDataPagamento(padrao) {
+  const hojeBR = new Date().toLocaleDateString('pt-BR');
+  let v = padrao || hojeBR;
+  while (true) {
+    const r = prompt('Em que dia o cliente pagou? (dd/mm/aaaa)', v);
+    if (r === null) return null;
+    const t = r.trim().replace(/-/g, '/');
+    const m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) return m[1].padStart(2, '0') + '/' + m[2].padStart(2, '0') + '/' + m[3];
+    v = r;
+    alert('Data inválida. Use o formato dd/mm/aaaa, por exemplo 06/08/2026.');
+  }
+}
+// "2026-08-06" (campo de data) -> "06/08/2026"
+function _dataBRde(v) {
+  const t = String(v || '').trim();
+  const m = t.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return m[3] + '/' + m[2] + '/' + m[1];
+  return /^\d{2}\/\d{2}\/\d{4}$/.test(t) ? t : '';
+}
+
 function renderComprovantesHTML(raw, id, modulo, onClickAnexarInline) {
   const lista = parseComprovantes(raw);
   const nomeFunc = modulo ? 'excluirComprovanteModulo' : 'excluirComprovante';
   const links = lista.map((c, i) => {
     const urlEsc = (c.url || '').replace(/'/g, "\\'");
     const chamada = modulo ? `'${id}', '${urlEsc}', '${modulo}'` : `'${id}', '${urlEsc}'`;
+    const dataAtual = (c.data || '').replace(/'/g, '');
     return `<span style="display:inline-flex;align-items:center;gap:2px">
-      <a href="${c.url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 8px;text-decoration:none">📎 ${c.data ? c.data : ('Comprovante ' + (i+1))}</a>
+      <a href="${c.url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 8px;text-decoration:none" title="Data do pagamento">📎 ${c.data ? c.data : 'Sem data'}</a>
+      <button onclick="editarDataComprovante('${id}', '${urlEsc}', '${dataAtual}', ${modulo ? "'" + modulo + "'" : 'null'})" title="Trocar a data do pagamento" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 3px">✎</button>
       <button onclick="${nomeFunc}(${chamada})" title="Remover" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:2px 4px">×</button>
     </span>`;
   }).join('');
   const botaoAdicionar = `<button class="btn btn-secondary" onclick="${onClickAnexarInline}" style="font-size:11px;padding:4px 10px">📎 ${lista.length ? 'Anexar outro' : 'Anexar comprovante'}</button>`;
   return links + botaoAdicionar;
+}
+
+async function editarDataComprovante(id, url, dataAtual, modulo) {
+  const nova = _perguntarDataPagamento(dataAtual);
+  if (!nova || nova === dataAtual) return;
+  try {
+    const r = await apiPost('editarDataComprovante', modulo ? { id, url, data: nova, modulo } : { id, url, data: nova });
+    if (modulo) { invalidarCacheExtra(modulo); loadPagamentosAtivo(); }
+    else {
+      const item = dadosPersonalizar.find(p => String(p.id) === String(id));
+      if (item) item.comprovante_url = JSON.stringify((r && r.comprovantes) || []);
+      renderPagamentos(dadosPersonalizar);
+    }
+    showToast('Data do pagamento atualizada!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
 async function uploadComprovante(id, inputEl) {
@@ -9196,6 +9237,8 @@ async function uploadComprovante(id, inputEl) {
     showToast('Arquivo muito grande (máx 10MB)', 'error');
     return;
   }
+  const dataPgto = _perguntarDataPagamento();
+  if (!dataPgto) { inputEl.value = ''; return; }
   showToast('Enviando comprovante...', 'success');
   try {
     const base64data = await new Promise((resolve, reject) => {
@@ -9210,7 +9253,7 @@ async function uploadComprovante(id, inputEl) {
       body: JSON.stringify({
         action: 'uploadComprovante',
         usuario: getUsuarioAtual() || 'Sem identificar',
-        dados: { id, filename: file.name, mimeType: file.type, base64data }
+        dados: { id, filename: file.name, mimeType: file.type, base64data, data_pagamento: dataPgto }
       })
     });
     const result = await response.json();

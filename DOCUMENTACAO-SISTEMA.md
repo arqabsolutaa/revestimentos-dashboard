@@ -154,3 +154,8 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - A sugestão de lote na Reserva Técnica lista só datas com sobra disponível.
 - Mudança só no index.html (sem novo deploy do Code.gs).
 - (ajuste 13/10) A data de fabricação só é conhecida na instalação; "Entrou" é opcional (só se ela anotar). Datas só com instalação mostram "Instalado" e Sobra "—". Reserva técnica aceita lote/data digitado à mão (a data pode ainda não ter instalação); a data reservada aparece na coluna "Reserv." em Estoque por Data para ela separar na pilha quando achar o lote. Sugestões de lote na reserva listam todas as datas conhecidas.
+
+## Comprovantes — data do pagamento (14/10/2026)
+- A etiqueta do comprovante mostra o **dia em que o cliente pagou**, não o dia do anexo. Ao anexar (Pagamentos e módulos vinílico/marmoraria/banheiras), o sistema pergunta a data (vem com hoje). Em Entradas/Saídas de obra, usa a data do lançamento.
+- Botão ✎ ao lado da etiqueta troca a data de um comprovante já anexado (action `editarDataComprovante`, Code.gs). Comprovantes antigos mostram a data em que foram anexados até serem editados.
+- Exige redeploy do Code.gs (nova versão).
