@@ -159,3 +159,10 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - A etiqueta do comprovante mostra o **dia em que o cliente pagou**, não o dia do anexo. Ao anexar (Pagamentos e módulos vinílico/marmoraria/banheiras), o sistema pergunta a data (vem com hoje). Em Entradas/Saídas de obra, usa a data do lançamento.
 - Botão ✎ ao lado da etiqueta troca a data de um comprovante já anexado (action `editarDataComprovante`, Code.gs). Comprovantes antigos mostram a data em que foram anexados até serem editados.
 - Exige redeploy do Code.gs (nova versão).
+
+## Romaneios da Marmoraria (14/10/2026)
+- Marmoraria agora tem duas abas: **Personalizações** e **Romaneios**. Cada romaneio = pedido de chapas do fornecedor (pedido, emissão, status, fornecedor, apto/cliente, frete, peso, pagamento, itens e PDF anexo).
+- **Leitura automática do PDF** (pdf.js, no navegador, carregado do cdnjs): ao clicar "Escolher PDF" em "Novo romaneio", o sistema preenche pedido, emissão, status, itens (qtd, produto, medida bruta/líquida, m², R$/m², total), frete, peso, pagamento e total. A pessoa escolhe só o apartamento (o cliente vem sozinho) e confere ("Bate com a soma dos itens"). Funciona para PDFs com texto selecionável no layout do FEST_PAN; PDF escaneado/layout diferente cai no preenchimento manual. O fornecedor não vem no PDF: é digitado e lembrado do último romaneio.
+- Planilha nova **Romaneios** (criada sozinha): id, modulo, pedido, data_emissao, status, fornecedor, ap, cliente, pagamento, frete, peso_kg, total, total_m2, itens (JSON), observacao, comprovante_url, criado_em, criado_por. PDF vai para a pasta do Drive "Romaneios_Essence".
+- Actions (Code.gs): getRomaneios, addRomaneio, updateRomaneio, deleteRomaneio (registrada em Exclusões), uploadComprovanteRomaneio (POST). Campo `modulo` ('marmoraria') permite reaproveitar em outros módulos.
+- Exige redeploy do Code.gs. Ainda não entra no data.json/PDF das contas.

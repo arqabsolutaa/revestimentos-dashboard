@@ -239,6 +239,272 @@ async function salvarVinilico() {
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
+// ===================== ROMANEIOS (Marmoraria) =====================
+// Cada romaneio = um pedido de chapas que chega do fornecedor. Anexando o PDF, os campos são lidos sozinhos.
+let dadosRomaneios = [], _romEditandoId = null, _romItens = [], _romArquivo = null;
+const _romModulo = 'marmoraria';
+// Lê o texto de um romaneio de chapas (linhas já reconstruídas) e devolve os campos.
+function parseRomaneioLinhas(linhas) {
+  const num = v => { const s = String(v == null ? '' : v).trim(); if (!s) return 0; return parseFloat(s.replace(/\./g, '').replace(',', '.')) || 0; };
+  const txt = linhas.join('\n');
+  const pega = (re) => { const m = txt.match(re); return m ? m[1].trim() : ''; };
+  const r = {
+    pedido: pega(/PEDIDO:?\s*(\d+)/i),
+    data_emissao: pega(/EMISS[ÃA]O:?\s*(\d{2}\/\d{2}\/\d{4})/i),
+    status: pega(/STATUS:?\s*([A-Za-zÀ-ú]+)/i),
+    peso_kg: num(pega(/PESO\s*KG:?\s*([\d.,]+)/i)),
+    frete: pega(/FRETE\s*POR:?\s*(.*?)(?:\s{2,}|\s+PLACA|$)/im),
+    total: 0, pagamento: '', itens: []
+  };
+  // total geral: último "TOTAL: R$ x" (o cabeçalho da coluna "TOTAL R$" não tem dois-pontos)
+  const tots = [...txt.matchAll(/TOTAL:\s*R\$\s*([\d.,]+)/gi)];
+  if (tots.length) r.total = num(tots[tots.length - 1][1]);
+  const iPg = linhas.findIndex(l => /^PAGAMENTO/i.test(l.trim()));
+  if (iPg >= 0 && linhas[iPg + 1]) r.pagamento = linhas[iPg + 1].replace(/\s+/g, ' ').trim();
+  // itens
+  const iIni = linhas.findIndex(l => /QTD\s+PRODUTO/i.test(l));
+  const reItem = /^(?:(.*?)\s+)?(\d+)\s+([\d.,]+)\s*[xX]\s*([\d.,]+)\s+([\d.,]+)\s*[xX]\s*([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)$/;
+  const reItem2 = /^(\d+)\s+([^\d].*?)\s+([\d.,]+)\s*[xX]\s*([\d.,]+)\s+([\d.,]+)\s*[xX]\s*([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)$/;
+  let nome = '';
+  for (let i = iIni + 1; i < linhas.length && iIni >= 0; i++) {
+    const l = linhas[i].replace(/\s+/g, ' ').trim();
+    if (!l) continue;
+    if (/^OBSERVA/i.test(l)) break;
+    const m2 = l.match(reItem2);
+    const m = m2 ? [m2[0], m2[2], m2[1], m2[3], m2[4], m2[5], m2[6], m2[7], m2[8], m2[9]] : l.match(reItem);
+    if (m) {
+      r.itens.push({ qtd: parseInt(m[2], 10), produto: (m[1] || nome).trim(), bruta: m[3] + ' x ' + m[4], liquida: m[5] + ' x ' + m[6], m2: num(m[7]), valor_m2: num(m[8]), total: num(m[9]) });
+      nome = '';
+    } else if (/^\d+\s+[\d.,]+\s+R?\$?\s*[\d.,]+$/.test(l) || /^\d+\s+[\d.,]+\s+[\d.,]+$/.test(l)) {
+      // linha de totais (qtd de chapas, m², valor) — fim da tabela
+      break;
+    } else { nome = l; }
+  }
+  return r;
+}
+
+let _pdfjsPromise = null;
+function _carregarPdfJs() {
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  if (_pdfjsPromise) return _pdfjsPromise;
+  _pdfjsPromise = new Promise((resolve, reject) => {
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    sc.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; resolve(window.pdfjsLib); };
+    sc.onerror = () => { _pdfjsPromise = null; reject(new Error('Não consegui carregar o leitor de PDF (sem internet?)')); };
+    document.head.appendChild(sc);
+  });
+  return _pdfjsPromise;
+}
+async function _linhasDoPdf(file) {
+  const pdfjs = await _carregarPdfJs();
+  const doc = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  const linhas = [];
+  for (let p = 1; p <= doc.numPages; p++) {
+    const c = await (await doc.getPage(p)).getTextContent();
+    const rows = [];
+    c.items.forEach(it => {
+      if (!it.str.trim()) return;
+      const y = Math.round(it.transform[5] / 3);
+      let r = rows.find(r => Math.abs(r.y - y) <= 1);
+      if (!r) { r = { y, it: [] }; rows.push(r); }
+      r.it.push({ x: it.transform[4], s: it.str });
+    });
+    rows.sort((a, b) => b.y - a.y).forEach(r => linhas.push(r.it.sort((a, b) => a.x - b.x).map(i => i.s).join('  ')));
+  }
+  return linhas;
+}
+
+function trocarTabMarm(tab) {
+  const rom = tab === 'rom';
+  document.getElementById('marm-pane-pers').style.display = rom ? 'none' : '';
+  document.getElementById('marm-pane-rom').style.display = rom ? '' : 'none';
+  document.getElementById('marm-btn-orcamento').style.display = rom ? 'none' : '';
+  document.getElementById('marm-btn-romaneio').style.display = rom ? '' : 'none';
+  const on = (id, v) => { const b = document.getElementById(id); b.style.color = v ? 'var(--accent)' : 'var(--text3)'; b.style.borderBottomColor = v ? 'var(--accent)' : 'transparent'; b.style.fontWeight = v ? '600' : '500'; };
+  on('marm-tab-pers', !rom); on('marm-tab-rom', rom);
+  if (rom) loadRomaneios();
+}
+
+async function loadRomaneios() {
+  try {
+    const r = await api('getRomaneios', { modulo: _romModulo });
+    dadosRomaneios = (r && r.romaneios) || [];
+  } catch (e) {
+    dadosRomaneios = [];
+    document.getElementById('romaneios-lista').innerHTML = '<div class="empty-state"><strong>Não foi possível carregar os romaneios</strong><p>' + (e.message || '') + '</p></div>';
+    return;
+  }
+  renderRomaneios();
+}
+
+const _fmtBR = (v, d) => (parseFloat(v) || 0).toLocaleString('pt-BR', { minimumFractionDigits: d == null ? 2 : d, maximumFractionDigits: d == null ? 2 : d });
+function _romItensDe(r) { try { const x = JSON.parse(r.itens || '[]'); return Array.isArray(x) ? x : []; } catch (e) { return []; } }
+
+function renderRomaneios() {
+  const el = document.getElementById('romaneios-lista');
+  if (!el) return;
+  const f = (document.getElementById('rom-filtro')?.value || '').toLowerCase();
+  const lista = (dadosRomaneios || []).filter(r => !f || [r.ap, r.cliente, r.fornecedor, r.pedido].some(v => String(v || '').toLowerCase().includes(f)))
+    .slice().sort((a, b) => String(b.criado_em || '').split('/').reverse().join('').localeCompare(String(a.criado_em || '').split('/').reverse().join('')));
+  if (!lista.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhum romaneio cadastrado</strong><p>Clique em "+ Novo romaneio" e anexe o PDF.</p></div>'; return; }
+  el.innerHTML = lista.map(r => {
+    const itens = _romItensDe(r);
+    const m2 = parseFloat(r.total_m2) || itens.reduce((a, i) => a + (parseFloat(i.m2) || 0), 0);
+    const chapas = itens.reduce((a, i) => a + (parseInt(i.qtd) || 0), 0);
+    const ok = /recebid|finaliz/i.test(r.status || '');
+    const tag = r.status ? `<span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;margin-left:8px;background:${ok ? '#E8F4EC' : '#FDF3E7'};color:${ok ? '#2F7D4F' : '#B5651D'}">${r.status}</span>` : '';
+    const anexos = parseComprovantes(r.comprovante_url).map(c => `<a href="${c.url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 8px;text-decoration:none">📎 ${c.filename || 'Romaneio'}</a>`).join(' ');
+    const dest = [r.ap ? 'Apto ' + r.ap : '', r.cliente].filter(Boolean).join(' · ');
+    const linhas = itens.map(i => `<tr><td style="padding:8px 16px;border-top:1px solid var(--border)">${i.qtd}</td><td style="padding:8px 16px;border-top:1px solid var(--border)">${i.produto}</td><td style="padding:8px 16px;border-top:1px solid var(--border)">${i.bruta || ''}</td><td style="padding:8px 16px;border-top:1px solid var(--border)">${i.liquida || ''}</td><td style="padding:8px 16px;border-top:1px solid var(--border);text-align:right">${_fmtBR(i.m2)}</td><td style="padding:8px 16px;border-top:1px solid var(--border);text-align:right">R$ ${_fmtBR(i.valor_m2)}</td><td style="padding:8px 16px;border-top:1px solid var(--border);text-align:right">R$ ${_fmtBR(i.total)}</td></tr>`).join('');
+    const totalGeral = parseFloat(r.total) || itens.reduce((a, i) => a + (parseFloat(i.total) || 0), 0);
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden">
+      <div style="padding:14px 18px;background:var(--surface2);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div><strong style="font-size:15px">Pedido ${r.pedido || '—'}</strong>${tag}</div><span style="font-size:12px;color:var(--text3)">Emissão ${r.data_emissao || '—'}</span></div>
+      <div style="display:flex;gap:20px;font-size:12px;color:var(--text2);padding:12px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap">
+        ${r.fornecedor ? `<span>Fornecedor: <b style="color:var(--text)">${r.fornecedor}</b></span>` : ''}${dest ? `<span>Destino: <b style="color:var(--text)">${dest}</b></span>` : ''}${r.frete ? `<span>Frete: <b style="color:var(--text)">${r.frete}</b></span>` : ''}${r.peso_kg ? `<span>Peso: <b style="color:var(--text)">${_fmtBR(r.peso_kg)} kg</b></span>` : ''}${r.pagamento ? `<span>Pagamento: <b style="color:var(--text)">${r.pagamento}</b></span>` : ''}
+      </div>
+      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px;min-width:560px"><thead><tr style="font-size:11px;color:var(--text3);text-transform:uppercase"><th style="text-align:left;padding:8px 16px">Qtd</th><th style="text-align:left;padding:8px 16px">Produto</th><th style="text-align:left;padding:8px 16px">Med. bruta</th><th style="text-align:left;padding:8px 16px">Med. líq.</th><th style="text-align:right;padding:8px 16px">m²</th><th style="text-align:right;padding:8px 16px">R$/m²</th><th style="text-align:right;padding:8px 16px">Total</th></tr></thead><tbody>${linhas}</tbody>
+      <tfoot><tr style="font-weight:700;background:#FBF9F4"><td style="padding:10px 16px">${chapas}</td><td style="padding:10px 16px" colspan="3">chapas</td><td style="padding:10px 16px;text-align:right">${_fmtBR(m2)} m²</td><td></td><td style="padding:10px 16px;text-align:right">R$ ${_fmtBR(totalGeral)}</td></tr></tfoot></table></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid var(--border);gap:8px;flex-wrap:wrap">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${anexos}<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="document.getElementById('rom-anexo-${r.id}').click()">📎 ${anexos ? 'Anexar outro' : 'Anexar PDF'}</button><input type="file" id="rom-anexo-${r.id}" accept="application/pdf,image/*,.pdf" style="display:none" onchange="anexarRomaneio('${r.id}', this)"></div>
+        <div style="display:flex;gap:6px"><button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="abrirModalRomaneio('${r.id}')">Editar</button><button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="excluirRomaneio('${r.id}')">Excluir</button></div>
+      </div></div>`;
+  }).join('');
+}
+
+function _romListaAps() {
+  const aps = new Set();
+  (dadosPersonalizar || []).forEach(p => p.ap && aps.add(String(p.ap)));
+  return [...aps].sort((a, b) => (parseInt(a) || 0) - (parseInt(b) || 0));
+}
+function romPreencherCliente() {
+  const ap = document.getElementById('rom-ap').value.trim();
+  const cli = document.getElementById('rom-cliente');
+  if (!ap || cli.dataset.manual === '1') return;
+  const p = (dadosPersonalizar || []).find(x => String(x.ap) === ap);
+  if (p) cli.value = String(p.cliente || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+}
+
+function abrirModalRomaneio(id) {
+  _romEditandoId = id || null; _romArquivo = null;
+  const r = id ? dadosRomaneios.find(x => String(x.id) === String(id)) : null;
+  document.getElementById('rom-titulo').textContent = r ? 'Editar romaneio' : 'Novo romaneio';
+  document.getElementById('rom-leitura').style.display = r ? 'none' : 'flex';
+  document.getElementById('rom-msg').style.display = 'none';
+  document.getElementById('rom-ap-list').innerHTML = _romListaAps().map(a => `<option value="${a}">`).join('');
+  const set = (k, v) => document.getElementById(k).value = v == null ? '' : v;
+  set('rom-ap', r?.ap); set('rom-cliente', r?.cliente); set('rom-fornecedor', r ? r.fornecedor : (localStorage.getItem('rom_ultimo_fornecedor') || ''));
+  set('rom-pedido', r?.pedido); set('rom-data', r?.data_emissao); set('rom-status', r?.status || 'A caminho');
+  set('rom-frete', r?.frete); set('rom-peso', r?.peso_kg); set('rom-pagamento', r?.pagamento); set('rom-total', r?.total); set('rom-obs', r?.observacao);
+  document.getElementById('rom-cliente').dataset.manual = r && r.cliente ? '1' : '';
+  _romItens = r ? _romItensDe(r).map(i => ({ ...i })) : [];
+  if (!_romItens.length) _romItens.push({ qtd: '', produto: '', bruta: '', liquida: '', m2: '', valor_m2: '', total: '' });
+  romRenderItens();
+  abrirModal('modal-romaneio');
+}
+
+async function lerPdfRomaneio(input) {
+  const file = input.files[0]; if (!file) return;
+  const msg = document.getElementById('rom-msg');
+  msg.style.display = 'block'; msg.style.color = 'var(--text2)'; msg.textContent = 'Lendo o PDF...';
+  try {
+    const r = parseRomaneioLinhas(await _linhasDoPdf(file));
+    if (!r.itens.length && !r.pedido) throw new Error('Não encontrei os dados nesse PDF. Preencha manualmente.');
+    _romArquivo = file;
+    const set = (k, v) => { if (v) document.getElementById(k).value = v; };
+    set('rom-pedido', r.pedido); set('rom-data', r.data_emissao);
+    set('rom-frete', r.frete); set('rom-peso', r.peso_kg ? _fmtBR(r.peso_kg) : ''); set('rom-pagamento', r.pagamento);
+    set('rom-total', r.total ? _fmtBR(r.total) : '');
+    const st = /final|receb/i.test(r.status || '') ? 'Finalizado' : 'A caminho';
+    document.getElementById('rom-status').value = st;
+    if (r.itens.length) _romItens = r.itens;
+    romRenderItens();
+    msg.style.color = '#2F7D4F';
+    msg.textContent = '✓ PDF lido: ' + r.itens.length + ' linha(s) de chapas. Confira, escolha o apartamento e salve.';
+  } catch (e) {
+    msg.style.color = 'var(--danger)'; msg.textContent = e.message;
+  }
+  input.value = '';
+}
+
+function romRenderItens() {
+  const campo = (i, k, w, extra) => `<input class="form-control" value="${String(_romItens[i][k] == null ? '' : _romItens[i][k]).replace(/"/g, '&quot;')}" oninput="romEditar(${i},'${k}',this.value)" style="padding:6px 6px;font-size:12px;width:100%;${w || ''}" ${extra || ''}>`;
+  document.getElementById('rom-itens').innerHTML = _romItens.map((it, i) => `<tr>
+    <td style="padding:3px">${campo(i, 'qtd')}</td><td style="padding:3px">${campo(i, 'produto')}</td><td style="padding:3px">${campo(i, 'bruta')}</td><td style="padding:3px">${campo(i, 'liquida')}</td>
+    <td style="padding:3px">${campo(i, 'm2', 'text-align:right')}</td><td style="padding:3px">${campo(i, 'valor_m2', 'text-align:right')}</td><td style="padding:3px">${campo(i, 'total', 'text-align:right;background:var(--surface2)')}</td>
+    <td style="padding:3px"><button onclick="romRemoverLinha(${i})" title="Remover linha" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px">×</button></td></tr>`).join('');
+  romRecalcular();
+}
+const _numRom = v => { const s = String(v == null ? '' : v).trim(); if (!s) return 0; return s.includes(',') ? (parseFloat(s.replace(/\./g, '').replace(',', '.')) || 0) : (parseFloat(s) || 0); };
+function romEditar(i, k, v) {
+  _romItens[i][k] = v;
+  // m² x valor/m² = total da linha (só quando a pessoa mexe nesses dois campos)
+  if (k === 'm2' || k === 'valor_m2') {
+    const t = _numRom(_romItens[i].m2) * _numRom(_romItens[i].valor_m2);
+    if (t) { _romItens[i].total = _fmtBR(t); const inp = document.getElementById('rom-itens').children[i]?.querySelectorAll('input')[6]; if (inp) inp.value = _romItens[i].total; }
+  }
+  romRecalcular();
+}
+function romAddLinha() { _romItens.push({ qtd: '', produto: '', bruta: '', liquida: '', m2: '', valor_m2: '', total: '' }); romRenderItens(); }
+function romRemoverLinha(i) { _romItens.splice(i, 1); if (!_romItens.length) romAddLinha(); else romRenderItens(); }
+function romRecalcular() {
+  const chapas = _romItens.reduce((a, i) => a + (parseInt(i.qtd) || 0), 0);
+  const m2 = _romItens.reduce((a, i) => a + _numRom(i.m2), 0);
+  const tot = _romItens.reduce((a, i) => a + _numRom(i.total), 0);
+  document.getElementById('rom-totais').innerHTML = `<span>${chapas} chapas</span><span>${_fmtBR(m2)} m²</span><span>Total <b style="font-size:15px">R$ ${_fmtBR(tot)}</b></span>`;
+  const pdf = _numRom(document.getElementById('rom-total').value), c = document.getElementById('rom-confere');
+  if (!pdf) { c.textContent = ''; return; }
+  const bate = Math.abs(pdf - tot) < 0.05;
+  c.style.color = bate ? '#2F7D4F' : 'var(--danger)';
+  c.textContent = bate ? '✓ Bate com a soma dos itens' : 'Não bate com a soma dos itens (R$ ' + _fmtBR(tot) + ')';
+}
+
+async function salvarRomaneio() {
+  const v = id => document.getElementById(id).value.trim();
+  const itens = _romItens.filter(i => (i.produto || '').trim() || _numRom(i.m2) || parseInt(i.qtd)).map(i => ({
+    qtd: parseInt(i.qtd) || 0, produto: String(i.produto || '').trim(), bruta: String(i.bruta || '').trim(), liquida: String(i.liquida || '').trim(),
+    m2: _numRom(i.m2), valor_m2: _numRom(i.valor_m2), total: _numRom(i.total)
+  }));
+  if (!itens.length) { showToast('Adicione ao menos uma linha de chapa', 'error'); return; }
+  const dados = {
+    modulo: _romModulo, pedido: v('rom-pedido'), data_emissao: v('rom-data'), status: v('rom-status'), fornecedor: v('rom-fornecedor'),
+    ap: v('rom-ap'), cliente: v('rom-cliente'), pagamento: v('rom-pagamento'), frete: v('rom-frete'), peso_kg: _numRom(v('rom-peso')),
+    total: _numRom(v('rom-total')) || itens.reduce((a, i) => a + i.total, 0), total_m2: itens.reduce((a, i) => a + i.m2, 0), observacao: v('rom-obs'), itens
+  };
+  const btn = document.getElementById('rom-btn-salvar'); btn.disabled = true;
+  try {
+    let id = _romEditandoId;
+    if (id) await apiPost('updateRomaneio', { id, ...dados });
+    else { const r = await apiPost('addRomaneio', dados); id = r && r.id; }
+    if (dados.fornecedor) { try { localStorage.setItem('rom_ultimo_fornecedor', dados.fornecedor); } catch (e) {} }
+    if (_romArquivo && id) {
+      showToast('Romaneio salvo! Anexando o PDF...', 'success');
+      await _enviarComprovante('uploadComprovanteRomaneio', { id, filename: _romArquivo.name, mimeType: _romArquivo.type || 'application/pdf', base64data: await _lerArquivoBase64(_romArquivo) });
+    }
+    fecharModal('modal-romaneio');
+    showToast('Romaneio salvo!', 'success');
+    await loadRomaneios();
+  } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+  btn.disabled = false;
+}
+
+async function anexarRomaneio(id, input) {
+  const file = input.files[0]; if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { showToast('Arquivo muito grande (máx 10MB)', 'error'); return; }
+  try {
+    showToast('Enviando...', 'success');
+    await _enviarComprovante('uploadComprovanteRomaneio', { id, filename: file.name, mimeType: file.type || 'application/pdf', base64data: await _lerArquivoBase64(file) });
+    await loadRomaneios(); showToast('Arquivo anexado!', 'success');
+  } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+  input.value = '';
+}
+
+async function excluirRomaneio(id) {
+  if (!confirm('Excluir este romaneio? O registro da exclusão fica guardado.')) return;
+  try { await apiAction('deleteRomaneio', id); dadosRomaneios = dadosRomaneios.filter(r => String(r.id) !== String(id)); renderRomaneios(); showToast('Romaneio excluído!', 'success'); }
+  catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
 // ===================== MARMORARIA =====================
 let dadosMarmoraria = [], dadosBancadas = [], marmSelecoes = [], marmApAtual = '';
 let dadosMetais = [], metaisItens = [], metaisApAtual = '', metaisPdfOriginalUrl = '';
@@ -2861,12 +3127,66 @@ body.mobile-mode #main{padding-bottom:72px}
       <p>Personalização de bancadas e pedras por apartamento</p>
     </div>
     <div class="header-actions">
-      <button class="btn btn-primary" onclick="abrirModalCalcMarmoraria()">+ Novo Orçamento</button>
+      <button class="btn btn-primary" id="marm-btn-orcamento" onclick="abrirModalCalcMarmoraria()">+ Novo Orçamento</button>
+      <button class="btn btn-primary" id="marm-btn-romaneio" onclick="abrirModalRomaneio()" style="display:none">+ Novo romaneio</button>
     </div>
   </div>
   <div class="page-content">
-    <div id="marmoraria-lista" style="display:flex;flex-direction:column;gap:12px">
-      <div class="empty-state"><strong>Carregando...</strong></div>
+    <div style="display:flex;border-bottom:2px solid var(--border);margin-bottom:18px">
+      <button id="marm-tab-pers" onclick="trocarTabMarm('pers')" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--accent);border-bottom:2px solid var(--accent);margin-bottom:-2px;font-family:'Inter',sans-serif">Personalizações</button>
+      <button id="marm-tab-rom" onclick="trocarTabMarm('rom')" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:500;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-2px;font-family:'Inter',sans-serif">Romaneios</button>
+    </div>
+    <div id="marm-pane-pers">
+      <div id="marmoraria-lista" style="display:flex;flex-direction:column;gap:12px">
+        <div class="empty-state"><strong>Carregando...</strong></div>
+      </div>
+    </div>
+    <div id="marm-pane-rom" style="display:none">
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <input class="filter-input" id="rom-filtro" placeholder="Filtrar por apto, fornecedor ou pedido" oninput="renderRomaneios()" style="width:300px">
+      </div>
+      <div id="romaneios-lista"><div class="empty-state"><strong>Carregando...</strong></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ==================== MODAL ROMANEIO ==================== -->
+<div id="modal-romaneio" class="modal-overlay">
+  <div class="modal" style="max-width:860px;width:96vw">
+    <div class="modal-header">
+      <h2 id="rom-titulo">Novo romaneio</h2>
+      <button class="modal-close" onclick="fecharModal('modal-romaneio')">×</button>
+    </div>
+    <div class="modal-body" style="max-height:74vh;overflow:auto">
+      <div id="rom-leitura" style="border:1.5px dashed var(--accent);background:var(--accent-bg);border-radius:10px;padding:16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div><strong style="font-size:14px">📄 Anexe o PDF do romaneio</strong><div style="font-size:12px;color:var(--text2);margin-top:2px">O sistema lê o pedido, a data, as chapas e os valores sozinho. Você só escolhe o apartamento e confere.</div></div>
+        <button class="btn btn-primary" onclick="document.getElementById('rom-arquivo').click()">Escolher PDF</button>
+        <input type="file" id="rom-arquivo" accept="application/pdf,.pdf" style="display:none" onchange="lerPdfRomaneio(this)">
+      </div>
+      <div id="rom-msg" style="font-size:12px;margin-bottom:10px;display:none"></div>
+      <div class="form-grid cols-3">
+        <div class="form-group"><label>Apartamento</label><input class="form-control" id="rom-ap" list="rom-ap-list" placeholder="Ex: 42" autocomplete="off" oninput="romPreencherCliente()"><datalist id="rom-ap-list"></datalist></div>
+        <div class="form-group"><label>Cliente</label><input class="form-control" id="rom-cliente" placeholder="Preenche sozinho pelo apto"></div>
+        <div class="form-group"><label>Fornecedor</label><input class="form-control" id="rom-fornecedor" placeholder="Nome do fornecedor"></div>
+        <div class="form-group"><label>Nº do pedido</label><input class="form-control" id="rom-pedido"></div>
+        <div class="form-group"><label>Data de emissão</label><input class="form-control" id="rom-data" placeholder="dd/mm/aaaa"></div>
+        <div class="form-group"><label>Status</label><select class="form-control" id="rom-status"><option>A caminho</option><option>Recebido</option><option>Finalizado</option></select></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 8px"><strong style="font-size:13px">Chapas / itens</strong><button class="btn btn-secondary" onclick="romAddLinha()" style="font-size:12px;padding:5px 10px">+ Adicionar linha</button></div>
+      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;min-width:600px"><colgroup><col style="width:46px"><col><col style="width:96px"><col style="width:96px"><col style="width:66px"><col style="width:66px"><col style="width:92px"><col style="width:24px"></colgroup><thead><tr style="text-align:left;color:var(--text3);font-size:10px;text-transform:uppercase"><th>Qtd</th><th>Produto</th><th>Med. bruta</th><th>Med. líq.</th><th>m²</th><th>R$/m²</th><th>Total</th><th></th></tr></thead><tbody id="rom-itens"></tbody></table></div>
+      <div id="rom-totais" style="display:flex;justify-content:flex-end;gap:24px;background:var(--surface2);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:13px"></div>
+      <div class="form-grid cols-3" style="margin-top:14px">
+        <div class="form-group"><label>Frete</label><input class="form-control" id="rom-frete"></div>
+        <div class="form-group"><label>Peso (kg)</label><input class="form-control" id="rom-peso"></div>
+        <div class="form-group"><label>Pagamento</label><input class="form-control" id="rom-pagamento"></div>
+        <div class="form-group"><label>Total do PDF (R$)</label><input class="form-control" id="rom-total" oninput="romRecalcular()"><div id="rom-confere" style="font-size:11px;margin-top:4px"></div></div>
+        <div class="form-group" style="grid-column:span 2"><label>Observação</label><input class="form-control" id="rom-obs" placeholder="Opcional"></div>
+      </div>
+    </div>
+    <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border)">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-romaneio')">Cancelar</button>
+      <button class="btn btn-primary" id="rom-btn-salvar" onclick="salvarRomaneio()">Salvar romaneio</button>
     </div>
   </div>
 </div>
