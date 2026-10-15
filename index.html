@@ -2451,6 +2451,16 @@ body.mobile-mode #main{padding-bottom:72px}
       Dados dos Revestimentos
     </button>
     </div>
+    <div id="nav-group-ctrlinst" style="display:none">
+    <button class="nav-btn active" onclick="showScreen('ctrlvisao')" id="nav-ctrlvisao">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Visão Geral
+    </button>
+    <button class="nav-btn" onclick="showScreen('ctrlpagto')" id="nav-ctrlpagto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Pagamento Instalações
+    </button>
+    </div>
     <div id="nav-group-financeiro" style="display:none">
     <button class="nav-btn active" onclick="showScreen('pagamentos')" id="nav-pagamentos">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
@@ -2526,6 +2536,10 @@ body.mobile-mode #main{padding-bottom:72px}
       <button onclick="pedirSenhaModulo('financeiro')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="display:block;margin:0 auto 12px;pointer-events:none"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
         Financeiro
+      </button>
+      <button onclick="pedirSenhaModulo('ctrlinst')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="display:block;margin:0 auto 12px;pointer-events:none"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Controle
       </button>
     </div>
 
@@ -3262,6 +3276,83 @@ body.mobile-mode #main{padding-bottom:72px}
 </div>
 
 <!-- VAGAS E DEPÓSITOS -->
+<!-- ===== CONTROLE · PAGAMENTO DE INSTALAÇÕES ===== -->
+<div id="ctrlvisao-screen" class="screen">
+  <div class="page-header">
+    <div class="page-header-left"><h1>Visão Geral</h1><p>Instalações: quanto foi combinado, quanto já foi pago e o que falta pagar</p></div>
+  </div>
+  <div class="page-content" id="ctrlvisao-conteudo"><div class="empty-state"><strong>Carregando...</strong></div></div>
+</div>
+
+<div id="ctrlpagto-screen" class="screen">
+  <div class="page-header">
+    <div class="page-header-left"><h1>Pagamento de Instalações</h1><p>Quanto pagar a cada instalador, calculado pelas paredes revestidas</p></div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="ctrlAbrirValores()">Tabela de valores</button>
+      <button class="btn btn-primary" onclick="ctrlAbrirInstalacao()">+ Nova instalação</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      <input class="form-control" id="ctrl-busca" placeholder="Buscar apto, cliente ou pessoa" oninput="ctrlRenderLista()" style="max-width:280px">
+      <select class="form-control" id="ctrl-filtro" onchange="ctrlRenderLista()" style="max-width:180px"><option value="">Todos os status</option><option value="apagar">A pagar</option><option value="parcial">Parcial</option><option value="pago">Pago</option><option value="arquivado">Arquivados</option></select>
+    </div>
+    <div id="ctrl-lista"><div class="empty-state"><strong>Carregando...</strong></div></div>
+  </div>
+</div>
+
+<div id="modal-ctrl-inst" class="modal-overlay">
+  <div class="modal" style="max-width:900px;width:96vw">
+    <div class="modal-header"><h2 id="ci-titulo">Nova instalação</h2><button class="modal-close" onclick="fecharModal('modal-ctrl-inst')">×</button></div>
+    <div class="modal-body" style="max-height:74vh;overflow:auto">
+      <div class="form-grid cols-3">
+        <div class="form-group"><label>Apartamento</label><select class="form-control" id="ci-apto" onchange="ciTrocarApto()"></select></div>
+        <div class="form-group"><label>Cliente</label><input class="form-control" id="ci-cliente" readonly></div>
+        <div class="form-group"><label>Previsão de pagamento (opcional)</label><input class="form-control" id="ci-previsao" placeholder="dd/mm/aaaa"></div>
+      </div>
+      <div class="form-group" style="margin-top:6px"><label>Quem instalou <span style="font-weight:400;color:var(--text3)">(marque uma ou mais pessoas — o valor é dividido igualmente)</span></label>
+        <div id="ci-pessoas" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>
+        <div style="display:flex;gap:6px;max-width:360px"><input class="form-control" id="ci-novo-inst" placeholder="Cadastrar novo instalador" onkeydown="if(event.key==='Enter'){event.preventDefault();ciAddInstalador()}"><button class="btn btn-secondary" onclick="ciAddInstalador()">Adicionar</button></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 8px">
+        <strong style="font-size:13px">Paredes instaladas</strong>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span style="font-size:12px;color:var(--text3)">Aplicar às marcadas:</span><select class="form-control" id="ci-rev-todas" style="min-width:240px;max-width:320px" onchange="ciAplicarTodas(this.value)"></select></div>
+      </div>
+      <div id="ci-paredes"></div>
+      <div class="form-group" style="margin-top:12px"><label>Observação</label><input class="form-control" id="ci-obs" placeholder="Opcional"></div>
+    </div>
+    <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--border)">
+      <div id="ci-resumo" style="font-size:13px"></div>
+      <div style="display:flex;gap:8px"><button class="btn btn-secondary" onclick="fecharModal('modal-ctrl-inst')">Cancelar</button><button class="btn btn-primary" id="ci-salvar" onclick="ciSalvar()">Salvar instalação</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-ctrl-valores" class="modal-overlay">
+  <div class="modal" style="max-width:760px;width:96vw">
+    <div class="modal-header"><h2>Tabela de valores · R$ por m²</h2><button class="modal-close" onclick="fecharModal('modal-ctrl-valores')">×</button></div>
+    <div class="modal-body" style="max-height:70vh;overflow:auto">
+      <input class="form-control" id="cv-busca" placeholder="Buscar revestimento" oninput="cvRender()" style="margin-bottom:10px">
+      <p style="font-size:12px;color:var(--text3);margin-bottom:8px">Quanto se paga ao instalador por m² de cada revestimento. Deixe em branco o que ainda não foi combinado.</p>
+      <div id="cv-lista"></div>
+    </div>
+    <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border)"><button class="btn btn-secondary" onclick="fecharModal('modal-ctrl-valores')">Cancelar</button><button class="btn btn-primary" onclick="cvSalvar()">Salvar valores</button></div>
+  </div>
+</div>
+
+<div id="modal-ctrl-baixa" class="modal-overlay">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header"><h2 id="cb-titulo">Dar baixa</h2><button class="modal-close" onclick="fecharModal('modal-ctrl-baixa')">×</button></div>
+    <div class="modal-body"><div class="form-grid cols-1">
+      <div class="form-group"><label>Pessoa</label><select class="form-control" id="cb-pessoa" onchange="cbTrocarPessoa()"></select></div>
+      <div class="form-group"><label>Valor pago (R$)</label><input class="form-control" id="cb-valor" inputmode="decimal"><div style="font-size:11px;color:var(--text3);margin-top:4px">Pode ser parcial: o que sobrar continua em "A pagar".</div></div>
+      <div class="form-group"><label>Data em que foi pago</label><input class="form-control" id="cb-data" placeholder="dd/mm/aaaa"></div>
+      <div class="form-group"><label>Observação</label><input class="form-control" id="cb-obs" placeholder="Opcional"></div>
+    </div></div>
+    <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border)"><button class="btn btn-secondary" onclick="fecharModal('modal-ctrl-baixa')">Cancelar</button><button class="btn btn-primary" id="cb-ok" onclick="cbSalvar()">Confirmar baixa</button></div>
+  </div>
+</div>
+
 <div id="vagasdep-screen" class="screen">
   <div id="vagasdep-lock" style="display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:20px;padding:40px;text-align:center">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="color:var(--text3)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
@@ -5625,13 +5716,15 @@ const SENHAS_MODULO = {
   personalizar: '40271',
   vagasdep: '40272',
   controle: '40273',
-  financeiro: '40274'
+  financeiro: '40274',
+  ctrlinst: '40275'
 };
 const NOMES_MODULO = {
   personalizar: 'Personalizar',
   vagasdep: 'Vagas e Depósitos',
   controle: 'Controle',
-  financeiro: 'Financeiro'
+  financeiro: 'Financeiro',
+  ctrlinst: 'Controle · Instalações'
 };
 
 
@@ -5875,9 +5968,11 @@ function escolherModulo(tipo) {
   const grupoControle = document.getElementById('nav-group-controle');
   const grupoFinanceiro = document.getElementById('nav-group-financeiro');
   const grupoVagasDep = document.getElementById('nav-group-vagasdep');
-  if (grupoPers) grupoPers.style.display = (tipo === 'controle' || tipo === 'financeiro' || tipo === 'vagasdep') ? 'none' : 'block';
+  if (grupoPers) grupoPers.style.display = (tipo === 'controle' || tipo === 'financeiro' || tipo === 'vagasdep' || tipo === 'ctrlinst') ? 'none' : 'block';
   if (grupoControle) grupoControle.style.display = tipo === 'controle' ? 'block' : 'none';
   if (grupoFinanceiro) grupoFinanceiro.style.display = tipo === 'financeiro' ? 'block' : 'none';
+  const grupoCtrlInst = document.getElementById('nav-group-ctrlinst');
+  if (grupoCtrlInst) grupoCtrlInst.style.display = tipo === 'ctrlinst' ? 'block' : 'none';
   if (grupoVagasDep) grupoVagasDep.style.display = tipo === 'vagasdep' ? 'block' : 'none';
   document.getElementById('sidebar').classList.toggle('sidebar-light', tipo === 'vagasdep');
 
@@ -5885,6 +5980,8 @@ function escolherModulo(tipo) {
     showScreen('vagasdep');
   } else if (tipo === 'controle') {
     showScreen('visaogeralvalores');
+  } else if (tipo === 'ctrlinst') {
+    showScreen('ctrlvisao');
   } else if (tipo === 'financeiro') {
     showScreen('pagamentos');
   } else {
@@ -5981,6 +6078,283 @@ window.onload = async () => {
   }).catch(()=>{});
 };
 
+// ===================== CONTROLE · PAGAMENTO DE INSTALAÇÕES =====================
+let ctrl = { instalador: [], valor: [], instalacao: [], pagamento: [] };
+let _ctrlCarregado = false, _ciEdit = null, _ciItens = {}, _ciPessoas = [], _cbInst = null;
+
+const _cNum = v => { if (typeof v === 'number') return v; let t = String(v == null ? '' : v).trim(); if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.'); const n = parseFloat(t); return isNaN(n) ? 0 : n; };
+const _cBool = v => String(v).toLowerCase() === 'true';
+const _cBRL = v => 'R$ ' + (Math.round((v || 0) * 100) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const _cM2 = v => (Math.round((v || 0) * 100) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const _cEsc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const _cHoje = () => new Date().toLocaleDateString('pt-BR');
+function _cData(txt) { const m = String(txt || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null; }
+function _cJson(v, pad) { if (Array.isArray(v)) return v; try { const r = JSON.parse(v || ''); return Array.isArray(r) ? r : pad; } catch (e) { return pad; } }
+
+async function ctrlCarregar(forcar) {
+  try {
+    const d = await api('getCtrlInst');
+    ctrl = { instalador: d.instalador || [], valor: d.valor || [], instalacao: d.instalacao || [], pagamento: d.pagamento || [] };
+    _ctrlCarregado = true;
+  } catch (e) { showToast('Não consegui carregar o Controle: ' + e.message, 'error'); }
+  if (!dadosRevestimentos.length || !dadosParedes.length) {
+    try { const dd = await lerDados(); if (dd.revestimentos) dadosRevestimentos = dd.revestimentos; if (dd.paredes) dadosParedes = dd.paredes; } catch (e) {}
+  }
+  ctrlRenderVisao(); ctrlRenderLista();
+}
+
+// Resumo de uma instalação: quanto cada pessoa recebe, quanto já recebeu, status
+function ctrlResumo(inst) {
+  const pessoas = _cJson(inst.pessoas, []);
+  const itens = _cJson(inst.itens, []);
+  const total = _cNum(inst.valor_total);
+  const m2 = _cNum(inst.total_m2);
+  const cota = pessoas.length ? total / pessoas.length : 0;
+  const pags = ctrl.pagamento.filter(p => String(p.instalacao_id) === String(inst.id));
+  const porPessoa = pessoas.map(n => {
+    const pago = pags.filter(p => p.pessoa === n).reduce((a, p) => a + _cNum(p.valor), 0);
+    return { nome: n, devido: cota, pago, falta: Math.max(0, cota - pago) };
+  });
+  const pago = pags.reduce((a, p) => a + _cNum(p.valor), 0);
+  const falta = Math.max(0, total - pago);
+  let status = 'apagar';
+  if (total > 0 && falta < 0.005) status = 'pago'; else if (pago > 0.005) status = 'parcial';
+  return { pessoas, itens, total, m2, cota, pags, porPessoa, pago, falta, status };
+}
+const _cBadge = s => s === 'pago' ? '<span class="badge badge-green">Pago</span>' : s === 'parcial' ? '<span class="badge badge-warn">Parcial</span>' : '<span class="badge badge-info">A pagar</span>';
+
+function ctrlRenderVisao() {
+  const el = document.getElementById('ctrlvisao-conteudo'); if (!el) return;
+  const ativas = ctrl.instalacao.filter(i => !_cBool(i.arquivado));
+  if (!ativas.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhuma instalação lançada ainda</strong><p>Use "Pagamento Instalações" para lançar a primeira.</p></div>'; return; }
+  const res = ativas.map(i => ({ i, r: ctrlResumo(i) }));
+  const tot = res.reduce((a, x) => a + x.r.total, 0), pago = res.reduce((a, x) => a + x.r.pago, 0), falta = res.reduce((a, x) => a + x.r.falta, 0);
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0); const lim = new Date(hoje.getTime() + 30 * 86400000);
+  const prev30 = res.reduce((a, x) => { const d = _cData(x.i.previsao); return a + (d && d <= lim && x.r.falta > 0 ? x.r.falta : 0); }, 0);
+  const pes = {};
+  res.forEach(x => x.r.porPessoa.forEach(p => {
+    const o = pes[p.nome] = pes[p.nome] || { nome: p.nome, aptos: [], m2: 0, devido: 0, pago: 0 };
+    o.aptos.push(x.i.apto); o.m2 += x.r.m2 / (x.r.pessoas.length || 1); o.devido += p.devido; o.pago += p.pago;
+  }));
+  const linhasPes = Object.values(pes).sort((a, b) => a.nome.localeCompare(b.nome)).map(o => `<tr><td style="font-weight:600">${_cEsc(o.nome)}</td><td>${_cEsc(o.aptos.join(', '))}</td><td>${_cM2(o.m2)}</td><td style="text-align:right">${_cBRL(o.devido)}</td><td style="text-align:right;color:var(--accent)">${_cBRL(o.pago)}</td><td style="text-align:right;font-weight:600">${_cBRL(Math.max(0, o.devido - o.pago))}</td></tr>`).join('');
+  const linhasAp = res.slice().sort((a, b) => Number(a.i.apto) - Number(b.i.apto)).map(x => `<tr><td style="font-weight:600">${_cEsc(x.i.apto)}</td><td>${_cEsc(x.r.pessoas.join(', '))}</td><td style="text-align:right">${_cBRL(x.r.total)}</td><td style="text-align:right">${_cBRL(x.r.pago)}</td><td style="text-align:right">${_cBRL(x.r.falta)}</td><td>${_cBadge(x.r.status)}</td></tr>`).join('');
+  el.innerHTML = `<div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Total combinado</div><div class="stat-value">${_cBRL(tot)}</div></div>
+    <div class="stat-card"><div class="stat-label">Já pago</div><div class="stat-value" style="color:var(--accent)">${_cBRL(pago)}</div></div>
+    <div class="stat-card"><div class="stat-label">Falta pagar</div><div class="stat-value" style="color:var(--warn)">${_cBRL(falta)}</div></div>
+    <div class="stat-card"><div class="stat-label">Previsão próx. 30 dias</div><div class="stat-value">${_cBRL(prev30)}</div></div></div>
+    <h3 style="font-size:13px;color:var(--text2);margin:18px 0 8px">Por pessoa</h3>
+    <div class="table-wrap"><table><thead><tr><th>Pessoa</th><th>Aptos</th><th>m²</th><th style="text-align:right">Combinado</th><th style="text-align:right">Pago</th><th style="text-align:right">Falta</th></tr></thead><tbody>${linhasPes}</tbody></table></div>
+    <h3 style="font-size:13px;color:var(--text2);margin:18px 0 8px">Por apartamento</h3>
+    <div class="table-wrap"><table><thead><tr><th>Apto</th><th>Pessoas</th><th style="text-align:right">Combinado</th><th style="text-align:right">Pago</th><th style="text-align:right">Falta</th><th>Status</th></tr></thead><tbody>${linhasAp}</tbody></table></div>`;
+}
+
+function ctrlRenderLista() {
+  const el = document.getElementById('ctrl-lista'); if (!el) return;
+  const q = (document.getElementById('ctrl-busca')?.value || '').toLowerCase().trim();
+  const f = document.getElementById('ctrl-filtro')?.value || '';
+  let lista = ctrl.instalacao.slice().sort((a, b) => Number(a.apto) - Number(b.apto));
+  lista = lista.filter(i => {
+    const arq = _cBool(i.arquivado);
+    if (f === 'arquivado') return arq; if (arq) return false;
+    const r = ctrlResumo(i);
+    if (f && r.status !== f) return false;
+    if (q && !(String(i.apto) + ' ' + (i.cliente || '') + ' ' + r.pessoas.join(' ')).toLowerCase().includes(q)) return false;
+    return true;
+  });
+  if (!lista.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhuma instalação por aqui</strong><p>Clique em "+ Nova instalação" para lançar.</p></div>'; return; }
+  el.innerHTML = lista.map(i => {
+    const r = ctrlResumo(i), arq = _cBool(i.arquivado);
+    const multi = r.pessoas.length > 1;
+    const linhas = r.porPessoa.map(p => `<tr><td style="padding:9px 18px;border-top:1px solid var(--border);font-weight:600">${_cEsc(p.nome)}</td><td style="padding:9px 18px;border-top:1px solid var(--border);text-align:right">${_cBRL(p.devido)}</td><td style="padding:9px 18px;border-top:1px solid var(--border);text-align:right;color:var(--accent)">${_cBRL(p.pago)}</td><td style="padding:9px 18px;border-top:1px solid var(--border);text-align:right;font-weight:${p.falta > 0 ? 600 : 400}">${_cBRL(p.falta)}</td><td style="padding:9px 18px;border-top:1px solid var(--border)">${_cBadge(p.falta < 0.005 && p.devido > 0 ? 'pago' : p.pago > 0.005 ? 'parcial' : 'apagar')}</td><td style="padding:9px 18px;border-top:1px solid var(--border);text-align:right">${p.falta > 0.005 ? `<button class="btn btn-primary" style="font-size:11px;padding:4px 10px" onclick="cbAbrir('${i.id}','${_cEsc(p.nome).replace(/'/g, '&#39;')}')">✓ Dar baixa</button>` : ''}</td></tr>`).join('');
+    const pagsHtml = r.pags.length ? r.pags.slice().sort((a, b) => (_cData(b.data) || 0) - (_cData(a.data) || 0)).map(p => `<div style="display:flex;justify-content:space-between;gap:8px;padding:3px 0"><span>${_cEsc(p.data || '—')} · <b>${_cEsc(p.pessoa)}</b> · ${_cBRL(_cNum(p.valor))}${p.obs ? ' · ' + _cEsc(p.obs) : ''}</span><span style="white-space:nowrap"><a href="#" onclick="cbEditar('${p.id}');return false" style="color:var(--text3);text-decoration:none" title="Editar">✎</a> <a href="#" onclick="cbExcluir('${p.id}');return false" style="color:var(--danger);text-decoration:none;margin-left:6px" title="Desfazer este pagamento">×</a></span></div>`).join('') : '<span style="color:var(--text3)">Nenhum pagamento lançado ainda</span>';
+    const wallsTxt = r.itens.length ? Object.entries(r.itens.reduce((a, it) => { const k = (it.rev_nome || '?') + (it.tamanho ? ' [' + it.tamanho + ']' : ''); a[k] = (a[k] || 0) + _cNum(it.m2); return a; }, {})).map(([k, v]) => `${_cEsc(k)}: ${_cM2(v)} m²`).join(' · ') : '';
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:14px;overflow:hidden;${arq ? 'opacity:.65' : ''}">
+      <div style="padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;background:var(--surface2)">
+        <div><b style="font-size:15px">Apto ${_cEsc(i.apto)}</b> <span style="color:var(--text3);font-size:12px">· ${_cEsc(i.cliente || '—')} · ${_cM2(r.m2)} m²</span> <span style="margin-left:8px">${_cBadge(r.status)}</span>${arq ? ' <span class="badge badge-warn">Arquivado</span>' : ''}</div>
+        <div style="font-size:13px">Combinado <b>${_cBRL(r.total)}</b> · Pago <b style="color:var(--accent)">${_cBRL(r.pago)}</b> · Falta <b style="color:var(--warn)">${_cBRL(r.falta)}</b></div></div>
+      <div style="padding:10px 18px;font-size:12px;color:var(--text2)">${multi ? `Dividido igualmente entre <b>${r.pessoas.map(_cEsc).join('</b> e <b>')}</b> · ${_cBRL(r.cota)} para cada` : r.pessoas.length ? `Instalador: <b>${_cEsc(r.pessoas[0])}</b>` : '<span style="color:var(--danger)">Nenhuma pessoa selecionada</span>'}${wallsTxt ? `<div style="color:var(--text3);margin-top:3px">${wallsTxt}</div>` : ''}</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="font-size:11px;color:var(--text3);text-transform:uppercase"><th style="text-align:left;padding:8px 18px">Pessoa</th><th style="text-align:right;padding:8px 18px">A receber</th><th style="text-align:right;padding:8px 18px">Pago</th><th style="text-align:right;padding:8px 18px">Falta</th><th style="text-align:left;padding:8px 18px">Status</th><th></th></tr></thead><tbody>${linhas}</tbody></table>
+      <div style="padding:10px 18px;border-top:1px solid var(--border);background:var(--surface2);font-size:12px;color:var(--text2)"><b>Pagamentos lançados:</b><div style="margin-top:4px">${pagsHtml}</div></div>
+      <div style="padding:10px 18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--text3)">
+        <span>${i.previsao ? 'Previsão: <b style="color:var(--text)">' + _cEsc(i.previsao) + '</b>' : ''}${i.obs ? ' · ' + _cEsc(i.obs) : ''}</span>
+        <span>${multi && r.porPessoa.filter(p => p.falta > 0.005).length > 1 ? `<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="cbBaixaTodos('${i.id}')">Dar baixa em todos</button> ` : ''}<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="ctrlAbrirInstalacao('${i.id}')">Editar</button> <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="ctrlArquivar('${i.id}',${arq ? 'false' : 'true'})">${arq ? 'Desarquivar' : 'Arquivar'}</button> <button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="ctrlExcluir('${i.id}')">Excluir</button></span></div></div>`;
+  }).join('');
+}
+
+async function ctrlArquivar(id, arq) { try { await apiPost('saveCtrlInst', { tipo: 'instalacao', registro: { id, arquivado: String(arq) } }); await ctrlCarregar(); } catch (e) { showToast('Erro: ' + e.message, 'error'); } }
+async function ctrlExcluir(id) {
+  const i = ctrl.instalacao.find(x => String(x.id) === String(id)); if (!i) return;
+  const n = ctrl.pagamento.filter(p => String(p.instalacao_id) === String(id)).length;
+  if (!confirm('Excluir a instalação do apto ' + i.apto + '?' + (n ? '\nOs ' + n + ' pagamento(s) lançados nela também serão apagados.' : ''))) return;
+  try { await apiPost('deleteCtrlInst', { tipo: 'instalacao', id }); showToast('Instalação excluída', 'success'); await ctrlCarregar(); } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+// ---------- Dar baixa ----------
+let _cbPagEdit = null;
+function cbAbrir(instId, pessoa) {
+  _cbInst = ctrl.instalacao.find(x => String(x.id) === String(instId)); _cbPagEdit = null; if (!_cbInst) return;
+  const r = ctrlResumo(_cbInst);
+  document.getElementById('cb-titulo').textContent = 'Dar baixa · Apto ' + _cbInst.apto;
+  const sel = document.getElementById('cb-pessoa'); sel.disabled = false;
+  sel.innerHTML = r.porPessoa.map(p => `<option value="${_cEsc(p.nome)}" data-falta="${p.falta}">${_cEsc(p.nome)} · falta ${_cBRL(p.falta)}</option>`).join('');
+  if (pessoa) sel.value = pessoa;
+  document.getElementById('cb-data').value = _cHoje(); document.getElementById('cb-obs').value = '';
+  cbTrocarPessoa(); document.getElementById('cb-ok').textContent = 'Confirmar baixa';
+  abrirModal('modal-ctrl-baixa');
+}
+function cbTrocarPessoa() {
+  if (_cbPagEdit) return;
+  const o = document.getElementById('cb-pessoa').selectedOptions[0];
+  document.getElementById('cb-valor').value = o ? _cM2(_cNum(o.dataset.falta)) : '';
+}
+function cbEditar(pagId) {
+  const p = ctrl.pagamento.find(x => String(x.id) === String(pagId)); if (!p) return;
+  _cbInst = ctrl.instalacao.find(x => String(x.id) === String(p.instalacao_id)); if (!_cbInst) return;
+  _cbPagEdit = p;
+  document.getElementById('cb-titulo').textContent = 'Editar pagamento · Apto ' + _cbInst.apto;
+  const sel = document.getElementById('cb-pessoa'); sel.innerHTML = `<option>${_cEsc(p.pessoa)}</option>`; sel.disabled = true;
+  document.getElementById('cb-valor').value = _cM2(_cNum(p.valor)); document.getElementById('cb-data').value = p.data || ''; document.getElementById('cb-obs').value = p.obs || '';
+  document.getElementById('cb-ok').textContent = 'Salvar alteração';
+  abrirModal('modal-ctrl-baixa');
+}
+async function cbSalvar() {
+  const valor = _cNum(document.getElementById('cb-valor').value);
+  const data = document.getElementById('cb-data').value.trim();
+  if (valor <= 0) { showToast('Informe o valor pago', 'error'); return; }
+  if (!_cData(data)) { showToast('Data no formato dd/mm/aaaa', 'error'); return; }
+  const btn = document.getElementById('cb-ok'); btn.disabled = true;
+  try {
+    const reg = { tipo: 'pagamento', registro: { instalacao_id: _cbInst.id, pessoa: document.getElementById('cb-pessoa').value, valor: Math.round(valor * 100) / 100, data, obs: document.getElementById('cb-obs').value.trim() } };
+    if (_cbPagEdit) reg.registro.id = _cbPagEdit.id;
+    await apiPost('saveCtrlInst', reg);
+    fecharModal('modal-ctrl-baixa'); showToast('Baixa registrada', 'success'); await ctrlCarregar();
+  } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+  btn.disabled = false;
+}
+async function cbExcluir(pagId) {
+  const p = ctrl.pagamento.find(x => String(x.id) === String(pagId)); if (!p) return;
+  if (!confirm('Desfazer o pagamento de ' + _cBRL(_cNum(p.valor)) + ' de ' + p.pessoa + ' (' + (p.data || '') + ')?\nO valor volta a ficar em aberto.')) return;
+  try { await apiPost('deleteCtrlInst', { tipo: 'pagamento', id: pagId }); showToast('Pagamento desfeito', 'success'); await ctrlCarregar(); } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+async function cbBaixaTodos(instId) {
+  const i = ctrl.instalacao.find(x => String(x.id) === String(instId)); if (!i) return;
+  const r = ctrlResumo(i), pend = r.porPessoa.filter(p => p.falta > 0.005);
+  const data = prompt('Dar baixa no valor que falta de ' + pend.map(p => p.nome).join(' e ') + ' (' + _cBRL(pend.reduce((a, p) => a + p.falta, 0)) + ').\nData do pagamento:', _cHoje());
+  if (data === null) return; if (!_cData(data.trim())) { showToast('Data no formato dd/mm/aaaa', 'error'); return; }
+  try { await apiPost('saveCtrlInst', { tipo: 'pagamento', lote: pend.map(p => ({ instalacao_id: i.id, pessoa: p.nome, valor: Math.round(p.falta * 100) / 100, data: data.trim(), obs: '' })) }); showToast('Baixa registrada', 'success'); await ctrlCarregar(); } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+// ---------- Tabela de valores ----------
+let _cvEdit = {};
+function ctrlAbrirValores() { _cvEdit = {}; document.getElementById('cv-busca').value = ''; cvRender(); abrirModal('modal-ctrl-valores'); }
+function _cValorRev(revId) { const v = ctrl.valor.find(x => String(x.rev_id) === String(revId)); return v ? _cNum(v.valor_m2) : 0; }
+function cvRender() {
+  const q = document.getElementById('cv-busca').value.toLowerCase().trim();
+  const revs = dadosRevestimentos.slice().sort((a, b) => String(a.nome).localeCompare(String(b.nome))).filter(r => !q || (r.nome + ' ' + (r.tamanho || '') + ' ' + (r.codigo || '')).toLowerCase().includes(q));
+  document.getElementById('cv-lista').innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="font-size:11px;color:var(--text3);text-transform:uppercase"><th style="text-align:left;padding:6px">Revestimento</th><th style="text-align:left;padding:6px">Medida</th><th style="text-align:right;padding:6px;width:150px">R$ por m²</th></tr></thead><tbody>${revs.map(r => { const atual = _cvEdit[r.id] !== undefined ? _cvEdit[r.id] : (_cValorRev(r.id) || ''); return `<tr><td style="padding:6px;border-top:1px solid var(--border)">${_cEsc(r.nome)}</td><td style="padding:6px;border-top:1px solid var(--border);color:var(--text3)">${_cEsc(r.tamanho || '—')}</td><td style="padding:6px;border-top:1px solid var(--border)"><input class="form-control" style="text-align:right;padding:5px 8px" inputmode="decimal" value="${atual === '' ? '' : _cEsc(String(atual).replace('.', ','))}" placeholder="—" oninput="_cvEdit['${r.id}']=this.value"></td></tr>`; }).join('')}</tbody></table>`;
+}
+async function cvSalvar() {
+  const lote = [];
+  Object.keys(_cvEdit).forEach(id => {
+    const r = dadosRevestimentos.find(x => String(x.id) === String(id)); if (!r) return;
+    const novo = _cNum(_cvEdit[id]); const ex = ctrl.valor.find(x => String(x.rev_id) === String(id));
+    if ((ex ? _cNum(ex.valor_m2) : 0) === novo) return;
+    lote.push({ id: ex ? ex.id : undefined, rev_id: String(id), rev_nome: r.nome, tamanho: r.tamanho || '', valor_m2: novo });
+  });
+  if (!lote.length) { fecharModal('modal-ctrl-valores'); return; }
+  try { await apiPost('saveCtrlInst', { tipo: 'valor', lote }); fecharModal('modal-ctrl-valores'); showToast('Valores salvos', 'success'); await ctrlCarregar(); } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+// ---------- Nova / editar instalação ----------
+function _ciOptsRev(sel) { return '<option value="">— Revestimento —</option>' + dadosRevestimentos.slice().sort((a, b) => String(a.nome).localeCompare(String(b.nome))).map(r => { const v = _cValorRev(r.id); return `<option value="${r.id}" ${String(sel) === String(r.id) ? 'selected' : ''}>${_cEsc(r.nome)} [${_cEsc(r.tamanho || '')}]${v ? ' · ' + _cBRL(v) + '/m²' : ' · sem valor'}</option>`; }).join(''); }
+function ctrlAbrirInstalacao(id) {
+  _ciEdit = id ? ctrl.instalacao.find(x => String(x.id) === String(id)) : null; _ciItens = {};
+  document.getElementById('ci-titulo').textContent = _ciEdit ? 'Editar instalação · Apto ' + _ciEdit.apto : 'Nova instalação';
+  const aps = [...new Set(dadosParedes.map(p => String(p.apartamento)))].sort((a, b) => parseInt(a) - parseInt(b) || a.localeCompare(b));
+  const sel = document.getElementById('ci-apto');
+  sel.innerHTML = '<option value="">Selecione...</option>' + aps.map(a => `<option value="${_cEsc(a)}">Apto ${_cEsc(a)}</option>`).join('');
+  sel.disabled = !!_ciEdit;
+  _ciPessoas = _ciEdit ? _cJson(_ciEdit.pessoas, []) : [];
+  if (_ciEdit) { sel.value = String(_ciEdit.apto); _cJson(_ciEdit.itens, []).forEach(it => { _ciItens[it.local + '|' + it.parede] = { ...it, marcada: true }; }); }
+  document.getElementById('ci-previsao').value = _ciEdit ? (_ciEdit.previsao || '') : '';
+  document.getElementById('ci-obs').value = _ciEdit ? (_ciEdit.obs || '') : '';
+  document.getElementById('ci-novo-inst').value = '';
+  document.getElementById('ci-rev-todas').innerHTML = _ciOptsRev('');
+  ciTrocarApto(); ciRenderPessoas(); abrirModal('modal-ctrl-inst');
+}
+function ciTrocarApto() {
+  const ap = document.getElementById('ci-apto').value;
+  const p0 = dadosParedes.find(p => String(p.apartamento) === ap);
+  document.getElementById('ci-cliente').value = _ciEdit ? (_ciEdit.cliente || '') : (p0 ? p0.cliente || '' : '');
+  if (!_ciEdit) _ciItens = {};
+  ciRenderParedes();
+}
+function ciRenderPessoas() {
+  const nomes = ctrl.instalador.filter(x => String(x.ativo).toLowerCase() !== 'false').map(x => x.nome);
+  _ciPessoas.forEach(n => { if (!nomes.includes(n)) nomes.push(n); });
+  document.getElementById('ci-pessoas').innerHTML = nomes.length ? nomes.map(n => { const on = _ciPessoas.includes(n); const inst = ctrl.instalador.find(x => x.nome === n); return `<label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1.5px solid ${on ? 'var(--accent)' : 'var(--border)'};background:${on ? 'var(--accent-bg)' : 'var(--surface)'};border-radius:999px;font-size:13px;cursor:pointer"><input type="checkbox" ${on ? 'checked' : ''} onchange="ciTogglePessoa('${_cEsc(n).replace(/'/g, '&#39;')}',this.checked)"> ${_cEsc(n)}${inst ? ` <a href="#" onclick="event.preventDefault();event.stopPropagation();ciRemoverInstalador('${inst.id}')" style="color:var(--text3);text-decoration:none" title="Remover da lista">×</a>` : ''}</label>`; }).join('') : '<span style="font-size:12px;color:var(--text3)">Nenhum instalador cadastrado ainda — cadastre abaixo.</span>';
+  ciResumo();
+}
+function ciTogglePessoa(n, on) { _ciPessoas = on ? [...new Set([..._ciPessoas, n])] : _ciPessoas.filter(x => x !== n); ciRenderPessoas(); }
+async function ciAddInstalador() {
+  const inp = document.getElementById('ci-novo-inst'); const nome = inp.value.trim(); if (!nome) return;
+  if (ctrl.instalador.some(x => x.nome.toLowerCase() === nome.toLowerCase())) { showToast('Esse nome já está na lista', 'error'); return; }
+  try { const r = await apiPost('saveCtrlInst', { tipo: 'instalador', registro: { nome, ativo: 'true' } }); ctrl.instalador.push({ id: r.ids[0], nome, ativo: 'true' }); _ciPessoas.push(nome); inp.value = ''; ciRenderPessoas(); } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+async function ciRemoverInstalador(id) {
+  const i = ctrl.instalador.find(x => String(x.id) === String(id)); if (!i) return;
+  if (!confirm('Tirar ' + i.nome + ' da lista de instaladores?\n(Instalações e pagamentos já lançados continuam com o nome.)')) return;
+  try { await apiPost('saveCtrlInst', { tipo: 'instalador', registro: { id, ativo: 'false' } }); i.ativo = 'false'; _ciPessoas = _ciPessoas.filter(n => n !== i.nome); ciRenderPessoas(); } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+function ciRenderParedes() {
+  const el = document.getElementById('ci-paredes'); const ap = document.getElementById('ci-apto').value;
+  if (!ap) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:10px">Selecione o apartamento para ver as paredes.</div>'; ciResumo(); return; }
+  const outras = new Set(); ctrl.instalacao.filter(i => String(i.apto) === ap && (!_ciEdit || i.id !== _ciEdit.id) && !_cBool(i.arquivado)).forEach(i => _cJson(i.itens, []).forEach(it => outras.add(it.local + '|' + it.parede)));
+  const paredes = dadosParedes.filter(p => String(p.apartamento) === ap).map(p => ({ local: String(p.local || '').trim(), parede: String(p.parede || '').trim(), m2: Math.round(_cNum(p.metro_linear) * _cNum(p.altura) * 100) / 100 }));
+  Object.values(_ciItens).forEach(it => { if (!paredes.some(p => p.local === it.local && p.parede === it.parede)) paredes.push({ local: it.local, parede: it.parede, m2: _cNum(it.m2) }); });
+  const grupos = {}; paredes.forEach(p => (grupos[p.local] = grupos[p.local] || []).push(p));
+  el.innerHTML = Object.keys(grupos).map(loc => `<div style="margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden"><div style="padding:8px 12px;background:var(--surface2);font-size:13px;font-weight:600;display:flex;justify-content:space-between"><span>${_cEsc(loc)}</span><span style="font-weight:400;font-size:11px;color:var(--text3)">${grupos[loc].length} parede(s)</span></div>${grupos[loc].map(p => {
+    const k = p.local + '|' + p.parede, it = _ciItens[k], on = !!(it && it.marcada), ja = outras.has(k) && !on;
+    const rate = it ? _cNum(it.valor_m2) : 0;
+    return `<div style="display:grid;grid-template-columns:24px minmax(120px,1fr) minmax(200px,1.6fr) 90px 100px;gap:8px;align-items:center;padding:7px 12px;border-top:1px solid var(--border);font-size:12px;${ja ? 'opacity:.55' : ''}">
+      <input type="checkbox" ${on ? 'checked' : ''} onchange="ciMarcar('${_cEsc(k).replace(/'/g, '&#39;')}',${p.m2},this.checked)">
+      <span><b>Parede ${_cEsc(p.parede)}</b> · ${_cM2(p.m2)} m²${ja ? '<br><span style="color:var(--warn)">já lançada em outra instalação</span>' : ''}</span>
+      <select class="form-control" style="font-size:12px;padding:4px 6px" ${on ? '' : 'disabled'} onchange="ciRev('${_cEsc(k).replace(/'/g, '&#39;')}',this.value)">${_ciOptsRev(it ? it.rev_id : '')}</select>
+      <input class="form-control" style="font-size:12px;padding:4px 6px;text-align:right" inputmode="decimal" ${on ? '' : 'disabled'} value="${rate ? String(rate).replace('.', ',') : ''}" placeholder="R$/m²" onchange="ciRate('${_cEsc(k).replace(/'/g, '&#39;')}',this.value)" title="Valor por m² (editável)">
+      <span style="text-align:right;font-weight:600">${on && rate ? _cBRL(p.m2 * rate) : '—'}</span></div>`; }).join('')}</div>`).join('') || '<div style="font-size:12px;color:var(--text3);padding:10px">Esse apartamento não tem paredes cadastradas em "Config. de Paredes".</div>';
+  ciResumo();
+}
+function _ciParede(k) { const [local, parede] = k.split('|'); const ap = document.getElementById('ci-apto').value; const p = dadosParedes.find(x => String(x.apartamento) === ap && String(x.local || '').trim() === local && String(x.parede || '').trim() === parede); return { local, parede, m2: p ? Math.round(_cNum(p.metro_linear) * _cNum(p.altura) * 100) / 100 : 0 }; }
+function ciMarcar(k, m2, on) { const base = _ciParede(k); const it = _ciItens[k] || { local: base.local, parede: base.parede, m2: m2, rev_id: '', rev_nome: '', tamanho: '', valor_m2: 0 }; it.marcada = on; if (on && !it.rev_id) { const t = document.getElementById('ci-rev-todas').value; if (t) _ciSetRev(it, t); } _ciItens[k] = it; ciRenderParedes(); }
+function _ciSetRev(it, revId) { const r = dadosRevestimentos.find(x => String(x.id) === String(revId)); it.rev_id = revId; it.rev_nome = r ? r.nome : ''; it.tamanho = r ? (r.tamanho || '') : ''; it.valor_m2 = revId ? _cValorRev(revId) : 0; }
+function ciRev(k, revId) { const it = _ciItens[k]; if (!it) return; _ciSetRev(it, revId); if (revId && !it.valor_m2) showToast('Esse revestimento ainda não tem valor na tabela — digite o R$/m² ao lado', 'info'); ciRenderParedes(); }
+function ciRate(k, v) { const it = _ciItens[k]; if (!it) return; it.valor_m2 = _cNum(v); ciRenderParedes(); }
+function ciAplicarTodas(revId) { if (!revId) return; Object.values(_ciItens).forEach(it => { if (it.marcada) _ciSetRev(it, revId); }); if (!_cValorRev(revId)) showToast('Esse revestimento ainda não tem valor na tabela — digite o R$/m² nas paredes', 'info'); document.getElementById('ci-rev-todas').value = revId; ciRenderParedes(); }
+function _ciTotais() { const its = Object.values(_ciItens).filter(i => i.marcada); return { its, m2: its.reduce((a, i) => a + _cNum(i.m2), 0), total: its.reduce((a, i) => a + _cNum(i.m2) * _cNum(i.valor_m2), 0) }; }
+function ciResumo() {
+  const t = _ciTotais(), n = _ciPessoas.length;
+  document.getElementById('ci-resumo').innerHTML = `<b>${t.its.length}</b> parede(s) · <b>${_cM2(t.m2)} m²</b> · Total <b>${_cBRL(t.total)}</b>${n > 1 ? ` · <span style="color:var(--text2)">${_cBRL(t.total / n)} para cada um dos ${n}</span>` : ''}`;
+}
+async function ciSalvar() {
+  const ap = document.getElementById('ci-apto').value, t = _ciTotais();
+  if (!ap) { showToast('Selecione o apartamento', 'error'); return; }
+  if (!_ciPessoas.length) { showToast('Marque pelo menos uma pessoa', 'error'); return; }
+  if (!t.its.length) { showToast('Marque as paredes instaladas', 'error'); return; }
+  const semRev = t.its.find(i => !i.rev_id); if (semRev) { showToast('Escolha o revestimento da parede ' + semRev.local + ' / ' + semRev.parede, 'error'); return; }
+  const semValor = t.its.find(i => !_cNum(i.valor_m2)); if (semValor && !confirm('A parede ' + semValor.local + ' / ' + semValor.parede + ' está sem valor por m². Salvar assim mesmo (ela vale R$ 0,00)?')) return;
+  const previsao = document.getElementById('ci-previsao').value.trim(); if (previsao && !_cData(previsao)) { showToast('Previsão no formato dd/mm/aaaa', 'error'); return; }
+  const btn = document.getElementById('ci-salvar'); btn.disabled = true;
+  try {
+    const itens = t.its.map(i => ({ local: i.local, parede: i.parede, m2: Math.round(_cNum(i.m2) * 100) / 100, rev_id: i.rev_id, rev_nome: i.rev_nome, tamanho: i.tamanho, valor_m2: _cNum(i.valor_m2), valor: Math.round(_cNum(i.m2) * _cNum(i.valor_m2) * 100) / 100 }));
+    const reg = { apto: ap, cliente: document.getElementById('ci-cliente').value, pessoas: _ciPessoas, itens, total_m2: Math.round(t.m2 * 100) / 100, valor_total: Math.round(t.total * 100) / 100, previsao, obs: document.getElementById('ci-obs').value.trim() };
+    if (_ciEdit) reg.id = _ciEdit.id; else reg.arquivado = 'false';
+    await apiPost('saveCtrlInst', { tipo: 'instalacao', registro: reg });
+    fecharModal('modal-ctrl-inst'); showToast('Instalação salva', 'success'); await ctrlCarregar();
+  } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+  btn.disabled = false;
+}
+
 // ===================== NAVEGAÇÃO =====================
 function showScreen(name) {
   if (name === 'config' && getUsuarioAtual() !== 'Bárbara') name = 'home';
@@ -5994,6 +6368,7 @@ function showScreen(name) {
   }
   try { document.getElementById('nav-' + name).classList.add('active'); } catch(e) {}
   localStorage.setItem('last_screen', name);
+  if (name === 'ctrlvisao' || name === 'ctrlpagto') ctrlCarregar();
   if (name === 'estoque') loadEstoque();
   if (name === 'necessidadecompra') loadNecessidadeCompra();
   if (name === 'saidas') loadSaidas();
@@ -6068,7 +6443,7 @@ async function apiPost(action, data) {
   }
   if (result.error) throw new Error(result.error);
   // Invalidar cache em memória (exceto para ações que recarregam logo depois)
-  if (action !== 'addRevestimento' && action !== 'addParede') invalidarCacheDados();
+  if (action !== 'addRevestimento' && action !== 'addParede' && action !== 'saveCtrlInst' && action !== 'deleteCtrlInst') invalidarCacheDados();
   return result.data;
 }
 

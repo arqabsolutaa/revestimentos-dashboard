@@ -172,3 +172,12 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - Antes o sistema somava de volta TODAS as saídas do revestimento ao estoque (inclusive saídas de outras obras, como Vista Park), o que podia esconder falta (ex.: Sintese 160x160 faltava 9,6 m² e aparecia zerado).
 - Saídas com apto "Vista Park", "Reserva" ou "Belize" não contam para apto do Essence. Saída sem número de apto não marca ninguém como "já retirou".
 - Coluna "Já Retirado" removida da tela de Compras.
+
+## Controle · Pagamento de Instalações (card "Controle", senha 40275)
+- Card novo no menu principal, separado de "Obra". Sidebar: **Visão Geral** e **Pagamento Instalações**.
+- Abas novas na planilha (criadas sozinhas pelo Code.gs): `Instaladores`, `Valores_Instalacao` (R$/m² por revestimento), `Pgto_Instalacoes` (apto, pessoas, paredes/itens em JSON, total m², valor total, previsão, arquivado) e `Pgto_Inst_Baixas` (cada pagamento lançado: pessoa, valor, data, obs).
+- Ações do Code.gs: `getCtrlInst`, `saveCtrlInst` (tipo + registro ou lote), `deleteCtrlInst` (excluir instalação apaga as baixas dela).
+- Nova instalação: escolhe apto → marca as paredes (de Config. de Paredes, m² = linear × altura) → revestimento por parede (valor R$/m² vem da tabela, editável na linha) → marca 1 ou mais pessoas (valor dividido igualmente).
+- Status é calculado pelos pagamentos: A pagar (nada pago) / Parcial / Pago. "Dar baixa" aceita valor parcial + data; dá para editar (✎) ou desfazer (×) cada pagamento.
+- Visão Geral soma só instalações não arquivadas: total combinado, já pago, falta pagar, previsão dos próximos 30 dias, além de quadros por pessoa e por apto.
+- A senha da Bárbara para este card é conferida no servidor (hash `ctrlinst` em `HASHES_SENHA_BARBARA`).
