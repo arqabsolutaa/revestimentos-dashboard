@@ -2517,6 +2517,7 @@ body.mobile-mode #main{padding-bottom:72px}
     <div id="escolha-usuarios" style="display:flex;gap:12px;justify-content:center;margin-bottom:34px">
       <button type="button" data-usuario="Bárbara" onclick="selecionarUsuario('Bárbara')" class="escolha-usuario-btn">Bárbara</button>
       <button type="button" data-usuario="Gabriel" onclick="selecionarUsuario('Gabriel')" class="escolha-usuario-btn">Gabriel</button>
+      <button type="button" data-usuario="Jailton" onclick="selecionarUsuario('Jailton')" class="escolha-usuario-btn">Jailton</button>
     </div>
     <p id="escolha-usuario-erro" style="display:none;color:#e0958a;font-size:12px;font-family:'Inter',sans-serif;margin:-22px 0 22px">Selecione o seu nome primeiro</p>
     <p style="color:#e8dfc4;opacity:0.6;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin:0 0 28px;font-family:'Inter',sans-serif">O que você deseja fazer?</p>
@@ -2808,7 +2809,7 @@ body.mobile-mode #main{padding-bottom:72px}
       <div class="modal-body">
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
           
-          <select class="form-control" id="hist-filtro-usuario" onchange="renderHistoricoAlteracoes()" style="max-width:180px"><option value="">Todos os usuários</option><option>Bárbara</option><option>Gabriel</option><option>Sem identificar</option></select>
+          <select class="form-control" id="hist-filtro-usuario" onchange="renderHistoricoAlteracoes()" style="max-width:180px"><option value="">Todos os usuários</option><option>Bárbara</option><option>Gabriel</option><option>Jailton</option><option>Sem identificar</option></select>
           <input class="form-control" id="hist-filtro-texto" oninput="renderHistoricoAlteracoes()" placeholder="Buscar (apto, ação...)" style="max-width:240px">
         </div>
         <div style="margin-bottom:12px"><button class="btn btn-secondary" onclick="gerarPDFAuditoria()">Gerar PDF</button></div>
