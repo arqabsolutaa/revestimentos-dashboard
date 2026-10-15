@@ -166,3 +166,9 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - Planilha nova **Romaneios** (criada sozinha): id, modulo, pedido, data_emissao, status, fornecedor, ap, cliente, pagamento, frete, peso_kg, total, total_m2, itens (JSON), observacao, comprovante_url, criado_em, criado_por. PDF vai para a pasta do Drive "Romaneios_Essence".
 - Actions (Code.gs): getRomaneios, addRomaneio, updateRomaneio, deleteRomaneio (registrada em Exclusões), uploadComprovanteRomaneio (POST). Campo `modulo` ('marmoraria') permite reaproveitar em outros módulos.
 - Exige redeploy do Code.gs. Ainda não entra no data.json/PDF das contas.
+
+## Compras — só entram os aptos que ainda não retiraram (14/10/2026)
+- Regra nova da lista de Compras: se um apto **já teve saída** daquele revestimento (saída com o número do apto, Essence), ele **sai da necessidade**. Só os aptos que ainda não retiraram disputam o estoque atual. Falta = necessário (aptos pendentes, com perda) − (estoque atual − reserva técnica).
+- Antes o sistema somava de volta TODAS as saídas do revestimento ao estoque (inclusive saídas de outras obras, como Vista Park), o que podia esconder falta (ex.: Sintese 160x160 faltava 9,6 m² e aparecia zerado).
+- Saídas com apto "Vista Park", "Reserva" ou "Belize" não contam para apto do Essence. Saída sem número de apto não marca ninguém como "já retirou".
+- Coluna "Já Retirado" removida da tela de Compras.

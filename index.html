@@ -2678,7 +2678,7 @@ body.mobile-mode #main{padding-bottom:72px}
     <div class="page-header">
       <div class="page-header-left">
         <h1>Compras</h1>
-        <p>Revestimentos que faltam no estoque pra cobrir o que já foi personalizado nos apês (já com a margem de perda de cada item)</p>
+        <p>Revestimentos que faltam pra cobrir os apês que ainda NÃO retiraram o material (já com a margem de perda). Apê que já teve saída não entra na conta</p>
       </div>
       <div class="header-actions">
         <button class="btn btn-secondary" onclick="gerarPDFNecessidadeCompra()" id="btn-pdf-necessidadecompra" style="margin-right:4px">
@@ -7036,6 +7036,22 @@ function _calcularNecessidadeCompra() {
     }
   });
 
+  // Quem já teve saída: se o apto já retirou aquele revestimento (saída registrada), o material já saiu do
+  // estoque e ele NÃO entra mais na necessidade. Só os aptos que ainda não retiraram é que disputam o estoque atual.
+  const _aptoEssenceDaSaida = sa => {
+    const a = String(sa.apto || '').trim();
+    if (/vista|reserva|belize/i.test(a) || /vista/i.test(String(sa.obra || ''))) return null; // outra obra
+    const m = a.match(/^(\d{2,3})$/) || a.match(/Apto\s*(\d{2,3})/i);
+    return m ? m[1] : null;
+  };
+  const jaSaiu = new Set(); // "apto|id do revestimento"
+  (dadosSaidas || []).forEach(sa => {
+    const ap = _aptoEssenceDaSaida(sa); if (!ap) return;
+    const codigo = String(sa.codigo_rev || '').trim(); if (!codigo) return;
+    const rev = dadosRevestimentos.find(r => String(r.codigo) === codigo) || dadosRevestimentos.find(r => String(r.id) === codigo);
+    if (rev) jaSaiu.add(ap + '|' + String(rev.id || rev.codigo));
+  });
+
   const porRevestimento = {}; // id/codigo -> { rev, necessarioM2, itens: [...] }
   Object.values(maisRecente).forEach(p => {
     let selecoes;
@@ -7048,9 +7064,10 @@ function _calcularNecessidadeCompra() {
       if (!rev) return; // referência órfã — revestimento não existe mais no catálogo
       const m2 = parseFloat(v.m2) || 0;
       if (m2 <= 0) return;
+      const key = String(rev.id || rev.codigo);
+      if (jaSaiu.has(ap + '|' + key)) return; // esse apto já retirou esse revestimento do estoque
       const perda = (parseFloat(rev.perda_pct) > 0 ? parseFloat(rev.perda_pct) : 20) / 100;
       const m2comPerda = m2 * (1 + perda);
-      const key = String(rev.id || rev.codigo);
       if (!porRevestimento[key]) porRevestimento[key] = { rev, necessarioM2: 0, itens: [] };
       porRevestimento[key].necessarioM2 += m2comPerda;
       const partesChave = chaveSel.split('-');
@@ -7058,28 +7075,14 @@ function _calcularNecessidadeCompra() {
       porRevestimento[key].itens.push({ ap, cliente: clienteBase, ambiente, m2, m2comPerda });
     });
   });
-
-  // Soma o que já saiu do estoque via Saídas registradas (estoque_m2 já vem descontado disso,
-  // então pra saber o total que já foi comprado/disponibilizado pra cada revestimento a gente
-  // precisa somar de volta o que já saiu — senão material já retirado (ex.: síntese do apto 42
-  // que já teve a saída dada) continua aparecendo como "faltando comprar".
-  const saidaPorRevestimento = {};
-  (dadosSaidas || []).forEach(s => {
-    const codigo = String(s.codigo_rev || '').trim();
-    if (!codigo) return;
-    const rev = dadosRevestimentos.find(r => String(r.codigo) === codigo) || dadosRevestimentos.find(r => String(r.id) === codigo);
-    if (!rev) return;
-    const key = String(rev.id || rev.codigo);
-    const m2 = parseFloat(s.quantidade_m2) || 0;
-    saidaPorRevestimento[key] = (saidaPorRevestimento[key] || 0) + m2;
-  });
+  const saidaPorRevestimento = {}; // não soma mais as saídas de volta: quem já retirou saiu da necessidade
 
   const lista = Object.values(porRevestimento).map(e => {
     const estoque = parseFloat(e.rev.estoque_m2) || 0;
     const key = String(e.rev.id || e.rev.codigo);
     const saidaM2 = saidaPorRevestimento[key] || 0;
     const reservadoM2 = _reservadoM2(e.rev); // reserva técnica: está no estoque mas não pode ser usada nas personalizações
-    const disponivelTotal = estoque + saidaM2 - reservadoM2; // estoque + o que já saiu (já foi comprado) − reserva técnica
+    const disponivelTotal = estoque - reservadoM2; // estoque atual − reserva técnica (aptos que já retiraram não entram na necessidade)
     const saldo = e.necessarioM2 - disponivelTotal;
     const m2cx = parseFloat(e.rev.m2_por_caixa) || 0;
     const caixasFaltam = saldo > 0.01 && m2cx > 0 ? Math.ceil(saldo / m2cx) : 0;
@@ -10799,13 +10802,12 @@ function renderNecessidadeCompra() {
 
   const fmt2 = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   cont.innerHTML = `<div class="table-wrap"><table>
-    <thead><tr><th>Revestimento</th><th>Medida</th><th>Aptos</th><th>Estoque Atual</th><th>Já Retirado</th><th>Necessário</th><th>Faltam (m²)</th><th></th></tr></thead>
+    <thead><tr><th>Revestimento</th><th>Medida</th><th>Aptos</th><th>Estoque Atual</th><th>Necessário</th><th>Faltam (m²)</th><th></th></tr></thead>
     <tbody>${faltando.map((x,i) => `<tr>
       <td style="font-weight:500">${x.rev.nome||'-'}</td>
       <td>${x.rev.tamanho||'—'}</td>
       <td>${_aptosDoItem(x).map(a => `<span class="badge badge-info" style="margin-right:3px">${a}</span>`).join('')}</td>
       <td>${fmt2(x.estoqueM2)} m²${x.reservadoM2 > 0.005 ? `<div style="font-size:10px;color:var(--warn)">− ${fmt2(x.reservadoM2)} m² de reserva técnica</div>` : ''}</td>
-      <td>${fmt2(x.saidaM2||0)} m²</td>
       <td>${fmt2(x.necessarioM2)} m²</td>
       <td><span class="badge badge-danger">${fmt2(x.saldoM2)} m²</span></td>
       <td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px" onclick="abrirDetalheNecessidadeCompra(${i})">Aptos</button></td>
@@ -10820,7 +10822,7 @@ function abrirDetalheNecessidadeCompra(idx) {
   const fmt2 = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   document.getElementById('necessidadecompra-detalhe-titulo').textContent = x.rev.nome + (x.rev.tamanho ? ' · ' + x.rev.tamanho : '');
   document.getElementById('necessidadecompra-detalhe-corpo').innerHTML = `
-    <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Estoque atual: <strong>${fmt2(x.estoqueM2)} m²</strong>${x.reservadoM2 > 0.005 ? ' (reserva técnica: <strong>' + fmt2(x.reservadoM2) + ' m²</strong>, não conta como disponível)' : ''} · Já retirado (saídas): <strong>${fmt2(x.saidaM2||0)} m²</strong> · Necessário: <strong>${fmt2(x.necessarioM2)} m²</strong> · Faltam: <strong style="color:var(--danger)">${fmt2(x.saldoM2)} m²</strong></p>
+    <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Estoque atual: <strong>${fmt2(x.estoqueM2)} m²</strong>${x.reservadoM2 > 0.005 ? ' (reserva técnica: <strong>' + fmt2(x.reservadoM2) + ' m²</strong>, não conta como disponível)' : ''} · Necessário: <strong>${fmt2(x.necessarioM2)} m²</strong> · Faltam: <strong style="color:var(--danger)">${fmt2(x.saldoM2)} m²</strong></p>
     <div class="table-wrap"><table>
       <thead><tr><th>Apto</th><th>Cliente</th><th>Ambiente</th><th style="text-align:right">m² (com perda)</th></tr></thead>
       <tbody>${x.itens.map(it => `<tr>
