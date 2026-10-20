@@ -28311,6 +28311,25 @@
       "valor_pago": "",
       "condicao_pagamento_confirmada": "",
       "valor_avista_confirmado": ""
+    },
+    {
+      "id": "id_1792497832659_mf8bs",
+      "ap": "151B",
+      "cliente": "— (R01)",
+      "empresa": "Empresa",
+      "data": "20/10/2026",
+      "selecoes": "{\"151B-Banho Master-Paredes-1\":{\"m2\":20.78,\"piso\":\"12\"},\"151B-Banho Master-Piso-3\":{\"m2\":5.75,\"piso\":\"3\"},\"151B-Banho Master-Piso-4\":{\"m2\":5.75,\"piso\":\"14\"},\"151B-Banho 02-Paredes-0\":{\"m2\":24.86,\"piso\":\"12\"},\"151B-Banho 02-Piso-1\":{\"m2\":5.66,\"piso\":\"3\"},\"151B-Banho 02-Piso-2\":{\"m2\":5.66,\"piso\":\"14\"},\"151B-Living-Piso Geral-0\":{\"m2\":106.34,\"piso\":\"51\"},\"151B-Área Gourmet-Paredes Decorativa-0\":{\"m2\":21.22,\"piso\":\"58\"}}",
+      "status": "pendente",
+      "criado_em": "20/10/2026",
+      "status_pgto": "",
+      "obs_pgto": "",
+      "comprovante_url": "",
+      "total_m2": "235.224",
+      "total_valor": "56774.36928",
+      "arquivado": "",
+      "valor_pago": "",
+      "condicao_pagamento_confirmada": "",
+      "valor_avista_confirmado": ""
     }
   ],
   "orcamentos": [
