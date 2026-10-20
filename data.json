@@ -29585,6 +29585,20 @@
       "obs": "",
       "criado_em": "20/10/2026",
       "qtd_pecas_usadas": "27"
+    },
+    {
+      "id": "id_1792528911822_mlbrx",
+      "ap": "61",
+      "cliente": "Patricia e Edson",
+      "revestimento": "Qatari Desert Nat Ret",
+      "codigo_rev": "7",
+      "lote_id": "",
+      "data_fab": "21/10/2026",
+      "qtd_caixas_usadas": "9",
+      "data_inst": "21/10/2026",
+      "obs": "",
+      "criado_em": "20/10/2026",
+      "qtd_pecas_usadas": "27"
     }
   ],
   "lotes": [
@@ -30903,6 +30917,19 @@
     },
     {
       "id": "id_1792528874656_m24ob",
+      "codigo_rev": "7",
+      "nome": "Qatari Desert Nat Ret",
+      "data_fab": "21/10/2026",
+      "qtd_caixas": "9",
+      "m2_por_caixa": "2.42",
+      "m2_total": "21.78",
+      "localizacao": "",
+      "obs": "Registrado via instalação",
+      "criado_em": "20/10/2026",
+      "qtd_pecas": "27"
+    },
+    {
+      "id": "id_1792528913097_qyau8",
       "codigo_rev": "7",
       "nome": "Qatari Desert Nat Ret",
       "data_fab": "21/10/2026",
