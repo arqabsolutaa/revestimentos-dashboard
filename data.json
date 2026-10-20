@@ -29543,6 +29543,20 @@
       "obs": "",
       "criado_em": "20/10/2026",
       "qtd_pecas_usadas": "15"
+    },
+    {
+      "id": "id_1792528619442_f1jef",
+      "ap": "61",
+      "cliente": "Patricia e Edson",
+      "revestimento": "Dansk Cement White Nat Ret",
+      "codigo_rev": "10",
+      "lote_id": "",
+      "data_fab": "06/03/2026",
+      "qtd_caixas_usadas": "5",
+      "data_inst": "21/10/2026",
+      "obs": "",
+      "criado_em": "20/10/2026",
+      "qtd_pecas_usadas": "15"
     }
   ],
   "lotes": [
@@ -30812,6 +30826,19 @@
       "codigo_rev": "12",
       "nome": "Pietra Lombarda Off White",
       "data_fab": "14/02/2026",
+      "qtd_caixas": "5",
+      "m2_por_caixa": "2.42",
+      "m2_total": "12.1",
+      "localizacao": "",
+      "obs": "Registrado via instalação",
+      "criado_em": "20/10/2026",
+      "qtd_pecas": "15"
+    },
+    {
+      "id": "id_1792528620132_hoxuu",
+      "codigo_rev": "10",
+      "nome": "Dansk Cement White Nat Ret",
+      "data_fab": "06/03/2026",
       "qtd_caixas": "5",
       "m2_por_caixa": "2.42",
       "m2_total": "12.1",
