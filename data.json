@@ -29557,6 +29557,20 @@
       "obs": "",
       "criado_em": "20/10/2026",
       "qtd_pecas_usadas": "24"
+    },
+    {
+      "id": "id_1792528807806_3l8cm",
+      "ap": "61",
+      "cliente": "Patricia e Edson",
+      "revestimento": "Posto 10 Nat Ret",
+      "codigo_rev": "6",
+      "lote_id": "",
+      "data_fab": "02/03/2025",
+      "qtd_caixas_usadas": "8",
+      "data_inst": "21/10/2026",
+      "obs": "",
+      "criado_em": "20/10/2026",
+      "qtd_pecas_usadas": "24"
     }
   ],
   "lotes": [
@@ -30852,6 +30866,19 @@
       "codigo_rev": "10",
       "nome": "Dansk Cement White Nat Ret",
       "data_fab": "06/03/2026",
+      "qtd_caixas": "8",
+      "m2_por_caixa": "2.42",
+      "m2_total": "19.36",
+      "localizacao": "",
+      "obs": "Registrado via instalação",
+      "criado_em": "20/10/2026",
+      "qtd_pecas": "24"
+    },
+    {
+      "id": "id_1792528809655_4jghs",
+      "codigo_rev": "6",
+      "nome": "Posto 10 Nat Ret",
+      "data_fab": "02/03/2025",
       "qtd_caixas": "8",
       "m2_por_caixa": "2.42",
       "m2_total": "19.36",
