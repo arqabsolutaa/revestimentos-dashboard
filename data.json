@@ -29473,6 +29473,20 @@
       "obs": "",
       "criado_em": "20/10/2026",
       "qtd_pecas_usadas": "24"
+    },
+    {
+      "id": "id_1792527977729_r6xqg",
+      "ap": "61",
+      "cliente": "Patricia e Edson",
+      "revestimento": "Charleston Nat Ret",
+      "codigo_rev": "38",
+      "lote_id": "",
+      "data_fab": "20/04/2025",
+      "qtd_caixas_usadas": "5",
+      "data_inst": "20/10/2026",
+      "obs": "",
+      "criado_em": "20/10/2026",
+      "qtd_pecas_usadas": "5"
     }
   ],
   "lotes": [
@@ -30684,6 +30698,19 @@
       "obs": "Registrado via instalação",
       "criado_em": "20/10/2026",
       "qtd_pecas": "24"
+    },
+    {
+      "id": "id_1792527978814_p4gi6",
+      "codigo_rev": "38",
+      "nome": "Charleston Nat Ret",
+      "data_fab": "20/04/2025",
+      "qtd_caixas": "5",
+      "m2_por_caixa": "2.55",
+      "m2_total": "12.75",
+      "localizacao": "",
+      "obs": "Registrado via instalação",
+      "criado_em": "20/10/2026",
+      "qtd_pecas": "5"
     }
   ],
   "entradasPersonalizacao": [
