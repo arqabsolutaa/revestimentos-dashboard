@@ -29189,6 +29189,21 @@
       "itens": "[{\"nome\":\"Pietra Lombarda Off White\",\"tamanho\":\"90x90\",\"m2\":20.78,\"preco\":105.3},{\"nome\":\"MS Barcelona Cristal Nat Ret\",\"tamanho\":\"90x90\",\"m2\":5.75,\"preco\":105.3},{\"nome\":\"Pietra Lombarda Off White\",\"tamanho\":\"90x90\",\"m2\":24.86,\"preco\":105.3},{\"nome\":\"MS Barcelona Cristal Nat Ret\",\"tamanho\":\"90x90\",\"m2\":5.66,\"preco\":105.3},{\"nome\":\"Sintese Platina St Nat\",\"tamanho\":\"120x270\",\"m2\":106.34,\"preco\":340.8},{\"nome\":\"Aeterna Bianco Cesellato \",\"tamanho\":\"45X120\",\"m2\":21.22,\"preco\":182.02},{\"nome\":\"Bonbon Rosa\",\"tamanho\":\"30,5x30,5\",\"m2\":3,\"preco\":307.22}]",
       "selecoes": "{\"151B-Banho Master-Paredes-1\":{\"m2\":20.78,\"piso\":\"12\"},\"151B-Banho Master-Piso-3\":{\"m2\":5.75,\"piso\":\"3\"},\"151B-Banho 02-Paredes-0\":{\"m2\":24.86,\"piso\":\"12\"},\"151B-Banho 02-Piso-1\":{\"m2\":5.66,\"piso\":\"3\"},\"151B-Living-Piso Geral-0\":{\"m2\":106.34,\"piso\":\"51\"},\"151B-Área Gourmet-Paredes Decorativa-0\":{\"m2\":21.22,\"piso\":\"58\"},\"151B-Banho 02-Parede Decorativa-3\":{\"m2\":3,\"piso\":\"id_1792500397682_ychlq\"}}",
       "criado_em": "20/10/2026"
+    },
+    {
+      "id": "id_1792501925544_tm2zl",
+      "data": "20/10/2026",
+      "dataISO": "20/10/2026",
+      "cliente": "—",
+      "ap": "151B",
+      "empresa": "Absoluta",
+      "totalM2": "188.24",
+      "totalValor": "58101.99",
+      "pagamento": "avista",
+      "desconto": "0",
+      "itens": "[{\"nome\":\"Pietra Lombarda Off White\",\"tamanho\":\"90x90\",\"m2\":20.78,\"preco\":105.3},{\"nome\":\"MS Barcelona Cristal Nat Ret\",\"tamanho\":\"90x90\",\"m2\":5.75,\"preco\":105.3},{\"nome\":\"Pietra Lombarda Off White\",\"tamanho\":\"90x90\",\"m2\":24.86,\"preco\":105.3},{\"nome\":\"MS Barcelona Cristal Nat Ret\",\"tamanho\":\"90x90\",\"m2\":5.66,\"preco\":105.3},{\"nome\":\"Sintese Platina St Nat\",\"tamanho\":\"120x270\",\"m2\":106.34,\"preco\":340.8},{\"nome\":\"Aeterna Bianco Cesellato \",\"tamanho\":\"45X120\",\"m2\":21.22,\"preco\":182.02},{\"nome\":\"Bonbon Rosa\",\"tamanho\":\"30,5x30,5\",\"m2\":3.63,\"preco\":3303.44}]",
+      "selecoes": "{\"151B-Banho Master-Paredes-1\":{\"m2\":20.78,\"piso\":\"12\"},\"151B-Banho Master-Piso-3\":{\"m2\":5.75,\"piso\":\"3\"},\"151B-Banho 02-Paredes-0\":{\"m2\":24.86,\"piso\":\"12\"},\"151B-Banho 02-Piso-1\":{\"m2\":5.66,\"piso\":\"3\"},\"151B-Living-Piso Geral-0\":{\"m2\":106.34,\"piso\":\"51\"},\"151B-Área Gourmet-Paredes Decorativa-0\":{\"m2\":21.22,\"piso\":\"58\"},\"151B-Banho 02-Parede Decorativa-4\":{\"m2\":3.63,\"piso\":\"id_1792500397682_ychlq\"}}",
+      "criado_em": "20/10/2026"
     }
   ],
   "instalacoes": [
