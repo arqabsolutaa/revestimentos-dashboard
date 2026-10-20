@@ -1448,6 +1448,27 @@
       "criado_em": "20/10/2026",
       "perda_pct": "20",
       "custo_m2": ""
+    },
+    {
+      "id": "id_1792500567629_e6ani",
+      "codigo": "151B",
+      "nome": "Bonbon Rosa",
+      "imagem": "",
+      "site": "",
+      "m2_por_caixa": "0",
+      "pecas_por_caixa": "0",
+      "qtd_caixas": "0",
+      "tamanho": "30,5x30,5",
+      "junta": "",
+      "espessura": "",
+      "data_fabricacao": "",
+      "lote": "",
+      "obra": "Essence",
+      "estoque_m2": "0",
+      "preco_m2": "307.22",
+      "criado_em": "20/10/2026",
+      "perda_pct": "20",
+      "custo_m2": ""
     }
   ],
   "paredes": [
