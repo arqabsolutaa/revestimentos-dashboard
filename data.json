@@ -22233,6 +22233,20 @@
       "criado_em": "20/10/2026",
       "planta_img": "",
       "nome_arquivo": ""
+    },
+    {
+      "id": "id_1792501637653_fuoty",
+      "apartamento": "151B",
+      "cliente": "",
+      "local": "Banho 02",
+      "parede": "Parede Decorativa",
+      "metro_linear": "2.9",
+      "altura": "1.25",
+      "imagem": "",
+      "obs": "",
+      "criado_em": "20/10/2026",
+      "planta_img": "",
+      "nome_arquivo": ""
     }
   ],
   "saidas": [
