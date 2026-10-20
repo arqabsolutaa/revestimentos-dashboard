@@ -29552,11 +29552,11 @@
       "codigo_rev": "10",
       "lote_id": "",
       "data_fab": "06/03/2026",
-      "qtd_caixas_usadas": "5",
+      "qtd_caixas_usadas": "8",
       "data_inst": "21/10/2026",
       "obs": "",
       "criado_em": "20/10/2026",
-      "qtd_pecas_usadas": "15"
+      "qtd_pecas_usadas": "24"
     }
   ],
   "lotes": [
@@ -30605,13 +30605,13 @@
       "codigo_rev": "10",
       "nome": "Dansk Cement White Nat Ret",
       "data_fab": "06/03/2026",
-      "qtd_caixas": "22",
+      "qtd_caixas": "17",
       "m2_por_caixa": "2.42",
-      "m2_total": "53.239999999999995",
+      "m2_total": "41.14",
       "localizacao": "",
       "obs": "Registrado via instalação",
       "criado_em": "07/10/2026",
-      "qtd_pecas": "66"
+      "qtd_pecas": "51"
     },
     {
       "id": "id_1791377192285_b75il",
@@ -30846,6 +30846,19 @@
       "obs": "Registrado via instalação",
       "criado_em": "20/10/2026",
       "qtd_pecas": "15"
+    },
+    {
+      "id": "id_1792528740218_zkrmx",
+      "codigo_rev": "10",
+      "nome": "Dansk Cement White Nat Ret",
+      "data_fab": "06/03/2026",
+      "qtd_caixas": "8",
+      "m2_por_caixa": "2.42",
+      "m2_total": "19.36",
+      "localizacao": "",
+      "obs": "Registrado via instalação",
+      "criado_em": "20/10/2026",
+      "qtd_pecas": "24"
     }
   ],
   "entradasPersonalizacao": [
