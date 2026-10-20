@@ -22142,6 +22142,20 @@
       "criado_em": "20/10/2026",
       "planta_img": "",
       "nome_arquivo": ""
+    },
+    {
+      "id": "id_1792497112119_wma7p",
+      "apartamento": "151B",
+      "cliente": "",
+      "local": "Área Gourmet",
+      "parede": "Paredes Decorativa",
+      "metro_linear": "7.86",
+      "altura": "2.7",
+      "imagem": "",
+      "obs": "",
+      "criado_em": "20/10/2026",
+      "planta_img": "",
+      "nome_arquivo": ""
     }
   ],
   "saidas": [
