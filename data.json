@@ -29501,6 +29501,20 @@
       "obs": "",
       "criado_em": "20/10/2026",
       "qtd_pecas_usadas": "65"
+    },
+    {
+      "id": "id_1792528369545_p6x22",
+      "ap": "61",
+      "cliente": "Patricia e Edson",
+      "revestimento": "Oh!Take Mountain Nat Ret",
+      "codigo_rev": "11",
+      "lote_id": "",
+      "data_fab": "14/01/2026",
+      "qtd_caixas_usadas": "11",
+      "data_inst": "21/10/2026",
+      "obs": "",
+      "criado_em": "20/10/2026",
+      "qtd_pecas_usadas": "33"
     }
   ],
   "lotes": [
@@ -30738,6 +30752,19 @@
       "obs": "Registrado via instalação",
       "criado_em": "20/10/2026",
       "qtd_pecas": "65"
+    },
+    {
+      "id": "id_1792528370579_uu5ia",
+      "codigo_rev": "11",
+      "nome": "Oh!Take Mountain Nat Ret",
+      "data_fab": "14/01/2026",
+      "qtd_caixas": "11",
+      "m2_por_caixa": "2.42",
+      "m2_total": "26.619999999999997",
+      "localizacao": "",
+      "obs": "Registrado via instalação",
+      "criado_em": "20/10/2026",
+      "qtd_pecas": "33"
     }
   ],
   "entradasPersonalizacao": [
