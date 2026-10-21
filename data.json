@@ -31197,6 +31197,23 @@
       "observacao": "",
       "criado_em": "08/10/2026",
       "conta": "rd06"
+    },
+    {
+      "id": "id_1792580715941_eseqz",
+      "data": "20/10/2026",
+      "apartamento": "81",
+      "cliente": "Fernanda e Bruno",
+      "categoria": "Revestimento",
+      "valor": "81027.72",
+      "valor_avista": "81027.72",
+      "condicao_pagamento": "avista",
+      "valor_juros": "0",
+      "forma_pagamento": "",
+      "comprovante_url": "",
+      "status": "pendente",
+      "observacao": "",
+      "criado_em": "21/10/2026",
+      "conta": "rd06"
     }
   ],
   "saidasObra": [
