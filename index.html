@@ -3289,6 +3289,7 @@ body.mobile-mode #main{padding-bottom:72px}
   <div class="page-header">
     <div class="page-header-left"><h1>Pagamento de Instalações</h1><p>Quanto pagar a cada instalador, calculado pelas paredes revestidas</p></div>
     <div class="header-actions">
+      <button class="btn btn-secondary" onclick="ctrlCarregar(true)" title="Puxar de novo o que está na planilha">↻ Atualizar</button>
       <button class="btn btn-secondary" onclick="ctrlAbrirValores()">Tabela de valores</button>
       <button class="btn btn-primary" onclick="ctrlAbrirInstalacao()">+ Nova instalação</button>
     </div>
@@ -6083,7 +6084,7 @@ window.onload = async () => {
 let ctrl = { instalador: [], valor: [], instalacao: [], pagamento: [] };
 let _ctrlCarregado = false, _ciEdit = null, _ciItens = {}, _ciPessoas = [], _cbInst = null;
 
-const _cNum = v => { if (typeof v === 'number') return v; let t = String(v == null ? '' : v).trim(); if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.'); const n = parseFloat(t); return isNaN(n) ? 0 : n; };
+const _cNum = v => { if (typeof v === 'number') return v; let t = String(v == null ? '' : v).replace(/[^\d.,-]/g, ''); if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.'); const n = parseFloat(t); return isNaN(n) ? 0 : n; };
 const _cBool = v => String(v).toLowerCase() === 'true';
 const _cBRL = v => 'R$ ' + (Math.round((v || 0) * 100) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const _cM2 = v => (Math.round((v || 0) * 100) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -6094,9 +6095,12 @@ function _cJson(v, pad) { if (Array.isArray(v)) return v; try { const r = JSON.p
 
 async function ctrlCarregar(forcar) {
   try {
-    const d = await api('getCtrlInst');
+    let d;
+    try { d = await api('getCtrlInst'); }
+    catch (e1) { if (/Timeout/i.test(e1.message || '')) { showToast('O Apps Script demorou, tentando de novo...', 'info'); d = await api('getCtrlInst'); } else throw e1; }
     ctrl = { instalador: d.instalador || [], valor: d.valor || [], instalacao: d.instalacao || [], pagamento: d.pagamento || [] };
     _ctrlCarregado = true;
+    if (forcar) showToast('Dados atualizados da planilha', 'success');
   } catch (e) { showToast('Não consegui carregar o Controle: ' + e.message, 'error'); }
   if (!dadosRevestimentos.length || !dadosParedes.length) {
     try { const dd = await lerDados(); if (dd.revestimentos) dadosRevestimentos = dd.revestimentos; if (dd.paredes) dadosParedes = dd.paredes; } catch (e) {}
@@ -6264,12 +6268,18 @@ async function cvSalvar() {
     lote.push({ id: ex ? ex.id : undefined, rev_id: String(id), rev_nome: r.nome, tamanho: r.tamanho || '', valor_m2: novo });
   });
   if (!lote.length) { fecharModal('modal-ctrl-valores'); return; }
-  try { await apiPost('saveCtrlInst', { tipo: 'valor', lote }); fecharModal('modal-ctrl-valores'); showToast('Valores salvos', 'success'); await ctrlCarregar(); } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+  const btn = document.querySelector('#modal-ctrl-valores .btn-primary'); if (btn) { btn.disabled = true; btn.textContent = 'Salvando...'; }
+  try {
+    for (let i = 0; i < lote.length; i += 20) await apiPost('saveCtrlInst', { tipo: 'valor', lote: lote.slice(i, i + 20) });
+    fecharModal('modal-ctrl-valores'); showToast('Valores salvos (' + lote.length + ')', 'success'); await ctrlCarregar();
+  } catch (e) { showToast('Erro ao salvar: ' + e.message + ' — confira na planilha o que já entrou.', 'error'); }
+  if (btn) { btn.disabled = false; btn.textContent = 'Salvar valores'; }
 }
 
 // ---------- Nova / editar instalação ----------
 function _ciOptsRev(sel) { return '<option value="">— Revestimento —</option>' + dadosRevestimentos.slice().sort((a, b) => String(a.nome).localeCompare(String(b.nome))).map(r => { const v = _cValorRev(r.id); return `<option value="${r.id}" ${String(sel) === String(r.id) ? 'selected' : ''}>${_cEsc(r.nome)} [${_cEsc(r.tamanho || '')}]${v ? ' · ' + _cBRL(v) + '/m²' : ' · sem valor'}</option>`; }).join(''); }
-function ctrlAbrirInstalacao(id) {
+async function ctrlAbrirInstalacao(id) {
+  try { const d = await api('getCtrlInst'); ctrl.valor = d.valor || ctrl.valor; ctrl.instalador = d.instalador || ctrl.instalador; } catch (e) { /* segue com o que já está na tela */ }
   _ciEdit = id ? ctrl.instalacao.find(x => String(x.id) === String(id)) : null; _ciItens = {};
   document.getElementById('ci-titulo').textContent = _ciEdit ? 'Editar instalação · Apto ' + _ciEdit.apto : 'Nova instalação';
   const aps = [...new Set(dadosParedes.map(p => String(p.apartamento)))].sort((a, b) => parseInt(a) - parseInt(b) || a.localeCompare(b));
