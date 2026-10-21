@@ -155,14 +155,14 @@
       "site": "https://www.portobello.com.br/produtos/pietra-lombarda/field-tile/pietra-lombarda-off-white/90x90-natural/209538E",
       "m2_por_caixa": "2.42",
       "pecas_por_caixa": "3",
-      "qtd_caixas": "88.16",
+      "qtd_caixas": "83.16",
       "tamanho": "90x90",
       "junta": "1,5mm",
       "espessura": "8,0mm",
       "data_fabricacao": "N / D ",
       "lote": "N / I ",
       "obra": "Essence",
-      "estoque_m2": "213.35000000000016",
+      "estoque_m2": "201.25000000000017",
       "preco_m2": "105.3",
       "criado_em": "",
       "perda_pct": "20",
@@ -27683,6 +27683,19 @@
       "destino": "uso",
       "obs": "Via Personalizar - Patricia e Edson ",
       "criado_em": "13/10/2026"
+    },
+    {
+      "id": "id_1792611993311_nmvz1",
+      "data": "21/10/2026",
+      "revestimento": "Pietra Lombarda Off White",
+      "codigo_rev": "9012/40",
+      "obra": "Essence Residence",
+      "local": "Banheiros 03 e 04",
+      "apto": "Apartamento 12 ",
+      "quantidade_m2": "12.1",
+      "destino": "uso",
+      "obs": "Alteração do piso",
+      "criado_em": "21/10/2026"
     }
   ],
   "personalizar": [
