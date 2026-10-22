@@ -28183,15 +28183,15 @@
       "selecoes": "{\"82-Living-Piso-0\":{\"m2\":100.3,\"piso\":\"41\"},\"82-Lavabo-Piso-0\":{\"m2\":2.43,\"piso\":\"14\"},\"82-Lavabo-Paredes Decorativas-1787594367845\":{\"m2\":3.21,\"piso\":\"166\"},\"82-Banho 02 (Master)-A-0\":{\"m2\":9.77,\"piso\":\"14\"},\"82-Banho 02 (Master)-B-1\":{\"m2\":4.82,\"piso\":\"14\"},\"82-Banho 02 (Master)-C-2\":{\"m2\":9.77,\"piso\":\"14\"},\"82-Banho 02 (Master)-D-3\":{\"m2\":4.82,\"piso\":\"58\"},\"82-Banho 02 (Master)-Piso-4\":{\"m2\":7.19,\"piso\":\"14\"},\"82-Banho 03-A-0\":{\"m2\":3.98,\"piso\":\"55\"},\"82-Banho 03-F-5\":{\"m2\":2.27,\"piso\":\"55\"},\"82-Banho 03-B-1\":{\"m2\":4.28,\"piso\":\"14\"},\"82-Banho 03-C-2\":{\"m2\":4.28,\"piso\":\"14\"},\"82-Banho 03-D-3\":{\"m2\":2.04,\"piso\":\"14\"},\"82-Banho 03-E-4\":{\"m2\":0.31,\"piso\":\"14\"},\"82-Banho 03-Piso-6\":{\"m2\":2.71,\"piso\":\"14\"},\"82-Banho 04-A-0\":{\"m2\":3.98,\"piso\":\"58\"},\"82-Banho 04-B-1\":{\"m2\":4.28,\"piso\":\"14\"},\"82-Banho 04-C-2\":{\"m2\":4.28,\"piso\":\"14\"},\"82-Banho 04-D-3\":{\"m2\":2.04,\"piso\":\"14\"},\"82-Banho 04-E-4\":{\"m2\":0.31,\"piso\":\"14\"},\"82-Banho 04-F-5\":{\"m2\":2.27,\"piso\":\"58\"},\"82-Banho 04-Piso-6\":{\"m2\":2.71,\"piso\":\"14\"},\"82-Banho 01-A-0\":{\"m2\":4.21,\"piso\":\"14\"},\"82-Banho 01-B-1\":{\"m2\":3.26,\"piso\":\"14\"},\"82-Banho 01-C-2\":{\"m2\":6.58,\"piso\":\"14\"},\"82-Banho 01-D-3\":{\"m2\":2.68,\"piso\":\"58\"},\"82-Banho 01-E-4\":{\"m2\":2.42,\"piso\":\"14\"},\"82-Banho 01-F-5\":{\"m2\":0.59,\"piso\":\"14\"},\"82-Banho 01-Piso-6\":{\"m2\":3.08,\"piso\":\"14\"},\"82-A.S-Paredes Totais-1787595838817\":{\"m2\":50.64,\"piso\":\"82\"}}",
       "status": "pendente",
       "criado_em": "24/08/2026",
-      "status_pgto": "",
+      "status_pgto": "pago",
       "obs_pgto": "",
       "comprovante_url": "",
       "total_m2": "306.61199999999997",
       "total_valor": "51567.17232",
       "arquivado": "",
-      "valor_pago": "",
-      "condicao_pagamento_confirmada": "",
-      "valor_avista_confirmado": ""
+      "valor_pago": "51567.17",
+      "condicao_pagamento_confirmada": "pix",
+      "valor_avista_confirmado": "51567.17"
     },
     {
       "id": "id_1788543466301_dyjsf",
