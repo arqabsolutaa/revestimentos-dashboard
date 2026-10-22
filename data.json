@@ -85,27 +85,6 @@
       "custo_m2": "39.9"
     },
     {
-      "id": "9",
-      "codigo": "9009",
-      "nome": "Pietra Lombarda - Terreno",
-      "imagem": "https://media.portobello.com.br/portobello-shop-209599-e-pietra-lombarda-pietra-lombarda-off-white-ext-90x90-ret-0.png?ims=660x0",
-      "site": "https://www.portobello.com.br/produtos/pietra-lombarda/field-tile/pietra-lombarda-off-white/90x90-externo/209599E",
-      "m2_por_caixa": "2.42",
-      "pecas_por_caixa": "3",
-      "qtd_caixas": "80",
-      "tamanho": "90x90",
-      "junta": "1,5mm",
-      "espessura": "8,0mm",
-      "data_fabricacao": "N / D ",
-      "lote": "N / I ",
-      "obra": "Terreno",
-      "estoque_m2": "193.6",
-      "preco_m2": "105.3",
-      "criado_em": "",
-      "perda_pct": "20",
-      "custo_m2": "39.9"
-    },
-    {
       "id": "10",
       "codigo": "9010/40",
       "nome": "Dansk Cement White Nat Ret",
