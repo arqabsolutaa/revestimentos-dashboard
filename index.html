@@ -5658,7 +5658,7 @@ async function forcarAtualizarDados() {
     // Também aciona a sincronização pro GitHub (bom pra quem abrir depois), mas a leitura
     // abaixo já vai direto na planilha ao vivo — não depende de esperar isso propagar
     const _syncGit = jsonp(SCRIPT_URL + '?action=forcarAtualizar').catch(()=>null);
-    const dados = await lerDados(true);
+    const dados = await lerDados('direto');
     if (dados.revestimentos) dadosRevestimentos = dados.revestimentos;
     if (dados.paredes) dadosParedes = dados.paredes;
     if (dados.saidas) dadosSaidas = dados.saidas;
@@ -6441,27 +6441,54 @@ async function api(action, data = {}) {
   return result.data;
 }
 
+// Etiqueta no canto da tela: mostra que está salvando e confirma quando terminou (ou deu erro)
+let _salvandoN = 0, _salvandoTimer = null;
+function _pillSalvando(estado) {
+  let el = document.getElementById('pill-salvando');
+  if (!el) {
+    el = document.createElement('div'); el.id = 'pill-salvando';
+    el.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:99999;padding:10px 16px;border-radius:999px;font:600 13px Inter,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25);display:none;pointer-events:none;transition:opacity .2s';
+    document.body.appendChild(el);
+  }
+  clearTimeout(_salvandoTimer);
+  if (estado === 'salvando') { el.textContent = '⏳ Salvando...' + (_salvandoN > 1 ? ' (' + _salvandoN + ')' : ''); el.style.background = '#2a2620'; el.style.color = '#e8dfc4'; el.style.display = 'block'; }
+  else if (estado === 'ok') { el.textContent = '✓ Salvo'; el.style.background = '#2F7D4F'; el.style.color = '#fff'; el.style.display = 'block'; _salvandoTimer = setTimeout(() => { el.style.display = 'none'; }, 1800); }
+  else { el.textContent = '✕ Não salvou'; el.style.background = '#B3402F'; el.style.color = '#fff'; el.style.display = 'block'; _salvandoTimer = setTimeout(() => { el.style.display = 'none'; }, 5000); }
+}
+
 async function apiPost(action, data) {
   if (!SCRIPT_URL) { showToast('Configure a URL do Apps Script primeiro!', 'error'); throw new Error('no url'); }
   const params = new URLSearchParams({ action, dados: JSON.stringify(data) });
+  const ehEscrita = !/^get/i.test(action);
+  if (ehEscrita) { _salvandoN++; _pillSalvando('salvando'); }
   let result;
   try {
-    result = await jsonp(SCRIPT_URL + '?' + params);
-  } catch(e) {
-    // Leituras (get*) não alteram nada: se der timeout (Apps Script "frio"), tenta mais uma vez.
-    if (/^get/i.test(action) && /Timeout/i.test(e.message || '')) result = await jsonp(SCRIPT_URL + '?' + params);
-    else throw e;
+    try {
+      result = await jsonp(SCRIPT_URL + '?' + params);
+    } catch(e) {
+      // Leituras (get*) não alteram nada: se der timeout (Apps Script "frio"), tenta mais uma vez.
+      if (/^get/i.test(action) && /Timeout/i.test(e.message || '')) result = await jsonp(SCRIPT_URL + '?' + params);
+      else throw e;
+    }
+    if (result.error) throw new Error(result.error);
+  } catch (e) {
+    if (ehEscrita) { _salvandoN = Math.max(0, _salvandoN - 1); _pillSalvando('erro'); }
+    throw e;
   }
-  if (result.error) throw new Error(result.error);
+  if (ehEscrita) { _salvandoN = Math.max(0, _salvandoN - 1); if (_salvandoN > 0) _pillSalvando('salvando'); else _pillSalvando('ok'); if (!/CtrlInst|Romaneio/.test(action)) _marcarEscrita(); }
   // Invalidar cache em memória (exceto para ações que recarregam logo depois)
   if (action !== 'addRevestimento' && action !== 'addParede' && action !== 'saveCtrlInst' && action !== 'deleteCtrlInst') invalidarCacheDados();
   return result.data;
 }
 
+// O Apps Script lendo a planilha inteira leva vários segundos. O data.json (GitHub) é atualizado pelo servidor
+// a cada minuto, então só vale ir direto na planilha quando ESTE navegador acabou de gravar algo (ainda não
+// chegou no data.json) ou quando se pede 'direto' (botão "Atualizar dados").
+let _escritaRecenteAte = 0;
+function _marcarEscrita() { _escritaRecenteAte = Date.now() + 90000; }
 async function lerDados(forcarFresco) {
-  // Buscar do data.json (rápido) como fonte principal — exceto quando forcarFresco pede dado
-  // direto da planilha (evita o delay de cache do GitHub logo após uma escrita)
-  if (!forcarFresco) {
+  const direto = forcarFresco === 'direto' || (!!forcarFresco && Date.now() < _escritaRecenteAte);
+  if (!direto) {
     try {
       const baseUrl = window.location.hostname === 'arqabsolutaa.github.io'
         ? 'https://raw.githubusercontent.com/arqabsolutaa/revestimentos-dashboard/main/data.json'
@@ -8553,6 +8580,7 @@ async function _enviarComprovante(action, campos) {
   });
   const result = await response.json();
   if (result.error) throw new Error(result.error);
+  _marcarEscrita();
   return result.data;
 }
 

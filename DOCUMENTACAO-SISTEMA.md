@@ -181,3 +181,10 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - Status é calculado pelos pagamentos: A pagar (nada pago) / Parcial / Pago. "Dar baixa" aceita valor parcial + data; dá para editar (✎) ou desfazer (×) cada pagamento.
 - Visão Geral soma só instalações não arquivadas: total combinado, já pago, falta pagar, previsão dos próximos 30 dias, além de quadros por pessoa e por apto.
 - A senha da Bárbara para este card é conferida no servidor (hash `ctrlinst` em `HASHES_SENHA_BARBARA`).
+
+## Desempenho (out/2026)
+- Salvar ficou rápido: `atualizarGithub()` (chamada em quase todo salvamento) agora **não sincroniza na hora**. Quem mantém o `data.json` em dia é o gatilho de 1 minuto (`atualizarAutomatico`, criado por `criarTriggerAutomatico`). Se esse gatilho ficar parado mais de 3 minutos, o próprio salvamento sincroniza (auto-correção).
+- `_atualizarGithubReal()` só envia ao GitHub se o conteúdo mudou (hash MD5 em Script Properties `GH_HASH`, `GH_SHA`, `GH_ULTIMO_MS`), usa JSON compacto e não faz mais commit vazio a cada minuto.
+- Registro de valores (antes → depois) tira a "foto" só das abas que a ação mexe (`_abasParaAcao`); ação desconhecida = planilha inteira. Backup completo antes de excluir: no máximo 1x a cada 2 horas.
+- Tela: `lerDados(true)` só vai direto na planilha (lento) por 90 s depois que o próprio navegador gravou algo; fora isso usa o `data.json`. O botão "Atualizar dados" usa `lerDados('direto')`.
+- Etiqueta "⏳ Salvando… / ✓ Salvo / ✕ Não salvou" no canto da tela em todo salvamento (`apiPost`).
