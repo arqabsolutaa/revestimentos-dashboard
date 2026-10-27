@@ -13445,7 +13445,8 @@ async function loadCivil() {
   } else {
     el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
     try {
-      const dados = await lerDados();
+      let dados = await lerDados();
+      if (!Array.isArray(dados.civil)) dados = await lerDados('direto'); // espelho antigo sem Civil
       dadosCivil = dados.civil || [];
       renderCivil();
     } catch(e) {
@@ -13453,7 +13454,8 @@ async function loadCivil() {
       return;
     }
   }
-  lerDados(true).then(dados => {
+  lerDados(true).then(async dados => {
+    if (dados && !Array.isArray(dados.civil)) dados = await lerDados('direto');
     if (dados && dados.civil) { dadosCivil = dados.civil; renderCivil(); }
     _carregarConfCobranca(renderCivil);
   }).catch(()=>{});
@@ -13623,14 +13625,16 @@ async function loadArCondicionado() {
   } else {
     el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
     try {
-      const dados = await lerDados();
+      let dados = await lerDados();
+      if (!Array.isArray(dados.arCondicionado)) dados = await lerDados('direto');
       dadosArCondicionado = dados.arCondicionado || [];
       renderArCondicionado();
     } catch(e) {
       el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de ar-condicionado ainda</strong></div>';
     }
   }
-  lerDados(true).then(dados => {
+  lerDados(true).then(async dados => {
+    if (dados && !Array.isArray(dados.arCondicionado)) dados = await lerDados('direto');
     if (dados && dados.arCondicionado) { dadosArCondicionado = dados.arCondicionado; renderArCondicionado(); }
     _carregarConfCobranca(renderArCondicionado);
   }).catch(()=>{});
