@@ -1,3 +1,4 @@
+    const dados = await lerDados(true);
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -782,24 +783,34 @@ const _CONF_MODULOS = {
   metais:   { nome: 'Metais', exclusivo: false, regexEntrada: /metal|metais/i, padrao: 'avista' }
 };
 function _confDe(modulo, refId) { return (dadosCobrancasConf || []).find(c => c.modulo === modulo && String(c.ref_id) === String(refId)); }
-// Confirmações: se o espelho (data.json) ainda não tem a aba, ou se acabou de haver uma confirmação (mesmo antes de
-// recarregar a página), busca direto da planilha — senão a confirmação "some" até o espelho atualizar.
-async function _lerDadosConf() {
-  let recente = false;
-  try { recente = Date.now() - (parseInt(localStorage.getItem('conf_cob_ult')) || 0) < 5 * 60 * 1000; } catch (e) {}
-  let d = await lerDados(recente ? 'direto' : undefined);
-  if (!d || !Array.isArray(d.cobrancasConfirmadas)) d = await lerDados('direto');
-  return d;
-}
-async function _carregarConfCobranca(depois) {
+// Confirmações: o espelho (data.json) pode estar atrasado alguns minutos, então a fonte de verdade é a planilha.
+// Mostra o que o espelho tem (rápido) e logo em seguida confirma direto na planilha (aba leve; se o Code.gs ainda
+// não tiver a ação leve, cai no getDados completo).
+let _confDiretoEm = 0;
+async function _confLerDireto() {
   try {
-    const d = await _lerDadosConf();
+    const r = await jsonp(SCRIPT_URL + '?action=getCobrancasConfirmadas');
+    const lista = r && (r.data || r.result || r);
+    if (Array.isArray(lista)) return lista;
+  } catch (e) {}
+  const d = await lerDados('direto');
+  return Array.isArray(d.cobrancasConfirmadas) ? d.cobrancasConfirmadas : null;
+}
+async function _carregarConfCobranca(depois, forcar) {
+  try {
+    const d = await lerDados();
     if (d && Array.isArray(d.cobrancasConfirmadas)) {
-      // não apaga o que acabou de ser confirmado aqui se o espelho (data.json) ainda não alcançou
       const locais = (dadosCobrancasConf || []).filter(l => l._local && !d.cobrancasConfirmadas.some(c => c.modulo === l.modulo && String(c.ref_id) === String(l.ref_id)));
       dadosCobrancasConf = d.cobrancasConfirmadas.concat(locais);
+      if (depois) depois();
     }
   } catch (e) {}
+  if (forcar || Date.now() - _confDiretoEm > 60000) {
+    try {
+      const lista = await _confLerDireto();
+      if (lista) { _confDiretoEm = Date.now(); dadosCobrancasConf = lista; }
+    } catch (e) {}
+  }
   if (depois) depois();
 }
 function _confInfoOrcamento(modulo, id) {
@@ -878,7 +889,6 @@ async function salvarConfCobranca() {
   _rerenderConf(modulo);
   try {
     await apiPost('confirmarCobranca', dados);
-    try { localStorage.setItem('conf_cob_ult', String(Date.now())); } catch (e) {}
     showToast('Confirmado! Já aparece em Cobranças futuras.', 'success');
   } catch (e) { dadosCobrancasConf = antes; _rerenderConf(modulo); showToast('Erro: ' + e.message, 'error'); }
 }
@@ -887,7 +897,7 @@ async function desfazerConfCobranca(modulo, id) {
   const antes = (dadosCobrancasConf || []).slice();
   dadosCobrancasConf = dadosCobrancasConf.filter(c => !(c.modulo === modulo && String(c.ref_id) === String(id)));
   _rerenderConf(modulo);
-  try { await apiPost('desfazerCobranca', { modulo, ref_id: id }); try { localStorage.setItem('conf_cob_ult', String(Date.now())); } catch (e) {} showToast('Confirmação desfeita', 'success'); }
+  try { await apiPost('desfazerCobranca', { modulo, ref_id: id }); showToast('Confirmação desfeita', 'success'); }
   catch (e) { dadosCobrancasConf = antes; _rerenderConf(modulo); showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -7983,17 +7993,12 @@ async function loadPrevisaoCobrancas() {
   cont.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
   try {
     // Tela financeira — sempre busca fresco, direto da planilha
-    let dados = await lerDados(true);
-    let recenteConf = false; try { recenteConf = Date.now() - (parseInt(localStorage.getItem('conf_cob_ult')) || 0) < 5 * 60 * 1000; } catch (e) {}
-    if (recenteConf || !Array.isArray(dados.cobrancasConfirmadas)) dados = await lerDados('direto');
+    const dados = await lerDados(true);
     if (dados.entradasPersonalizacao) dadosEntradasPers = dados.entradasPersonalizacao;
     if (dados.saidasObra) dadosSaidasObra = dados.saidasObra;
     if (dados.baixasParcelas) dadosBaixasParcelas = dados.baixasParcelas;
-    if (Array.isArray(dados.cobrancasConfirmadas)) {
-      const locais = (dadosCobrancasConf || []).filter(l => l._local && !dados.cobrancasConfirmadas.some(c => c.modulo === l.modulo && String(c.ref_id) === String(l.ref_id)));
-      dadosCobrancasConf = dados.cobrancasConfirmadas.concat(locais);
-    }
   } catch(e) {}
+  await _carregarConfCobranca(null, true); // confirmações sempre direto da planilha nesta tela
 
   renderAtrasadasPrevisao();
 
