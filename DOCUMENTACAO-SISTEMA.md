@@ -188,3 +188,7 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - Registro de valores (antes → depois) tira a "foto" só das abas que a ação mexe (`_abasParaAcao`); ação desconhecida = planilha inteira. Backup completo antes de excluir: no máximo 1x a cada 2 horas.
 - Tela: `lerDados(true)` só vai direto na planilha (lento) por 90 s depois que o próprio navegador gravou algo; fora isso usa o `data.json`. O botão "Atualizar dados" usa `lerDados('direto')`.
 - Etiqueta "⏳ Salvando… / ✓ Salvo / ✕ Não salvou" no canto da tela em todo salvamento (`apiPost`).
+
+## Banheira escolhida → Cobranças futuras (previsão)
+- Na aba **Banheiras**, cada orçamento tem "✓ Cliente escolheu esta" (data da escolha editável) e "Desfazer". Só 1 por apartamento: confirmar uma desmarca as outras do mesmo apto. Grava `confirmado` e `data_confirmacao` em `Banheiras_Personalizar` (action `confirmarBanheira`).
+- A banheira confirmada entra em **Cobranças futuras** sozinha, sempre em 3x, valor de venda (soma de `preco_venda`), parcelas mensais a partir da data da escolha, marcada "Previsto". Quando existir uma entrada de categoria Banheira para o apto, a previsão some (sem contar em dobro). Baixa de parcela funciona igual às demais.

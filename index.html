@@ -763,12 +763,36 @@ function renderBanheiras() {
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
         <button class="btn btn-secondary" onclick="editarBanheira('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
         <button class="btn btn-secondary" onclick="gerarPDFBanheiraId('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
+        ${_banhConfirmada(p)
+          ? `<span class="badge badge-green" style="align-self:center">✓ Escolhida pelo cliente${p.data_confirmacao ? ' · ' + formatarDataDisplay(p.data_confirmacao) : ''}</span><button class="btn btn-secondary" onclick="desfazerEscolhaBanheira('${p.id}')" style="font-size:11px;padding:4px 10px">Desfazer</button>`
+          : `<button class="btn btn-primary" onclick="confirmarEscolhaBanheira('${p.id}')" style="font-size:11px;padding:4px 10px">✓ Cliente escolheu esta</button>`}
       </div>
       </div>
       </div>
     </div>`;
   }).join('');
 }
+
+function _banhConfirmada(p) { return String(p.confirmado || '').toLowerCase() === 'sim' || String(p.confirmado || '').toLowerCase() === 'true'; }
+async function _salvarEscolhaBanheira(id, confirmar, data) {
+  const p = dadosBanheiras.find(x => String(x.id) === String(id)); if (!p) return;
+  const antes = dadosBanheiras.map(x => ({ ...x }));
+  dadosBanheiras.forEach(x => { if (String(x.ap) === String(p.ap)) { x.confirmado = (String(x.id) === String(id) && confirmar) ? 'sim' : ''; x.data_confirmacao = (String(x.id) === String(id) && confirmar) ? data : ''; } });
+  renderBanheiras();
+  try {
+    await apiPost('confirmarBanheira', { id, confirmar, data });
+    showToast(confirmar ? 'Banheira confirmada! Ela já aparece em Cobranças futuras (3x).' : 'Escolha desfeita', 'success');
+    invalidarCacheExtra('banheiras');
+  } catch (e) { dadosBanheiras = antes; renderBanheiras(); showToast('Erro: ' + e.message, 'error'); }
+}
+function confirmarEscolhaBanheira(id) {
+  const p = dadosBanheiras.find(x => String(x.id) === String(id)); if (!p) return;
+  const data = prompt('Banheira escolhida pelo cliente do apto ' + p.ap + '.\nEla entra em Cobranças futuras em 3x, contando a partir desta data:', new Date().toLocaleDateString('pt-BR'));
+  if (data === null) return;
+  if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(data.trim())) { showToast('Data no formato dd/mm/aaaa', 'error'); return; }
+  _salvarEscolhaBanheira(id, true, data.trim());
+}
+function desfazerEscolhaBanheira(id) { _salvarEscolhaBanheira(id, false, ''); }
 
 async function abrirModalCalcBanheira() {
   banhItens = []; banhApAtual = ''; banhProdutoAtual = null; banhPagamento = 'avista'; banhEditId = null;
@@ -6447,7 +6471,7 @@ function _pillSalvando(estado) {
   let el = document.getElementById('pill-salvando');
   if (!el) {
     el = document.createElement('div'); el.id = 'pill-salvando';
-    el.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:99999;padding:10px 16px;border-radius:999px;font:600 13px Inter,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25);display:none;pointer-events:none;transition:opacity .2s';
+    el.style.cssText = 'position:fixed;right:18px;top:14px;z-index:99999;padding:10px 16px;border-radius:999px;font:600 13px Inter,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25);display:none;pointer-events:none;transition:opacity .2s';
     document.body.appendChild(el);
   }
   clearTimeout(_salvandoTimer);
@@ -7333,6 +7357,27 @@ function _calcularParcelasFuturas(incluirAtrasadas) {
       });
     }
   });
+  // Banheira que o cliente escolheu (confirmada na aba Banheiras) e ainda sem entrada lançada:
+  // entra como previsão, sempre em 3x, com o valor de venda do orçamento. Lançou a entrada → a previsão some.
+  (dadosBanheiras || []).filter(_banhConfirmada).forEach(b => {
+    const jaTemEntrada = (dadosEntradasPers || []).some(en => String(en.apartamento) === String(b.ap) && /banheira/i.test(en.categoria || ''));
+    if (jaTemEntrada) return;
+    let itens = []; try { itens = typeof b.selecoes === 'string' ? JSON.parse(b.selecoes || '[]') : (b.selecoes || []); } catch (e) {}
+    const total = (Array.isArray(itens) ? itens : []).reduce((a, it) => a + (parseFloat(it.preco_venda) || 0), 0);
+    const dataBase = _parseDataBR(b.data_confirmacao) || _parseDataBR(b.data);
+    if (!total || !dataBase) return;
+    const n = 3, valorParcela = total / n;
+    for (let i = 0; i < n; i++) {
+      const dataParcela = new Date(dataBase.getFullYear(), dataBase.getMonth() + i, dataBase.getDate());
+      const chave = _chaveParcela('entrada', b.id, i + 1);
+      const baixaDada = baixas.has(chave);
+      const atrasada = dataParcela < hoje && !baixaDada;
+      if (dataParcela < hoje && !incluirAtrasadas) continue;
+      parcelas.push({ tipo: 'entrada', automatico: false, previsto: true, entradaId: b.id, chave, baixaDada, atrasada,
+        apartamento: b.ap, cliente: b.cliente, categoria: 'Banheira', numeroParcela: i + 1, totalParcelas: n,
+        valor: valorParcela, data: dataParcela, condicao: 'boleto3' });
+    }
+  });
   (dadosSaidasObra || []).forEach(sa => {
     const n = _numeroParcelas(sa.condicao_pagamento);
     if (n <= 1) return; // só entra na previsão se for realmente parcelada
@@ -7818,6 +7863,7 @@ async function loadPrevisaoCobrancas() {
     if (dados.saidasObra) dadosSaidasObra = dados.saidasObra;
     if (dados.baixasParcelas) dadosBaixasParcelas = dados.baixasParcelas;
   } catch(e) {}
+  try { const b = await lerDadosExtra('banheiras'); dadosBanheiras = b.personalizar || []; } catch(e) {}
 
   renderAtrasadasPrevisao();
 
@@ -7933,7 +7979,7 @@ function abrirModalMesPrevisao(chave) {
       <tbody>${lista_.map(p => `<tr>
         <td>${String(p.data.getDate()).padStart(2,'0')}/${String(p.data.getMonth()+1).padStart(2,'0')}</td>
         <td><span class="badge badge-info">Apto ${p.apartamento||'—'}</span></td>
-        <td>${p.cliente||'—'}</td>
+        <td>${p.cliente||'—'}${p.previsto ? ' <span class="badge badge-warn" title="Banheira escolhida, ainda sem entrada lançada">Previsto</span>' : ''}</td>
         <td style="color:var(--text2)">${p.categoria||''} · ${_labelCondicaoPagamento(p.condicao)}</td>
         <td style="color:var(--text2)">${p.numeroParcela}/${p.totalParcelas}</td>
         <td style="text-align:right;font-weight:600;color:${corTitulo}">${fmt(p.valor)}</td>
