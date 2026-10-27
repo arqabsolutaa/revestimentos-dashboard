@@ -782,9 +782,18 @@ const _CONF_MODULOS = {
   metais:   { nome: 'Metais', exclusivo: false, regexEntrada: /metal|metais/i, padrao: 'avista' }
 };
 function _confDe(modulo, refId) { return (dadosCobrancasConf || []).find(c => c.modulo === modulo && String(c.ref_id) === String(refId)); }
+// Confirmações: se o espelho (data.json) ainda não tem a aba, ou se acabou de haver uma confirmação (mesmo antes de
+// recarregar a página), busca direto da planilha — senão a confirmação "some" até o espelho atualizar.
+async function _lerDadosConf() {
+  let recente = false;
+  try { recente = Date.now() - (parseInt(localStorage.getItem('conf_cob_ult')) || 0) < 5 * 60 * 1000; } catch (e) {}
+  let d = await lerDados(recente ? 'direto' : undefined);
+  if (!d || !Array.isArray(d.cobrancasConfirmadas)) d = await lerDados('direto');
+  return d;
+}
 async function _carregarConfCobranca(depois) {
   try {
-    const d = await lerDados();
+    const d = await _lerDadosConf();
     if (d && Array.isArray(d.cobrancasConfirmadas)) {
       // não apaga o que acabou de ser confirmado aqui se o espelho (data.json) ainda não alcançou
       const locais = (dadosCobrancasConf || []).filter(l => l._local && !d.cobrancasConfirmadas.some(c => c.modulo === l.modulo && String(c.ref_id) === String(l.ref_id)));
@@ -869,6 +878,7 @@ async function salvarConfCobranca() {
   _rerenderConf(modulo);
   try {
     await apiPost('confirmarCobranca', dados);
+    try { localStorage.setItem('conf_cob_ult', String(Date.now())); } catch (e) {}
     showToast('Confirmado! Já aparece em Cobranças futuras.', 'success');
   } catch (e) { dadosCobrancasConf = antes; _rerenderConf(modulo); showToast('Erro: ' + e.message, 'error'); }
 }
@@ -877,7 +887,7 @@ async function desfazerConfCobranca(modulo, id) {
   const antes = (dadosCobrancasConf || []).slice();
   dadosCobrancasConf = dadosCobrancasConf.filter(c => !(c.modulo === modulo && String(c.ref_id) === String(id)));
   _rerenderConf(modulo);
-  try { await apiPost('desfazerCobranca', { modulo, ref_id: id }); showToast('Confirmação desfeita', 'success'); }
+  try { await apiPost('desfazerCobranca', { modulo, ref_id: id }); try { localStorage.setItem('conf_cob_ult', String(Date.now())); } catch (e) {} showToast('Confirmação desfeita', 'success'); }
   catch (e) { dadosCobrancasConf = antes; _rerenderConf(modulo); showToast('Erro: ' + e.message, 'error'); }
 }
 
@@ -7973,7 +7983,9 @@ async function loadPrevisaoCobrancas() {
   cont.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
   try {
     // Tela financeira — sempre busca fresco, direto da planilha
-    const dados = await lerDados(true);
+    let dados = await lerDados(true);
+    let recenteConf = false; try { recenteConf = Date.now() - (parseInt(localStorage.getItem('conf_cob_ult')) || 0) < 5 * 60 * 1000; } catch (e) {}
+    if (recenteConf || !Array.isArray(dados.cobrancasConfirmadas)) dados = await lerDados('direto');
     if (dados.entradasPersonalizacao) dadosEntradasPers = dados.entradasPersonalizacao;
     if (dados.saidasObra) dadosSaidasObra = dados.saidasObra;
     if (dados.baixasParcelas) dadosBaixasParcelas = dados.baixasParcelas;
