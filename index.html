@@ -716,6 +716,7 @@ async function loadBanheiras() {
     const d = await lerDadosExtra('banheiras');
     dadosBanheiras = d.personalizar || [];
     dadosBanhCatalogo = d.catalogo || [];
+    _carregarConfCobranca(renderBanheiras);
   } catch(e) {
     console.log('Banheiras:', e.message);
     dadosBanheiras = [];
@@ -763,9 +764,7 @@ function renderBanheiras() {
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
         <button class="btn btn-secondary" onclick="editarBanheira('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
         <button class="btn btn-secondary" onclick="gerarPDFBanheiraId('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
-        ${_banhConfirmada(p)
-          ? `<span class="badge badge-green" style="align-self:center">✓ Escolhida pelo cliente${p.data_confirmacao ? ' · ' + formatarDataDisplay(p.data_confirmacao) : ''}</span><button class="btn btn-secondary" onclick="desfazerEscolhaBanheira('${p.id}')" style="font-size:11px;padding:4px 10px">Desfazer</button>`
-          : `<button class="btn btn-primary" onclick="confirmarEscolhaBanheira('${p.id}')" style="font-size:11px;padding:4px 10px">✓ Cliente escolheu esta</button>`}
+        ${_confRenderBotao('banheira', p.id)}
       </div>
       </div>
       </div>
@@ -773,26 +772,114 @@ function renderBanheiras() {
   }).join('');
 }
 
-function _banhConfirmada(p) { return String(p.confirmado || '').toLowerCase() === 'sim' || String(p.confirmado || '').toLowerCase() === 'true'; }
-async function _salvarEscolhaBanheira(id, confirmar, data) {
-  const p = dadosBanheiras.find(x => String(x.id) === String(id)); if (!p) return;
-  const antes = dadosBanheiras.map(x => ({ ...x }));
-  dadosBanheiras.forEach(x => { if (String(x.ap) === String(p.ap)) { x.confirmado = (String(x.id) === String(id) && confirmar) ? 'sim' : ''; x.data_confirmacao = (String(x.id) === String(id) && confirmar) ? data : ''; } });
-  renderBanheiras();
+// ===== Confirmação de orçamento → cobrança prevista (banheira, civil, ar-condicionado, metais) =====
+let dadosCobrancasConf = [];
+let _confCobAtual = null;
+const _CONF_MODULOS = {
+  banheira: { nome: 'Banheira', exclusivo: true, regexEntrada: /banheira/i, padrao: 'boleto3' },
+  civil:    { nome: 'Civil', exclusivo: false, regexEntrada: /civil/i, padrao: null },
+  ac:       { nome: 'Ar-condicionado', exclusivo: false, regexEntrada: /ar.?cond|climatiza/i, padrao: null },
+  metais:   { nome: 'Metais', exclusivo: false, regexEntrada: /metal|metais/i, padrao: 'avista' }
+};
+function _confDe(modulo, refId) { return (dadosCobrancasConf || []).find(c => c.modulo === modulo && String(c.ref_id) === String(refId)); }
+async function _carregarConfCobranca(depois) {
   try {
-    await apiPost('confirmarBanheira', { id, confirmar, data });
-    showToast(confirmar ? 'Banheira confirmada! Ela já aparece em Cobranças futuras (3x).' : 'Escolha desfeita', 'success');
-    invalidarCacheExtra('banheiras');
-  } catch (e) { dadosBanheiras = antes; renderBanheiras(); showToast('Erro: ' + e.message, 'error'); }
+    const d = await lerDados();
+    if (d && Array.isArray(d.cobrancasConfirmadas)) {
+      // não apaga o que acabou de ser confirmado aqui se o espelho (data.json) ainda não alcançou
+      const locais = (dadosCobrancasConf || []).filter(l => l._local && !d.cobrancasConfirmadas.some(c => c.modulo === l.modulo && String(c.ref_id) === String(l.ref_id)));
+      dadosCobrancasConf = d.cobrancasConfirmadas.concat(locais);
+    }
+  } catch (e) {}
+  if (depois) depois();
 }
-function confirmarEscolhaBanheira(id) {
-  const p = dadosBanheiras.find(x => String(x.id) === String(id)); if (!p) return;
-  const data = prompt('Banheira escolhida pelo cliente do apto ' + p.ap + '.\nEla entra em Cobranças futuras em 3x, contando a partir desta data:', new Date().toLocaleDateString('pt-BR'));
-  if (data === null) return;
-  if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(data.trim())) { showToast('Data no formato dd/mm/aaaa', 'error'); return; }
-  _salvarEscolhaBanheira(id, true, data.trim());
+function _confInfoOrcamento(modulo, id) {
+  if (modulo === 'banheira') {
+    const p = dadosBanheiras.find(x => String(x.id) === String(id)); if (!p) return null;
+    let it = []; try { it = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes || '[]') : (p.selecoes || []); } catch (e) {}
+    return { ap: p.ap, cliente: p.cliente, descricao: 'Banheira (' + it.length + ' item(ns))', base: it.reduce((a, v) => a + (parseFloat(v.preco_venda) || 0), 0), condicao: 'boleto3' };
+  }
+  if (modulo === 'civil') {
+    const c = dadosCivil.find(x => String(x.id) === String(id)); if (!c) return null;
+    return { ap: c.ap, cliente: c.cliente, descricao: 'Civil — ' + (c.servico || ''), base: parseFloat(c.valor_avista) || parseFloat(c.valor) || 0, condicao: c.condicao_pagamento || 'avista' };
+  }
+  if (modulo === 'ac') {
+    const c = dadosArCondicionado.find(x => String(x.id) === String(id)); if (!c) return null;
+    return { ap: c.ap, cliente: c.cliente, descricao: 'Ar-condicionado (' + (c.qtd_pontos || 0) + ' máquina(s))', base: parseFloat(c.valor_avista) || parseFloat(c.valor) || 0, condicao: c.condicao_pagamento || 'avista' };
+  }
+  if (modulo === 'metais') {
+    const p = dadosMetais.find(x => String(x.id) === String(id)); if (!p) return null;
+    let it = []; try { it = typeof p.itens === 'string' ? JSON.parse(p.itens || '[]') : (p.itens || []); } catch (e) {}
+    return { ap: p.ap, cliente: p.cliente, descricao: 'Metais (' + it.length + ' item(ns))', base: it.reduce((a, v) => a + (parseFloat(v.valor) || 0), 0), condicao: 'avista' };
+  }
+  return null;
 }
-function desfazerEscolhaBanheira(id) { _salvarEscolhaBanheira(id, false, ''); }
+function _confRenderBotao(modulo, id, rerender) {
+  const c = _confDe(modulo, id);
+  if (c) {
+    return `<span class="badge badge-green" style="align-self:center">✓ Confirmado · ${_labelCondicaoPagamento(c.condicao)} · R$ ${(parseFloat(c.valor_total) || 0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+      <button class="btn btn-secondary" onclick="abrirConfirmarCobranca('${modulo}','${id}')" style="font-size:11px;padding:4px 10px">Alterar</button>
+      <button class="btn btn-secondary" onclick="desfazerConfCobranca('${modulo}','${id}')" style="font-size:11px;padding:4px 10px">Desfazer</button>`;
+  }
+  return `<button class="btn btn-primary" onclick="abrirConfirmarCobranca('${modulo}','${id}')" style="font-size:11px;padding:4px 10px">✓ Confirmar orçamento</button>`;
+}
+function _rerenderConf(modulo) {
+  if (modulo === 'banheira') renderBanheiras(); else if (modulo === 'civil') renderCivil(); else if (modulo === 'ac') renderArCondicionado(); else if (modulo === 'metais') renderMetais();
+}
+function abrirConfirmarCobranca(modulo, id) {
+  const info = _confInfoOrcamento(modulo, id);
+  if (!info) { showToast('Orçamento não encontrado', 'error'); return; }
+  if (!info.base) { showToast('Esse orçamento está sem valor', 'error'); return; }
+  const ja = _confDe(modulo, id);
+  _confCobAtual = { modulo, id, info };
+  const sel = document.getElementById('conf-cob-condicao');
+  const origem = document.getElementById('civil-condicao');
+  sel.innerHTML = origem ? origem.innerHTML : '<option value="avista">À Vista</option>';
+  sel.value = (ja && ja.condicao) || info.condicao || 'avista';
+  if (!sel.value) sel.value = 'avista';
+  const hoje = new Date(); const iso = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0') + '-' + String(hoje.getDate()).padStart(2, '0');
+  const dj = ja && _parseDataBR(ja.data);
+  document.getElementById('conf-cob-data').value = dj ? dj.getFullYear() + '-' + String(dj.getMonth() + 1).padStart(2, '0') + '-' + String(dj.getDate()).padStart(2, '0') : iso;
+  document.getElementById('conf-cob-resumo').innerHTML = `<strong>Apto ${info.ap} — ${info.cliente || ''}</strong><br>${info.descricao}<br>Valor à vista: <strong>${_fmtR$(info.base)}</strong>`;
+  atualizarResumoConfCobranca();
+  abrirModal('modal-conf-cobranca');
+}
+function atualizarResumoConfCobranca() {
+  if (!_confCobAtual) return;
+  const cond = document.getElementById('conf-cob-condicao').value;
+  const { total, juros } = calcularTotalComPagamento(_confCobAtual.info.base, cond);
+  const n = cond.startsWith('credito') ? 1 : _numeroParcelas(cond);
+  document.getElementById('conf-cob-calculo').innerHTML =
+    `Total a cobrar do cliente: <strong>${_fmtR$(total)}</strong>${juros > 0.005 ? ` <span style="color:var(--warn)">(acréscimo ${_fmtR$(juros)})</span>` : ''}` +
+    `<br>${n > 1 ? n + ' parcelas de <strong>' + _fmtR$(total / n) + '</strong>' : '1 cobrança de <strong>' + _fmtR$(total) + '</strong>'}`;
+}
+async function salvarConfCobranca() {
+  if (!_confCobAtual) return;
+  const { modulo, id, info } = _confCobAtual;
+  const cond = document.getElementById('conf-cob-condicao').value;
+  const iso = document.getElementById('conf-cob-data').value;
+  if (!iso) { showToast('Informe a data do 1º vencimento', 'error'); return; }
+  const data = iso.split('-').reverse().join('/');
+  const { total } = calcularTotalComPagamento(info.base, cond);
+  const dados = { modulo, ref_id: id, apto: String(info.ap), cliente: info.cliente || '', descricao: info.descricao, valor_base: info.base, condicao: cond, valor_total: total, data, exclusivo: _CONF_MODULOS[modulo].exclusivo };
+  const antes = (dadosCobrancasConf || []).slice();
+  dadosCobrancasConf = dadosCobrancasConf.filter(c => !(c.modulo === modulo && (String(c.ref_id) === String(id) || (dados.exclusivo && String(c.apto) === dados.apto))));
+  dadosCobrancasConf.push({ ...dados, _local: true });
+  fecharModal('modal-conf-cobranca');
+  _rerenderConf(modulo);
+  try {
+    await apiPost('confirmarCobranca', dados);
+    showToast('Confirmado! Já aparece em Cobranças futuras.', 'success');
+  } catch (e) { dadosCobrancasConf = antes; _rerenderConf(modulo); showToast('Erro: ' + e.message, 'error'); }
+}
+async function desfazerConfCobranca(modulo, id) {
+  if (!confirm('Desfazer a confirmação? A cobrança prevista some de Cobranças futuras.')) return;
+  const antes = (dadosCobrancasConf || []).slice();
+  dadosCobrancasConf = dadosCobrancasConf.filter(c => !(c.modulo === modulo && String(c.ref_id) === String(id)));
+  _rerenderConf(modulo);
+  try { await apiPost('desfazerCobranca', { modulo, ref_id: id }); showToast('Confirmação desfeita', 'success'); }
+  catch (e) { dadosCobrancasConf = antes; _rerenderConf(modulo); showToast('Erro: ' + e.message, 'error'); }
+}
 
 async function abrirModalCalcBanheira() {
   banhItens = []; banhApAtual = ''; banhProdutoAtual = null; banhPagamento = 'avista'; banhEditId = null;
@@ -4095,6 +4182,32 @@ body.mobile-mode #main{padding-bottom:72px}
 </div>
 
 <!-- MODAL METAIS -->
+<div id="modal-conf-cobranca" class="modal-overlay">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <h2>Confirmar orçamento</h2>
+      <button class="modal-close" onclick="fecharModal('modal-conf-cobranca')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p id="conf-cob-resumo" style="font-size:13px;color:var(--text2);margin-bottom:12px"></p>
+      <div class="form-group">
+        <label class="form-label">Forma de pagamento do cliente</label>
+        <select class="form-control" id="conf-cob-condicao" onchange="atualizarResumoConfCobranca()"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Data do 1º vencimento</label>
+        <input type="date" class="form-control" id="conf-cob-data">
+      </div>
+      <div id="conf-cob-calculo" style="font-size:13px;margin-top:4px"></div>
+      <p style="font-size:11px;color:var(--text3);margin-top:10px">Ao confirmar, as parcelas entram em Cobranças futuras como "Previsto". Quando o cliente pagar, é só dar baixa na parcela.</p>
+    </div>
+    <div class="modal-footer" style="display:flex;gap:8px;justify-content:flex-end;padding:12px 20px">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-conf-cobranca')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarConfCobranca()">✓ Confirmar</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-civil" class="modal-overlay">
   <div class="modal" style="max-width:560px">
     <div class="modal-header">
@@ -7357,25 +7470,27 @@ function _calcularParcelasFuturas(incluirAtrasadas) {
       });
     }
   });
-  // Banheira que o cliente escolheu (confirmada na aba Banheiras) e ainda sem entrada lançada:
-  // entra como previsão, sempre em 3x, com o valor de venda do orçamento. Lançou a entrada → a previsão some.
-  (dadosBanheiras || []).filter(_banhConfirmada).forEach(b => {
-    const jaTemEntrada = (dadosEntradasPers || []).some(en => String(en.apartamento) === String(b.ap) && /banheira/i.test(en.categoria || ''));
+  // Orçamentos confirmados (banheira, civil, ar-condicionado, metais) ainda sem entrada lançada:
+  // entram como "Previsto" com a forma de pagamento que o cliente escolheu. Lançou a entrada → a previsão some.
+  (dadosCobrancasConf || []).forEach(c => {
+    const cfg = _CONF_MODULOS[c.modulo]; if (!cfg) return;
+    const jaTemEntrada = (dadosEntradasPers || []).some(en => String(en.apartamento) === String(c.apto) && cfg.regexEntrada.test(en.categoria || ''));
     if (jaTemEntrada) return;
-    let itens = []; try { itens = typeof b.selecoes === 'string' ? JSON.parse(b.selecoes || '[]') : (b.selecoes || []); } catch (e) {}
-    const total = (Array.isArray(itens) ? itens : []).reduce((a, it) => a + (parseFloat(it.preco_venda) || 0), 0);
-    const dataBase = _parseDataBR(b.data_confirmacao) || _parseDataBR(b.data);
+    const total = parseFloat(c.valor_total) || 0;
+    const dataBase = _parseDataBR(c.data);
     if (!total || !dataBase) return;
-    const n = 3, valorParcela = total / n;
+    const cond = c.condicao || 'avista';
+    const n = cond.startsWith('credito') ? 1 : _numeroParcelas(cond); // crédito cai de uma vez só
+    const valorParcela = total / n;
     for (let i = 0; i < n; i++) {
       const dataParcela = new Date(dataBase.getFullYear(), dataBase.getMonth() + i, dataBase.getDate());
-      const chave = _chaveParcela('entrada', b.id, i + 1);
+      const chave = _chaveParcela('entrada', c.id || (c.modulo + '_' + c.ref_id), i + 1);
       const baixaDada = baixas.has(chave);
       const atrasada = dataParcela < hoje && !baixaDada;
       if (dataParcela < hoje && !incluirAtrasadas) continue;
-      parcelas.push({ tipo: 'entrada', automatico: false, previsto: true, entradaId: b.id, chave, baixaDada, atrasada,
-        apartamento: b.ap, cliente: b.cliente, categoria: 'Banheira', numeroParcela: i + 1, totalParcelas: n,
-        valor: valorParcela, data: dataParcela, condicao: 'boleto3' });
+      parcelas.push({ tipo: 'entrada', automatico: false, previsto: true, entradaId: c.id || (c.modulo + '_' + c.ref_id), chave, baixaDada, atrasada,
+        apartamento: c.apto, cliente: c.cliente, categoria: cfg.nome, numeroParcela: i + 1, totalParcelas: n,
+        valor: valorParcela, data: dataParcela, condicao: cond });
     }
   });
   (dadosSaidasObra || []).forEach(sa => {
@@ -7862,8 +7977,11 @@ async function loadPrevisaoCobrancas() {
     if (dados.entradasPersonalizacao) dadosEntradasPers = dados.entradasPersonalizacao;
     if (dados.saidasObra) dadosSaidasObra = dados.saidasObra;
     if (dados.baixasParcelas) dadosBaixasParcelas = dados.baixasParcelas;
+    if (Array.isArray(dados.cobrancasConfirmadas)) {
+      const locais = (dadosCobrancasConf || []).filter(l => l._local && !dados.cobrancasConfirmadas.some(c => c.modulo === l.modulo && String(c.ref_id) === String(l.ref_id)));
+      dadosCobrancasConf = dados.cobrancasConfirmadas.concat(locais);
+    }
   } catch(e) {}
-  try { const b = await lerDadosExtra('banheiras'); dadosBanheiras = b.personalizar || []; } catch(e) {}
 
   renderAtrasadasPrevisao();
 
@@ -13092,6 +13210,7 @@ async function loadMetais() {
   try {
     const d = await lerDadosExtra('metais');
     dadosMetais = d.personalizar || [];
+    _carregarConfCobranca(renderMetais);
   } catch(e) {
     console.log('Metais:', e.message);
     dadosMetais = [];
@@ -13114,9 +13233,10 @@ function renderMetais() {
         <div>
           <strong>Apto ${p.ap}</strong> <span style="color:var(--text3);font-size:12px">· ${p.cliente||''} · ${itens.length} item(ns)</span>
         </div>
-        <div style="display:flex;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">
           <strong style="font-size:14px">R$ ${total.toFixed(2)}</strong>
           ${p.pdf_original_url ? `<a href="${p.pdf_original_url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:4px 10px">PDF original</a>` : ''}
+          ${_confRenderBotao('metais', p.id)}
           <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="gerarPDFMetaisId('${p.id}')">Gerar PDF</button>
           <button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="excluirMetais('${p.id}')">Excluir</button>
         </div>
@@ -13335,6 +13455,7 @@ async function loadCivil() {
   }
   lerDados(true).then(dados => {
     if (dados && dados.civil) { dadosCivil = dados.civil; renderCivil(); }
+    _carregarConfCobranca(renderCivil);
   }).catch(()=>{});
 }
 
@@ -13361,6 +13482,7 @@ function renderCivil() {
           <button class="status-pgto-badge status-pago" onclick="alterarStatusCivil('${c.id}','pago')" style="${status==='pago'?'':'opacity:0.4'}">Pago</button>
         </div>
         <div style="display:flex;gap:6px">
+          ${_confRenderBotao('civil', c.id)}
           <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="gerarPDFCivil('${c.id}')">📄 PDF</button>
           <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirCivil('${c.id}')">🗑️</button>
         </div>
@@ -13510,6 +13632,7 @@ async function loadArCondicionado() {
   }
   lerDados(true).then(dados => {
     if (dados && dados.arCondicionado) { dadosArCondicionado = dados.arCondicionado; renderArCondicionado(); }
+    _carregarConfCobranca(renderArCondicionado);
   }).catch(()=>{});
 }
 
@@ -13546,6 +13669,7 @@ function renderArCondicionado() {
           <button class="status-pgto-badge status-pago" onclick="alterarStatusAC('${c.id}','pago')" style="${status==='pago'?'':'opacity:0.4'}">Pago</button>
         </div>
         <div style="display:flex;gap:6px">
+          ${_confRenderBotao('ac', c.id)}
           <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="gerarPDFAC('${c.id}')">📄 PDF</button>
           <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px;color:var(--danger);border-color:var(--danger)" onclick="excluirAC('${c.id}')">🗑️</button>
         </div>

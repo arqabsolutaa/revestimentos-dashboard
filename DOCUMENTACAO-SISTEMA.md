@@ -189,6 +189,8 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - Tela: `lerDados(true)` só vai direto na planilha (lento) por 90 s depois que o próprio navegador gravou algo; fora isso usa o `data.json`. O botão "Atualizar dados" usa `lerDados('direto')`.
 - Etiqueta "⏳ Salvando… / ✓ Salvo / ✕ Não salvou" no canto da tela em todo salvamento (`apiPost`).
 
-## Banheira escolhida → Cobranças futuras (previsão)
-- Na aba **Banheiras**, cada orçamento tem "✓ Cliente escolheu esta" (data da escolha editável) e "Desfazer". Só 1 por apartamento: confirmar uma desmarca as outras do mesmo apto. Grava `confirmado` e `data_confirmacao` em `Banheiras_Personalizar` (action `confirmarBanheira`).
-- A banheira confirmada entra em **Cobranças futuras** sozinha, sempre em 3x, valor de venda (soma de `preco_venda`), parcelas mensais a partir da data da escolha, marcada "Previsto". Quando existir uma entrada de categoria Banheira para o apto, a previsão some (sem contar em dobro). Baixa de parcela funciona igual às demais.
+## Confirmação de orçamento → Cobranças futuras (banheira, civil, ar-condicionado, metais)
+- Cada orçamento tem o botão "✓ Confirmar orçamento". Ao confirmar, pergunta a **forma de pagamento** (PIX, À vista, Boleto Nx, PIX parcelado Nx, Débito, Crédito) e a **data do 1º vencimento**; calcula o total com acréscimo da forma escolhida.
+- Grava na aba `Cobrancas_Confirmadas` (id, modulo, ref_id, apto, cliente, descricao, valor_base, condicao, valor_total, data, criado_em, criado_por) — actions `confirmarCobranca` / `desfazerCobranca`. Módulos: `banheira` (exclusiva: só 1 por apto), `civil`, `ac`, `metais`.
+- Em Cobranças futuras aparece como **"Previsto"**: 1 cobrança (PIX/à vista/débito/crédito) ou N parcelas (boleto/PIX parcelado), mensais a partir da data. Dar baixa funciona como nas outras parcelas.
+- A previsão some quando existir uma entrada do apto com a categoria do módulo (Banheira, Civil, Ar-condicionado, Metais), para não contar em dobro. "Alterar" troca a forma de pagamento; "Desfazer" remove a previsão.
