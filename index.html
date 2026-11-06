@@ -2751,6 +2751,10 @@ body.mobile-mode #main{padding-bottom:72px}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Exportar Excel
         </button>
+        <button class="btn btn-secondary" onclick="abrirSugestaoReservas()" style="margin-right:4px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Montar reservas
+        </button>
         <button class="btn btn-secondary" onclick="abrirReservasTecnicas()" style="margin-right:4px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
           Reservas Técnicas
@@ -2786,9 +2790,9 @@ body.mobile-mode #main{padding-bottom:72px}
       <div class="table-wrap">
         <table>
           <thead><tr>
-            <th>Código</th><th>Nome</th><th>Obra</th><th>m²/cx</th><th>Qtd Caixas</th><th>Reserva técnica</th><th>Disponível (cx)</th><th>Estoque (m²)</th><th>Lote</th><th>Popularidade</th>
+            <th>Código</th><th>Nome</th><th>Obra</th><th>m²/cx</th><th>Físico (cx)</th><th>Reservado (clientes)</th><th>Reserva técnica</th><th>Disponível (cx)</th><th>Estoque (m²)</th><th>Lote</th><th>Popularidade</th>
           </tr></thead>
-          <tbody id="estoque-tbody"><tr><td colspan="10"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr></tbody>
+          <tbody id="estoque-tbody"><tr><td colspan="11"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr></tbody>
         </table>
       </div>
     </div>
@@ -2890,6 +2894,24 @@ body.mobile-mode #main{padding-bottom:72px}
     </div>
   </div>
 
+  <div class="modal-overlay" id="modal-sug-reservas">
+    <div class="modal" style="max-width:1000px;width:96vw">
+      <div class="modal-header"><h2>Montar reservas técnicas</h2><button class="modal-close" onclick="fecharModal('modal-sug-reservas')">&times;</button></div>
+      <div class="modal-body">
+        <p style="font-size:13px;color:var(--text2);margin:0 0 12px">Para cada apartamento que já recebeu revestimento, o sistema sugere guardar uma reserva técnica do <strong>mesmo lote</strong> (data de fabricação da instalação), para repor quebra sem misturar lotes. Ajuste as quantidades e crie.</p>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <label style="font-size:12px;color:var(--text3)">Reserva de</label>
+          <input type="number" id="sug-pct" class="filter-input" value="10" min="1" max="100" style="width:64px" onchange="recalcularSugestaoReservas()">
+          <span style="font-size:12px;color:var(--text3)">% das caixas instaladas (mínimo 1 cx)</span>
+        </div>
+        <div class="table-wrap" id="sug-lista" style="max-height:52vh;overflow:auto"></div>
+      </div>
+      <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 20px">
+        <span id="sug-resumo" style="font-size:12px;color:var(--text2)"></span>
+        <span><button class="btn btn-secondary" onclick="fecharModal('modal-sug-reservas')">Cancelar</button> <button class="btn btn-primary" id="sug-btn-criar" onclick="criarReservasSugeridas()">Criar reservas marcadas</button></span>
+      </div>
+    </div>
+  </div>
   <div class="modal-overlay" id="modal-reservas">
     <div class="modal" style="max-width:900px;width:96%">
       <div class="modal-header">
@@ -11506,13 +11528,14 @@ async function gerarPDFNecessidadeCompra() {
 }
 
 async function loadEstoque() {
-  function _aplicarEstoque(lista) {
+  function _aplicarEstoque(lista, dadosFonte) {
     dadosEstoque = lista;
     dadosRevestimentos = lista;
     renderEstoque(dadosEstoque);
     if (document.getElementById('painel-ultimas-saidas')?.style.display !== 'none') renderUltimasSaidas();
     renderStatsEstoque(dadosEstoque);
     popularFiltroObra(dadosEstoque, 'filtro-estoque-obra');
+    _carregarBaseEstoqueCalc(dadosFonte);
   }
   if (dadosRevestimentos.length) {
     _aplicarEstoque(dadosRevestimentos);
@@ -11520,7 +11543,7 @@ async function loadEstoque() {
     document.getElementById('estoque-tbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div>Carregando...</div></td></tr>';
     try {
       const dados = await lerDados();
-      _aplicarEstoque(dados.revestimentos || []);
+      _aplicarEstoque(dados.revestimentos || [], dados);
     } catch(e) {
       document.getElementById('estoque-tbody').innerHTML = `<tr><td colspan="8"><div class="empty-state"><strong>Erro ao carregar</strong><p>${e.message}</p></div></td></tr>`;
       return;
@@ -11528,7 +11551,7 @@ async function loadEstoque() {
   }
   // Corrige sozinho em segundo plano, direto da planilha
   lerDados(true).then(dados => {
-    if (dados && dados.revestimentos) _aplicarEstoque(dados.revestimentos);
+    if (dados && dados.revestimentos) _aplicarEstoque(dados.revestimentos, dados);
   }).catch(()=>{});
 }
 function renderStatsEstoque(d) {
@@ -11540,8 +11563,167 @@ function renderStatsEstoque(d) {
     <div class="stat-card"><div class="stat-label">Tipos de Revestimento</div><div class="stat-value">${tipos}</div></div>
     <div class="stat-card"><div class="stat-label">Obras Ativas</div><div class="stat-value">${obras}</div></div>
     <div class="stat-card"><div class="stat-label">Reserva técnica</div><div class="stat-value">${_fmtCx((dadosReservas||[]).reduce((a,x)=>a+(parseFloat(x.qtd_caixas)||0),0))} cx</div></div>
+    <div class="stat-card"><div class="stat-label">Falta comprar</div><div class="stat-value" style="color:var(--danger)">${_fmtCx(d.reduce((a, r) => { const c = _estCalc(r); return a + (c.dispCx < -0.005 ? -c.dispCx : 0); }, 0))} cx</div></div>
   `;
 }
+// ===================== ESTOQUE: FÍSICO × RESERVADO × DISPONÍVEL =====================
+// A planilha desconta a saída quando o cliente CONFIRMA (e com a perda). Mas o material só sai do estoque quando
+// SOBE para o apartamento (registro em Instalações) e sobe só o bruto, sem a perda. Aqui o sistema reconstrói o
+// número real sem mexer na aba Revestimentos:
+//   físico     = estoque da planilha + (saídas "Via Personalizar" − o que já subiu) + contagem física (ajuste)
+//   reservado  = o que os clientes confirmados ainda não receberam (bruto, sem perda)
+//   disponível = físico − reservado − reserva técnica
+let dadosEstoqueAjustes = [];
+const _eN = v => parseFloat(v) || 0;
+function _estApSaida(txt) { return String(txt || '').replace(/^\s*ap\.?\s*/i, '').trim().split(/[\s\-–]/)[0]; }
+function _estMapas() {
+  const revs = (dadosEstoque.length ? dadosEstoque : dadosRevestimentos) || [];
+  const idx = new Map();
+  revs.forEach(r => { idx.set(String(r.id), r); if (r.codigo) idx.set(String(r.codigo).trim(), r); });
+  const porRev = {};
+  const par = (rev, ap) => { const k = String(rev.id); porRev[k] = porRev[k] || {}; return porRev[k][ap] = porRev[k][ap] || { sold: 0, raised: 0 }; };
+  (dadosSaidas || []).forEach(sa => {
+    if (!/via personalizar/i.test(sa.obs || '')) return;
+    const rev = idx.get(String(sa.codigo_rev || '').trim()); if (!rev) return;
+    const ap = _estApSaida(sa.apto); if (!ap) return;
+    par(rev, ap).sold += _eN(sa.quantidade_m2);
+  });
+  (dadosInstalacoes || []).forEach(i => {
+    const rev = idx.get(String(i.codigo_rev || '').trim()); if (!rev) return;
+    const ap = String(i.ap || '').trim(); if (!ap) return;
+    par(rev, ap).raised += _eN(i.qtd_caixas_usadas) * _eN(rev.m2_por_caixa);
+  });
+  return porRev;
+}
+let _estMapasCache = null, _estMapasChave = '';
+function _estMapasCached() {
+  const chave = (dadosSaidas || []).length + '|' + (dadosInstalacoes || []).length + '|' + (dadosEstoque.length ? dadosEstoque : dadosRevestimentos).length;
+  if (!_estMapasCache || _estMapasChave !== chave) { _estMapasCache = _estMapas(); _estMapasChave = chave; }
+  return _estMapasCache;
+}
+function _estAjusteDe(rev) {
+  const cods = [String(rev.codigo || '').trim(), String(rev.id || '').trim()].filter(Boolean);
+  let ult = null;
+  (dadosEstoqueAjustes || []).forEach(a => { if (cods.includes(String(a.codigo_rev || '').trim())) ult = a; });
+  return ult;
+}
+function _estCalc(rev, semAjuste) {
+  const m2cx = _eN(rev.m2_por_caixa);
+  const perda = (_eN(rev.perda_pct) || 10) / 100;
+  const pares = _estMapasCached()[String(rev.id)] || {};
+  let corr = 0, reservM2 = 0; const reservAps = [];
+  Object.entries(pares).forEach(([ap, v]) => {
+    if (v.sold <= 0) return; // só instalação sem saída do Personalizar: a planilha já conta de outro jeito
+    corr += v.sold - v.raised;
+    const falta = Math.max(0, v.sold / (1 + perda) - v.raised);
+    if (falta > 0.005) reservM2 += falta, reservAps.push({ ap, cx: m2cx > 0 ? falta / m2cx : 0 });
+  });
+  const aj = semAjuste ? null : _estAjusteDe(rev);
+  const fisicoM2 = _eN(rev.estoque_m2) + corr + (aj ? _eN(aj.ajuste_m2) : 0);
+  const rtCx = _reservadoCaixas(rev);
+  const fisicoCx = m2cx > 0 ? fisicoM2 / m2cx : 0;
+  const reservCx = m2cx > 0 ? reservM2 / m2cx : 0;
+  // a planilha trava em zero: se zerou e ainda há saídas confirmadas sem subir, o físico calculado pode estar errado até alguém contar
+  const incerto = !aj && _eN(rev.estoque_m2) <= 0.0001 && corr > 0.005;
+  return { fisicoM2, fisicoCx, reservCx, reservAps, rtCx, incerto, dispCx: fisicoCx - reservCx - rtCx,
+    ajuste: !!aj, ajusteData: aj ? aj.criado_em : '', ajusteCx: aj ? _eN(aj.caixas_contadas) : 0 };
+}
+async function contarEstoque(revId) {
+  const rev = (dadosEstoque.length ? dadosEstoque : dadosRevestimentos).find(r => String(r.id) === String(revId));
+  if (!rev) return;
+  const m2cx = _eN(rev.m2_por_caixa); if (!m2cx) { showToast('Esse revestimento está sem m² por caixa', 'error'); return; }
+  const atual = _estCalc(rev);
+  const txt = prompt('Contagem física — ' + (rev.nome || '') + (rev.tamanho ? ' ' + rev.tamanho : '') + '\n\nQuantas caixas existem DE VERDADE no estoque agora?\n(inclua as que estão guardadas para clientes que ainda não receberam; não conte as que já subiram)\n\nO sistema mostra: ' + _fmtCx(atual.fisicoCx) + ' cx', String(Math.round(atual.fisicoCx * 100) / 100).replace('.', ','));
+  if (txt === null) return;
+  const cx = parseFloat(String(txt).replace(',', '.'));
+  if (isNaN(cx) || cx < 0) { showToast('Informe um número de caixas', 'error'); return; }
+  const semAj = _estCalc(rev, true);
+  const ajuste = Math.round((cx * m2cx - semAj.fisicoM2) * 100) / 100;
+  const reg = { id: 'tmp_' + Date.now(), codigo_rev: String(rev.codigo || rev.id), revestimento: rev.nome || '', caixas_contadas: cx, ajuste_m2: ajuste, motivo: 'Contagem física', criado_em: new Date().toLocaleDateString('pt-BR') };
+  const antes = dadosEstoqueAjustes.slice();
+  dadosEstoqueAjustes.push(reg);
+  renderEstoque(dadosEstoque); renderStatsEstoque(dadosEstoque);
+  try { await apiPost('salvarAjusteEstoque', reg); showToast('Estoque físico ajustado para ' + _fmtCx(cx) + ' cx', 'success'); }
+  catch (e) { dadosEstoqueAjustes = antes; renderEstoque(dadosEstoque); renderStatsEstoque(dadosEstoque); showToast('Erro: ' + e.message, 'error'); }
+}
+// Carrega o que o cálculo precisa (saídas, instalações, contagens) sem travar a tela
+async function _carregarBaseEstoqueCalc(dadosFonte) {
+  try {
+    const d = dadosFonte || await lerDados();
+    if (d.saidas) dadosSaidas = d.saidas;
+    if (d.instalacoes) dadosInstalacoes = d.instalacoes;
+    if (Array.isArray(d.estoqueAjustes)) {
+      const locais = (dadosEstoqueAjustes || []).filter(a => String(a.id).startsWith('tmp_') && !d.estoqueAjustes.some(x => String(x.codigo_rev) === String(a.codigo_rev) && _eN(x.ajuste_m2) === _eN(a.ajuste_m2)));
+      dadosEstoqueAjustes = d.estoqueAjustes.concat(locais);
+    }
+    if (Array.isArray(d.reservasTecnicas)) dadosReservas = d.reservasTecnicas;
+    if (dadosEstoque.length) { renderEstoque(dadosEstoque); renderStatsEstoque(dadosEstoque); }
+  } catch (e) {}
+}
+
+// ----- Montar reservas técnicas (sugestão por apartamento / revestimento / lote) -----
+let _sugReservas = [];
+function _sugGerar(pct) {
+  const revs = (dadosEstoque.length ? dadosEstoque : dadosRevestimentos) || [];
+  const idx = new Map(); revs.forEach(r => { idx.set(String(r.id), r); if (r.codigo) idx.set(String(r.codigo).trim(), r); });
+  const grupos = {};
+  (dadosInstalacoes || []).forEach(i => {
+    const rev = idx.get(String(i.codigo_rev || '').trim()); if (!rev) return;
+    const cx = _eN(i.qtd_caixas_usadas); if (cx <= 0) return;
+    const lote = String(i.data_fab || '').trim();
+    const k = i.ap + '|' + rev.id + '|' + lote;
+    grupos[k] = grupos[k] || { ap: String(i.ap), cliente: i.cliente || '', rev, lote, cx: 0 };
+    grupos[k].cx += cx;
+  });
+  return Object.values(grupos).filter(g => !(dadosReservas || []).some(x => String(x.ap) === g.ap && _reservasDoRev(g.rev).includes(x)))
+    .map(g => ({ ...g, sug: Math.max(1, Math.ceil(g.cx * pct / 100 - 1e-9)), marcado: true }))
+    .sort((a, b) => String(a.rev.nome || '').localeCompare(String(b.rev.nome || ''), 'pt-BR') || (parseInt(a.ap) || 0) - (parseInt(b.ap) || 0));
+}
+function abrirSugestaoReservas() {
+  const pct = parseFloat(document.getElementById('sug-pct').value) || 10;
+  _sugReservas = _sugGerar(pct);
+  renderSugestaoReservas();
+  abrirModal('modal-sug-reservas');
+  if (!(dadosInstalacoes || []).length) _carregarBaseEstoqueCalc().then(() => { _sugReservas = _sugGerar(parseFloat(document.getElementById('sug-pct').value) || 10); renderSugestaoReservas(); });
+}
+function recalcularSugestaoReservas() {
+  const pct = parseFloat(document.getElementById('sug-pct').value) || 10;
+  _sugReservas = _sugGerar(pct); renderSugestaoReservas();
+}
+function renderSugestaoReservas() {
+  const el = document.getElementById('sug-lista');
+  if (!_sugReservas.length) { el.innerHTML = '<div class="empty-state"><strong>Nada a sugerir</strong><p>Todos os apartamentos com instalação registrada já têm reserva técnica, ou ainda não há instalações.</p></div>'; document.getElementById('sug-resumo').textContent = ''; return; }
+  const extraPorRev = {};
+  _sugReservas.forEach(g => { if (g.marcado) extraPorRev[g.rev.id] = (extraPorRev[g.rev.id] || 0) + (_eN(g.sug)); });
+  el.innerHTML = `<table><thead><tr><th></th><th>Apto</th><th>Cliente</th><th>Revestimento</th><th>Lote (fab.)</th><th>Instaladas (cx)</th><th>Reserva (cx)</th><th>Situação do estoque</th></tr></thead><tbody>` +
+    _sugReservas.map((g, i) => {
+      const c = _estCalc(g.rev);
+      const disp = c.dispCx - (extraPorRev[g.rev.id] || 0);
+      return `<tr><td><input type="checkbox" ${g.marcado ? 'checked' : ''} onchange="_sugReservas[${i}].marcado=this.checked;renderSugestaoReservas()"></td>
+        <td><span class="badge badge-info">${g.ap}</span></td><td>${g.cliente || '-'}</td>
+        <td style="font-weight:500">${g.rev.nome || '-'} <span style="color:var(--text3);font-size:11px">${g.rev.tamanho || ''}</span></td>
+        <td>${g.lote || '<span style="color:var(--text3)">sem data</span>'}</td><td>${_fmtCx(g.cx)}</td>
+        <td><input type="number" min="0" step="1" value="${g.sug}" style="width:64px" class="filter-input" onchange="_sugReservas[${i}].sug=parseFloat(this.value)||0;renderSugestaoReservas()"></td>
+        <td style="${disp < -0.005 ? 'color:var(--danger);font-weight:600' : 'color:var(--text2)'}">${c.fisicoCx || g.marcado ? (disp < -0.005 ? 'faltam ' + _fmtCx(-disp) + ' cx' : 'sobram ' + _fmtCx(disp) + ' cx') : '-'}</td></tr>`;
+    }).join('') + '</tbody></table>';
+  const marc = _sugReservas.filter(g => g.marcado && _eN(g.sug) > 0);
+  document.getElementById('sug-resumo').textContent = marc.length + ' reserva(s) · ' + _fmtCx(marc.reduce((a, g) => a + _eN(g.sug), 0)) + ' caixas no total';
+}
+async function criarReservasSugeridas() {
+  const itens = _sugReservas.filter(g => g.marcado && _eN(g.sug) > 0).map(g => ({ ap: g.ap, codigo_rev: String(g.rev.codigo || g.rev.id), revestimento: g.rev.nome || '', lote: g.lote, qtd_caixas: _eN(g.sug), obs: 'Sugestão automática' }));
+  if (!itens.length) { showToast('Marque ao menos uma reserva', 'error'); return; }
+  const btn = document.getElementById('sug-btn-criar'); btn.disabled = true; btn.textContent = 'Criando…';
+  try {
+    const r = await apiPost('addReservasTecnicasLote', { itens });
+    const ids = (r && (r.ids || (r.data && r.data.ids))) || [];
+    itens.forEach((it, i) => dadosReservas.push({ id: ids[i] || ('tmp_' + Date.now() + i), ...it, criado_em: new Date().toLocaleDateString('pt-BR') }));
+    renderEstoque(dadosEstoque); renderStatsEstoque(dadosEstoque);
+    fecharModal('modal-sug-reservas');
+    showToast(itens.length + ' reserva(s) técnica(s) criada(s)', 'success');
+  } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+  btn.disabled = false; btn.textContent = 'Criar reservas marcadas';
+}
+
 // ===================== RESERVAS TÉCNICAS =====================
 // Caixas guardadas por apartamento. Não mexem no estoque da planilha: só saem do "disponível".
 function _reservasDoRev(rev) {
@@ -11557,25 +11739,26 @@ function _reservadoM2(rev) { return _reservadoCaixas(rev) * (parseFloat(rev.m2_p
 const _fmtCx = v => (Math.round(v * 100) / 100).toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:2});
 
 function renderEstoque(d) {
-  if (!d.length) { document.getElementById('estoque-tbody').innerHTML = '<tr><td colspan="10"><div class="empty-state"><strong>Nenhum item encontrado</strong><p>Cadastre revestimentos primeiro</p></div></td></tr>'; return; }
+  if (!d.length) { document.getElementById('estoque-tbody').innerHTML = '<tr><td colspan="11"><div class="empty-state"><strong>Nenhum item encontrado</strong><p>Cadastre revestimentos primeiro</p></div></td></tr>'; return; }
   document.getElementById('estoque-tbody').innerHTML = d.map(r => {
     const est = parseFloat(r.estoque_m2) || 0;
     const badge = est <= 0 ? 'badge-danger' : est < 5 ? 'badge-warn' : 'badge-green';
     const pop = parseInt(r.popularidade) || 0;
     const stars = '●'.repeat(Math.min(5, Math.ceil(pop/2))) + '○'.repeat(Math.max(0, 5 - Math.ceil(pop/2)));
     const m2cx = parseFloat(r.m2_por_caixa)||0;
-    const qtdCx = parseFloat(r.qtd_caixas) || (m2cx > 0 ? Math.round(est/m2cx*100)/100 : 0);
-    const reservCx = _reservadoCaixas(r);
-    const dispCx = qtdCx - reservCx;
+    const c = _estCalc(r);
+    const tipAj = c.ajuste ? ` title="Contagem física de ${c.ajusteData || ''} (${_fmtCx(c.ajusteCx)} cx contadas)"` : '';
+    const temCalc = m2cx > 0;
     return `<tr>
       <td><span class="badge badge-gray" style="font-family:var(--font-mono,monospace)">${r.codigo||'-'}</span></td>
       <td style="font-weight:500">${r.nome||'-'}</td>
       <td>${r.obra||'-'}</td>
       <td>${r.m2_por_caixa||'-'}</td>
-      <td style="font-weight:600">${qtdCx > 0 ? qtdCx.toFixed(1) + ' cx' : '-'}</td>
-      <td>${reservCx > 0 ? `<span class="badge badge-warn" title="Reservado para: ${_reservasDoRev(r).map(x => 'Apto ' + x.ap + ' (' + _fmtCx(parseFloat(x.qtd_caixas)||0) + ' cx)').join(', ')}">${_fmtCx(reservCx)} cx</span>` : '<span style="color:var(--text3)">—</span>'}</td>
-      <td style="font-weight:600;${dispCx < 0 ? 'color:var(--danger)' : ''}">${qtdCx > 0 ? _fmtCx(dispCx) + ' cx' : '-'}</td>
-      <td><span class="badge ${badge}">${est.toFixed(2)} m²</span></td>
+      <td style="font-weight:600"${tipAj}>${temCalc ? (c.fisicoCx !== 0 ? _fmtCx(c.fisicoCx) + ' cx' : '-') : '-'}${c.incerto ? ' <span title="A planilha chegou a zero para este revestimento, então este número pode estar errado. Clique em ✎ e informe a contagem real." style="color:var(--warn);cursor:help">⚠</span>' : ''}${temCalc ? ` <button class="btn btn-secondary" onclick="contarEstoque('${String(r.id).replace(/'/g,"\\'")}')" title="Contar / corrigir o estoque físico" style="padding:1px 6px;font-size:10px;margin-left:4px">✎</button>` : ''}</td>
+      <td>${c.reservCx > 0.005 ? `<span class="badge badge-warn" title="Confirmados e ainda não subiram: ${c.reservAps.map(x => 'Apto ' + x.ap + ' (' + _fmtCx(x.cx) + ' cx)').join(', ')}">${_fmtCx(c.reservCx)} cx</span>` : '<span style="color:var(--text3)">—</span>'}</td>
+      <td>${c.rtCx > 0 ? `<span class="badge badge-warn" title="Reserva técnica para: ${_reservasDoRev(r).map(x => 'Apto ' + x.ap + ' (' + _fmtCx(parseFloat(x.qtd_caixas)||0) + ' cx)').join(', ')}">${_fmtCx(c.rtCx)} cx</span>` : '<span style="color:var(--text3)">—</span>'}</td>
+      <td style="font-weight:600;${c.dispCx < -0.005 ? 'color:var(--danger)' : ''}">${temCalc && (c.fisicoCx !== 0 || c.reservCx > 0.005 || c.rtCx > 0) ? _fmtCx(c.dispCx) + ' cx' + (c.dispCx < -0.005 ? ' <span style="font-size:10px;font-weight:500">(comprar)</span>' : '') : '-'}</td>
+      <td><span class="badge ${temCalc && c.fisicoM2 > 0 ? (c.fisicoM2 < 5 ? 'badge-warn' : 'badge-green') : badge}">${(temCalc ? c.fisicoM2 : est).toFixed(2)} m²</span></td>
       <td><span class="badge badge-info">${r.lote||'-'}</span></td>
       <td style="font-size:11px;letter-spacing:1px;color:var(--warn)">${stars}</td>
     </tr>`;

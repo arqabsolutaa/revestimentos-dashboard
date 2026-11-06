@@ -194,3 +194,11 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - Grava na aba `Cobrancas_Confirmadas` (id, modulo, ref_id, apto, cliente, descricao, valor_base, condicao, valor_total, data, criado_em, criado_por) — actions `confirmarCobranca` / `desfazerCobranca`. Módulos: `banheira` (exclusiva: só 1 por apto), `civil`, `ac`, `metais`.
 - Em Cobranças futuras aparece como **"Previsto"**: 1 cobrança (PIX/à vista/débito/crédito) ou N parcelas (boleto/PIX parcelado), mensais a partir da data. Dar baixa funciona como nas outras parcelas.
 - A previsão some quando existir uma entrada do apto com a categoria do módulo (Banheira, Civil, Ar-condicionado, Metais), para não contar em dobro. "Alterar" troca a forma de pagamento; "Desfazer" remove a previsão.
+
+## Estoque: físico × reservado × disponível e reservas técnicas por lote
+- Tela Estoque (aba Revestimentos) ganhou: **Físico (cx)**, **Reservado (clientes)**, **Reserva técnica**, **Disponível (cx)** (vermelho = comprar) e o card "Falta comprar".
+- Regra: a planilha desconta a saída quando o cliente confirma (com perda), mas o material só sai quando sobe (registro em Instalações) e sobe só o bruto. O sistema reconstrói no front, sem mexer na aba Revestimentos:
+  físico = estoque da planilha + (saídas "Via Personalizar" − o que subiu) + contagem física;
+  reservado = confirmado e ainda não subiu (bruto, sem perda); disponível = físico − reservado − reserva técnica.
+- Botão ✎ na linha = **contagem física** (aba `Estoque_Ajustes`, action `salvarAjusteEstoque`, vale a última). ⚠ aparece quando a planilha travou em zero e o físico calculado pode estar errado até alguém contar. Registrar instalações pendentes ANTES de contar.
+- Botão **Montar reservas**: sugere reserva técnica por apto + revestimento + lote (data de fabricação da instalação), 10% das caixas instaladas (mín. 1), cria em lote (`addReservasTecnicasLote`) na aba Reservas_Tecnicas já existente.
