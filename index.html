@@ -316,13 +316,15 @@ async function _linhasDoPdf(file) {
 }
 
 function trocarTabMarm(tab) {
-  const rom = tab === 'rom';
-  document.getElementById('marm-pane-pers').style.display = rom ? 'none' : '';
+  const rom = tab === 'rom', val = tab === 'val', pers = !rom && !val;
+  document.getElementById('marm-pane-pers').style.display = pers ? '' : 'none';
   document.getElementById('marm-pane-rom').style.display = rom ? '' : 'none';
-  document.getElementById('marm-btn-orcamento').style.display = rom ? 'none' : '';
+  document.getElementById('marm-pane-val').style.display = val ? '' : 'none';
+  document.getElementById('marm-btn-orcamento').style.display = pers ? '' : 'none';
   document.getElementById('marm-btn-romaneio').style.display = rom ? '' : 'none';
+  document.getElementById('marm-btn-valor').style.display = val ? '' : 'none';
   const on = (id, v) => { const b = document.getElementById(id); b.style.color = v ? 'var(--accent)' : 'var(--text3)'; b.style.borderBottomColor = v ? 'var(--accent)' : 'transparent'; b.style.fontWeight = v ? '600' : '500'; };
-  on('marm-tab-pers', !rom); on('marm-tab-rom', rom);
+  on('marm-tab-pers', pers); on('marm-tab-rom', rom); on('marm-tab-val', val);
   if (rom) loadRomaneios();
 }
 
@@ -532,9 +534,15 @@ async function loadMarmoraria() {
   }).catch(()=>{});
 }
 
+// Orçamento "por valor" = todos os itens têm valor_fechado (guardado na mesma aba, mas mostrado só na aba própria)
+function _marmSelecoes(p) { try { return typeof p.selecoes === 'string' ? JSON.parse(p.selecoes || '[]') : (p.selecoes || []); } catch (e) { return []; } }
+function _marmEhValor(p) { const s = _marmSelecoes(p); return Array.isArray(s) && s.length > 0 && s.every(v => v && v.valor_fechado); }
+
 function renderMarmoraria() {
+  renderMarmValor();
   const el = document.getElementById('marmoraria-lista');
-  if (!dadosMarmoraria.length) {
+  const listaPers = dadosMarmoraria.filter(p => !_marmEhValor(p));
+  if (!listaPers.length) {
     el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento de marmoraria encontrado</strong></div>';
     return;
   }
@@ -544,7 +552,7 @@ function renderMarmoraria() {
     </label>
     <button class="btn btn-danger excluir-selecionados-btn" id="excluir-marm-btn" onclick="excluirSelecionadosModulo('marmoraria','marm')">Excluir selecionados</button>
   </div>`;
-  el.innerHTML = dadosMarmoraria.map(p => {
+  el.innerHTML = listaPers.map(p => {
     const sel = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'[]') : (p.selecoes||[]);
     const totalM2 = sel.reduce((a, v) => a + (parseFloat(v.m2)||0), 0);
     const totalValor = sel.reduce((a, v) => {
@@ -703,6 +711,152 @@ async function salvarMarmoraria() {
     dadosMarmoraria = d.personalizar || [];
     renderMarmoraria();
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+// ===================== MARMORARIA · ORÇAMENTO POR VALOR =====================
+let mvItens = [], mvApAtual = '';
+
+function renderMarmValor() {
+  const el = document.getElementById('marm-valor-lista');
+  if (!el) return;
+  const lista = dadosMarmoraria.filter(_marmEhValor);
+  if (!lista.length) { el.innerHTML = '<div class="empty-state"><strong>Nenhum orçamento por valor ainda</strong></div>'; return; }
+  const brl = v => 'R$ ' + (parseFloat(v) || 0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer"><input type="checkbox" class="orcamento-check" onchange="toggleSelecionarTodos('marmv',this)"> Selecionar todos</label>
+    <button class="btn btn-danger excluir-selecionados-btn" id="excluir-marmv-btn" onclick="excluirSelecionadosModulo('marmoraria','marmv')">Excluir selecionados</button>
+  </div>` + lista.map(p => {
+    const sel = _marmSelecoes(p);
+    const total = sel.reduce((a, v) => a + (parseFloat(v.valor) || 0), 0);
+    const resumo = sel.map(v => esc_(v.ambiente || '—')).join(' · ');
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <input type="checkbox" class="orcamento-check marmv-check" data-id="${p.id}" onchange="atualizarBtnExcluir('marmv')" style="margin-top:4px">
+          <div>
+            <p style="font-size:15px;font-weight:600">${esc_(p.cliente || '—')}</p>
+            <p style="font-size:12px;color:var(--text3)">Apto ${p.ap || '—'} · ${formatarDataDisplay(p.data) || '—'}</p>
+            <p style="font-size:12px;color:var(--text3);margin-top:4px">${sel.length} item(ns): ${resumo}</p>
+          </div>
+        </div>
+        <div style="text-align:right"><span style="font-size:15px;font-weight:600;color:var(--accent)">${brl(total)}</span></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-secondary" onclick="gerarPDFMarmValorId('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function esc_(v) { return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+
+async function abrirModalMarmValor() {
+  mvItens = []; mvApAtual = '';
+  try { const d = await lerDadosExtra('marmoraria'); dadosMarmCatalogo = d.catalogo || []; } catch (e) {}
+  const sel = document.getElementById('mv-ap-select');
+  sel.innerHTML = '<option value="">— Selecione —</option>' +
+    [...new Set(dadosParedes.map(p => p.apartamento))].sort((a,b) => String(a).localeCompare(String(b), 'pt-BR', {numeric:true}))
+    .map(ap => `<option value="${ap}">Apto ${ap} - ${_clienteDoAp(ap)}</option>`).join('');
+  document.getElementById('mv-cliente-card').style.display = 'none';
+  mvAdicionarItem();
+  abrirModal('modal-marm-valor');
+}
+function mvTrocarApto() {
+  mvApAtual = document.getElementById('mv-ap-select').value;
+  mostrarCardCliente('mv-cliente-card', mvApAtual, dadosParedes);
+}
+function mvAdicionarItem() { mvItens.push({ ambiente: '', descricao: '', pedra: '', valor: '' }); mvRender(); }
+function mvRender() {
+  document.getElementById('mv-itens-lista').innerHTML = mvItens.map((b, i) => `
+    <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;border:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <input class="form-control" value="${esc_(b.ambiente)}" placeholder="Ambiente (ex: Banho 01)" style="font-size:12px;flex:1;margin-right:8px" oninput="mvItens[${i}].ambiente=this.value">
+        <button onclick="mvItens.splice(${i},1);mvRender()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px">×</button>
+      </div>
+      <input class="form-control" value="${esc_(b.descricao)}" placeholder="Descrição do serviço (ex: Soleira, rodapé, nicho)" style="font-size:12px;margin-bottom:8px" oninput="mvItens[${i}].descricao=this.value">
+      <div style="display:flex;gap:8px">
+        <div style="flex:2">
+          <label style="font-size:11px;color:var(--text3)">Pedra</label>
+          <select class="form-control" style="font-size:12px" onchange="mvItens[${i}].pedra=this.value">
+            <option value="">— Selecione —</option>
+            ${_optionsCatalogoMarmoraria(String(b.pedra || ''))}
+          </select>
+        </div>
+        <div style="flex:1">
+          <label style="font-size:11px;color:var(--text3)">Valor cobrado (R$)</label>
+          <input class="form-control" type="number" step="0.01" value="${b.valor || ''}" placeholder="0,00" style="font-size:12px" oninput="mvItens[${i}].valor=this.value;mvTotal()">
+        </div>
+      </div>
+    </div>`).join('');
+  mvTotal();
+}
+function mvTotal() {
+  const t = mvItens.reduce((a, v) => a + (parseFloat(v.valor) || 0), 0);
+  document.getElementById('mv-total').textContent = 'R$ ' + t.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function _mvItensLimpos() {
+  return mvItens.filter(b => (parseFloat(b.valor) || 0) > 0).map(b => {
+    const ped = dadosMarmCatalogo.find(p => String(p.id) === String(b.pedra));
+    return { ambiente: b.ambiente || '', descricao: b.descricao || '', pedra: b.pedra || '', pedra_nome: ped ? ped.nome : '', valor: parseFloat(b.valor) || 0, valor_fechado: true };
+  });
+}
+async function salvarMarmValor(gerarPdf) {
+  if (!mvApAtual) { showToast('Selecione o apartamento', 'error'); return; }
+  const itens = _mvItensLimpos();
+  if (!itens.length) { showToast('Preencha pelo menos um item com valor', 'error'); return; }
+  const cliente = _clienteDoAp(mvApAtual) || '—';
+  showToast('Salvando...', 'success');
+  try {
+    await apiPost('addMarmPersonalizar', { ap: mvApAtual, cliente, data: new Date().toLocaleDateString('pt-BR'), selecoes: itens, tipo: 'marmoraria' });
+    invalidarCacheExtra('marmoraria');
+    const d = await lerDadosExtra('marmoraria', true);
+    dadosMarmoraria = d.personalizar || [];
+    renderMarmoraria();
+    if (gerarPdf) await _gerarPDFMarmValorInterno(mvApAtual, cliente, itens);
+    fecharModal('modal-marm-valor');
+    showToast('Orçamento salvo!', 'success');
+  } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+function gerarPDFMarmValorId(id) {
+  const p = dadosMarmoraria.find(x => String(x.id) === String(id));
+  if (!p) { showToast('Orçamento não encontrado', 'error'); return; }
+  _gerarPDFMarmValorInterno(p.ap, p.cliente, _marmSelecoes(p));
+}
+async function _gerarPDFMarmValorInterno(ap, cliente, itens) {
+  const ESSENCE_CORES = ESSENCE_PALETAS.marmoraria;
+  const jsPDF = getJsPDF();
+  if (!jsPDF) { showToast('jsPDF não carregado', 'error'); return; }
+  showToast('Gerando PDF...', 'success');
+  let imgData = null;
+  try { imgData = await carregarImagemPDF(ESSENCE_ASSETS + 'capa-marmoraria.png'); } catch (e) {}
+  const doc = new jsPDF();
+  _pdfCapa(doc, imgData, 'PERSONALIZE');
+  _pdfInfoCliente(doc, ap, cliente, null, 50, ESSENCE_CORES);
+  let y = 88;
+  _pdfTabelaHeader(doc, y, [
+    {label:'A M B I E N T E   /   P E D R A', x:8},
+    {label:'V A L O R', x:202, align:'right'},
+  ]);
+  y += 12;
+  let total = 0, alt = false;
+  itens.forEach(b => {
+    const ped = dadosMarmCatalogo.find(p => String(p.id) === String(b.pedra));
+    const nomePedra = ped ? ped.nome : (b.pedra_nome || 'Pedra não definida');
+    const valor = parseFloat(b.valor) || 0;
+    total += valor;
+    if (y > 248) { doc.addPage(); y = 15; }
+    _pdfLinha(doc, y, [
+      {valor: b.ambiente || '—', x:8, bold:true, dy:8},
+      {valor: (b.descricao ? b.descricao + '  ·  ' : '') + nomePedra, x:8, bold:false, size:7.5, cor:ESSENCE_CORES.cinza, dy:15},
+      {valor: 'R$ ' + valor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}), x:202, align:'right', bold:true, dy:10, cor:ESSENCE_CORES.dourado},
+    ], alt);
+    alt = !alt; y += 20;
+  });
+  y += 6;
+  _pdfTotal(doc, y, null, total, 'Apto ' + ap, ESSENCE_CORES);
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setTextColor(...ESSENCE_CORES.cinza); doc.setFontSize(7); doc.text('Pág. ' + i + ' / ' + n, 202, 292, {align:'right'}); }
+  doc.save('Marmoraria-Valor-Ap' + ap + '-' + nomeArquivoLimpo(cliente) + '.pdf');
+  showToast('PDF gerado!', 'success');
 }
 
 // ===================== BANHEIRAS =====================
@@ -3303,17 +3457,23 @@ body.mobile-mode #main{padding-bottom:72px}
     <div class="header-actions">
       <button class="btn btn-primary" id="marm-btn-orcamento" onclick="abrirModalCalcMarmoraria()">+ Novo Orçamento</button>
       <button class="btn btn-primary" id="marm-btn-romaneio" onclick="abrirModalRomaneio()" style="display:none">+ Novo romaneio</button>
+      <button class="btn btn-primary" id="marm-btn-valor" onclick="abrirModalMarmValor()" style="display:none">+ Novo orçamento por valor</button>
     </div>
   </div>
   <div class="page-content">
     <div style="display:flex;border-bottom:2px solid var(--border);margin-bottom:18px">
       <button id="marm-tab-pers" onclick="trocarTabMarm('pers')" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--accent);border-bottom:2px solid var(--accent);margin-bottom:-2px;font-family:'Inter',sans-serif">Personalizações</button>
       <button id="marm-tab-rom" onclick="trocarTabMarm('rom')" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:500;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-2px;font-family:'Inter',sans-serif">Romaneios</button>
+      <button id="marm-tab-val" onclick="trocarTabMarm('val')" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:500;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-2px;font-family:'Inter',sans-serif">Orçamento por valor</button>
     </div>
     <div id="marm-pane-pers">
       <div id="marmoraria-lista" style="display:flex;flex-direction:column;gap:12px">
         <div class="empty-state"><strong>Carregando...</strong></div>
       </div>
+    </div>
+    <div id="marm-pane-val" style="display:none">
+      <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Orçamentos com valor fechado (sem cálculo por m²): você escolhe o ambiente, a pedra e o valor que será cobrado do cliente.</p>
+      <div id="marm-valor-lista" style="display:flex;flex-direction:column;gap:12px"><div class="empty-state"><strong>Carregando...</strong></div></div>
     </div>
     <div id="marm-pane-rom" style="display:none">
       <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
@@ -14337,6 +14497,42 @@ async function gerarPDFInstalacoesApto(ap) {
       <button class="btn btn-secondary" onclick="fecharModal('modal-calc-marmoraria')">Fechar</button>
       <button class="btn btn-secondary" id="marm-btn-salvar" onclick="salvarMarmoraria()" style="display:none">Salvar em Personalizar</button>
       <button class="btn btn-primary" id="marm-btn-pdf" onclick="gerarPDFMarmoraria()" style="display:none">Gerar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MARMORARIA POR VALOR -->
+<div id="modal-marm-valor" class="modal-overlay">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header">
+      <h2>Orçamento Marmoraria · por valor</h2>
+      <button class="modal-close" onclick="fecharModal('modal-marm-valor')">×</button>
+    </div>
+    <div class="modal-body" style="max-height:74vh;overflow:auto">
+      <div class="form-group">
+        <label class="form-label">Apartamento</label>
+        <select class="form-control" id="mv-ap-select" onchange="mvTrocarApto()">
+          <option value="">— Selecione —</option>
+        </select>
+      </div>
+      <div id="mv-cliente-card" style="display:none;margin-top:12px;padding:12px 16px;background:var(--accent-bg);border-radius:var(--radius-sm);border:1px solid #b8d4c0">
+        <p style="font-size:13px;font-weight:500;color:var(--accent)" id="mv-cliente-card-nome"></p>
+        <p style="font-size:12px;color:var(--text2)" id="mv-cliente-card-info"></p>
+      </div>
+      <div style="margin-top:16px">
+        <h3 style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px">Itens do orçamento</h3>
+        <div id="mv-itens-lista"></div>
+        <button class="btn btn-secondary" onclick="mvAdicionarItem()" style="margin-top:12px;width:100%">+ Adicionar item</button>
+      </div>
+      <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--surface2);border-radius:var(--radius-sm)">
+        <span style="font-size:13px;color:var(--text2)">Total</span>
+        <strong id="mv-total" style="font-size:18px">R$ 0,00</strong>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-marm-valor')">Fechar</button>
+      <button class="btn btn-secondary" onclick="salvarMarmValor(false)">Salvar</button>
+      <button class="btn btn-primary" onclick="salvarMarmValor(true)">Salvar e Gerar PDF</button>
     </div>
   </div>
 </div>
