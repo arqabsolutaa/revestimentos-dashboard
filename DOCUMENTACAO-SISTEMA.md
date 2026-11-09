@@ -202,3 +202,13 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
   reservado = confirmado e ainda não subiu (bruto, sem perda); disponível = físico − reservado − reserva técnica.
 - Botão ✎ na linha = **contagem física** (aba `Estoque_Ajustes`, action `salvarAjusteEstoque`, vale a última). ⚠ aparece quando a planilha travou em zero e o físico calculado pode estar errado até alguém contar. Registrar instalações pendentes ANTES de contar.
 - Botão **Montar reservas**: sugere reserva técnica por apto + revestimento + lote (data de fabricação da instalação), 10% das caixas instaladas (mín. 1), cria em lote (`addReservasTecnicasLote`) na aba Reservas_Tecnicas já existente.
+
+## Alteração de orçamento já confirmado (troca de revestimento)
+
+- **Quando vale:** orçamento do Personalizar com saída já confirmada (`status = confirmado`). Em Controle de Pagamentos → Revestimentos, o botão **✏️ Editar** abre o cálculo em *modo alteração*. Orçamento ainda pendente continua sendo editado/sobrescrito como antes.
+- **O que é salvo:** só o delta, na aba `Personalizar_Alteracoes` (id, personalizar_id, ap, cliente, numero, data, linhas, valor_diferenca, status, confirmado_em…). O orçamento original nunca é alterado. Cada *linha* guarda `antes` e `depois` ({piso, m2}) e o valor de cada lado (m² com perda × preço, igual ao orçamento). Mesma parede + mesmo revestimento = não mudou (vale a metragem contratada, não a da aba Paredes).
+- **Base da próxima alteração:** orçamento original + todas as alterações (função `_selecoesEfetivas`). Só pode haver 1 alteração pendente por orçamento.
+- **Confirmar (só Bárbara):** modal mostra o que volta/sai do estoque em caixas. `confirmarAlteracaoPersonalizar` grava Saídas ("Via Personalizar - Alteração N"): **estorno** (quantidade negativa, soma de volta ao `estoque_m2`) para o material trocado/removido e **saída normal** só para o material novo (com a perda do revestimento). Não confirma duas vezes.
+- **Diferença de valor:** positiva → `confirmarCobranca` com `modulo = 'alteracao'` (entra em Cobranças futuras como "Previsto", forma de pagamento e 1º vencimento escolhidos; some pela baixa da parcela). Negativa → **crédito** do cliente (exibido no card; uso manual por enquanto). Zero → nada a cobrar.
+- **Materiais por Apartamento:** cada alteração confirmada vira um cartão "Cliente · Alteração N" só com o material novo (m² e caixas).
+- **Code.gs:** ações `salvarAlteracaoPersonalizar`, `excluirAlteracaoPersonalizar` (só pendente), `confirmarAlteracaoPersonalizar`, leitura leve `getPersonalizarAlteracoes`; `personalizarAlteracoes` no espelho `data.json`.

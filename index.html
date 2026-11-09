@@ -980,7 +980,8 @@ const _CONF_MODULOS = {
   banheira: { nome: 'Banheira', exclusivo: true, regexEntrada: /banheira/i, padrao: 'boleto3' },
   civil:    { nome: 'Civil', exclusivo: false, regexEntrada: /civil/i, padrao: null },
   ac:       { nome: 'Ar-condicionado', exclusivo: false, regexEntrada: /ar.?cond|climatiza/i, padrao: null },
-  metais:   { nome: 'Metais', exclusivo: false, regexEntrada: /metal|metais/i, padrao: 'avista' }
+  metais:   { nome: 'Metais', exclusivo: false, regexEntrada: /metal|metais/i, padrao: 'avista' },
+  alteracao:{ nome: 'Alteração de revestimento', exclusivo: false, regexEntrada: /(?!)/, padrao: 'avista' } // a previsão some pela baixa da parcela
 };
 function _confDe(modulo, refId) { return (dadosCobrancasConf || []).find(c => c.modulo === modulo && String(c.ref_id) === String(refId)); }
 // Confirmações: o espelho (data.json) pode estar atrasado alguns minutos, então a fonte de verdade é a planilha.
@@ -1044,7 +1045,7 @@ function _confRenderBotao(modulo, id, rerender) {
   return `<button class="btn btn-primary" onclick="abrirConfirmarCobranca('${modulo}','${id}')" style="font-size:11px;padding:4px 10px">✓ Confirmar orçamento</button>`;
 }
 function _rerenderConf(modulo) {
-  if (modulo === 'banheira') renderBanheiras(); else if (modulo === 'civil') renderCivil(); else if (modulo === 'ac') renderArCondicionado(); else if (modulo === 'metais') renderMetais();
+  if (modulo === 'banheira') renderBanheiras(); else if (modulo === 'civil') renderCivil(); else if (modulo === 'ac') renderArCondicionado(); else if (modulo === 'metais') renderMetais(); else if (modulo === 'alteracao') _rerenderAlt();
 }
 function abrirConfirmarCobranca(modulo, id) {
   const info = _confInfoOrcamento(modulo, id);
@@ -5096,9 +5097,10 @@ body.mobile-mode #main{padding-bottom:72px}
 <div class="modal-overlay" id="modal-calculo">
   <div class="modal" style="max-width:720px">
     <div class="modal-header">
-      <h2>Calcular Revestimento</h2>
+      <h2 id="calc-modal-titulo">Calcular Revestimento</h2>
       <button class="modal-close" onclick="fecharModal('modal-calculo')">×</button>
     </div>
+    <div id="calc-alt-banner" style="display:none;margin:0;padding:10px 20px;background:#fff6e0;border-bottom:1px solid #e8d9a8;font-size:12px;color:#6b5a1e"></div>
     <div class="modal-body">
       <!-- STEP 1: selecionar AP -->
       <div id="calc-step1">
@@ -6909,7 +6911,7 @@ function showToast(msg, type = 'default') {
 
 // ===================== MODALS =====================
 function abrirModal(id) { document.getElementById(id).classList.add('open'); }
-function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
+function fecharModal(id) { document.getElementById(id).classList.remove('open'); if (id === 'modal-calculo' && typeof _altSairModo === 'function') _altSairModo(); }
 // Nenhum modal fecha ao clicar fora — apenas pelo X
 // document.querySelectorAll('.modal-overlay') removido intencionalmente
 
@@ -10088,7 +10090,9 @@ async function loadPagamentos(forcarFresco) {
   try {
     const dados = await lerDados(forcarFresco);
     const pers = (dados.personalizar || []).filter(p => p.arquivado !== 'true');
+    if (Array.isArray(dados.personalizarAlteracoes) && !dadosAlteracoes.length) dadosAlteracoes = dados.personalizarAlteracoes;
     renderPagamentos(pers);
+    _carregarAlteracoes(_rerenderAlt, !!forcarFresco);
   } catch(e) {
     document.getElementById('pgto-lista').innerHTML = '<div class="empty-state"><strong>Erro ao carregar</strong></div>';
     return;
@@ -10473,6 +10477,7 @@ function _valorBrutoPago(p, totalCalculado) {
 }
 
 function renderPagamentos(lista) {
+  window._pgtoListaAtual = lista;
   if (!lista.length) {
     document.getElementById('pgto-lista').innerHTML = '<div class="empty-state"><strong>Nenhum orçamento encontrado</strong></div>';
     return;
@@ -10522,6 +10527,7 @@ function renderPagamentos(lista) {
           <input type="file" id="file-comprovante-${p.id}" accept="image/*,.pdf" style="display:none" onchange="uploadComprovante('${p.id}', this)">
         </div>
       </div>
+      ${_altBlocoHTML(p)}
     </div>`;
   }).join('');
 }
@@ -11115,11 +11121,33 @@ function _materiaisAgrupados() {
     }).sort((a,b) => a.ambiente.localeCompare(b.ambiente) || a.item.localeCompare(b.item));
     const totalM2 = linhas.reduce((s,l) => s + l.m2, 0);
     return { id: p.id, ap, cliente: p.cliente || '—', linhas, totalM2 };
-  }).sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
+  }).concat(_materiaisAlteracoes()).sort((a,b) => (parseInt(a.ap)||0) - (parseInt(b.ap)||0));
+}
+
+// Alterações confirmadas viram um cartão próprio, só com o material NOVO (o que ainda precisa subir)
+function _materiaisAlteracoes() {
+  const out = [];
+  (dadosAlteracoes || []).filter(a => a.status === 'confirmado').forEach(a => {
+    const linhas = [];
+    _altLinhas(a).forEach(l => {
+      if (!l.depois) return; // item que saiu não precisa subir
+      const m2n = parseFloat(l.depois.m2) || 0;
+      const m2a = l.antes ? (parseFloat(l.antes.m2) || 0) : 0;
+      const m2 = (l.antes && String(l.antes.piso) === String(l.depois.piso)) ? m2n - m2a : m2n;
+      if (m2 <= 0.0001) return;
+      const rev = dadosRevestimentos.find(r => String(r.id) === String(l.depois.piso) || String(r.codigo) === String(l.depois.piso));
+      const m2cx = rev ? parseFloat(rev.m2_por_caixa) : 0;
+      linhas.push({ ambiente: l.ambiente || '—', item: l.item || '', material: rev ? rev.nome : '(revestimento não encontrado)', tamanho: rev ? rev.tamanho : '', m2, caixas: m2cx > 0 ? Math.ceil(m2 / m2cx) : null });
+    });
+    if (!linhas.length) return;
+    out.push({ id: a.id, ap: String(a.ap || '').trim(), cliente: (a.cliente || '—') + ' · Alteração ' + a.numero, linhas, totalM2: linhas.reduce((x, l) => x + l.m2, 0) });
+  });
+  return out;
 }
 
 function loadOrcamentos() {
   renderOrcamentos(_materiaisAgrupados());
+  _carregarAlteracoes(() => renderOrcamentos(_materiaisAgrupados()));
 }
 
 function renderOrcamentos(grupos) {
@@ -12685,6 +12713,7 @@ async function excluirRevestimento(id) {
 
 // ===================== CALCULO =====================
 async function abrirCalculo() {
+  if (window._altModo) _altSairModo();
   calcSelecoes = {}; calcApAtual = null;
   document.getElementById('calc-step2').style.display = 'none';
   document.getElementById('calc-step3').style.display = 'none';
@@ -12708,7 +12737,7 @@ function selecionarAp() {
   if (!ap) { document.getElementById('calc-cliente-info').style.display = 'none'; document.getElementById('calc-step2').style.display = 'none'; return; }
   calcApAtual = ap;
   const paredesAp = dadosParedes.filter(p => p.apartamento === ap);
-  const cliente = paredesAp[0]?.cliente || '—';
+  const cliente = _clienteDoAp(ap) || '—';
   document.getElementById('calc-cliente-nome').textContent = cliente; document.getElementById('calc-cliente-nome').dataset.cliente = cliente;
   document.getElementById('calc-ap-info').textContent = 'Apartamento ' + ap + ' · ' + paredesAp.length + ' paredes configuradas';
   document.getElementById('calc-cliente-info').style.display = 'block';
@@ -12916,7 +12945,7 @@ function atualizarResumo() {
   document.getElementById('calc-resumo').innerHTML = resumo || '<p style="font-size:13px;color:var(--text3)">Selecione as paredes acima</p>';
   const temSelecao = Object.keys(calcSelecoes).length > 0;
   document.getElementById('calc-btn-salvar').style.display = temSelecao ? 'inline-flex' : 'none';
-  const btnV = document.getElementById('calc-btn-salvar-versao'); if (btnV) btnV.style.display = temSelecao ? 'inline-flex' : 'none';
+  const btnV = document.getElementById('calc-btn-salvar-versao'); if (btnV) btnV.style.display = (temSelecao && !window._altModo) ? 'inline-flex' : 'none';
   document.getElementById('calc-btn-pdf').style.display = temSelecao ? 'inline-flex' : 'none';
   const pgtoBox = document.getElementById('calc-desconto-box');
   if (pgtoBox) pgtoBox.style.display = temSelecao ? 'block' : 'none';
@@ -12929,8 +12958,7 @@ async function salvarNovaVersao() {
   if (!calcApAtual) return;
   const obs = prompt('Nome desta versão (ex: "sem banheiros", "v2"):');
   if (obs === null) return; // cancelou
-  const paredesAp = dadosParedes.filter(p => p.apartamento === calcApAtual);
-  const cliente = (paredesAp[0]?.cliente || '—') + (obs ? ' (' + obs + ')' : ' (nova versão)');
+  const cliente = (_clienteDoAp(calcApAtual) || '—') + (obs ? ' (' + obs + ')' : ' (nova versão)');
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA) || 'Empresa';
   const dados = { ap: calcApAtual, cliente, empresa, data: new Date().toLocaleDateString('pt-BR'), selecoes: calcSelecoes, total_m2: window._calcTotalM2 || 0, total_valor: window._calcTotalValor || 0 };
   showToast('Salvando nova versão...', 'success');
@@ -12961,8 +12989,9 @@ async function salvarNovaVersao() {
 
 async function salvarSelecao() {
   if (!calcApAtual) return;
+  if (window._altModo) return salvarAlteracao();
   const paredesAp = dadosParedes.filter(p => p.apartamento === calcApAtual);
-  const cliente = paredesAp[0]?.cliente || '—';
+  const cliente = _clienteDoAp(calcApAtual) || '—';
   const empresa = localStorage.getItem(STORAGE_KEY_EMPRESA) || 'Empresa';
   const dados = { ap: calcApAtual, cliente, empresa, data: new Date().toLocaleDateString('pt-BR'), selecoes: calcSelecoes, total_m2: window._calcTotalM2 || 0, total_valor: window._calcTotalValor || 0 };
   showToast('Salvando...', 'success');
@@ -13000,6 +13029,252 @@ async function salvarSelecao() {
   } catch(e) {
     showToast('Erro ao salvar: ' + e.message, 'error');
   }
+}
+
+// ===================== ALTERAÇÃO DE ORÇAMENTO (troca de revestimento depois de confirmado) =====================
+// Orçamento já confirmado → "Editar" salva só o que mudou (linhas + diferença de valor). Ao confirmar a alteração:
+// devolve ao estoque o material que saiu, dá baixa só no novo e lança a diferença em Cobranças futuras (ou vira crédito).
+let dadosAlteracoes = [];
+let _altDiretoEm = 0;
+let _altConfAtual = null;
+
+function _altLinhas(a) { try { return typeof a.linhas === 'string' ? JSON.parse(a.linhas || '[]') : (a.linhas || []); } catch (e) { return []; } }
+function _altDe(persId) { return (dadosAlteracoes || []).filter(a => String(a.personalizar_id) === String(persId)).sort((a, b) => (parseInt(a.numero) || 0) - (parseInt(b.numero) || 0)); }
+function _selecoesOriginais(p) { try { return typeof p.selecoes === 'string' ? JSON.parse(p.selecoes || '{}') : (p.selecoes || {}); } catch (e) { return {}; } }
+// O que o cliente tem HOJE: orçamento original + todas as alterações, em ordem
+function _selecoesEfetivas(p) {
+  const sel = JSON.parse(JSON.stringify(_selecoesOriginais(p)));
+  _altDe(p.id).forEach(a => _altLinhas(a).forEach(l => {
+    if (l.depois) sel[l.key] = { ...(sel[l.key] || {}), m2: l.depois.m2, piso: l.depois.piso }; else delete sel[l.key];
+  }));
+  return sel;
+}
+function _revPorPiso(piso) { return (dadosRevestimentos || []).find(r => String(r.id) === String(piso) || String(r.codigo) === String(piso)); }
+function _nomeRevPiso(piso) { const r = _revPorPiso(piso); return r ? (r.nome + (r.tamanho ? ' ' + r.tamanho : '')) : (piso ? '(não encontrado)' : '—'); }
+// Valor à vista de uma linha, do mesmo jeito que o orçamento calcula (m² com perda × preço)
+function _valorLinhaSel(v) {
+  if (!v) return 0;
+  const rev = _revPorPiso(v.piso);
+  const perda = rev ? (parseFloat(rev.perda_pct) > 0 ? parseFloat(rev.perda_pct) : 20) / 100 : 0.20;
+  return getPreco(rev) * (parseFloat(v.m2) || 0) * (1 + perda);
+}
+// Chave "normalizada" (apto|ambiente|parede): a edição pode devolver a mesma parede com outro sufixo na chave
+function _altNormKey(key) {
+  const p = String(key).split('-');
+  if (p.length < 3) return String(key);
+  return p[0] + '|' + p.slice(1, p.length - 2).join('-') + '|' + p[p.length - 2];
+}
+function _altCalcularLinhas(base, novo, ap) {
+  const mapa = obj => {
+    const m = new Map();
+    Object.entries(obj || {}).forEach(([key, v]) => {
+      if (!v || !v.piso || !(parseFloat(v.m2) > 0)) return;
+      let nk = _altNormKey(key); if (m.has(nk)) nk = String(key); // duas paredes iguais: usa a chave inteira
+      m.set(nk, { key, v });
+    });
+    return m;
+  };
+  const mb = mapa(base), mn = mapa(novo);
+  const linhas = [];
+  new Set([...mb.keys(), ...mn.keys()]).forEach(nk => {
+    const a = mb.get(nk), n = mn.get(nk);
+    // mesma parede com o mesmo revestimento = não mudou (a metragem da aba Paredes pode ter mudado depois do orçamento;
+    // vale sempre a metragem que o cliente contratou)
+    if (a && n && String(a.v.piso) === String(n.v.piso)) return;
+    const key = a ? a.key : n.key;
+    // troca de revestimento na mesma parede: o novo entra com a metragem contratada
+    const m2Novo = n ? (a ? parseFloat(a.v.m2) || 0 : parseFloat(n.v.m2) || 0) : 0;
+    const { ambiente, item } = _quebrarChaveSelecao(key, ap);
+    linhas.push({ key, ambiente, item,
+      antes: a ? { piso: a.v.piso, m2: parseFloat(a.v.m2) || 0 } : null,
+      depois: n ? { piso: n.v.piso, m2: m2Novo } : null,
+      valor_antes: Math.round(_valorLinhaSel(a && a.v) * 100) / 100,
+      valor_depois: Math.round(_valorLinhaSel(n ? { piso: n.v.piso, m2: m2Novo } : null) * 100) / 100 });
+  });
+  return linhas;
+}
+function _altDiferenca(linhas) { return Math.round(linhas.reduce((x, l) => x + (l.valor_depois || 0) - (l.valor_antes || 0), 0) * 100) / 100; }
+function _altTextoLinha(l) {
+  const f = v => (parseFloat(v) || 0).toFixed(2).replace('.', ',');
+  const amb = (l.ambiente || '—') + (l.item ? ' · ' + l.item : '');
+  if (l.antes && l.depois) return `<strong>${amb}</strong>: ${_nomeRevPiso(l.antes.piso)} ${f(l.antes.m2)} m² → <strong>${_nomeRevPiso(l.depois.piso)}</strong> ${f(l.depois.m2)} m²`;
+  if (l.depois) return `<strong>${amb}</strong>: entrou ${_nomeRevPiso(l.depois.piso)} ${f(l.depois.m2)} m²`;
+  return `<strong>${amb}</strong>: saiu ${_nomeRevPiso(l.antes.piso)} ${f(l.antes.m2)} m²`;
+}
+function _creditoAlteracoesApto(ap) {
+  return (dadosAlteracoes || []).filter(a => a.status === 'confirmado' && String(a.ap) === String(ap) && (parseFloat(a.valor_diferenca) || 0) < 0)
+    .reduce((x, a) => x + Math.abs(parseFloat(a.valor_diferenca) || 0), 0);
+}
+
+async function _carregarAlteracoes(depois, forcar) {
+  try {
+    const d = await lerDados();
+    if (d && Array.isArray(d.personalizarAlteracoes)) {
+      const locais = (dadosAlteracoes || []).filter(l => l._local && !d.personalizarAlteracoes.some(c => String(c.id) === String(l.id)));
+      dadosAlteracoes = d.personalizarAlteracoes.concat(locais);
+    }
+  } catch (e) {}
+  if (depois) depois();
+  if (forcar || Date.now() - _altDiretoEm > 30000) {
+    try {
+      const r = await jsonp(SCRIPT_URL + '?action=getPersonalizarAlteracoes');
+      const lista = r && (r.data || r.result || r);
+      if (Array.isArray(lista)) {
+        _altDiretoEm = Date.now();
+        const locais = (dadosAlteracoes || []).filter(l => l._local && !lista.some(c => String(c.id) === String(l.id)));
+        dadosAlteracoes = lista.concat(locais);
+        if (depois) depois();
+      }
+    } catch (e) {}
+  }
+}
+function _rerenderAlt() {
+  if (window._pgtoListaAtual && document.getElementById('pgto-lista')) renderPagamentos(window._pgtoListaAtual);
+  if (typeof _materiaisAgrupados === 'function' && document.getElementById('orcamentos-cards') && (window._materiaisGrupos || []).length) renderOrcamentos(_materiaisAgrupados());
+}
+
+function _altAplicarModo() {
+  const m = window._altModo;
+  const t = document.getElementById('calc-modal-titulo'), b = document.getElementById('calc-alt-banner'), bt = document.getElementById('calc-btn-salvar');
+  if (t) t.textContent = m ? 'Alterar orçamento já confirmado' : 'Calcular Revestimento';
+  if (b) { b.style.display = m ? 'block' : 'none'; b.innerHTML = m ? '<strong>Modo alteração.</strong> Troque o revestimento ou a metragem do que mudou. Ao salvar, só a <strong>diferença</strong> é guardada: o orçamento original não é mexido e o estoque só muda quando você confirmar a alteração.' : ''; }
+  if (bt) bt.textContent = m ? 'Salvar alteração' : 'Salvar em Personalizar';
+}
+function _altSairModo() { window._altModo = null; window._editandoPersonalizacaoId = null; _altAplicarModo(); }
+
+async function salvarAlteracao() {
+  const m = window._altModo; if (!m) return;
+  const linhas = _altCalcularLinhas(m.base, calcSelecoes, m.ap);
+  if (!linhas.length) { showToast('Nada foi alterado em relação ao orçamento atual', 'error'); return; }
+  const dif = _altDiferenca(linhas);
+  const txt = linhas.length + ' mudança(s). ' + (dif > 0.005 ? 'Diferença a cobrar: ' + _fmtR$(dif) : dif < -0.005 ? 'Crédito para o cliente: ' + _fmtR$(-dif) : 'Sem diferença de valor') + '.\n\nSalvar como alteração pendente? (o estoque só muda quando você confirmar)';
+  if (!confirm(txt)) return;
+  showToast('Salvando alteração...', 'success');
+  try {
+    const r = await apiPost('salvarAlteracaoPersonalizar', { personalizar_id: m.persId, ap: m.ap, cliente: m.cliente, linhas, valor_diferenca: dif });
+    dadosAlteracoes.push({ id: r.id, personalizar_id: m.persId, ap: String(m.ap), cliente: m.cliente, numero: r.numero, data: new Date().toLocaleDateString('pt-BR'), linhas: JSON.stringify(linhas), valor_diferenca: dif, status: 'pendente', _local: true });
+    fecharModal('modal-calculo');
+    showToast('Alteração salva! Confirme quando o cliente aprovar.', 'success');
+    _rerenderAlt();
+    _carregarAlteracoes(_rerenderAlt, true);
+  } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+function _altBlocoHTML(p) {
+  const lista = _altDe(p.id);
+  if (!lista.length) return '';
+  const credito = _creditoAlteracoesApto(p.ap);
+  return `<div style="flex-basis:100%;border-top:1px dashed var(--border);padding-top:12px;display:flex;flex-direction:column;gap:8px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+      <strong style="font-size:12px;color:var(--text2);letter-spacing:.3px">ALTERAÇÕES DO ORÇAMENTO</strong>
+      ${credito > 0.005 ? `<span class="badge badge-green" title="Soma das alterações confirmadas com valor a menos">Crédito do cliente: ${_fmtR$(credito)}</span>` : ''}
+    </div>
+    ${lista.map(a => {
+      const dif = parseFloat(a.valor_diferenca) || 0;
+      const conf = a.status === 'confirmado';
+      const difTxt = dif > 0.005 ? `<span style="color:var(--accent2);font-weight:600">+ ${_fmtR$(dif)} a cobrar</span>` : dif < -0.005 ? `<span style="color:#2e7d3f;font-weight:600">− ${_fmtR$(-dif)} de crédito</span>` : '<span style="color:var(--text3)">sem diferença de valor</span>';
+      return `<div style="background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+          <span style="font-size:13px;font-weight:600">Alteração ${a.numero} <span style="font-weight:400;color:var(--text3)">· ${formatarDataDisplay(a.data) || ''}</span></span>
+          ${conf ? '<span class="badge badge-green">✓ Confirmada · estoque atualizado</span>' : '<span class="badge badge-warn">Pendente</span>'}
+        </div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">${_altLinhas(a).map(l => '• ' + _altTextoLinha(l)).join('<br>')}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:8px">
+          <span style="font-size:12px">${difTxt}</span>
+          ${conf ? '' : `<span style="display:flex;gap:6px"><button class="btn btn-primary" onclick="abrirConfirmarAlteracao('${a.id}')" style="font-size:11px;padding:4px 10px">✓ Confirmar alteração</button><button class="btn btn-secondary" onclick="excluirAlteracao('${a.id}')" style="font-size:11px;padding:4px 10px">Excluir</button></span>`}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function _altMovimentos(a) {
+  // quanto de cada material volta / sai (em caixas, com perda), igual ao cálculo do servidor
+  const mov = [];
+  _altLinhas(a).forEach(l => {
+    const x = l.antes, y = l.depois;
+    const m2a = x ? (parseFloat(x.m2) || 0) : 0, m2n = y ? (parseFloat(y.m2) || 0) : 0;
+    if (x && y && String(x.piso) === String(y.piso)) {
+      const d = m2n - m2a;
+      if (d > 0.0001) mov.push({ piso: y.piso, m2: d, sinal: 1 }); else if (d < -0.0001) mov.push({ piso: x.piso, m2: -d, sinal: -1 });
+    } else {
+      if (x && m2a > 0) mov.push({ piso: x.piso, m2: m2a, sinal: -1 });
+      if (y && m2n > 0) mov.push({ piso: y.piso, m2: m2n, sinal: 1 });
+    }
+  });
+  return mov.map(m => {
+    const rev = _revPorPiso(m.piso); const perda = rev ? (parseFloat(rev.perda_pct) || 10) / 100 : 0.10;
+    const m2cx = rev ? parseFloat(rev.m2_por_caixa) || 0 : 0; const m2p = m.m2 * (1 + perda);
+    return { ...m, nome: _nomeRevPiso(m.piso), m2p, cx: m2cx > 0 ? m2p / m2cx : null };
+  });
+}
+function abrirConfirmarAlteracao(id) {
+  const a = (dadosAlteracoes || []).find(x => String(x.id) === String(id)); if (!a) { showToast('Alteração não encontrada', 'error'); return; }
+  _altConfAtual = a;
+  const dif = parseFloat(a.valor_diferenca) || 0;
+  const mov = _altMovimentos(a);
+  const fx = v => (Math.round(v * 10) / 10).toString().replace('.', ',');
+  const lm = (sin, rot) => mov.filter(m => m.sinal === sin).map(m => `• ${m.nome}: ${m.cx != null ? fx(m.cx) + ' cx' : m.m2p.toFixed(2).replace('.', ',') + ' m²'} <span style="color:var(--text3)">(${m.m2p.toFixed(2).replace('.', ',')} m² com perda)</span>`).join('<br>') || '<span style="color:var(--text3)">nada</span>';
+  document.getElementById('alt-conf-resumo').innerHTML = `<strong>Apto ${a.ap} — ${a.cliente || ''}</strong> · Alteração ${a.numero}
+    <div style="margin-top:10px">${_altLinhas(a).map(l => '• ' + _altTextoLinha(l)).join('<br>')}</div>
+    <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;line-height:1.6">
+      <strong>Volta para o estoque:</strong><br>${lm(-1)}<br><strong style="display:inline-block;margin-top:6px">Sai do estoque (material novo):</strong><br>${lm(1)}
+    </div>`;
+  const cobBox = document.getElementById('alt-conf-cobranca');
+  if (dif > 0.005) {
+    cobBox.style.display = 'block';
+    const sel = document.getElementById('alt-conf-condicao'); const origem = document.getElementById('civil-condicao');
+    sel.innerHTML = origem ? origem.innerHTML : '<option value="avista">À Vista</option>'; sel.value = 'avista';
+    const hoje = new Date(); document.getElementById('alt-conf-data').value = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0') + '-' + String(hoje.getDate()).padStart(2, '0');
+    document.getElementById('alt-conf-info').textContent = '';
+    atualizarResumoAltConf();
+  } else {
+    cobBox.style.display = 'none';
+    document.getElementById('alt-conf-info').innerHTML = dif < -0.005 ? `O cliente fica com <strong>${_fmtR$(-dif)} de crédito</strong> para usar em outra coisa.` : 'Sem diferença de valor: nada será cobrado.';
+  }
+  abrirModal('modal-alt-confirmar');
+}
+function atualizarResumoAltConf() {
+  if (!_altConfAtual) return;
+  const dif = parseFloat(_altConfAtual.valor_diferenca) || 0;
+  const cond = document.getElementById('alt-conf-condicao').value;
+  const { total, juros } = calcularTotalComPagamento(dif, cond);
+  const n = cond.startsWith('credito') ? 1 : _numeroParcelas(cond);
+  document.getElementById('alt-conf-calculo').innerHTML = `Diferença à vista: <strong>${_fmtR$(dif)}</strong><br>Total a cobrar do cliente: <strong>${_fmtR$(total)}</strong>${juros > 0.005 ? ` <span style="color:var(--warn)">(acréscimo ${_fmtR$(juros)})</span>` : ''}<br>${n > 1 ? n + ' parcelas de <strong>' + _fmtR$(total / n) + '</strong>' : '1 cobrança de <strong>' + _fmtR$(total) + '</strong>'}`;
+}
+async function executarConfirmarAlteracao() {
+  const a = _altConfAtual; if (!a) return;
+  const dif = parseFloat(a.valor_diferenca) || 0;
+  const btn = document.getElementById('alt-conf-btn'); if (btn) btn.disabled = true;
+  try {
+    // 1) cobrança prevista (idempotente: re-confirmar só troca a forma de pagamento)
+    if (dif > 0.005) {
+      const cond = document.getElementById('alt-conf-condicao').value;
+      const iso = document.getElementById('alt-conf-data').value;
+      if (!iso) { showToast('Informe a data do 1º vencimento', 'error'); if (btn) btn.disabled = false; return; }
+      const { total } = calcularTotalComPagamento(dif, cond);
+      const dados = { modulo: 'alteracao', ref_id: a.id, apto: String(a.ap), cliente: a.cliente || '', descricao: 'Alteração ' + a.numero + ' de revestimento', valor_base: dif, condicao: cond, valor_total: total, data: iso.split('-').reverse().join('/'), exclusivo: false };
+      await apiPost('confirmarCobranca', dados);
+      dadosCobrancasConf = (dadosCobrancasConf || []).filter(c => !(c.modulo === 'alteracao' && String(c.ref_id) === String(a.id))).concat([{ ...dados, _local: true }]);
+    }
+    // 2) estoque: estorna o que saiu e baixa o novo
+    await apiPost('confirmarAlteracaoPersonalizar', { id: a.id });
+    a.status = 'confirmado';
+    fecharModal('modal-alt-confirmar');
+    showToast('Alteração confirmada! Estoque atualizado' + (dif > 0.005 ? ' e cobrança lançada em Cobranças futuras.' : '.'), 'success');
+    _rerenderAlt();
+    lerDados(true).then(d => { if (d) { if (d.saidas) dadosSaidas = d.saidas; if (d.revestimentos) { dadosRevestimentos = d.revestimentos; dadosEstoque = d.revestimentos; } } }).catch(() => {});
+    _carregarAlteracoes(_rerenderAlt, true);
+  } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+  if (btn) btn.disabled = false;
+}
+async function excluirAlteracao(id) {
+  if (!confirm('Excluir esta alteração pendente? O estoque não foi mexido, então nada precisa ser desfeito.')) return;
+  const antes = (dadosAlteracoes || []).slice();
+  dadosAlteracoes = dadosAlteracoes.filter(a => String(a.id) !== String(id));
+  _rerenderAlt();
+  try { await apiPost('excluirAlteracaoPersonalizar', { id }); showToast('Alteração excluída', 'success'); }
+  catch (e) { dadosAlteracoes = antes; _rerenderAlt(); showToast('Erro: ' + e.message, 'error'); }
 }
 
 // ===================== PERSONALIZAR =====================
@@ -13131,7 +13406,17 @@ async function confirmarSaidaPersonalizar(id) {
 async function editarPersonalizacao(id) {
   const p = dadosPersonalizar.find(x => String(x.id) === String(id));
   if (!p) { showToast('Orçamento não encontrado', 'error'); return; }
-  const selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+  let selecoes = typeof p.selecoes === 'string' ? JSON.parse(p.selecoes||'{}') : (p.selecoes||{});
+
+  // Orçamento já confirmado (saída feita e estoque baixado): editar vira ALTERAÇÃO — salva só a diferença
+  window._altModo = null;
+  if (String(p.status) === 'confirmado') {
+    await _carregarAlteracoes(null, true);
+    const pendente = _altDe(p.id).find(a => a.status !== 'confirmado');
+    if (pendente) { showToast('Já existe a alteração ' + pendente.numero + ' pendente deste orçamento — confirme ou exclua antes de fazer outra.', 'error'); return; }
+    selecoes = _selecoesEfetivas(p);
+    window._altModo = { persId: p.id, base: JSON.parse(JSON.stringify(selecoes)), ap: p.ap, cliente: p.cliente };
+  }
 
   // Garantir que dadosParedes está carregado
   if (!dadosParedes.length) {
@@ -13150,6 +13435,7 @@ async function editarPersonalizacao(id) {
 
   // Abrir modal
   abrirModal('modal-calculo');
+  _altAplicarModo();
 
   // Popular select de apartamentos
   const aps = [...new Set(dadosParedes.map(x => x.apartamento).filter(Boolean))];
@@ -14544,6 +14830,32 @@ async function gerarPDFInstalacoesApto(ap) {
       <button class="btn btn-secondary" onclick="fecharModal('modal-calc-marmoraria')">Fechar</button>
       <button class="btn btn-secondary" id="marm-btn-salvar" onclick="salvarMarmoraria()" style="display:none">Salvar em Personalizar</button>
       <button class="btn btn-primary" id="marm-btn-pdf" onclick="gerarPDFMarmoraria()" style="display:none">Gerar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR ALTERAÇÃO DE ORÇAMENTO -->
+<div id="modal-alt-confirmar" class="modal-overlay">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h2>Confirmar alteração</h2>
+      <button class="modal-close" onclick="fecharModal('modal-alt-confirmar')">×</button>
+    </div>
+    <div class="modal-body" style="max-height:70vh;overflow:auto">
+      <div id="alt-conf-resumo" style="font-size:13px;line-height:1.5"></div>
+      <div id="alt-conf-cobranca" style="display:none;margin-top:16px">
+        <div class="form-group"><label class="form-label">Forma de pagamento da diferença</label>
+          <select class="form-control" id="alt-conf-condicao" onchange="atualizarResumoAltConf()"></select></div>
+        <div class="form-group" style="margin-top:10px"><label class="form-label">Data do 1º vencimento</label>
+          <input class="form-control" type="date" id="alt-conf-data"></div>
+        <div id="alt-conf-calculo" style="margin-top:10px;padding:10px 12px;background:var(--accent-bg);border-radius:var(--radius-sm);font-size:13px;line-height:1.6"></div>
+      </div>
+      <div id="alt-conf-info" style="margin-top:12px;font-size:13px"></div>
+      <p style="font-size:11px;color:var(--text3);margin-top:12px">Ao confirmar, o estoque é atualizado agora (o material trocado volta e o novo sai). Isso não pode ser desfeito por aqui.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-alt-confirmar')">Cancelar</button>
+      <button class="btn btn-primary" id="alt-conf-btn" onclick="executarConfirmarAlteracao()">Confirmar alteração</button>
     </div>
   </div>
 </div>
