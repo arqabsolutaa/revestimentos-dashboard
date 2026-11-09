@@ -141,7 +141,7 @@ async function abrirModalCalcVinilico() {
   sel.innerHTML = '<option value="">— Selecione —</option>' +
     [...new Set(dadosParedes.map(p => p.apartamento))].sort((a,b) => Number(a)-Number(b))
     .map(ap => {
-      const cli = dadosParedes.find(p => p.apartamento === ap)?.cliente || '';
+      const cli = {cliente:_clienteDoAp(ap)}.cliente || '';
       return `<option value="${ap}">Apto ${ap} - ${cli}</option>`;
     }).join('');
   document.getElementById('vin-pisos-container').style.display = 'none';
@@ -584,7 +584,7 @@ async function abrirModalCalcMarmoraria() {
   sel.innerHTML = '<option value="">— Selecione —</option>' +
     [...new Set(dadosParedes.map(p => p.apartamento))].sort((a,b) => Number(a)-Number(b))
     .map(ap => {
-      const cli = dadosParedes.find(p => p.apartamento === ap)?.cliente || '';
+      const cli = {cliente:_clienteDoAp(ap)}.cliente || '';
       return `<option value="${ap}">Apto ${ap} - ${cli}</option>`;
     }).join('');
   document.getElementById('marm-bancadas-container').style.display = 'none';
@@ -692,7 +692,7 @@ function atualizarResumoMarm() {
 
 async function salvarMarmoraria() {
   if (!marmApAtual) return;
-  const cliente = dadosParedes.find(p => p.apartamento === marmApAtual)?.cliente || '—';
+  const cliente = {cliente:_clienteDoAp(marmApAtual)}.cliente || '—';
   const dados = { ap: marmApAtual, cliente, data: new Date().toLocaleDateString('pt-BR'), selecoes: marmSelecoes, tipo: 'marmoraria' };
   showToast('Salvando...', 'success');
   try {
@@ -938,7 +938,7 @@ async function abrirModalCalcBanheira() {
   sel.innerHTML = '<option value="">— Selecione —</option>' +
     [...new Set(dadosParedes.map(p => p.apartamento))].sort((a,b) => Number(a)-Number(b))
     .map(ap => {
-      const cli = dadosParedes.find(p => p.apartamento === ap)?.cliente || '';
+      const cli = {cliente:_clienteDoAp(ap)}.cliente || '';
       return `<option value="${ap}">Apto ${ap} - ${cli}</option>`;
     }).join('');
   
@@ -964,13 +964,20 @@ async function abrirModalCalcBanheira() {
 }
 
 
+// Cliente de um apartamento: usa a primeira linha da aba Paredes que tenha nome preenchido
+// (alguns aptos, como 151B, têm linhas sem cliente misturadas com linhas preenchidas)
+function _clienteDoAp(ap) {
+  const linhas = (typeof dadosParedes !== 'undefined' ? dadosParedes : []).filter(p => String(p.apartamento) === String(ap));
+  const cheia = linhas.find(p => String(p.cliente || '').trim() && String(p.cliente).trim() !== 'Disponível');
+  return String((cheia || linhas.find(p => String(p.cliente || '').trim()) || {}).cliente || '').trim();
+}
 function mostrarCardCliente(cardId, ap, dadosParedes) {
   const card = document.getElementById(cardId);
   if (!card) return;
   if (!ap) { card.style.display = 'none'; return; }
   const p = dadosParedes.find(x => x.apartamento === ap);
   if (p) {
-    document.getElementById(cardId + '-nome').textContent = p.cliente || '—';
+    document.getElementById(cardId + '-nome').textContent = _clienteDoAp(ap) || '—';
     document.getElementById(cardId + '-info').textContent = 'Apartamento ' + ap;
     card.style.display = 'block';
   } else {
@@ -1176,7 +1183,7 @@ async function salvarBanheira() {
   const sel = document.getElementById('banh-ap-select');
   if (sel && sel.value) banhApAtual = sel.value;
   if (!banhApAtual || !banhItens.length) { showToast('Selecione o apartamento e adicione pelo menos uma banheira', 'error'); return; }
-  const cliente = dadosParedes.find(p => p.apartamento === banhApAtual)?.cliente || '—';
+  const cliente = {cliente:_clienteDoAp(banhApAtual)}.cliente || '—';
   const dados = { ap: banhApAtual, cliente, data: new Date().toLocaleDateString('pt-BR'), selecoes: banhItens, tipo: 'banheiras', pagamento: banhPagamento };
   const editandoId = banhEditId;
   showToast(editandoId ? 'Salvando alterações...' : 'Salvando...', 'success');
@@ -1719,7 +1726,7 @@ function gerarPDFModulo(id, modulo) {
 // ===================== PDF VINILICO =====================
 function gerarPDFVinilico() {
   if (!vinApAtual) { showToast('Selecione um apartamento', 'error'); return; }
-  const cliente = dadosParedes.find(p => p.apartamento === vinApAtual)?.cliente || '—';
+  const cliente = {cliente:_clienteDoAp(vinApAtual)}.cliente || '—';
   _gerarPDFVinilicoInterno(vinApAtual, cliente, vinSelecoes);
 }
 function gerarPDFVinilicoId(id) {
@@ -1787,7 +1794,7 @@ async function _gerarPDFVinilicoInterno(ap, cliente, selecoes) {
 // ===================== PDF MARMORARIA =====================
 function gerarPDFMarmoraria() {
   if (!marmApAtual) { showToast('Selecione um apartamento', 'error'); return; }
-  const cliente = dadosParedes.find(p => p.apartamento === marmApAtual)?.cliente || '—';
+  const cliente = {cliente:_clienteDoAp(marmApAtual)}.cliente || '—';
   _gerarPDFMarmorariaInterno(marmApAtual, cliente, marmSelecoes);
 }
 function gerarPDFMarmorariaId(id) {
@@ -1859,7 +1866,7 @@ function gerarPDFBanheira() {
   if (!banhApAtual) { showToast('Selecione um apartamento primeiro', 'error'); return; }
   if (!banhItens || !banhItens.length) { showToast('Clique em "+ Adicionar ao orçamento" antes de gerar o PDF', 'error'); return; }
   const clienteTexto = sel ? sel.options[sel.selectedIndex]?.text || '' : '';
-  const cliente = dadosParedes.find(p => p.apartamento === banhApAtual)?.cliente || 
+  const cliente = {cliente:_clienteDoAp(banhApAtual)}.cliente || 
     clienteTexto.split(' - ').slice(1).join(' - ') || '—';
   _gerarPDFBanheiraInterno(banhApAtual, cliente, banhItens, banhPagamento);
 }
@@ -6475,7 +6482,7 @@ async function ctrlAbrirInstalacao(id) {
 function ciTrocarApto() {
   const ap = document.getElementById('ci-apto').value;
   const p0 = dadosParedes.find(p => String(p.apartamento) === ap);
-  document.getElementById('ci-cliente').value = _ciEdit ? (_ciEdit.cliente || '') : (p0 ? p0.cliente || '' : '');
+  document.getElementById('ci-cliente').value = _ciEdit ? (_ciEdit.cliente || '') : (p0 ? _clienteDoAp(ap) : '');
   if (!_ciEdit) _ciItens = {};
   ciRenderParedes();
 }
@@ -13454,7 +13461,7 @@ function abrirModalMetais() {
   sel.innerHTML = '<option value="">— Selecione —</option>' +
     [...new Set(dadosParedes.map(p => p.apartamento))].sort((a,b) => Number(a)-Number(b))
     .map(ap => {
-      const cli = dadosParedes.find(p => p.apartamento === ap)?.cliente || '';
+      const cli = {cliente:_clienteDoAp(ap)}.cliente || '';
       return `<option value="${ap}">Apto ${ap} - ${cli}</option>`;
     }).join('');
   document.getElementById('metais-cliente-card').style.display = 'none';
@@ -13603,7 +13610,7 @@ async function salvarMetais(gerarPdf) {
   if (!metaisApAtual) { showToast('Selecione o apartamento', 'error'); return; }
   const itensValidos = metaisItens.filter(it => it.nome && it.valor > 0);
   if (!itensValidos.length) { showToast('Adicione pelo menos um item com nome e valor', 'error'); return; }
-  const cliente = dadosParedes.find(p => p.apartamento === metaisApAtual)?.cliente || '';
+  const cliente = {cliente:_clienteDoAp(metaisApAtual)}.cliente || '';
   try {
     await apiPost('addMetaisPersonalizar', { ap: metaisApAtual, cliente, itens: itensValidos, pdfOriginalUrl: metaisPdfOriginalUrl });
     showToast('Cotação de metais salva!', 'success');
