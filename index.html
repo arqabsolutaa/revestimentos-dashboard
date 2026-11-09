@@ -536,6 +536,7 @@ async function loadMarmoraria() {
 
 // Orçamento "por valor" = todos os itens têm valor_fechado (guardado na mesma aba, mas mostrado só na aba própria)
 function _marmSelecoes(p) { try { return typeof p.selecoes === 'string' ? JSON.parse(p.selecoes || '[]') : (p.selecoes || []); } catch (e) { return []; } }
+function _mvTotalSel(sel) { const f = parseFloat((sel[0] || {}).valor_final) || 0; return f > 0 ? f : sel.reduce((a, v) => a + (parseFloat(v.valor) || 0), 0); }
 function _marmEhValor(p) { const s = _marmSelecoes(p); return Array.isArray(s) && s.length > 0 && s.every(v => v && v.valor_fechado); }
 
 function renderMarmoraria() {
@@ -714,7 +715,7 @@ async function salvarMarmoraria() {
 }
 
 // ===================== MARMORARIA · ORÇAMENTO POR VALOR =====================
-let mvItens = [], mvApAtual = '', mvEditId = null, mvDataOriginal = '';
+let mvItens = [], mvApAtual = '', mvEditId = null, mvDataOriginal = '', mvModoFinal = false, mvValorFinal = '';
 
 function renderMarmValor() {
   const el = document.getElementById('marm-valor-lista');
@@ -727,7 +728,7 @@ function renderMarmValor() {
     <button class="btn btn-danger excluir-selecionados-btn" id="excluir-marmv-btn" onclick="excluirSelecionadosModulo('marmoraria','marmv')">Excluir selecionados</button>
   </div>` + lista.map(p => {
     const sel = _marmSelecoes(p);
-    const total = sel.reduce((a, v) => a + (parseFloat(v.valor) || 0), 0);
+    const total = _mvTotalSel(sel);
     const resumo = sel.map(v => esc_(v.ambiente || '—')).join(' · ');
     return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
@@ -751,7 +752,7 @@ function renderMarmValor() {
 function esc_(v) { return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
 
 async function abrirModalMarmValor(editId) {
-  mvItens = []; mvApAtual = ''; mvEditId = null; mvDataOriginal = '';
+  mvItens = []; mvApAtual = ''; mvEditId = null; mvDataOriginal = ''; mvModoFinal = false; mvValorFinal = '';
   try { const d = await lerDadosExtra('marmoraria'); dadosMarmCatalogo = d.catalogo || []; } catch (e) {}
   const sel = document.getElementById('mv-ap-select');
   sel.innerHTML = '<option value="">— Selecione —</option>' +
@@ -763,9 +764,15 @@ async function abrirModalMarmValor(editId) {
   if (reg) {
     mvEditId = reg.id; mvDataOriginal = reg.data || '';
     sel.value = String(reg.ap); mvTrocarApto();
-    mvItens = _marmSelecoes(reg).map(v => ({ ambiente: v.ambiente || '', descricao: v.descricao || '', pedra: v.pedra || '', valor: v.valor || '' }));
+    const selReg = _marmSelecoes(reg);
+    mvItens = selReg.map(v => ({ ambiente: v.ambiente || '', descricao: v.descricao || '', pedra: v.pedra || '', valor: v.valor || '' }));
+    const vf = parseFloat((selReg[0] || {}).valor_final) || 0;
+    if (vf > 0) { mvModoFinal = true; mvValorFinal = vf; }
     mvRender();
   } else mvAdicionarItem();
+  document.getElementById('mv-modo-final').checked = mvModoFinal;
+  document.getElementById('mv-valor-final').value = mvValorFinal || '';
+  mvAplicarModo();
   abrirModal('modal-marm-valor');
 }
 function editarMarmValor(id) { abrirModalMarmValor(id); }
@@ -790,7 +797,7 @@ function mvRender() {
             ${_optionsCatalogoMarmoraria(String(b.pedra || ''))}
           </select>
         </div>
-        <div style="flex:1">
+        <div style="flex:1;${mvModoFinal ? 'display:none' : ''}">
           <label style="font-size:11px;color:var(--text3)">Valor cobrado (R$)</label>
           <input class="form-control" type="number" step="0.01" value="${b.valor || ''}" placeholder="0,00" style="font-size:12px" oninput="mvItens[${i}].valor=this.value;mvTotal()">
         </div>
@@ -798,19 +805,26 @@ function mvRender() {
     </div>`).join('');
   mvTotal();
 }
+function mvTrocarModo(on) { mvModoFinal = !!on; mvAplicarModo(); mvRender(); }
+function mvAplicarModo() { document.getElementById('mv-final-box').style.display = mvModoFinal ? 'block' : 'none'; }
 function mvTotal() {
-  const t = mvItens.reduce((a, v) => a + (parseFloat(v.valor) || 0), 0);
+  const t = mvModoFinal ? (parseFloat(mvValorFinal) || 0) : mvItens.reduce((a, v) => a + (parseFloat(v.valor) || 0), 0);
   document.getElementById('mv-total').textContent = 'R$ ' + t.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 function _mvItensLimpos() {
-  return mvItens.filter(b => (parseFloat(b.valor) || 0) > 0).map(b => {
+  const vf = parseFloat(mvValorFinal) || 0;
+  const ok = mvModoFinal ? (b => b.ambiente || b.descricao || b.pedra) : (b => (parseFloat(b.valor) || 0) > 0);
+  const lista = mvItens.filter(ok).map(b => {
     const ped = dadosMarmCatalogo.find(p => String(p.id) === String(b.pedra));
-    return { ambiente: b.ambiente || '', descricao: b.descricao || '', pedra: b.pedra || '', pedra_nome: ped ? ped.nome : '', valor: parseFloat(b.valor) || 0, valor_fechado: true };
+    return { ambiente: b.ambiente || '', descricao: b.descricao || '', pedra: b.pedra || '', pedra_nome: ped ? ped.nome : '', valor: mvModoFinal ? 0 : (parseFloat(b.valor) || 0), valor_fechado: true };
   });
+  if (mvModoFinal && lista.length) lista[0].valor_final = vf;  // o valor final fica guardado no 1º item
+  return lista;
 }
 async function salvarMarmValor(gerarPdf) {
   if (!mvApAtual) { showToast('Selecione o apartamento', 'error'); return; }
   const itens = _mvItensLimpos();
+  if (mvModoFinal && !(parseFloat(mvValorFinal) > 0)) { showToast('Informe o valor final', 'error'); return; }
   if (!itens.length) { showToast('Preencha pelo menos um item com valor', 'error'); return; }
   const cliente = _clienteDoAp(mvApAtual) || '—';
   showToast('Salvando...', 'success');
@@ -845,22 +859,25 @@ async function _gerarPDFMarmValorInterno(ap, cliente, itens) {
   _pdfCapa(doc, imgData, 'PERSONALIZE');
   _pdfInfoCliente(doc, ap, cliente, null, 50, ESSENCE_CORES);
   let y = 88;
-  _pdfTabelaHeader(doc, y, [
+  const valorFinal = parseFloat((itens[0] || {}).valor_final) || 0;
+  _pdfTabelaHeader(doc, y, valorFinal ? [
+    {label:'A M B I E N T E   /   P E D R A', x:8},
+  ] : [
     {label:'A M B I E N T E   /   P E D R A', x:8},
     {label:'V A L O R', x:202, align:'right'},
   ]);
   y += 12;
-  let total = 0, alt = false;
+  let total = valorFinal, alt = false;
   itens.forEach(b => {
     const ped = dadosMarmCatalogo.find(p => String(p.id) === String(b.pedra));
     const nomePedra = ped ? ped.nome : (b.pedra_nome || 'Pedra não definida');
     const valor = parseFloat(b.valor) || 0;
-    total += valor;
+    if (!valorFinal) total += valor;
     if (y > 248) { doc.addPage(); y = 15; }
     _pdfLinha(doc, y, [
       {valor: b.ambiente || '—', x:8, bold:true, dy:8},
       {valor: (b.descricao ? b.descricao + '  ·  ' : '') + nomePedra, x:8, bold:false, size:7.5, cor:ESSENCE_CORES.cinza, dy:15},
-      {valor: 'R$ ' + valor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}), x:202, align:'right', bold:true, dy:10, cor:ESSENCE_CORES.dourado},
+      ...(valorFinal ? [] : [{valor: 'R$ ' + valor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}), x:202, align:'right', bold:true, dy:10, cor:ESSENCE_CORES.dourado}]),
     ], alt);
     alt = !alt; y += 20;
   });
@@ -14533,9 +14550,17 @@ async function gerarPDFInstalacoesApto(ap) {
         <p style="font-size:12px;color:var(--text2)" id="mv-cliente-card-info"></p>
       </div>
       <div style="margin-top:16px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:12px;cursor:pointer;padding:10px 12px;background:var(--accent-bg);border-radius:var(--radius-sm)">
+          <input type="checkbox" id="mv-modo-final" onchange="mvTrocarModo(this.checked)">
+          <span><strong>Informar só o valor final</strong> <span style="color:var(--text3)">(os itens entram como descritivo, sem valor individual)</span></span>
+        </label>
         <h3 style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px">Itens do orçamento</h3>
         <div id="mv-itens-lista"></div>
         <button class="btn btn-secondary" onclick="mvAdicionarItem()" style="margin-top:12px;width:100%">+ Adicionar item</button>
+      </div>
+      <div id="mv-final-box" style="display:none;margin-top:16px">
+        <label class="form-label">Valor final do orçamento (R$)</label>
+        <input class="form-control" type="number" step="0.01" id="mv-valor-final" placeholder="0,00" oninput="mvValorFinal=this.value;mvTotal()">
       </div>
       <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--surface2);border-radius:var(--radius-sm)">
         <span style="font-size:13px;color:var(--text2)">Total</span>
