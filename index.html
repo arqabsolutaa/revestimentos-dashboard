@@ -775,7 +775,21 @@ async function abrirModalMarmValor(editId) {
   mvAplicarModo();
   abrirModal('modal-marm-valor');
 }
-function editarMarmValor(id) { abrirModalMarmValor(id); }
+async function editarMarmValor(id) {
+  // Atualiza a lista direto da planilha antes de editar (evita editar uma cópia antiga)
+  try {
+    invalidarCacheExtra('marmoraria');
+    const d = await lerDadosExtra('marmoraria', true);
+    dadosMarmoraria = d.personalizar || [];
+    dadosMarmCatalogo = d.catalogo || dadosMarmCatalogo;
+  } catch (e) {}
+  if (!dadosMarmoraria.find(x => String(x.id) === String(id))) {
+    renderMarmoraria();
+    showToast('Esse orçamento já foi alterado — lista atualizada. Clique em Editar de novo.', 'error');
+    return;
+  }
+  abrirModalMarmValor(id);
+}
 function mvTrocarApto() {
   mvApAtual = document.getElementById('mv-ap-select').value;
   mostrarCardCliente('mv-cliente-card', mvApAtual, dadosParedes);
@@ -832,7 +846,10 @@ async function salvarMarmValor(gerarPdf) {
     const idAntigo = mvEditId;
     await apiPost('addMarmPersonalizar', { ap: mvApAtual, cliente, data: (idAntigo && mvDataOriginal) || new Date().toLocaleDateString('pt-BR'), selecoes: itens, tipo: 'marmoraria' });
     // edição: grava o novo e só depois remove o antigo (se algo falhar, nada se perde)
-    if (idAntigo) await apiPost('deletePersonalizarExtra', { id: idAntigo, modulo: 'marmoraria' });
+    if (idAntigo) {
+      try { await apiPost('deletePersonalizarExtra', { id: idAntigo, modulo: 'marmoraria' }); }
+      catch (e) { if (!/ID n[ãa]o encontrado/i.test(e.message || '')) throw e; /* já tinha sido removido: segue */ }
+    }
     mvEditId = null;
     invalidarCacheExtra('marmoraria');
     const d = await lerDadosExtra('marmoraria', true);
