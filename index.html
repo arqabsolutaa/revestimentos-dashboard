@@ -714,7 +714,7 @@ async function salvarMarmoraria() {
 }
 
 // ===================== MARMORARIA · ORÇAMENTO POR VALOR =====================
-let mvItens = [], mvApAtual = '';
+let mvItens = [], mvApAtual = '', mvEditId = null, mvDataOriginal = '';
 
 function renderMarmValor() {
   const el = document.getElementById('marm-valor-lista');
@@ -743,23 +743,32 @@ function renderMarmValor() {
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
         <button class="btn btn-secondary" onclick="gerarPDFMarmValorId('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
+        <button class="btn btn-secondary" onclick="editarMarmValor('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
       </div>
     </div>`;
   }).join('');
 }
 function esc_(v) { return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
 
-async function abrirModalMarmValor() {
-  mvItens = []; mvApAtual = '';
+async function abrirModalMarmValor(editId) {
+  mvItens = []; mvApAtual = ''; mvEditId = null; mvDataOriginal = '';
   try { const d = await lerDadosExtra('marmoraria'); dadosMarmCatalogo = d.catalogo || []; } catch (e) {}
   const sel = document.getElementById('mv-ap-select');
   sel.innerHTML = '<option value="">— Selecione —</option>' +
     [...new Set(dadosParedes.map(p => p.apartamento))].sort((a,b) => String(a).localeCompare(String(b), 'pt-BR', {numeric:true}))
     .map(ap => `<option value="${ap}">Apto ${ap} - ${_clienteDoAp(ap)}</option>`).join('');
   document.getElementById('mv-cliente-card').style.display = 'none';
-  mvAdicionarItem();
+  const reg = editId ? dadosMarmoraria.find(x => String(x.id) === String(editId)) : null;
+  document.getElementById('mv-titulo').textContent = reg ? 'Editar orçamento · por valor' : 'Orçamento Marmoraria · por valor';
+  if (reg) {
+    mvEditId = reg.id; mvDataOriginal = reg.data || '';
+    sel.value = String(reg.ap); mvTrocarApto();
+    mvItens = _marmSelecoes(reg).map(v => ({ ambiente: v.ambiente || '', descricao: v.descricao || '', pedra: v.pedra || '', valor: v.valor || '' }));
+    mvRender();
+  } else mvAdicionarItem();
   abrirModal('modal-marm-valor');
 }
+function editarMarmValor(id) { abrirModalMarmValor(id); }
 function mvTrocarApto() {
   mvApAtual = document.getElementById('mv-ap-select').value;
   mostrarCardCliente('mv-cliente-card', mvApAtual, dadosParedes);
@@ -806,14 +815,18 @@ async function salvarMarmValor(gerarPdf) {
   const cliente = _clienteDoAp(mvApAtual) || '—';
   showToast('Salvando...', 'success');
   try {
-    await apiPost('addMarmPersonalizar', { ap: mvApAtual, cliente, data: new Date().toLocaleDateString('pt-BR'), selecoes: itens, tipo: 'marmoraria' });
+    const idAntigo = mvEditId;
+    await apiPost('addMarmPersonalizar', { ap: mvApAtual, cliente, data: (idAntigo && mvDataOriginal) || new Date().toLocaleDateString('pt-BR'), selecoes: itens, tipo: 'marmoraria' });
+    // edição: grava o novo e só depois remove o antigo (se algo falhar, nada se perde)
+    if (idAntigo) await apiPost('deletePersonalizarExtra', { id: idAntigo, modulo: 'marmoraria' });
+    mvEditId = null;
     invalidarCacheExtra('marmoraria');
     const d = await lerDadosExtra('marmoraria', true);
     dadosMarmoraria = d.personalizar || [];
     renderMarmoraria();
     if (gerarPdf) await _gerarPDFMarmValorInterno(mvApAtual, cliente, itens);
     fecharModal('modal-marm-valor');
-    showToast('Orçamento salvo!', 'success');
+    showToast(idAntigo ? 'Orçamento atualizado!' : 'Orçamento salvo!', 'success');
   } catch (e) { showToast('Erro: ' + e.message, 'error'); }
 }
 function gerarPDFMarmValorId(id) {
@@ -14505,7 +14518,7 @@ async function gerarPDFInstalacoesApto(ap) {
 <div id="modal-marm-valor" class="modal-overlay">
   <div class="modal" style="max-width:680px">
     <div class="modal-header">
-      <h2>Orçamento Marmoraria · por valor</h2>
+      <h2 id="mv-titulo">Orçamento Marmoraria · por valor</h2>
       <button class="modal-close" onclick="fecharModal('modal-marm-valor')">×</button>
     </div>
     <div class="modal-body" style="max-height:74vh;overflow:auto">
