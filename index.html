@@ -4143,6 +4143,17 @@ body.mobile-mode #main{padding-bottom:72px}
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-conv-alt">
+  <div class="modal" style="max-width:720px;width:96vw">
+    <div class="modal-header"><h2>Transformar orçamento em alteração</h2><button class="modal-close" onclick="fecharModal('modal-conv-alt')">&times;</button></div>
+    <div class="modal-body" id="conv-alt-corpo"></div>
+    <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding:12px 20px">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-conv-alt')">Cancelar</button>
+      <button class="btn btn-primary" id="conv-alt-btn" onclick="executarConverterAlt()">Salvar como alteração pendente</button>
+    </div>
+  </div>
+</div>
+
 <div id="contastotais-screen" class="screen">
   <div class="page-header">
     <div class="page-header-left">
@@ -10701,6 +10712,7 @@ function renderPagamentos(lista) {
           <button class="btn btn-secondary" onclick="abrirModalOutraCondicao('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF outra condição</button>
           <button class="btn btn-secondary" onclick="abrirModalPdfQuitado('${p.id}')" style="font-size:11px;padding:4px 10px;color:#2e7d3f;border-color:#2e7d3f">✓ Gerar PDF Quitado</button>
           <button class="btn btn-secondary" onclick="editarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
+          ${_botaoConverterAlt(p)}
           <button class="btn btn-secondary" onclick="arquivarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">🗄 Arquivar</button>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:100%">
@@ -13342,6 +13354,71 @@ async function salvarAlteracao() {
   } catch (e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
+
+// ===== TRANSFORMAR UM ORÇAMENTO NOVO (R01/R02...) EM ALTERAÇÃO DE UM ORÇAMENTO JÁ CONFIRMADO =====
+let _convAlt = null;
+function _basesConfirmadasDoAp(p) {
+  return (dadosPersonalizar || []).filter(x => String(x.ap) === String(p.ap) && String(x.id) !== String(p.id) && String(x.status) === 'confirmado' && String(x.arquivado || '').toLowerCase() !== 'true');
+}
+function _botaoConverterAlt(p) {
+  if (String(p.status) === 'confirmado' || String(p.arquivado || '').toLowerCase() === 'true') return '';
+  if (!_basesConfirmadasDoAp(p).length) return '';
+  return `<button class="btn btn-secondary" onclick="abrirConverterAlt('${p.id}')" style="font-size:11px;padding:4px 10px" title="Compara com o orçamento confirmado e guarda só a diferença">🔁 Transformar em alteração</button>`;
+}
+function _convSobreposicao(base, novo) {
+  const nb = new Set(Object.keys(_selecoesOriginais(base)).map(_altNormKey));
+  return Object.keys(novo).filter(k => nb.has(_altNormKey(k))).length;
+}
+async function abrirConverterAlt(id) {
+  const p = (dadosPersonalizar || []).find(x => String(x.id) === String(id));
+  if (!p) { showToast('Orçamento não encontrado', 'error'); return; }
+  await _carregarAlteracoes(null, true);
+  const bases = _basesConfirmadasDoAp(p);
+  const novo = _selecoesOriginais(p);
+  const melhor = bases.slice().sort((a, b) => _convSobreposicao(b, novo) - _convSobreposicao(a, novo))[0];
+  _convAlt = { p, novo, bases, baseId: melhor.id };
+  _renderConverterAlt();
+  abrirModal('modal-conv-alt');
+}
+function _renderConverterAlt() {
+  const c = _convAlt, base = c.bases.find(b => String(b.id) === String(c.baseId));
+  const pend = _altDe(base.id).find(a => a.status !== 'confirmado');
+  const linhas = _altCalcularLinhas(_selecoesEfetivas(base), c.novo, c.p.ap);
+  c.linhas = linhas;
+  const dif = _altDiferenca(linhas), removidos = linhas.filter(l => !l.depois);
+  const outros = (dadosPersonalizar || []).filter(x => String(x.ap) === String(c.p.ap) && String(x.id) !== String(c.p.id) && String(x.status) !== 'confirmado' && String(x.arquivado || '').toLowerCase() !== 'true');
+  document.getElementById('conv-alt-corpo').innerHTML = `
+    <p style="font-size:13px;color:var(--text2);margin:0 0 12px">O sistema compara <strong>${escHtml(c.p.cliente)}</strong> com o orçamento já confirmado e guarda <strong>só a diferença</strong> como alteração. O estoque <u>não muda</u> agora — só quando você confirmar a alteração.</p>
+    <label style="font-size:12px;color:var(--text3)">Comparar com o orçamento confirmado</label>
+    <select class="filter-input" style="width:100%;margin-bottom:12px" onchange="_convAlt.baseId=this.value;_renderConverterAlt()">${c.bases.map(b => `<option value="${b.id}" ${String(b.id) === String(c.baseId) ? 'selected' : ''}>${escHtml(b.cliente)} · ${escHtml(b.data)}</option>`).join('')}</select>
+    ${pend ? `<div style="background:#fff3dc;color:#b26a00;padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:10px">Este orçamento confirmado já tem a alteração ${pend.numero} pendente. Confirme ou exclua ela antes.</div>` : ''}
+    ${!linhas.length ? '<div style="padding:14px;text-align:center;color:var(--text3)">Nenhuma diferença em relação ao orçamento confirmado.</div>' : `
+    <div style="font-size:12px;line-height:1.7;background:var(--surface2);border-radius:8px;padding:10px 12px;max-height:34vh;overflow:auto">${linhas.map(l => '• ' + _altTextoLinha(l)).join('<br>')}</div>
+    ${removidos.length ? `<div style="background:#fdeaea;color:#b5453d;padding:10px 12px;border-radius:8px;font-size:12px;margin-top:10px"><strong>Atenção:</strong> ${removidos.length} item(ns) existem no orçamento confirmado e <strong>não estão</strong> neste orçamento novo (aparecem como removidos acima). Se foi esquecimento, corrija o orçamento antes; se o cliente tirou mesmo, está certo — o material volta ao estoque e vira crédito.</div>` : ''}
+    <div style="margin-top:12px;font-size:14px"><strong>${dif > 0.005 ? 'Diferença a cobrar: ' + _fmtR$(dif) : dif < -0.005 ? 'Crédito para o cliente: ' + _fmtR$(-dif) : 'Sem diferença de valor'}</strong></div>`}
+    <div style="margin-top:14px;font-size:12px">
+      <label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="conv-arq-este" checked> Arquivar este orçamento (${escHtml(c.p.cliente)}) depois de transformar</label>
+      ${outros.map(o => `<label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-top:6px"><input type="checkbox" class="conv-arq-outro" value="${o.id}"> Arquivar também: ${escHtml(o.cliente)} · ${escHtml(o.data)}</label>`).join('')}
+    </div>`;
+  document.getElementById('conv-alt-btn').disabled = !linhas.length || !!pend;
+}
+async function executarConverterAlt() {
+  const c = _convAlt; if (!c || !c.linhas.length) return;
+  const base = c.bases.find(b => String(b.id) === String(c.baseId));
+  const btn = document.getElementById('conv-alt-btn'); btn.disabled = true; btn.textContent = 'Salvando…';
+  try {
+    const dif = _altDiferenca(c.linhas);
+    const r = await apiPost('salvarAlteracaoPersonalizar', { personalizar_id: base.id, ap: base.ap, cliente: base.cliente, linhas: c.linhas, valor_diferenca: dif });
+    dadosAlteracoes.push({ id: r.id, personalizar_id: base.id, ap: String(base.ap), cliente: base.cliente, numero: r.numero, data: new Date().toLocaleDateString('pt-BR'), linhas: JSON.stringify(c.linhas), valor_diferenca: dif, status: 'pendente', _local: true });
+    const arquivar = []; if (document.getElementById('conv-arq-este').checked) arquivar.push(c.p.id);
+    document.querySelectorAll('.conv-arq-outro:checked').forEach(i => arquivar.push(i.value));
+    for (const aid of arquivar) await apiPost('arquivarPersonalizacao', { id: aid, arquivado: 'true' });
+    fecharModal('modal-conv-alt');
+    showToast('Alteração ' + r.numero + ' salva como pendente' + (arquivar.length ? ' e ' + arquivar.length + ' orçamento(s) arquivado(s)' : '') + '. Agora é só confirmar.', 'success');
+    loadPagamentos(true);
+  } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+  btn.textContent = 'Salvar como alteração pendente'; btn.disabled = false;
+}
 
 // ===== PDF DA TROCA: o que sai da unidade e o que entra, só do que mudou na alteração =====
 async function exportarTrocaPdf(id) {

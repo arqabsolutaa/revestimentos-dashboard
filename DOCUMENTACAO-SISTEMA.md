@@ -225,3 +225,6 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 
 ### PDF da troca (alteração confirmada)
 - Botão "📄 PDF da troca" na alteração confirmada (Personalizar) e no card da alteração em Materiais. Gera `Essence-Apto-<apto>-Troca-<n>.pdf`: por ambiente o que **retirar** e o que **colocar** (m² e caixas), e o resumo de caixas que **sobe** e que **volta** ao estoque (mesma conta da baixa/estorno, com perda). Só considera o que mudou em relação ao orçamento original.
+
+### Transformar orçamento novo em alteração
+- Em Financeiro → Controle de Pagamentos, orçamentos **pendentes** de um apto que já tem orçamento **confirmado** ganham o botão "🔁 Transformar em alteração". Abre uma prévia com tudo que muda em relação ao confirmado (escolhe sozinho o confirmado mais parecido; dá para trocar), a diferença de valor e aviso de itens removidos. Salva como alteração **pendente** (estoque só muda ao confirmar) e pode arquivar o orçamento usado e outros pendentes do apto.
