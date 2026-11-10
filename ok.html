@@ -55,6 +55,7 @@
   .erro { color: var(--danger); font-size: 13px; margin-top: 10px; font-weight: 500; }
   .assinado-banner { background: var(--ok-bg); color: var(--ok); border-radius: 14px; padding: 14px 16px; margin-top: 14px; font-size: 13px; }
   .sigimg { max-width: 100%; height: 90px; background: #fff; border: 1px solid var(--border); border-radius: 8px; margin-top: 8px; }
+  .capa-txt { white-space: pre-wrap; font-size: 15px; line-height: 1.6; color: var(--text); }
   .center { text-align: center; padding: 60px 20px; color: var(--text2); }
 </style>
 </head>
@@ -126,8 +127,11 @@ function render() {
   if (travado) {
     h += `<div class="assinado-banner"><strong>✓ Termo assinado</strong> em ${esc(termo.assinado_em)}<br>Código de verificação: <strong>${esc(termo.hash)}</strong></div>`;
   } else {
-    h += `<div class="card intro">Confira cada item no apartamento e marque <strong>OK</strong> ou <strong>Ressalva</strong>. Se quiser, anexe foto e escreva uma observação. No final, o cliente e o arquiteto assinam na tela. <span id="prog"></span></div>`;
+    h += termo.itens.length ? `<div class="card intro">Confira cada item no apartamento e marque <strong>OK</strong> ou <strong>Ressalva</strong>. Se quiser, anexe foto e escreva uma observação. No final, o cliente e o arquiteto assinam na tela. <span id="prog"></span></div>`
+      : `<div class="card intro">Leia o termo abaixo e, se estiver de acordo, o cliente e o arquiteto assinam na tela.</div>`;
   }
+  if (termo.texto) h += `<div class="card"><div class="capa-txt">${esc(termo.texto)}</div></div>`;
+  if (termo.itens.length) h += `<h2>Itens conferidos</h2>`;
   termo.itens.forEach((it, i) => { h += itemHtml(it, i); });
   h += `<h2>Observações gerais</h2><div class="card" style="margin-top:8px">` +
     (travado ? `<div>${esc(termo.obs_geral) || '<span style="color:var(--text3)">Sem observações.</span>'}</div>`
@@ -281,12 +285,33 @@ async function baixarPdf() {
   try {
     const J = window.jspdf && window.jspdf.jsPDF; if (!J) throw new Error('Biblioteca de PDF não carregou');
     const doc = new J(); const W = 210; let y = 0;
+    const centrarEsp = (t, y0, cs) => { const w = doc.getTextWidth(t) + cs * (t.length - 1); doc.text(t, W / 2 - w / 2, y0, { charSpace: cs }); };
     const marrom = [67, 51, 30], dourado = [140, 132, 103];
-    doc.setFillColor(...marrom); doc.rect(0, 0, W, 34, 'F');
-    doc.setTextColor(241, 234, 214); doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.text('ABSOLUTA CONSTRUTORA  ·  ESSENCE RESIDENCE', 12, 13);
-    doc.setFontSize(16); doc.setFont('helvetica', 'bold'); doc.text(termo.titulo || 'Termo de OK', 12, 23);
-    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.text('Apto ' + termo.apto + (termo.cliente ? '  ·  ' + termo.cliente : ''), 12, 29.5);
-    y = 44;
+    // ---- CAPA padrão Absoluta ----
+    doc.setFillColor(...marrom); doc.rect(0, 0, W, 297, 'F');
+    doc.setDrawColor(...dourado); doc.setLineWidth(0.4); doc.rect(10, 10, W - 20, 277);
+    doc.setTextColor(241, 234, 214); doc.setFont('helvetica', 'bold'); doc.setFontSize(34); centrarEsp('ABSOLUTA', 92, 3);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(...dourado); centrarEsp('CONSTRUTORA E INCORPORADORA', 101, 2);
+    doc.setLineWidth(0.6); doc.line(W / 2 - 18, 112, W / 2 + 18, 112);
+    doc.setTextColor(241, 234, 214); doc.setFont('helvetica', 'bold'); doc.setFontSize(22);
+    const tl = doc.splitTextToSize(termo.titulo || 'Termo', 150); doc.text(tl, W / 2, 140, { align: 'center' });
+    let cy = 140 + tl.length * 9 + 6;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(12); doc.text('Essence Residence', W / 2, cy, { align: 'center' }); cy += 8;
+    doc.text('Apartamento ' + termo.apto, W / 2, cy, { align: 'center' }); cy += 7;
+    if (termo.cliente) { doc.setTextColor(...dourado); doc.text(termo.cliente, W / 2, cy, { align: 'center' }); }
+    doc.setFontSize(8); doc.setTextColor(...dourado); doc.text('Assinado em ' + termo.assinado_em, W / 2, 268, { align: 'center' });
+    // ---- páginas de conteúdo ----
+    doc.addPage(); y = 0;
+    doc.setFillColor(...marrom); doc.rect(0, 0, W, 18, 'F');
+    doc.setTextColor(241, 234, 214); doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.text('ABSOLUTA', 12, 11.5, { charSpace: 1.5 });
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.text((termo.titulo || 'Termo') + '  ·  Apto ' + termo.apto, W - 12, 11.5, { align: 'right' });
+    y = 30;
+    if (termo.texto) {
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5); doc.setTextColor(28, 26, 21);
+      const tx = doc.splitTextToSize(termo.texto, 186);
+      for (const ln of tx) { if (y > 275) { doc.addPage(); y = 20; } doc.text(ln, 12, y); y += 5.6; }
+      y += 6;
+    }
     const novaPag = h => { if (y + h > 280) { doc.addPage(); y = 16; } };
     for (let i = 0; i < termo.itens.length; i++) {
       const it = termo.itens[i];

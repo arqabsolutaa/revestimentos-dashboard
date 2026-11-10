@@ -221,3 +221,4 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - **Assinado = travado**: não pode mais ser editado nem excluído. Guarda data/hora e código de verificação (hash). Há botão de PDF.
 - Dados na aba `Vistorias_Termos` (criada automaticamente). Backend em `Code.gs`: `criarTermoVistoria`, `getTermosVistoria`, `getTermoVistoriaPublico`, `salvarRespostaTermoVistoria`, `uploadFotoTermoVistoria`, `assinarTermoVistoria`, `excluirTermoVistoria`.
 - Em breve (já no menu): Termos de Garantia e Vistoria de Entrega.
+- **Texto do termo e capa padrão**: ao criar o termo, a Bárbara escreve o texto (já vem um modelo por tipo de serviço). O checklist é opcional (termo só com texto + assinaturas é permitido). O PDF sempre tem capa padrão Absoluta (marrom/dourado, título, apto, cliente) e, nas páginas seguintes, texto, itens, fotos e assinaturas. Coluna nova `texto` na aba `Vistorias_Termos` (acrescentada sozinha se a aba já existir).
