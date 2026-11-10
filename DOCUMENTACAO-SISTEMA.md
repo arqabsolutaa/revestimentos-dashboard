@@ -215,7 +215,7 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 
 
 ## Termos e Vistorias · OK de Obra (área só da Bárbara)
-- Nova área na tela inicial ("Termos e Vistorias"), mesma senha do Financeiro (conferida no servidor, hash `vistorias`). Gabriel e Jailton não entram.
+- Nova área na tela inicial ("Termos e Vistorias"), senha própria (conferida no servidor, hash `vistorias`). Gabriel e Jailton não entram.
 - **Criar termo**: escolhe apto, tipo de serviço (modelos de checklist editáveis) e título. O sistema gera um link `ok.html?t=TOKEN` (token de 40 caracteres, específico do termo).
 - **Página pública `ok.html`** (celular): cliente e arquiteto marcam cada item como OK ou Ressalva (ressalva exige observação), anexam foto (reduzida antes do envio; salva no Drive, pasta `Vistorias_Fotos`), escrevem observação geral e assinam na tela. Salva sozinho enquanto preenche.
 - **Assinado = travado**: não pode mais ser editado nem excluído. Guarda data/hora e código de verificação (hash). Há botão de PDF.
