@@ -2236,7 +2236,7 @@ input,select,textarea{font-family:'Inter',sans-serif;outline:none}
 /* SIDEBAR */
 #sidebar{
   width:var(--sidebar);min-width:var(--sidebar);
-  background:#111009;
+  background:var(--sidebar-bg,#111009);
   border-right:none;
   display:flex;flex-direction:column;
   padding:0;
@@ -2337,7 +2337,7 @@ input,select,textarea{font-family:'Inter',sans-serif;outline:none}
   transition:all var(--transition);
 }
 .btn-primary{background:var(--accent-dark);color:white;border:1px solid var(--accent-dark)}
-.btn-primary:hover{background:#000}
+.btn-primary:hover{filter:brightness(.78)}
 .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
 .btn-secondary:hover{background:var(--surface2);border-color:var(--border2)}
 .btn-danger{background:var(--danger-bg);color:var(--danger);border:1px solid #f0c0bb}
@@ -2655,6 +2655,26 @@ body.mobile-mode #main{padding-bottom:72px}
 .escolha-usuario-btn{background:rgba(245,240,228,0.06);border:1px solid rgba(178,152,89,0.35);color:#e8dfc4;padding:10px 26px;border-radius:999px;font-size:13px;letter-spacing:1.5px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
 .escolha-usuario-btn.ativo{background:rgba(178,152,89,0.35);border-color:rgba(178,152,89,1);color:#fff}
 </style>
+<script>
+// ===== TEMA DE CORES (cada pessoa escolhe a sua; fica salvo neste navegador) =====
+const TEMA_KEY = 'tema_cores_v1';
+function _hexHsl(hex) { hex = String(hex || '').replace('#', ''); if (hex.length === 3) hex = hex.split('').map(c => c + c).join(''); const n = parseInt(hex, 16); let r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255; const mx = Math.max(r, g, b), mn = Math.min(r, g, b); let h = 0, s = 0, l = (mx + mn) / 2; if (mx !== mn) { const d = mx - mn; s = l > .5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; } return [h, s * 100, l * 100]; }
+function _hslHex(h, s, l) { s /= 100; l /= 100; const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l), f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); return '#' + [f(0), f(8), f(4)].map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join(''); }
+const _cl = (v, a, b) => Math.max(a, Math.min(b, v));
+function aplicarTema(t) {
+  const st = document.documentElement.style;
+  ['--accent', '--accent2', '--accent-bg', '--accent-dark', '--sidebar-bg'].forEach(v => st.removeProperty(v));
+  if (!t || !/^#[0-9a-f]{6}$/i.test(t.destaque || '') || !/^#[0-9a-f]{6}$/i.test(t.escura || '')) return;
+  const [h, s, l] = _hexHsl(t.destaque), [h2, s2, l2] = _hexHsl(t.escura);
+  st.setProperty('--accent', _hslHex(h, s, _cl(l, 28, 62)));
+  st.setProperty('--accent2', _hslHex(h, s, _cl(l, 28, 62) - 8));
+  st.setProperty('--accent-bg', _hslHex(h, Math.min(s, 60), 95));
+  st.setProperty('--accent-dark', _hslHex(h2, Math.min(s2, 60), _cl(l2, 4, 26)));
+  st.setProperty('--sidebar-bg', _hslHex(h2, Math.min(s2, 60), Math.max(3, _cl(l2, 4, 26) * .62)));
+}
+function _corTema(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || '#888'; }
+try { aplicarTema(JSON.parse(localStorage.getItem(TEMA_KEY) || 'null')); } catch (e) {}
+</script>
 </head>
 <body>
 
@@ -2843,6 +2863,7 @@ body.mobile-mode #main{padding-bottom:72px}
     </button>
     </div>
     <div style="margin-top:auto;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.06)">
+      <button onclick="abrirTema()" style="display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:none;padding:8px 10px;border-radius:6px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:12px;font-family:inherit;text-align:left">🎨 Cores do sistema</button>
       <button onclick="sairParaEscolha()" style="display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:none;padding:8px 10px;border-radius:6px;cursor:pointer;color:rgba(255,255,255,0.4);font-size:11px;font-family:'Inter',sans-serif;transition:all 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14" style="pointer-events:none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Trocar de área
@@ -4154,6 +4175,23 @@ body.mobile-mode #main{padding-bottom:72px}
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-tema">
+  <div class="modal" style="max-width:460px;width:96vw">
+    <div class="modal-header"><h2>Cores do sistema</h2><button class="modal-close" onclick="fecharModal('modal-tema')">&times;</button></div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text2);margin:0 0 14px">Escolha qualquer cor — clique no quadrado para abrir a paleta completa. Vale só neste navegador, então cada pessoa pode ter a sua.</p>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><input type="color" id="tema-destaque" oninput="temaMudou()" style="width:54px;height:40px;border:none;padding:0;background:none;cursor:pointer"><div><div style="font-weight:600;font-size:13px">Cor de destaque</div><div style="font-size:11px;color:var(--text3)">detalhes, números, links e marcações (hoje: dourado)</div></div></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><input type="color" id="tema-escura" oninput="temaMudou()" style="width:54px;height:40px;border:none;padding:0;background:none;cursor:pointer"><div><div style="font-weight:600;font-size:13px">Cor do menu e dos botões</div><div style="font-size:11px;color:var(--text3)">o sistema escurece sozinho para o texto continuar legível</div></div></div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Sugestões</div>
+      <div id="tema-sugestoes" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    </div>
+    <div class="modal-footer" style="display:flex;justify-content:space-between;padding:12px 20px">
+      <button class="btn btn-secondary" onclick="temaRestaurar()">Voltar ao original</button>
+      <button class="btn btn-primary" onclick="fecharModal('modal-tema')">Pronto</button>
+    </div>
+  </div>
+</div>
+
 <div id="contastotais-screen" class="screen">
   <div class="page-header">
     <div class="page-header-left">
@@ -4295,7 +4333,7 @@ body.mobile-mode #main{padding-bottom:72px}
           <span id="calc-entrada-seta" style="font-size:11px;color:var(--text3)">mostrar ▾</span>
         </div>
         <div id="calc-entrada-corpo" style="display:none;margin-top:6px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
-          <div id="calc-entrada-display" style="background:#1A1814;color:#fff;border-radius:8px;padding:16px 14px;text-align:right;font-size:26px;font-weight:600;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0.5px">0</div>
+          <div id="calc-entrada-display" style="background:var(--accent-dark);color:#fff;border-radius:8px;padding:16px 14px;text-align:right;font-size:26px;font-weight:600;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0.5px">0</div>
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
             <button type="button" class="calc-btn calc-btn-fn" onclick="calcBotao('entrada','C')">C</button>
             <button type="button" class="calc-btn calc-btn-fn" onclick="calcBotao('entrada','CE')">CE</button>
@@ -4431,7 +4469,7 @@ body.mobile-mode #main{padding-bottom:72px}
           <span id="calc-saida-seta" style="font-size:11px;color:var(--text3)">mostrar ▾</span>
         </div>
         <div id="calc-saida-corpo" style="display:none;margin-top:6px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
-          <div id="calc-saida-display" style="background:#1A1814;color:#fff;border-radius:8px;padding:16px 14px;text-align:right;font-size:26px;font-weight:600;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0.5px">0</div>
+          <div id="calc-saida-display" style="background:var(--accent-dark);color:#fff;border-radius:8px;padding:16px 14px;text-align:right;font-size:26px;font-weight:600;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0.5px">0</div>
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
             <button type="button" class="calc-btn calc-btn-fn" onclick="calcBotao('saida','C')">C</button>
             <button type="button" class="calc-btn calc-btn-fn" onclick="calcBotao('saida','CE')">CE</button>
@@ -11692,14 +11730,14 @@ async function loadVisaoGeral(forcado) {
       data: {
         labels: ['Concluídos', 'Em andamento', 'Não iniciados'],
         datasets: [{ data: [concluidos, emAndamento, naoIniciados||1],
-          backgroundColor: ['#1A1814', '#C9A84C', '#E8E4DE'],
+          backgroundColor: [_corTema('--accent-dark'), _corTema('--accent'), '#E8E4DE'],
           borderWidth: 0, hoverOffset: 4 }]
       },
       options: { cutout: '72%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} apt` } } }, animation: { animateRotate: true, duration: 800 } }
     });
     document.getElementById('vg-conclusao-legend').innerHTML = [
-      ['#1A1814','Concluídos',concluidos],
-      ['#C9A84C','Em andamento',emAndamento],
+      [_corTema('--accent-dark'),'Concluídos',concluidos],
+      [_corTema('--accent'),'Em andamento',emAndamento],
       ['#E8E4DE','Não iniciados',naoIniciados]
     ].map(([c,l,v]) => `<span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:${c};border:1px solid var(--border);flex-shrink:0"></span><span style="color:var(--text2)">${l} <strong style="color:var(--text)">${v}</strong></span></span>`).join('');
 
@@ -11711,7 +11749,7 @@ async function loadVisaoGeral(forcado) {
       type: 'bar',
       data: {
         labels: ambLabels.length ? ambLabels : ['Sem dados'],
-        datasets: [{ data: ambValues.length ? ambValues : [0], backgroundColor: '#C9A84C', borderRadius: 4, borderSkipped: false }]
+        datasets: [{ data: ambValues.length ? ambValues : [0], backgroundColor: _corTema('--accent'), borderRadius: 4, borderSkipped: false }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
@@ -11733,7 +11771,7 @@ async function loadVisaoGeral(forcado) {
           <span style="font-size:12px;color:var(--text3)">${val.toFixed(1)} m²</span>
         </div>
         <div style="height:4px;background:var(--surface2);border-radius:2px;overflow:hidden">
-          <div style="height:100%;width:${Math.round(val/maxVal*100)}%;background:${i===0?'#C9A84C':'#1A1814'};border-radius:2px;transition:width 0.6s ease"></div>
+          <div style="height:100%;width:${Math.round(val/maxVal*100)}%;background:${i===0?'var(--accent)':'var(--accent-dark)'};border-radius:2px;transition:width 0.6s ease"></div>
         </div>
       </div>
     `).join('') : '<p style="font-size:13px;color:var(--text3);text-align:center;padding:20px 0">Nenhuma personalização ainda</p>';
@@ -11745,14 +11783,14 @@ async function loadVisaoGeral(forcado) {
       data: {
         labels: ['Concluídos', 'Em andamento', 'Não iniciados'],
         datasets: [{ data: [concluidos, emAndamento, naoIniciados||1],
-          backgroundColor: ['#1A1814','#C9A84C','#E8E4DE'],
+          backgroundColor: [_corTema('--accent-dark'),_corTema('--accent'),'#E8E4DE'],
           borderWidth: 0, hoverOffset: 4 }]
       },
       options: { cutout: '65%', plugins: { legend: { display: false } }, animation: { duration: 800 } }
     });
     document.getElementById('vg-status-legend').innerHTML = [
-      ['#1A1814','Concluídos',concluidos,'('+Math.round(concluidos/Math.max(totalAps,1)*100)+'%)'],
-      ['#C9A84C','Em andamento',emAndamento,'('+Math.round(emAndamento/Math.max(totalAps,1)*100)+'%)'],
+      [_corTema('--accent-dark'),'Concluídos',concluidos,'('+Math.round(concluidos/Math.max(totalAps,1)*100)+'%)'],
+      [_corTema('--accent'),'Em andamento',emAndamento,'('+Math.round(emAndamento/Math.max(totalAps,1)*100)+'%)'],
       ['#E8E4DE','Não iniciados',naoIniciados,'('+Math.round(naoIniciados/Math.max(totalAps,1)*100)+'%)']
     ].map(([c,l,v,p]) => `<span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:${c};border:1px solid var(--border);flex-shrink:0"></span><span style="color:var(--text2);font-size:11px">${l} <strong style="color:var(--text)">${v}</strong> ${p}</span></span>`).join('');
 
@@ -11805,7 +11843,7 @@ function renderVgPendencias(personalizacoes) {
     return;
   }
   el.innerHTML = pendentes.map(p => {
-    const cor = p.dias == null ? 'var(--text3)' : (p.dias >= 14 ? '#C0392B' : (p.dias >= 7 ? '#C9A84C' : 'var(--text3)'));
+    const cor = p.dias == null ? 'var(--text3)' : (p.dias >= 14 ? '#C0392B' : (p.dias >= 7 ? 'var(--accent)' : 'var(--text3)'));
     const diasTexto = p.dias == null ? 'data desconhecida' : (p.dias === 0 ? 'hoje' : ('há ' + p.dias + ' dia' + (p.dias>1?'s':'')));
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
       <span style="font-size:13px;color:var(--text)">Apto ${p.ap} <span style="color:var(--text3)">· ${p.cliente}</span></span>
@@ -13421,6 +13459,27 @@ async function executarConverterAlt() {
   } catch (e) { showToast('Erro: ' + e.message, 'error'); }
   btn.textContent = 'Salvar como alteração pendente'; btn.disabled = false;
 }
+
+// ===== CORES DO SISTEMA =====
+const TEMA_SUGESTOES = [
+  { n: 'Original', d: '#C9A84C', e: '#1A1814' }, { n: 'Azul petróleo', d: '#2A8FA3', e: '#0F2A33' }, { n: 'Verde', d: '#3E9B6A', e: '#12261D' },
+  { n: 'Vinho', d: '#B0405A', e: '#2A1019' }, { n: 'Grafite e cobre', d: '#C46F3E', e: '#202124' }, { n: 'Roxo', d: '#8A5CC7', e: '#1E1530' },
+  { n: 'Rosa', d: '#D8628A', e: '#2B1520' }, { n: 'Azul', d: '#3B78D8', e: '#10203D' }
+];
+function abrirTema() {
+  let t = null; try { t = JSON.parse(localStorage.getItem(TEMA_KEY) || 'null'); } catch (e) {}
+  document.getElementById('tema-destaque').value = (t && t.destaque) || '#C9A84C';
+  document.getElementById('tema-escura').value = (t && t.escura) || '#1A1814';
+  document.getElementById('tema-sugestoes').innerHTML = TEMA_SUGESTOES.map((x, i) => `<button onclick="temaSugestao(${i})" title="${x.n}" style="display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:1px solid var(--border);border-radius:10px;padding:6px 8px;cursor:pointer;font-size:10px;color:var(--text2)"><span style="display:flex;width:44px;height:22px;border-radius:6px;overflow:hidden"><i style="flex:1;background:${x.e}"></i><i style="flex:1;background:${x.d}"></i></span>${x.n}</button>`).join('');
+  abrirModal('modal-tema');
+}
+function temaMudou() {
+  const t = { destaque: document.getElementById('tema-destaque').value, escura: document.getElementById('tema-escura').value };
+  try { localStorage.setItem(TEMA_KEY, JSON.stringify(t)); } catch (e) {}
+  aplicarTema(t);
+}
+function temaSugestao(i) { const x = TEMA_SUGESTOES[i]; document.getElementById('tema-destaque').value = x.d; document.getElementById('tema-escura').value = x.e; temaMudou(); }
+function temaRestaurar() { try { localStorage.removeItem(TEMA_KEY); } catch (e) {} aplicarTema(null); document.getElementById('tema-destaque').value = '#C9A84C'; document.getElementById('tema-escura').value = '#1A1814'; }
 
 // ===== PDF DA TROCA: o que sai da unidade e o que entra, só do que mudou na alteração =====
 async function exportarTrocaPdf(id) {

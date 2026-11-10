@@ -228,3 +228,6 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 
 ### Transformar orçamento novo em alteração
 - Em Financeiro → Controle de Pagamentos, orçamentos **pendentes** de um apto que já tem orçamento **confirmado** ganham o botão "🔁 Transformar em alteração". Abre uma prévia com tudo que muda em relação ao confirmado (escolhe sozinho o confirmado mais parecido; dá para trocar), a diferença de valor e aviso de itens removidos. Salva como alteração **pendente** (estoque só muda ao confirmar) e pode arquivar o orçamento usado e outros pendentes do apto.
+
+### Cores do sistema
+- Botão "🎨 Cores do sistema" no rodapé do menu lateral: seletor de cor livre (paleta completa do navegador) para a cor de destaque e para a cor do menu/botões, mais 8 sugestões e "Voltar ao original". Salvo no navegador de cada pessoa (`localStorage` `tema_cores_v1`). As cores são ajustadas sozinhas (destaque entre 28–62% de luminosidade; cor escura até 26%) para manter o texto legível. Implementado com as variáveis CSS `--accent`, `--accent2`, `--accent-bg`, `--accent-dark`, `--sidebar-bg`.
