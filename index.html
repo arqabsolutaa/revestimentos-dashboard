@@ -7094,9 +7094,18 @@ async function excluirTermo(id) {
   try { await apiPost('excluirTermoVistoria', { id }); showToast('Termo excluído'); loadVistorias(true); } catch (e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
-function abrirNovoTermo() {
-  const aptos = [...new Set((typeof dadosParedes !== 'undefined' ? dadosParedes : []).map(p => p.apartamento))].sort((a, b) => Number(a) - Number(b));
-  document.getElementById('nt-apto').innerHTML = '<option value="">— Selecione —</option>' + aptos.map(ap => `<option value="${escHtml(ap)}">Apto ${escHtml(ap)} - ${escHtml(_clienteDoAp(ap))}</option>`).join('');
+async function abrirNovoTermo() {
+  const sel0 = document.getElementById('nt-apto');
+  if (!dadosParedes || !dadosParedes.length) {
+    sel0.innerHTML = '<option value="">Carregando apartamentos…</option>'; abrirModal('modal-novo-termo');
+    try { const d = await lerDados(true); if (d && d.paredes) dadosParedes = d.paredes; if (d && d.personalizar && !(dadosPersonalizar || []).length) dadosPersonalizar = d.personalizar; } catch (e) {}
+  }
+  // apartamentos: da aba Paredes; se vier vazia, usa os que já têm orçamento
+  let aptos = [...new Set((dadosParedes || []).map(p => String(p.apartamento || '').trim()).filter(Boolean))];
+  if (!aptos.length) aptos = [...new Set((dadosPersonalizar || []).map(p => String(p.ap || '').trim()).filter(Boolean))];
+  aptos.sort((a, b) => (parseInt(a) || 0) - (parseInt(b) || 0) || a.localeCompare(b));
+  if (!aptos.length) { sel0.innerHTML = '<option value="">Não consegui carregar os apartamentos — clique em "Atualizar dados" no menu e tente de novo</option>'; }
+  else document.getElementById('nt-apto').innerHTML = '<option value="">— Selecione —</option>' + aptos.map(ap => `<option value="${escHtml(ap)}">Apto ${escHtml(ap)} - ${escHtml(_clienteDoAp(ap))}</option>`).join('');
   document.getElementById('nt-modulo').innerHTML = Object.keys(NT_MODELOS).map(k => `<option>${k}</option>`).join('');
   ntTrocouTipo();
   document.getElementById('nt-form').style.display = 'block'; document.getElementById('nt-pronto').style.display = 'none';
