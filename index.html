@@ -2248,7 +2248,8 @@ input,select,textarea{font-family:'Inter',sans-serif;outline:none}
 #sidebar.sidebar-light #sidebar-toolbar-topo,
 #sidebar.sidebar-light #nav-group-personalizar,
 #sidebar.sidebar-light #nav-group-controle,
-#sidebar.sidebar-light #nav-group-financeiro{display:none !important}
+#sidebar.sidebar-light #nav-group-financeiro,
+#sidebar.sidebar-light #nav-group-vistorias{display:none !important}
 #sidebar.sidebar-light .nav-btn{color:#3a3730}
 #sidebar.sidebar-light .nav-btn:hover{background:rgba(0,0,0,0.05);color:#1a1812}
 #sidebar.sidebar-light .nav-btn.active{background:var(--accent);color:#fff;font-weight:600;border-left:none}
@@ -2800,6 +2801,20 @@ body.mobile-mode #main{padding-bottom:72px}
       Pagamento Instalações
     </button>
     </div>
+    <div id="nav-group-vistorias" style="display:none">
+    <button class="nav-btn active" onclick="showScreen('vistorias')" id="nav-vistorias">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      OK de Obra
+    </button>
+    <button class="nav-btn" disabled style="opacity:.45;cursor:default" title="Em breve">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Termos de Garantia · em breve
+    </button>
+    <button class="nav-btn" disabled style="opacity:.45;cursor:default" title="Em breve">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      Vistoria de Entrega · em breve
+    </button>
+    </div>
     <div id="nav-group-financeiro" style="display:none">
     <button class="nav-btn active" onclick="showScreen('pagamentos')" id="nav-pagamentos">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
@@ -2880,6 +2895,10 @@ body.mobile-mode #main{padding-bottom:72px}
       <button onclick="pedirSenhaModulo('ctrlinst')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="display:block;margin:0 auto 12px;pointer-events:none"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
         Controle
+      </button>
+      <button onclick="pedirSenhaModulo('vistorias')" style="background:rgba(245,240,228,0.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(178,152,89,0.6);color:#e8dfc4;padding:22px 40px;border-radius:14px;font-size:13px;font-weight:400;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-transform:uppercase;min-width:200px" onmouseover="this.style.borderColor='rgba(178,152,89,1)';this.style.background='rgba(178,152,89,0.2)'" onmouseout="this.style.borderColor='rgba(178,152,89,0.6)';this.style.background='rgba(245,240,228,0.1)'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="display:block;margin:0 auto 12px;pointer-events:none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg>
+        Termos e Vistorias
       </button>
     </div>
 
@@ -4072,6 +4091,56 @@ body.mobile-mode #main{padding-bottom:72px}
 </div>
 
 <!-- CONTAS (totais por conta de destino) -->
+<div id="vistorias-screen" class="screen">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>OK de Obra</h1>
+      <p>Termos conferidos pelo cliente e pelo arquiteto, com assinatura na tela, fotos e observações</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="loadVistorias(true)">Atualizar</button>
+      <button class="btn btn-primary" onclick="abrirNovoTermo()">+ Novo termo</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+      <input id="vist-f-apto" class="filter-input" placeholder="Filtrar por apto ou cliente" oninput="renderVistorias()" style="min-width:220px">
+      <select id="vist-f-status" class="filter-input" onchange="renderVistorias()">
+        <option value="">Todos</option><option value="aberto">Aguardando assinatura</option><option value="assinado">Assinados</option>
+      </select>
+    </div>
+    <div id="vist-lista"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-novo-termo">
+  <div class="modal" style="max-width:620px;width:96vw">
+    <div class="modal-header"><h2>Novo termo de OK</h2><button class="modal-close" onclick="fecharModal('modal-novo-termo')">&times;</button></div>
+    <div class="modal-body">
+      <div id="nt-form">
+        <label style="font-size:12px;color:var(--text3)">Apartamento</label>
+        <select id="nt-apto" class="filter-input" style="width:100%;margin-bottom:12px"></select>
+        <label style="font-size:12px;color:var(--text3)">Tipo de serviço</label>
+        <select id="nt-modulo" class="filter-input" style="width:100%;margin-bottom:12px" onchange="ntTrocouTipo()"></select>
+        <label style="font-size:12px;color:var(--text3)">Título do termo</label>
+        <input id="nt-titulo" class="filter-input" style="width:100%;margin-bottom:12px">
+        <label style="font-size:12px;color:var(--text3)">Itens do checklist (um por linha — pode editar, apagar ou acrescentar)</label>
+        <textarea id="nt-itens" class="filter-input" rows="8" style="width:100%;font-family:inherit"></textarea>
+      </div>
+      <div id="nt-pronto" style="display:none">
+        <p style="font-size:13px;color:var(--text2);margin:0 0 10px">Termo criado. Envie este link ao cliente e ao arquiteto — eles abrem no celular, conferem os itens e assinam na tela.</p>
+        <input id="nt-link" class="filter-input" readonly style="width:100%" onclick="this.select()">
+      </div>
+    </div>
+    <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:8px;padding:12px 20px">
+      <button class="btn btn-secondary" onclick="fecharModal('modal-novo-termo')">Fechar</button>
+      <button class="btn btn-secondary" id="nt-btn-copiar" style="display:none" onclick="ntCopiar()">Copiar link</button>
+      <button class="btn btn-secondary" id="nt-btn-zap" style="display:none" onclick="ntZap()">WhatsApp</button>
+      <button class="btn btn-primary" id="nt-btn-criar" onclick="criarNovoTermo()">Criar termo</button>
+    </div>
+  </div>
+</div>
+
 <div id="contastotais-screen" class="screen">
   <div class="page-header">
     <div class="page-header-left">
@@ -6113,14 +6182,16 @@ const SENHAS_MODULO = {
   vagasdep: '40272',
   controle: '40273',
   financeiro: '40274',
-  ctrlinst: '40275'
+  ctrlinst: '40275',
+  vistorias: '-' // só a Bárbara entra (senha conferida no servidor); '-' é apenas marcador
 };
 const NOMES_MODULO = {
   personalizar: 'Personalizar',
   vagasdep: 'Vagas e Depósitos',
   controle: 'Controle',
   financeiro: 'Financeiro',
-  ctrlinst: 'Controle · Instalações'
+  ctrlinst: 'Controle · Instalações',
+  vistorias: 'Termos e Vistorias'
 };
 
 
@@ -6307,6 +6378,9 @@ async function confirmarSenhaModulo() {
   const senha = document.getElementById('escolha-senha-input').value;
   const erroEl = document.getElementById('escolha-senha-erro');
   let ok = false;
+  if (tipo === 'vistorias' && getUsuarioAtual() !== 'Bárbara') {
+    erroEl.textContent = 'Esta área é só da Bárbara'; erroEl.style.display = 'block'; return;
+  }
   if (getUsuarioAtual() === 'Bárbara') {
     // A senha da Bárbara NÃO fica no código da página: é conferida no servidor (Apps Script).
     erroEl.style.display = 'none';
@@ -6364,12 +6438,14 @@ function escolherModulo(tipo) {
   const grupoControle = document.getElementById('nav-group-controle');
   const grupoFinanceiro = document.getElementById('nav-group-financeiro');
   const grupoVagasDep = document.getElementById('nav-group-vagasdep');
-  if (grupoPers) grupoPers.style.display = (tipo === 'controle' || tipo === 'financeiro' || tipo === 'vagasdep' || tipo === 'ctrlinst') ? 'none' : 'block';
+  if (grupoPers) grupoPers.style.display = (tipo === 'controle' || tipo === 'financeiro' || tipo === 'vagasdep' || tipo === 'ctrlinst' || tipo === 'vistorias') ? 'none' : 'block';
   if (grupoControle) grupoControle.style.display = tipo === 'controle' ? 'block' : 'none';
   if (grupoFinanceiro) grupoFinanceiro.style.display = tipo === 'financeiro' ? 'block' : 'none';
   const grupoCtrlInst = document.getElementById('nav-group-ctrlinst');
   if (grupoCtrlInst) grupoCtrlInst.style.display = tipo === 'ctrlinst' ? 'block' : 'none';
   if (grupoVagasDep) grupoVagasDep.style.display = tipo === 'vagasdep' ? 'block' : 'none';
+  const grupoVist = document.getElementById('nav-group-vistorias');
+  if (grupoVist) grupoVist.style.display = tipo === 'vistorias' ? 'block' : 'none';
   document.getElementById('sidebar').classList.toggle('sidebar-light', tipo === 'vagasdep');
 
   if (tipo === 'vagasdep') {
@@ -6378,6 +6454,8 @@ function escolherModulo(tipo) {
     showScreen('visaogeralvalores');
   } else if (tipo === 'ctrlinst') {
     showScreen('ctrlvisao');
+  } else if (tipo === 'vistorias') {
+    showScreen('vistorias');
   } else if (tipo === 'financeiro') {
     showScreen('pagamentos');
   } else {
@@ -6415,7 +6493,7 @@ window.onload = async () => {
   const areaSalva = sessionStorage.getItem('absoluta_area');
   if (capaOk) {
     entrarSistema();
-    if (areaSalva && SENHAS_MODULO[areaSalva] && getUsuarioAtual()) {
+    if (areaSalva && SENHAS_MODULO[areaSalva] && getUsuarioAtual() && (areaSalva !== 'vistorias' || getUsuarioAtual() === 'Bárbara')) {
       const lastScreen = localStorage.getItem('last_screen'); // le ANTES, pois escolherModulo tambem mexe no last_screen
       escolherModulo(areaSalva);
       if (lastScreen) showScreen(lastScreen);
@@ -6795,6 +6873,7 @@ function showScreen(name) {
   if (name === 'visaogeralvalores') { if (!vgValoresDesbloqueado) { document.getElementById('vgvalores-lock').style.display = 'flex'; document.getElementById('vgvalores-conteudo').style.display = 'none'; } else { document.getElementById('vgvalores-lock').style.display = 'none'; document.getElementById('vgvalores-conteudo').style.display = 'block'; loadVisaoGeralValores(); } }
   if (name === 'previsaocobrancas') loadPrevisaoCobrancas();
   if (name === 'contastotais') loadContasTotais();
+  if (name === 'vistorias') loadVistorias();
 }
 
 
@@ -6903,6 +6982,100 @@ async function lerDados(forcarFresco) {
 }
 
 // ===================== TOAST =====================
+
+// ===================== TERMOS E VISTORIAS · OK DE OBRA =====================
+let dadosTermos = [];
+const NT_MODELOS = {
+  'Revestimentos': { titulo: 'OK de Revestimentos', itens: ['Pisos assentados, sem peças trincadas, manchadas ou ocas','Rejuntes uniformes e bem acabados','Paredes revestidas alinhadas e niveladas','Cortes e arremates (soleiras, rodapés, cantos) bem feitos','Limpeza do revestimento concluída'] },
+  'Marmoraria': { titulo: 'OK de Marmoraria', itens: ['Pedras instaladas conforme o projeto e o orçamento','Sem trincas, lascas ou manchas','Cortes, furos e recortes corretos (cuba, cooktop, torneira)','Acabamento das bordas e juntas','Silicone / vedação aplicados'] },
+  'Banheira': { titulo: 'OK de Banheira', itens: ['Banheira instalada e nivelada','Sem riscos ou danos na peça','Vedação e acabamento ao redor','Registro e drenagem testados, sem vazamento'] },
+  'Metais': { titulo: 'OK de Metais', itens: ['Metais instalados conforme o modelo escolhido','Sem riscos ou danos no acabamento','Registros e torneiras funcionando, sem vazamento','Acabamentos (canoplas, sifões) bem fixados'] },
+  'Civil': { titulo: 'OK de Civil', itens: ['Serviço executado conforme o orçamento','Paredes e superfícies regulares e sem fissuras','Acabamento e limpeza concluídos'] },
+  'Ar-condicionado': { titulo: 'OK de Ar-condicionado', itens: ['Equipamentos instalados conforme o projeto','Funcionamento testado (frio e dreno)','Sem vazamento e sem ruídos anormais','Acabamento das tubulações'] },
+  'Vinílico': { titulo: 'OK de Vinílico', itens: ['Piso vinílico instalado sem folgas ou ondulações','Rodapés e arremates bem acabados','Limpeza concluída'] },
+  'Outro': { titulo: 'OK de Obra', itens: ['Item 1'] }
+};
+
+async function loadVistorias(forcar) {
+  const el = document.getElementById('vist-lista');
+  if (!el) return;
+  if (!dadosTermos.length || forcar) el.innerHTML = '<div style="padding:30px;text-align:center;color:var(--text3)">Carregando…</div>';
+  try {
+    const r = await apiPost('getTermosVistoria', {});
+    dadosTermos = (Array.isArray(r) ? r : []).map(t => { let it = []; try { it = JSON.parse(t.itens || '[]'); } catch (e) {} return Object.assign({}, t, { _itens: it }); });
+    renderVistorias();
+  } catch (e) {
+    el.innerHTML = '<div style="padding:30px;text-align:center;color:var(--danger)">Não consegui carregar os termos: ' + escHtml(e.message) + (/desconhecida/i.test(e.message) ? '<br>Atualize o Code.gs no Apps Script (nova versão).' : '') + '</div>';
+  }
+}
+function escHtml(v) { return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function _linkTermo(token) { return location.origin + location.pathname.replace(/[^\/]*$/, '') + 'ok.html?t=' + token; }
+
+function renderVistorias() {
+  const el = document.getElementById('vist-lista');
+  const q = (document.getElementById('vist-f-apto').value || '').toLowerCase().trim();
+  const st = document.getElementById('vist-f-status').value;
+  const lista = dadosTermos.filter(t => (!st || t.status === st) && (!q || (t.apto + ' ' + t.cliente + ' ' + t.titulo).toLowerCase().includes(q)));
+  if (!lista.length) { el.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text3)">' + (dadosTermos.length ? 'Nenhum termo com esse filtro.' : 'Nenhum termo ainda. Clique em “+ Novo termo”.') + '</div>'; return; }
+  el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">' + lista.map(t => {
+    const n = t._itens.length, feitos = t._itens.filter(i => i.status === 'ok' || i.status === 'ressalva').length, res = t._itens.filter(i => i.status === 'ressalva').length;
+    const ass = t.status === 'assinado';
+    const badge = ass ? '<span style="background:#e8f5e9;color:#2e7d3f;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700">✓ Assinado</span>' : '<span style="background:#fff3dc;color:#b26a00;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700">Aguardando</span>';
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div><div style="font-weight:700;font-size:15px">Apto ${escHtml(t.apto)}</div><div style="font-size:12px;color:var(--text3)">${escHtml(t.cliente || '—')}</div></div>${badge}</div>
+      <div style="margin-top:10px;font-size:14px;font-weight:600">${escHtml(t.titulo)}</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px">${feitos} de ${n} itens conferidos${res ? ' · ' + res + ' com ressalva' : ''}</div>
+      ${ass ? `<div style="font-size:12px;color:var(--text3);margin-top:2px">Assinado em ${escHtml(t.assinado_em)}</div>` : `<div style="font-size:12px;color:var(--text3);margin-top:2px">Criado em ${escHtml(t.criado_em)}</div>`}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn btn-secondary" onclick="copiarLinkTermo('${t.token}')">Copiar link</button>
+        <button class="btn btn-secondary" onclick="window.open('${_linkTermo(t.token)}','_blank')">${ass ? 'Ver termo' : 'Abrir'}</button>
+        ${ass ? `<button class="btn btn-secondary" onclick="window.open('${_linkTermo(t.token)}&pdf=1','_blank')">PDF</button>` : `<button class="btn btn-secondary" style="color:var(--danger)" onclick="excluirTermo('${t.id}')">Excluir</button>`}
+      </div></div>`;
+  }).join('') + '</div>';
+}
+
+function copiarLinkTermo(token) {
+  const l = _linkTermo(token);
+  (navigator.clipboard ? navigator.clipboard.writeText(l) : Promise.reject()).then(() => showToast('Link copiado'), () => { prompt('Copie o link:', l); });
+}
+async function excluirTermo(id) {
+  if (!confirm('Excluir este termo? Só dá para excluir termos ainda não assinados.')) return;
+  try { await apiPost('excluirTermoVistoria', { id }); showToast('Termo excluído'); loadVistorias(true); } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+function abrirNovoTermo() {
+  const aptos = [...new Set((typeof dadosParedes !== 'undefined' ? dadosParedes : []).map(p => p.apartamento))].sort((a, b) => Number(a) - Number(b));
+  document.getElementById('nt-apto').innerHTML = '<option value="">— Selecione —</option>' + aptos.map(ap => `<option value="${escHtml(ap)}">Apto ${escHtml(ap)} - ${escHtml(_clienteDoAp(ap))}</option>`).join('');
+  document.getElementById('nt-modulo').innerHTML = Object.keys(NT_MODELOS).map(k => `<option>${k}</option>`).join('');
+  ntTrocouTipo();
+  document.getElementById('nt-form').style.display = 'block'; document.getElementById('nt-pronto').style.display = 'none';
+  ['nt-btn-copiar', 'nt-btn-zap'].forEach(i => document.getElementById(i).style.display = 'none');
+  const b = document.getElementById('nt-btn-criar'); b.style.display = ''; b.disabled = false; b.textContent = 'Criar termo';
+  abrirModal('modal-novo-termo');
+}
+function ntTrocouTipo() {
+  const m = NT_MODELOS[document.getElementById('nt-modulo').value];
+  document.getElementById('nt-titulo').value = m.titulo;
+  document.getElementById('nt-itens').value = m.itens.join('\n');
+}
+let _ntToken = '';
+async function criarNovoTermo() {
+  const apto = document.getElementById('nt-apto').value;
+  if (!apto) return showToast('Escolha o apartamento', 'error');
+  const itens = document.getElementById('nt-itens').value.split('\n').map(x => x.trim()).filter(Boolean);
+  const b = document.getElementById('nt-btn-criar'); b.disabled = true; b.textContent = 'Criando…';
+  try {
+    const r = await apiPost('criarTermoVistoria', { apto, cliente: _clienteDoAp(apto), modulo: document.getElementById('nt-modulo').value, titulo: document.getElementById('nt-titulo').value, itens });
+    _ntToken = r.token;
+    document.getElementById('nt-link').value = _linkTermo(r.token);
+    document.getElementById('nt-form').style.display = 'none'; document.getElementById('nt-pronto').style.display = 'block';
+    b.style.display = 'none'; ['nt-btn-copiar', 'nt-btn-zap'].forEach(i => document.getElementById(i).style.display = '');
+    loadVistorias(true);
+  } catch (e) { b.disabled = false; b.textContent = 'Criar termo'; showToast('Erro: ' + e.message, 'error'); }
+}
+function ntCopiar() { copiarLinkTermo(_ntToken); }
+function ntZap() { window.open('https://wa.me/?text=' + encodeURIComponent('Segue o link para conferência e OK do apartamento: ' + _linkTermo(_ntToken)), '_blank'); }
+
 function showToast(msg, type = 'default') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast ' + type + ' show';

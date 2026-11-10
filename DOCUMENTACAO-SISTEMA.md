@@ -212,3 +212,12 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - **Diferença de valor:** positiva → `confirmarCobranca` com `modulo = 'alteracao'` (entra em Cobranças futuras como "Previsto", forma de pagamento e 1º vencimento escolhidos; some pela baixa da parcela). Negativa → **crédito** do cliente (exibido no card; uso manual por enquanto). Zero → nada a cobrar.
 - **Materiais por Apartamento:** cada alteração confirmada vira um cartão "Cliente · Alteração N" só com o material novo (m² e caixas).
 - **Code.gs:** ações `salvarAlteracaoPersonalizar`, `excluirAlteracaoPersonalizar` (só pendente), `confirmarAlteracaoPersonalizar`, leitura leve `getPersonalizarAlteracoes`; `personalizarAlteracoes` no espelho `data.json`.
+
+
+## Termos e Vistorias · OK de Obra (área só da Bárbara)
+- Nova área na tela inicial ("Termos e Vistorias"), mesma senha do Financeiro (conferida no servidor, hash `vistorias`). Gabriel e Jailton não entram.
+- **Criar termo**: escolhe apto, tipo de serviço (modelos de checklist editáveis) e título. O sistema gera um link `ok.html?t=TOKEN` (token de 40 caracteres, específico do termo).
+- **Página pública `ok.html`** (celular): cliente e arquiteto marcam cada item como OK ou Ressalva (ressalva exige observação), anexam foto (reduzida antes do envio; salva no Drive, pasta `Vistorias_Fotos`), escrevem observação geral e assinam na tela. Salva sozinho enquanto preenche.
+- **Assinado = travado**: não pode mais ser editado nem excluído. Guarda data/hora e código de verificação (hash). Há botão de PDF.
+- Dados na aba `Vistorias_Termos` (criada automaticamente). Backend em `Code.gs`: `criarTermoVistoria`, `getTermosVistoria`, `getTermoVistoriaPublico`, `salvarRespostaTermoVistoria`, `uploadFotoTermoVistoria`, `assinarTermoVistoria`, `excluirTermoVistoria`.
+- Em breve (já no menu): Termos de Garantia e Vistoria de Entrega.

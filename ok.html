@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Termo de OK · Absoluta</title>
+<link rel="icon" href="assets/favicon-32.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f7f5f0; --surface:#ffffff; --text:#1c1a15; --text2:#5a5648; --text3:#8f8a78; --border:#e4dfd0;
+    --marrom:#43331e; --dourado:#8c8467; --ok:#2e7d3f; --ok-bg:#e8f5e9; --warn:#b26a00; --warn-bg:#fff3dc; --danger:#b5453d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg:#15130e; --surface:#1f1c15; --text:#f1ede0; --text2:#c9c3ae; --text3:#9a9484; --border:#3a3527; --marrom:#d9c8a0; --dourado:#b8ad8a; --ok:#6fcf86; --ok-bg:#1d3324; --warn:#f0b24d; --warn-bg:#3a2e14; --danger:#e0847b; }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.45; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 16px calc(40px + env(safe-area-inset-bottom)); }
+  header.topo { background: #43331e; color: #f1ead6; padding: 22px 16px 20px; }
+  header.topo .in { max-width: 720px; margin: 0 auto; }
+  header.topo small { letter-spacing: 3px; text-transform: uppercase; font-size: 10px; opacity: .75; display: block; margin-bottom: 6px; }
+  header.topo h1 { margin: 0; font-size: 20px; font-weight: 600; }
+  header.topo p { margin: 4px 0 0; font-size: 13px; opacity: .85; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 14px; }
+  .intro { font-size: 13px; color: var(--text2); }
+  .item .txt { font-weight: 600; font-size: 15px; margin-bottom: 10px; }
+  .item .num { color: var(--text3); font-weight: 500; margin-right: 4px; }
+  .seg { display: flex; gap: 8px; }
+  .seg button { flex: 1; padding: 12px 8px; border-radius: 10px; border: 1.5px solid var(--border); background: transparent; color: var(--text2); font: inherit; font-weight: 600; cursor: pointer; }
+  .seg button.on-ok { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
+  .seg button.on-res { background: var(--warn-bg); border-color: var(--warn); color: var(--warn); }
+  textarea, input[type=text] { width: 100%; font: inherit; font-size: 15px; padding: 11px 12px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--bg); color: var(--text); margin-top: 10px; }
+  textarea { min-height: 70px; resize: vertical; }
+  textarea:focus, input:focus { outline: none; border-color: var(--dourado); }
+  .fotos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+  .fotos img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); background: #ddd; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 11px 14px; border-radius: 10px; border: 1.5px solid var(--border); background: transparent; color: var(--text); font: inherit; font-weight: 600; font-size: 13px; cursor: pointer; }
+  .btn.primary { background: var(--marrom); border-color: var(--marrom); color: #fff; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #1b160d; } }
+  .btn.big { width: 100%; padding: 15px; font-size: 15px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  h2 { font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin: 26px 0 0; font-weight: 700; }
+  .sig { position: relative; }
+  .sig canvas { width: 100%; height: 130px; background: #fff; border: 1.5px dashed var(--dourado); border-radius: 10px; touch-action: none; display: block; margin-top: 10px; }
+  .sig .limpar { position: absolute; right: 0; top: -6px; font-size: 12px; padding: 5px 9px; background: rgba(255,255,255,.9); color: #333; }
+  .sig .hint { position: absolute; left: 0; right: 0; top: 128px; text-align: center; color: #bbb; font-size: 13px; pointer-events: none; }
+  .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .badge.ok { background: var(--ok-bg); color: var(--ok); }
+  .badge.res { background: var(--warn-bg); color: var(--warn); }
+  .salvo { position: fixed; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); background: var(--marrom); color: #fff; font-size: 12px; padding: 7px 12px; border-radius: 20px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .salvo { color: #1b160d; } }
+  .salvo.on { opacity: .95; }
+  .erro { color: var(--danger); font-size: 13px; margin-top: 10px; font-weight: 500; }
+  .assinado-banner { background: var(--ok-bg); color: var(--ok); border-radius: 14px; padding: 14px 16px; margin-top: 14px; font-size: 13px; }
+  .sigimg { max-width: 100%; height: 90px; background: #fff; border: 1px solid var(--border); border-radius: 8px; margin-top: 8px; }
+  .center { text-align: center; padding: 60px 20px; color: var(--text2); }
+</style>
+</head>
+<body>
+<header class="topo"><div class="in">
+  <small>Absoluta Construtora · Essence Residence</small>
+  <h1 id="titulo">Termo de OK</h1>
+  <p id="sub"></p>
+</div></header>
+<div class="wrap" id="app"><div class="center">Carregando…</div></div>
+<div class="salvo" id="salvo">Salvando…</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9D4XhHquXu-UKK6876Ymb7ApTlIpnXCoYdeV4_zGQD_Dz5JfY-z-LNKz2303ufnn9Uw/exec';
+const params = new URLSearchParams(location.search);
+const TOKEN = params.get('t') || '';
+let termo = null;
+let travado = false;
+const pads = {};
+
+const esc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fotoUrl = (id, w) => 'https://lh3.googleusercontent.com/d/' + id + '=w' + (w || 400);
+const fotoLink = id => 'https://drive.google.com/file/d/' + id + '/view';
+
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+    const s = document.createElement('script');
+    const t = setTimeout(() => { delete window[cb]; s.remove(); reject(new Error('O servidor demorou a responder. Tente de novo em instantes.')); }, 40000);
+    window[cb] = d => { clearTimeout(t); delete window[cb]; s.remove(); resolve(d); };
+    s.onerror = () => { clearTimeout(t); delete window[cb]; s.remove(); reject(new Error('Sem conexão. Verifique a internet.')); };
+    s.src = url + '&callback=' + cb;
+    document.head.appendChild(s);
+  });
+}
+async function post(action, dados) {
+  const r = await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action, dados, usuario: 'Termo público' }) });
+  const j = await r.json();
+  if (j.error) throw new Error(j.error);
+  return j.data;
+}
+
+async function carregar() {
+  if (!TOKEN) { document.getElementById('app').innerHTML = '<div class="center">Link inválido.</div>'; return; }
+  try {
+    const r = await jsonp(SCRIPT_URL + '?action=getTermoVistoriaPublico&token=' + encodeURIComponent(TOKEN));
+    if (r.error) throw new Error(r.error);
+    termo = r.data;
+    travado = termo.status === 'assinado';
+    document.getElementById('titulo').textContent = termo.titulo || 'Termo de OK';
+    document.getElementById('sub').textContent = 'Apto ' + termo.apto + (termo.cliente ? ' · ' + termo.cliente : '');
+    document.title = (termo.titulo || 'Termo de OK') + ' · Apto ' + termo.apto;
+    render();
+    if (travado && params.get('pdf') === '1') baixarPdf();
+  } catch (e) {
+    document.getElementById('app').innerHTML = '<div class="center"><strong>Não foi possível abrir o termo</strong><br><br>' + esc(e.message) + '</div>';
+  }
+}
+
+function resumoStatus() {
+  const n = termo.itens.length, ok = termo.itens.filter(i => i.status === 'ok').length, res = termo.itens.filter(i => i.status === 'ressalva').length;
+  return { n, ok, res, falta: n - ok - res };
+}
+
+function render() {
+  const app = document.getElementById('app');
+  let h = '';
+  if (travado) {
+    h += `<div class="assinado-banner"><strong>✓ Termo assinado</strong> em ${esc(termo.assinado_em)}<br>Código de verificação: <strong>${esc(termo.hash)}</strong></div>`;
+  } else {
+    h += `<div class="card intro">Confira cada item no apartamento e marque <strong>OK</strong> ou <strong>Ressalva</strong>. Se quiser, anexe foto e escreva uma observação. No final, o cliente e o arquiteto assinam na tela. <span id="prog"></span></div>`;
+  }
+  termo.itens.forEach((it, i) => { h += itemHtml(it, i); });
+  h += `<h2>Observações gerais</h2><div class="card" style="margin-top:8px">` +
+    (travado ? `<div>${esc(termo.obs_geral) || '<span style="color:var(--text3)">Sem observações.</span>'}</div>`
+             : `<textarea id="obs-geral" placeholder="Algo mais que queira registrar (opcional)" style="margin-top:0">${esc(termo.obs_geral)}</textarea>`) + `</div>`;
+  if (travado) {
+    h += `<h2>Assinaturas</h2><div class="card" style="margin-top:8px">
+      <div><strong>Cliente:</strong> ${esc(termo.nome_cliente)}<br><img class="sigimg" src="${esc(termo.assinatura_cliente)}" alt="Assinatura do cliente"></div>
+      <div style="margin-top:16px"><strong>Arquiteto:</strong> ${esc(termo.nome_arquiteto)}<br><img class="sigimg" src="${esc(termo.assinatura_arquiteto)}" alt="Assinatura do arquiteto"></div>
+    </div>
+    <button class="btn primary big" style="margin-top:16px" onclick="baixarPdf()" id="btn-pdf">Baixar PDF do termo</button>`;
+  } else {
+    h += `<h2>Assinaturas</h2>
+    <div class="card" style="margin-top:8px">
+      <div class="sig"><strong>Cliente</strong><input type="text" id="nome-cliente" placeholder="Nome completo do cliente" value="${esc(termo.nome_cliente)}">
+        <canvas id="pad-cliente"></canvas><div class="hint" id="hint-cliente">Assine aqui com o dedo</div><button class="btn limpar" onclick="limpar('cliente')">Limpar</button></div>
+      <div class="sig" style="margin-top:22px"><strong>Arquiteto</strong><input type="text" id="nome-arquiteto" placeholder="Nome completo do arquiteto" value="${esc(termo.nome_arquiteto)}">
+        <canvas id="pad-arquiteto"></canvas><div class="hint" id="hint-arquiteto">Assine aqui com o dedo</div><button class="btn limpar" onclick="limpar('arquiteto')">Limpar</button></div>
+      <p class="intro" style="margin:18px 0 0">Ao assinar, declaro que conferi os itens acima e que as respostas e observações registradas neste termo correspondem ao que foi verificado no apartamento. Depois de assinado, o termo não pode mais ser alterado.</p>
+      <div class="erro" id="erro" style="display:none"></div>
+      <button class="btn primary big" style="margin-top:14px" id="btn-assinar" onclick="assinar()">Assinar e concluir</button>
+    </div>`;
+  }
+  app.innerHTML = h;
+  if (!travado) { iniciarPad('cliente'); iniciarPad('arquiteto'); document.getElementById('obs-geral').addEventListener('input', agendarSalvar); atualizarProg(); }
+}
+
+function itemHtml(it, i) {
+  const fotos = (it.fotos || []).map(id => `<a href="${fotoLink(id)}" target="_blank" rel="noopener"><img src="${fotoUrl(id, 300)}" loading="lazy" alt="Foto"></a>`).join('');
+  if (travado) {
+    return `<div class="card item"><div class="txt"><span class="num">${i + 1}.</span> ${esc(it.texto)}</div>
+      <span class="badge ${it.status === 'ok' ? 'ok' : 'res'}">${it.status === 'ok' ? '✓ OK' : '⚠ Ressalva'}</span>
+      ${it.obs ? `<div style="margin-top:8px;font-size:14px">${esc(it.obs)}</div>` : ''}
+      ${fotos ? `<div class="fotos">${fotos}</div>` : ''}</div>`;
+  }
+  return `<div class="card item" id="item-${it.id}"><div class="txt"><span class="num">${i + 1}.</span> ${esc(it.texto)}</div>
+    <div class="seg">
+      <button class="${it.status === 'ok' ? 'on-ok' : ''}" onclick="marcar('${it.id}','ok')">✓ OK</button>
+      <button class="${it.status === 'ressalva' ? 'on-res' : ''}" onclick="marcar('${it.id}','ressalva')">⚠ Ressalva</button>
+    </div>
+    <textarea id="obs-${it.id}" placeholder="${it.status === 'ressalva' ? 'Descreva a ressalva (obrigatório)' : 'Observação (opcional)'}" oninput="mudouObs('${it.id}',this.value)">${esc(it.obs)}</textarea>
+    <div class="fotos" id="fotos-${it.id}">${fotos}
+      <label class="btn">📷 Foto<input type="file" accept="image/*" style="display:none" onchange="enviarFoto('${it.id}',this)"></label>
+    </div></div>`;
+}
+
+function atualizarProg() {
+  const r = resumoStatus(), el = document.getElementById('prog');
+  if (el) el.innerHTML = `<br><strong>${r.ok + r.res} de ${r.n}</strong> itens conferidos` + (r.res ? ` · ${r.res} com ressalva` : '') + '.';
+}
+function marcar(id, st) {
+  const it = termo.itens.find(x => x.id === id); it.status = it.status === st ? '' : st;
+  const card = document.getElementById('item-' + id), b = card.querySelectorAll('.seg button');
+  b[0].className = it.status === 'ok' ? 'on-ok' : ''; b[1].className = it.status === 'ressalva' ? 'on-res' : '';
+  document.getElementById('obs-' + id).placeholder = it.status === 'ressalva' ? 'Descreva a ressalva (obrigatório)' : 'Observação (opcional)';
+  atualizarProg(); agendarSalvar();
+}
+function mudouObs(id, v) { termo.itens.find(x => x.id === id).obs = v; agendarSalvar(); }
+
+let _t = null;
+function agendarSalvar() { mostrarSalvo('Salvando…'); clearTimeout(_t); _t = setTimeout(salvarProgresso, 900); }
+function mostrarSalvo(txt, ok) { const el = document.getElementById('salvo'); el.textContent = txt; el.classList.add('on'); if (ok) setTimeout(() => el.classList.remove('on'), 1400); }
+async function salvarProgresso() {
+  try {
+    await post('salvarRespostaTermoVistoria', { token: TOKEN, itens: termo.itens.map(i => ({ id: i.id, status: i.status, obs: i.obs })), obs_geral: (document.getElementById('obs-geral') || {}).value || '' });
+    mostrarSalvo('Salvo ✓', true);
+  } catch (e) { mostrarSalvo('Não salvou: ' + e.message); }
+}
+
+// Reduz a foto antes de enviar (celular tira foto de vários MB)
+function reduzirImagem(file, max) {
+  return new Promise((resolve, reject) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const esc = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * esc); c.height = Math.round(img.naturalHeight * esc);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      resolve(c.toDataURL('image/jpeg', 0.8).split(',')[1]);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Não consegui ler a foto')); };
+    img.src = url;
+  });
+}
+async function enviarFoto(id, input) {
+  const file = input.files && input.files[0]; if (!file) return;
+  mostrarSalvo('Enviando foto…');
+  try {
+    const b64 = await reduzirImagem(file, 1400);
+    const r = await post('uploadFotoTermoVistoria', { token: TOKEN, item_id: id, mimeType: 'image/jpeg', base64data: b64 });
+    termo.itens.find(x => x.id === id).fotos = r.fotos;
+    const box = document.getElementById('fotos-' + id), label = box.querySelector('label');
+    const a = document.createElement('a'); a.href = fotoLink(r.fileId); a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = `<img src="${fotoUrl(r.fileId, 300)}" alt="Foto">`; box.insertBefore(a, label);
+    mostrarSalvo('Foto enviada ✓', true);
+  } catch (e) { mostrarSalvo('Erro na foto: ' + e.message); }
+  input.value = '';
+}
+
+// ---- assinatura na tela ----
+function iniciarPad(qual) {
+  const cv = document.getElementById('pad-' + qual), dpr = window.devicePixelRatio || 1;
+  const rect = cv.getBoundingClientRect(); cv.width = Math.round(rect.width * dpr); cv.height = Math.round(rect.height * dpr);
+  const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr); ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#111';
+  const pad = pads[qual] = { cv, ctx, desenhou: false, desenhando: false };
+  const pos = e => { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); cv.setPointerCapture(e.pointerId); pad.desenhando = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + .1, p.y + .1); ctx.stroke(); pad.desenhou = true; document.getElementById('hint-' + qual).style.display = 'none'; });
+  cv.addEventListener('pointermove', e => { if (!pad.desenhando) return; e.preventDefault(); const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+  const fim = () => { pad.desenhando = false; };
+  cv.addEventListener('pointerup', fim); cv.addEventListener('pointercancel', fim);
+}
+function limpar(qual) {
+  const p = pads[qual]; p.ctx.save(); p.ctx.setTransform(1, 0, 0, 1, 0, 0); p.ctx.clearRect(0, 0, p.cv.width, p.cv.height); p.ctx.restore();
+  p.desenhou = false; document.getElementById('hint-' + qual).style.display = '';
+}
+// Exporta pequena (cabe na célula da planilha): 420x140 px
+function exportarAssinatura(qual) {
+  const p = pads[qual], c = document.createElement('canvas'); c.width = 420; c.height = 140;
+  const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, 420, 140); x.drawImage(p.cv, 0, 0, 420, 140);
+  return c.toDataURL('image/png');
+}
+
+async function assinar() {
+  const erro = document.getElementById('erro'); erro.style.display = 'none';
+  const falha = m => { erro.textContent = m; erro.style.display = 'block'; erro.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+  const r = resumoStatus();
+  if (r.falta) return falha('Falta marcar ' + r.falta + ' item(ns) como OK ou Ressalva.');
+  const semObs = termo.itens.find(i => i.status === 'ressalva' && !String(i.obs || '').trim());
+  if (semObs) { document.getElementById('item-' + semObs.id).scrollIntoView({ block: 'center', behavior: 'smooth' }); return falha('Descreva a ressalva do item "' + semObs.texto + '".'); }
+  const nc = document.getElementById('nome-cliente').value.trim(), na = document.getElementById('nome-arquiteto').value.trim();
+  if (!nc || !na) return falha('Preencha o nome de quem assina (cliente e arquiteto).');
+  if (!pads.cliente.desenhou) return falha('Falta a assinatura do cliente.');
+  if (!pads.arquiteto.desenhou) return falha('Falta a assinatura do arquiteto.');
+  if (!confirm('Confirmar a assinatura? Depois disso o termo não poderá mais ser alterado.')) return;
+  const btn = document.getElementById('btn-assinar'); btn.disabled = true; btn.textContent = 'Assinando…';
+  try {
+    clearTimeout(_t);
+    await post('assinarTermoVistoria', { token: TOKEN, itens: termo.itens.map(i => ({ id: i.id, status: i.status, obs: i.obs })), obs_geral: document.getElementById('obs-geral').value,
+      nome_cliente: nc, assinatura_cliente: exportarAssinatura('cliente'), nome_arquiteto: na, assinatura_arquiteto: exportarAssinatura('arquiteto') });
+    await carregar(); window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) { btn.disabled = false; btn.textContent = 'Assinar e concluir'; falha(e.message); }
+}
+
+// ---- PDF ----
+async function imgParaDataUrl(url) {
+  try {
+    const b = await (await fetch(url)).blob();
+    return await new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => res(null); r.readAsDataURL(b); });
+  } catch (e) { return null; }
+}
+async function baixarPdf() {
+  const btn = document.getElementById('btn-pdf'); if (btn) { btn.disabled = true; btn.textContent = 'Gerando PDF…'; }
+  try {
+    const J = window.jspdf && window.jspdf.jsPDF; if (!J) throw new Error('Biblioteca de PDF não carregou');
+    const doc = new J(); const W = 210; let y = 0;
+    const marrom = [67, 51, 30], dourado = [140, 132, 103];
+    doc.setFillColor(...marrom); doc.rect(0, 0, W, 34, 'F');
+    doc.setTextColor(241, 234, 214); doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.text('ABSOLUTA CONSTRUTORA  ·  ESSENCE RESIDENCE', 12, 13);
+    doc.setFontSize(16); doc.setFont('helvetica', 'bold'); doc.text(termo.titulo || 'Termo de OK', 12, 23);
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.text('Apto ' + termo.apto + (termo.cliente ? '  ·  ' + termo.cliente : ''), 12, 29.5);
+    y = 44;
+    const novaPag = h => { if (y + h > 280) { doc.addPage(); y = 16; } };
+    for (let i = 0; i < termo.itens.length; i++) {
+      const it = termo.itens[i];
+      const linhas = doc.splitTextToSize((i + 1) + '. ' + it.texto, 150), obs = it.obs ? doc.splitTextToSize('Obs.: ' + it.obs, 176) : [];
+      const fotos = (it.fotos || []).slice(0, 4);
+      novaPag(10 + linhas.length * 5 + obs.length * 4.5 + (fotos.length ? 32 : 0));
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(28, 26, 21); doc.text(linhas, 12, y);
+      const ok = it.status === 'ok'; doc.setFontSize(9);
+      doc.setTextColor(ok ? 46 : 178, ok ? 125 : 106, ok ? 63 : 0); doc.text(ok ? 'OK' : 'RESSALVA', W - 12, y, { align: 'right' });
+      y += linhas.length * 5;
+      if (obs.length) { doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(90, 86, 72); doc.text(obs, 12, y); y += obs.length * 4.5; }
+      if (fotos.length) {
+        let x = 12;
+        for (const id of fotos) { const d = await imgParaDataUrl(fotoUrl(id, 400)); if (d) { try { doc.addImage(d, 'JPEG', x, y + 1, 36, 28); } catch (e) {} } x += 40; }
+        y += 31;
+      }
+      y += 3; doc.setDrawColor(228, 223, 208); doc.line(12, y, W - 12, y); y += 6;
+    }
+    if (termo.obs_geral) {
+      const l = doc.splitTextToSize('Observações gerais: ' + termo.obs_geral, 186); novaPag(l.length * 4.5 + 6);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(60, 56, 44); doc.text(l, 12, y); y += l.length * 4.5 + 6;
+    }
+    novaPag(62);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(...dourado); doc.text('ASSINATURAS', 12, y); y += 4;
+    doc.setDrawColor(...dourado);
+    const sig = (img, nome, papel, x) => { try { doc.addImage(img, 'PNG', x, y, 60, 20); } catch (e) {} doc.line(x, y + 22, x + 80, y + 22);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(28, 26, 21); doc.text(nome, x, y + 27); doc.setFont('helvetica', 'normal'); doc.setTextColor(120, 114, 96); doc.text(papel, x, y + 31.5); };
+    sig(termo.assinatura_cliente, termo.nome_cliente, 'Cliente', 12); sig(termo.assinatura_arquiteto, termo.nome_arquiteto, 'Arquiteto', 112);
+    y += 40;
+    doc.setFontSize(7.5); doc.setTextColor(140, 132, 103);
+    doc.text('Termo assinado em ' + termo.assinado_em + '  ·  Código de verificação: ' + termo.hash, 12, y);
+    doc.save('Termo-OK-Apto' + termo.apto + '-' + (termo.titulo || 'obra').replace(/[^\w]+/g, '-').slice(0, 40) + '.pdf');
+  } catch (e) { alert('Não consegui gerar o PDF: ' + e.message); }
+  if (btn) { btn.disabled = false; btn.textContent = 'Baixar PDF do termo'; }
+}
+
+carregar();
+</script>
+</body>
+</html>
