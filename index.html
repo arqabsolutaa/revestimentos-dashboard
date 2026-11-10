@@ -11321,7 +11321,7 @@ function _materiaisAlteracoes() {
       linhas.push({ ambiente: l.ambiente || '—', item: l.item || '', material: rev ? rev.nome : '(revestimento não encontrado)', tamanho: rev ? rev.tamanho : '', m2, caixas: m2cx > 0 ? Math.ceil(m2 / m2cx) : null });
     });
     if (!linhas.length) return;
-    out.push({ id: a.id, ap: String(a.ap || '').trim(), cliente: (a.cliente || '—') + ' · Alteração ' + a.numero, linhas, totalM2: linhas.reduce((x, l) => x + l.m2, 0) });
+    out.push({ id: a.id, altId: a.id, ap: String(a.ap || '').trim(), cliente: (a.cliente || '—') + ' · Alteração ' + a.numero, linhas, totalM2: linhas.reduce((x, l) => x + l.m2, 0) });
   });
   return out;
 }
@@ -11373,6 +11373,7 @@ function _abrirModalMaterialApto(id) {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Exportar este apartamento (PDF)
     </button>
+    ${g.altId ? `<button class="btn btn-primary" onclick="exportarTrocaPdf('${g.altId}')" style="width:100%;margin-top:8px;justify-content:center">📄 PDF da troca (retirar / colocar)</button>` : ''}
   `;
   document.getElementById('modal-material-apto').classList.add('open');
 }
@@ -13341,6 +13342,83 @@ async function salvarAlteracao() {
   } catch (e) { showToast('Erro: ' + e.message, 'error'); }
 }
 
+
+// ===== PDF DA TROCA: o que sai da unidade e o que entra, só do que mudou na alteração =====
+async function exportarTrocaPdf(id) {
+  const a = (dadosAlteracoes || []).find(x => String(x.id) === String(id));
+  if (!a) { showToast('Alteração não encontrada', 'error'); return; }
+  try {
+    const J = getJsPDF(); if (!J) throw new Error('Biblioteca de PDF não carregou (jsPDF)');
+    const doc = new J({ unit: 'mm', format: 'a4' });
+    const W = 210, ml = 16, mr = 16;
+    const TXT = [44,44,44], CZ = [136,136,136], DOU = [176,128,64], BD = [229,224,213], BG = [248,245,240], VERM = [181,69,61], VERDE = [46,125,63];
+    const m2f = v => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' m²';
+    const cxDe = (piso, m2) => { const r = _revPorPiso(piso); const c = r ? parseFloat(r.m2_por_caixa) : 0; return c > 0 ? Math.ceil(m2 / c - 0.0001) : null; };
+    const tam = piso => { const r = _revPorPiso(piso); return r ? r.nome + (r.tamanho ? ' (' + r.tamanho + ')' : '') : '(revestimento não encontrado)'; };
+    let y = 18;
+    const nova = h => { if (y + h > 280) { doc.addPage(); y = 18; } };
+    doc.setFontSize(17); doc.setFont('helvetica', 'bold'); doc.setTextColor(...TXT); doc.text('Troca de Revestimento', ml, y); y += 6;
+    doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.setTextColor(...CZ);
+    doc.text('Essence Residence · Apto ' + a.ap + (a.cliente ? ' · ' + a.cliente : '') + ' · Alteração ' + a.numero, ml, y); y += 4;
+    doc.text('Emitido em ' + new Date().toLocaleDateString('pt-BR') + ' · somente o que mudou em relação ao orçamento original', ml, y); y += 6;
+    doc.setDrawColor(...BD); doc.setLineWidth(0.3); doc.line(ml, y, W - mr, y); y += 8;
+
+    // por ambiente
+    const porAmb = {};
+    _altLinhas(a).forEach(l => { const k = l.ambiente || '—'; (porAmb[k] = porAmb[k] || []).push(l); });
+    const bloco = (rotulo, cor, texto, m2, cx) => {
+      nova(11);
+      doc.setFontSize(7.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...cor); doc.text(rotulo, ml + 6, y);
+      doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(...TXT);
+      const ls = doc.splitTextToSize(texto, 108); doc.text(ls, ml + 26, y);
+      doc.setTextColor(...CZ); doc.text(m2f(m2), W - mr - 22, y, { align: 'right' });
+      doc.setFont('helvetica', 'bold'); doc.setTextColor(...cor); doc.text(cx != null ? cx + ' cx' : '—', W - mr, y, { align: 'right' });
+      y += Math.max(1, ls.length) * 4.6 + 1.5;
+    };
+    Object.entries(porAmb).forEach(([amb, ls]) => {
+      nova(24);
+      doc.setFillColor(...BG); doc.setDrawColor(...BD); doc.roundedRect(ml, y - 4.5, W - ml - mr, 7, 1.5, 1.5, 'FD');
+      doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...DOU); doc.text(amb, ml + 3, y); y += 7;
+      ls.forEach(l => {
+        const x = l.antes, n = l.depois, item = l.item ? l.item + ': ' : '';
+        if (x && n && String(x.piso) === String(n.piso)) {
+          const d = (parseFloat(n.m2) || 0) - (parseFloat(x.m2) || 0);
+          if (d > 0) bloco('COLOCAR', VERDE, item + tam(n.piso) + ' (acréscimo)', d, cxDe(n.piso, d));
+          else if (d < 0) bloco('RETIRAR', VERM, item + tam(x.piso) + ' (redução)', -d, cxDe(x.piso, -d));
+        } else {
+          if (x && (parseFloat(x.m2) || 0) > 0) bloco('RETIRAR', VERM, item + tam(x.piso), parseFloat(x.m2) || 0, cxDe(x.piso, parseFloat(x.m2) || 0));
+          if (n && (parseFloat(n.m2) || 0) > 0) bloco('COLOCAR', VERDE, item + tam(n.piso), parseFloat(n.m2) || 0, cxDe(n.piso, parseFloat(n.m2) || 0));
+        }
+      });
+      y += 3;
+    });
+
+    // resumo de caixas (mesma conta do estoque: m² + perda)
+    const mov = _altMovimentos(a);
+    const agr = sin => { const m = {}; mov.filter(z => z.sinal === sin).forEach(z => { const k = z.nome; m[k] = m[k] || { nome: k, m2p: 0, cx: 0, ok: true }; m[k].m2p += z.m2p; if (z.cx == null) m[k].ok = false; else m[k].cx += z.cx; }); return Object.values(m); };
+    const resumo = (titulo, cor, lista, sub) => {
+      nova(20 + lista.length * 6);
+      doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(...cor); doc.text(titulo, ml, y); y += 4.5;
+      doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...CZ); doc.text(sub, ml, y); y += 6;
+      if (!lista.length) { doc.setFontSize(9); doc.setTextColor(...CZ); doc.text('Nada.', ml + 3, y); y += 7; return; }
+      lista.forEach(r => {
+        nova(7); doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(...TXT); doc.text(r.nome, ml + 3, y);
+        doc.setTextColor(...CZ); doc.text(m2f(r.m2p), W - mr - 24, y, { align: 'right' });
+        doc.setFont('helvetica', 'bold'); doc.setTextColor(...cor); doc.text(r.ok ? Math.ceil(r.cx - 0.0001) + ' cx' : '—', W - mr, y, { align: 'right' }); y += 6;
+      });
+      y += 4;
+    };
+    nova(30); doc.setDrawColor(...BD); doc.line(ml, y, W - mr, y); y += 9;
+    resumo('Material que SOBE para a unidade', VERDE, agr(1), 'Caixas fechadas (arredondadas p/ cima), já com a perda do cadastro do revestimento');
+    resumo('Material que VOLTA da unidade ao estoque', VERM, agr(-1), 'Caixas que saíram para a unidade e voltam ao estoque (mesma conta da baixa/estorno)');
+    doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...CZ);
+    const n = doc.getNumberOfPages();
+    for (let i = 1; i <= n; i++) { doc.setPage(i); doc.text('Absoluta Construtora e Incorporadora · Essence Residence · São Bernardo do Campo/SP  ·  página ' + i + '/' + n, W / 2, 292, { align: 'center' }); }
+    doc.save('Essence-Apto-' + a.ap + '-Troca-' + a.numero + '.pdf');
+    showToast('PDF da troca gerado!', 'success');
+  } catch (e) { showToast('Erro ao gerar PDF: ' + e.message, 'error'); }
+}
+
 function _altBlocoHTML(p) {
   const lista = _altDe(p.id);
   if (!lista.length) return '';
@@ -13362,6 +13440,7 @@ function _altBlocoHTML(p) {
         <div style="font-size:12px;color:var(--text2);line-height:1.6">${_altLinhas(a).map(l => '• ' + _altTextoLinha(l)).join('<br>')}</div>
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:8px">
           <span style="font-size:12px">${difTxt}</span>
+          ${conf ? `<button class="btn btn-secondary" onclick="exportarTrocaPdf('${a.id}')" style="font-size:11px;padding:4px 10px">📄 PDF da troca</button>` : ''}
           ${conf ? '' : `<span style="display:flex;gap:6px"><button class="btn btn-primary" onclick="abrirConfirmarAlteracao('${a.id}')" style="font-size:11px;padding:4px 10px">✓ Confirmar alteração</button><button class="btn btn-secondary" onclick="excluirAlteracao('${a.id}')" style="font-size:11px;padding:4px 10px">Excluir</button></span>`}
         </div>
       </div>`;

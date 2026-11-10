@@ -222,3 +222,6 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - Dados na aba `Vistorias_Termos` (criada automaticamente). Backend em `Code.gs`: `criarTermoVistoria`, `getTermosVistoria`, `getTermoVistoriaPublico`, `salvarRespostaTermoVistoria`, `uploadFotoTermoVistoria`, `assinarTermoVistoria`, `excluirTermoVistoria`.
 - Em breve (já no menu): Termos de Garantia e Vistoria de Entrega.
 - **Texto do termo e capa padrão**: ao criar o termo, a Bárbara escreve o texto (já vem um modelo por tipo de serviço). O checklist é opcional (termo só com texto + assinaturas é permitido). O PDF sempre tem capa padrão Absoluta (marrom/dourado, título, apto, cliente) e, nas páginas seguintes, texto, itens, fotos e assinaturas. Coluna nova `texto` na aba `Vistorias_Termos` (acrescentada sozinha se a aba já existir).
+
+### PDF da troca (alteração confirmada)
+- Botão "📄 PDF da troca" na alteração confirmada (Personalizar) e no card da alteração em Materiais. Gera `Essence-Apto-<apto>-Troca-<n>.pdf`: por ambiente o que **retirar** e o que **colocar** (m² e caixas), e o resumo de caixas que **sobe** e que **volta** ao estoque (mesma conta da baixa/estorno, com perda). Só considera o que mudou em relação ao orçamento original.
