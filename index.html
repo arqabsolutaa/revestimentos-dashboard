@@ -7731,6 +7731,9 @@ function _calcularParcelasFuturas(incluirAtrasadas) {
   // entram como "Previsto" com a forma de pagamento que o cliente escolheu. Lançou a entrada → a previsão some.
   (dadosCobrancasConf || []).forEach(c => {
     const cfg = _CONF_MODULOS[c.modulo]; if (!cfg) return;
+    // confirmação de um orçamento que não existe mais (foi excluído/refeito): ignora, senão a cobrança fica duplicada
+    const listaRef = c.modulo === 'civil' ? dadosCivil : c.modulo === 'ac' ? dadosArCondicionado : null;
+    if (listaRef && listaRef.length && !listaRef.some(x => String(x.id) === String(c.ref_id))) return;
     const jaTemEntrada = (dadosEntradasPers || []).some(en => String(en.apartamento) === String(c.apto) && cfg.regexEntrada.test(en.categoria || ''));
     if (jaTemEntrada) return;
     const total = parseFloat(c.valor_total) || 0;
@@ -8234,6 +8237,8 @@ async function loadPrevisaoCobrancas() {
     if (dados.entradasPersonalizacao) dadosEntradasPers = dados.entradasPersonalizacao;
     if (dados.saidasObra) dadosSaidasObra = dados.saidasObra;
     if (dados.baixasParcelas) dadosBaixasParcelas = dados.baixasParcelas;
+    if (Array.isArray(dados.civil)) dadosCivil = dados.civil;
+    if (Array.isArray(dados.arCondicionado)) dadosArCondicionado = dados.arCondicionado;
   } catch(e) {}
   await _carregarConfCobranca(null, true); // confirmações sempre direto da planilha nesta tela
 
