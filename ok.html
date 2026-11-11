@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Termo de OK · Absoluta</title>
+<title>Termo de Conferência · Absoluta</title>
 <link rel="icon" href="assets/favicon-32.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -56,13 +56,44 @@
   .assinado-banner { background: var(--ok-bg); color: var(--ok); border-radius: 14px; padding: 14px 16px; margin-top: 14px; font-size: 13px; }
   .sigimg { max-width: 100%; height: 90px; background: #fff; border: 1px solid var(--border); border-radius: 8px; margin-top: 8px; }
   .capa-txt { white-space: pre-wrap; font-size: 15px; line-height: 1.6; color: var(--text); }
+
+  /* ---- passo a passo ---- */
+  body.wiz header.topo { display: none; }
+  .capa { min-height: 100vh; min-height: 100dvh; background: #43331e; color: #f1ead6; display: flex; align-items: center; justify-content: center; padding: 22px; animation: fade .5s ease; }
+  .capa .moldura { width: 100%; max-width: 520px; min-height: calc(100dvh - 44px); border: 1px solid #8c8467; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 34px 26px; }
+  .capa .marca { font-size: 34px; font-weight: 700; letter-spacing: 7px; margin-right: -7px; }
+  .capa .tag { font-size: 9px; letter-spacing: 4px; color: #b9ae8a; margin-top: 8px; }
+  .capa .traco { width: 44px; height: 1px; background: #8c8467; margin: 34px 0; }
+  .capa h1 { font-size: 24px; font-weight: 600; line-height: 1.25; margin: 0 0 18px; }
+  .capa .info { font-size: 14px; line-height: 1.8; color: #d8cfb4; }
+  .capa .info b { color: #f1ead6; font-weight: 600; }
+  .capa .comecar { margin-top: 42px; padding: 15px 38px; border-radius: 40px; border: 1px solid #b9ae8a; background: transparent; color: #f1ead6; font: inherit; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
+  .capa .comecar:active { background: rgba(185,174,138,.2); }
+  .capa .dica { margin-top: 14px; font-size: 11px; color: #9f946f; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .topo-wiz { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 12px 16px 10px; border-bottom: 1px solid var(--border); }
+  .topo-wiz .lin { max-width: 720px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); }
+  .topo-wiz .barra { max-width: 720px; margin: 8px auto 0; height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .topo-wiz .barra i { display: block; height: 100%; background: var(--dourado); border-radius: 4px; transition: width .35s ease; }
+  .pagina { max-width: 720px; margin: 0 auto; padding: 22px 16px 130px; animation: fade .35s ease; }
+  .q-num { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--dourado); font-weight: 700; }
+  h2.q-txt { font-size: 21px; line-height: 1.35; font-weight: 600; margin: 8px 0 22px; text-transform: none; letter-spacing: 0; color: var(--text); }
+  .q-sub { font-size: 13px; color: var(--text2); margin: -12px 0 18px; }
+  .rodape-wiz { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg); border-top: 1px solid var(--border); padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); z-index: 6; }
+  .rodape-wiz .in { max-width: 720px; margin: 0 auto; display: flex; gap: 10px; }
+  .rodape-wiz .btn { padding: 15px 14px; font-size: 14px; }
+  .rodape-wiz .btn.primary { flex: 1; }
+  .erro-passo { color: var(--danger); font-size: 13px; font-weight: 500; min-height: 18px; margin-top: 10px; }
+  .resumo-lin { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 14px; cursor: pointer; }
+  .resumo-lin:last-child { border-bottom: none; }
+  .fotos img { width: 78px; height: 78px; }
   .center { text-align: center; padding: 60px 20px; color: var(--text2); }
 </style>
 </head>
 <body>
 <header class="topo"><div class="in">
   <small>Absoluta Construtora · Essence Residence</small>
-  <h1 id="titulo">Termo de OK</h1>
+  <h1 id="titulo">Termo de Conferência</h1>
   <p id="sub"></p>
 </div></header>
 <div class="wrap" id="app"><div class="center">Carregando…</div></div>
@@ -106,10 +137,10 @@ async function carregar() {
     if (r.error) throw new Error(r.error);
     termo = r.data;
     travado = termo.status === 'assinado';
-    document.getElementById('titulo').textContent = termo.titulo || 'Termo de OK';
+    document.getElementById('titulo').textContent = termo.titulo || 'Termo de Conferência';
     document.getElementById('sub').textContent = 'Apto ' + termo.apto + (termo.cliente ? ' · ' + termo.cliente : '');
-    document.title = (termo.titulo || 'Termo de OK') + ' · Apto ' + termo.apto;
-    render();
+    document.title = (termo.titulo || 'Termo de Conferência') + ' · Apto ' + termo.apto;
+    if (travado) render(); else renderWizard();
     if (travado && params.get('pdf') === '1') baixarPdf();
   } catch (e) {
     document.getElementById('app').innerHTML = '<div class="center"><strong>Não foi possível abrir o termo</strong><br><br>' + esc(e.message) + '</div>';
@@ -186,16 +217,16 @@ function marcar(id, st) {
   const card = document.getElementById('item-' + id), b = card.querySelectorAll('.seg button');
   b[0].className = it.status === 'ok' ? 'on-ok' : ''; b[1].className = it.status === 'ressalva' ? 'on-res' : '';
   document.getElementById('obs-' + id).placeholder = it.status === 'ressalva' ? 'Descreva a ressalva (obrigatório)' : 'Observação (opcional)';
-  atualizarProg(); agendarSalvar();
+  atualizarProg(); agendarSalvar(); if (window.atualizarNav) atualizarNav();
 }
-function mudouObs(id, v) { termo.itens.find(x => x.id === id).obs = v; agendarSalvar(); }
+function mudouObs(id, v) { termo.itens.find(x => x.id === id).obs = v; agendarSalvar(); if (window.atualizarNav) atualizarNav(); }
 
 let _t = null;
 function agendarSalvar() { mostrarSalvo('Salvando…'); clearTimeout(_t); _t = setTimeout(salvarProgresso, 900); }
 function mostrarSalvo(txt, ok) { const el = document.getElementById('salvo'); el.textContent = txt; el.classList.add('on'); if (ok) setTimeout(() => el.classList.remove('on'), 1400); }
 async function salvarProgresso() {
   try {
-    await post('salvarRespostaTermoVistoria', { token: TOKEN, itens: termo.itens.map(i => ({ id: i.id, status: i.status, obs: i.obs })), obs_geral: (document.getElementById('obs-geral') || {}).value || '' });
+    await post('salvarRespostaTermoVistoria', { token: TOKEN, itens: termo.itens.map(i => ({ id: i.id, status: i.status, obs: i.obs })), obs_geral: termo.obs_geral || '' });
     mostrarSalvo('Salvo ✓', true);
   } catch (e) { mostrarSalvo('Não salvou: ' + e.message); }
 }
@@ -255,10 +286,11 @@ function exportarAssinatura(qual) {
 async function assinar() {
   const erro = document.getElementById('erro'); erro.style.display = 'none';
   const falha = m => { erro.textContent = m; erro.style.display = 'block'; erro.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+  termo.obs_geral = document.getElementById('obs-geral').value;
   const r = resumoStatus();
   if (r.falta) return falha('Falta marcar ' + r.falta + ' item(ns) como OK ou Ressalva.');
   const semObs = termo.itens.find(i => i.status === 'ressalva' && !String(i.obs || '').trim());
-  if (semObs) { document.getElementById('item-' + semObs.id).scrollIntoView({ block: 'center', behavior: 'smooth' }); return falha('Descreva a ressalva do item "' + semObs.texto + '".'); }
+  if (semObs) { irParaItem(semObs.id); return falha('Descreva a ressalva do item "' + semObs.texto + '".'); }
   const nc = document.getElementById('nome-cliente').value.trim(), na = document.getElementById('nome-arquiteto').value.trim();
   if (!nc || !na) return falha('Preencha o nome de quem assina (cliente e arquiteto).');
   if (!pads.cliente.desenhou) return falha('Falta a assinatura do cliente.');
@@ -343,10 +375,86 @@ async function baixarPdf() {
     y += 40;
     doc.setFontSize(7.5); doc.setTextColor(140, 132, 103);
     doc.text('Termo assinado em ' + termo.assinado_em + '  ·  Código de verificação: ' + termo.hash, 12, y);
-    doc.save('Termo-OK-Apto' + termo.apto + '-' + (termo.titulo || 'obra').replace(/[^\w]+/g, '-').slice(0, 40) + '.pdf');
+    doc.save('Termo-Apto' + termo.apto + '-' + (termo.titulo || 'obra').replace(/[^\w]+/g, '-').slice(0, 40) + '.pdf');
   } catch (e) { alert('Não consegui gerar o PDF: ' + e.message); }
   if (btn) { btn.disabled = false; btn.textContent = 'Baixar PDF do termo'; }
 }
+
+// ================= PASSO A PASSO (capa + uma pergunta por página) =================
+let passos = [], passo = 0;
+function montarPassos() {
+  passos = [{ t: 'capa' }];
+  if (termo.texto) passos.push({ t: 'texto' });
+  termo.itens.forEach((it, i) => passos.push({ t: 'item', i }));
+  passos.push({ t: 'final' });
+}
+function renderWizard() {
+  document.body.classList.add('wiz');
+  montarPassos();
+  const algum = termo.itens.some(i => i.status);
+  passo = 0;
+  if (algum) { const k = passos.findIndex(q => q.t === 'item' && !termo.itens[q.i].status); passo = k >= 0 ? k : passos.length - 1; }
+  desenhar();
+}
+function irParaItem(id) { const k = passos.findIndex(q => q.t === 'item' && termo.itens[q.i].id === id); if (k >= 0) { passo = k; desenhar(); } }
+function desenhar() {
+  const app = document.getElementById('app'), q = passos[passo], total = passos.length - 1;
+  window.scrollTo(0, 0);
+  if (q.t === 'capa') {
+    app.innerHTML = `<section class="capa"><div class="moldura">
+      <div class="marca">ABSOLUTA</div><div class="tag">CONSTRUTORA E INCORPORADORA</div><div class="traco"></div>
+      <h1>${esc(termo.titulo || 'Termo de Conferência')}</h1>
+      <div class="info">Essence Residence<br><b>Apartamento ${esc(termo.apto)}</b>${termo.cliente ? '<br>' + esc(termo.cliente) : ''}</div>
+      <button class="comecar" onclick="avancar()">Começar</button>
+      <div class="dica">${termo.itens.length ? termo.itens.length + (termo.itens.length === 1 ? ' pergunta' : ' perguntas') + ' · ' : ''}leva poucos minutos</div>
+    </div></section>`;
+    return;
+  }
+  let corpo = '', nav = '';
+  if (q.t === 'texto') {
+    corpo = `<div class="q-num">Antes de começar</div><h2 class="q-txt" style="font-size:19px">Leia com atenção</h2><div class="card"><div class="capa-txt">${esc(termo.texto)}</div></div>`;
+    nav = `<button class="btn" onclick="voltar()">Voltar</button><button class="btn primary" onclick="avancar()">Próxima</button>`;
+  } else if (q.t === 'item') {
+    const it = termo.itens[q.i], fotos = (it.fotos || []).map(id => `<a href="${fotoLink(id)}" target="_blank" rel="noopener"><img src="${fotoUrl(id, 300)}" alt="Foto"></a>`).join('');
+    corpo = `<div class="q-num">Pergunta ${q.i + 1} de ${termo.itens.length}</div><h2 class="q-txt">${esc(it.texto)}</h2>
+      <div id="item-${it.id}">
+        <div class="seg">
+          <button class="${it.status === 'ok' ? 'on-ok' : ''}" onclick="marcar('${it.id}','ok')">✓ Está de acordo</button>
+          <button class="${it.status === 'ressalva' ? 'on-res' : ''}" onclick="marcar('${it.id}','ressalva')">⚠ Tenho uma ressalva</button>
+        </div>
+        <textarea id="obs-${it.id}" placeholder="${it.status === 'ressalva' ? 'Descreva a ressalva (obrigatório)' : 'Comentário (opcional)'}" oninput="mudouObs('${it.id}',this.value)">${esc(it.obs)}</textarea>
+        <div class="fotos" id="fotos-${it.id}">${fotos}<label class="btn">📷 Adicionar foto<input type="file" accept="image/*" style="display:none" onchange="enviarFoto('${it.id}',this)"></label></div>
+      </div><div class="erro-passo" id="erro-passo"></div>`;
+    nav = `<button class="btn" onclick="voltar()">Voltar</button><button class="btn primary" id="btn-prox" onclick="avancar()">${passo === passos.length - 2 ? 'Revisar e assinar' : 'Próxima'}</button>`;
+  } else {
+    corpo = `<div class="q-num">Última etapa</div><h2 class="q-txt">Revisão e assinaturas</h2>
+      ${termo.itens.length ? `<div class="card" style="padding:4px 16px">${termo.itens.map((it, i) => `<div class="resumo-lin" onclick="irParaItem('${it.id}')"><span><span style="color:var(--text3)">${i + 1}.</span> ${esc(it.texto)}</span><span class="badge ${it.status === 'ok' ? 'ok' : 'res'}">${it.status === 'ok' ? '✓' : it.status === 'ressalva' ? '⚠' : '—'}</span></div>`).join('')}</div>` : ''}
+      <h2>Observações gerais</h2><div class="card" style="margin-top:8px"><textarea id="obs-geral" placeholder="Algo mais que queira registrar (opcional)" style="margin-top:0">${esc(termo.obs_geral)}</textarea></div>
+      <h2>Assinaturas</h2>
+      <div class="card" style="margin-top:8px">
+        <div class="sig"><strong>Cliente</strong><input type="text" id="nome-cliente" placeholder="Nome completo do cliente" value="${esc(termo.nome_cliente)}">
+          <canvas id="pad-cliente"></canvas><div class="hint" id="hint-cliente">Assine aqui com o dedo</div><button class="btn limpar" onclick="limpar('cliente')">Limpar</button></div>
+        <div class="sig" style="margin-top:22px"><strong>Arquiteto</strong><input type="text" id="nome-arquiteto" placeholder="Nome completo do arquiteto" value="${esc(termo.nome_arquiteto)}">
+          <canvas id="pad-arquiteto"></canvas><div class="hint" id="hint-arquiteto">Assine aqui com o dedo</div><button class="btn limpar" onclick="limpar('arquiteto')">Limpar</button></div>
+        <p class="intro" style="margin:18px 0 0">Ao assinar, declaro que conferi o que está descrito neste termo e que as respostas e observações registradas correspondem ao que foi verificado no apartamento. Depois de assinado, o termo não pode mais ser alterado.</p>
+        <div class="erro" id="erro" style="display:none"></div>
+        <button class="btn primary big" style="margin-top:14px" id="btn-assinar" onclick="assinar()">Assinar e concluir</button>
+      </div>`;
+    nav = `<button class="btn" style="flex:1" onclick="voltar()">Voltar</button>`;
+  }
+  app.innerHTML = `<div class="topo-wiz"><div class="lin"><span>Absoluta</span><span>Apto ${esc(termo.apto)}</span></div><div class="barra"><i style="width:${Math.round(passo / total * 100)}%"></i></div></div>
+    <div class="pagina">${corpo}</div><div class="rodape-wiz"><div class="in">${nav}</div></div>`;
+  if (q.t === 'final') { iniciarPad('cliente'); iniciarPad('arquiteto'); document.getElementById('obs-geral').addEventListener('input', e => { termo.obs_geral = e.target.value; agendarSalvar(); }); }
+  atualizarNav();
+}
+function respondido(it) { return it.status === 'ok' || (it.status === 'ressalva' && String(it.obs || '').trim()); }
+function atualizarNav() {
+  const q = passos[passo], b = document.getElementById('btn-prox'); if (!b || q.t !== 'item') return;
+  b.disabled = !respondido(termo.itens[q.i]);
+  const e = document.getElementById('erro-passo'); if (e) { const it = termo.itens[q.i]; e.textContent = it.status === 'ressalva' && !String(it.obs || '').trim() ? 'Descreva a ressalva para continuar.' : (!it.status ? 'Escolha uma opção para continuar.' : ''); }
+}
+function avancar() { if (passo < passos.length - 1) { passo++; desenhar(); } }
+function voltar() { if (passo > 0) { passo--; desenhar(); } }
 
 carregar();
 </script>

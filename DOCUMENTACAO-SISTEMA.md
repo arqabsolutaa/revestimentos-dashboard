@@ -231,3 +231,7 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 
 ### Cores do sistema
 - Botão "🎨 Cores do sistema" no rodapé do menu lateral: seletor de cor livre (paleta completa do navegador) para a cor de destaque e para a cor do menu/botões, mais 8 sugestões e "Voltar ao original". Salvo no navegador de cada pessoa (`localStorage` `tema_cores_v1`). As cores são ajustadas sozinhas (destaque entre 28–62% de luminosidade; cor escura até 26%) para manter o texto legível. Implementado com as variáveis CSS `--accent`, `--accent2`, `--accent-bg`, `--accent-dark`, `--sidebar-bg`.
+
+### Termos de Etapas (antes "OK de Obra") — passo a passo
+- Nome no menu: "Termos de Etapas". Títulos padrão: "Conferência de <etapa>" (Revestimentos, Elétrica, Hidráulica, Marmoraria, Banheira, Metais, Civil, Ar-condicionado, Vinílico, Outro).
+- A página do cliente (`ok.html`) virou um passo a passo: **capa** padrão Absoluta → texto "Leia com atenção" → **uma pergunta por página** (Está de acordo / Tenho uma ressalva, comentário e fotos; só avança quando respondida, ressalva exige comentário) → **revisão** com lista, observações gerais e assinaturas do cliente e do arquiteto. Termo assinado mostra a visão travada com o PDF.
