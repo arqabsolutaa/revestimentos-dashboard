@@ -235,3 +235,9 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 ### Termos de Etapas (antes "OK de Obra") — passo a passo
 - Nome no menu: "Termos de Etapas". Títulos padrão: "Conferência de <etapa>" (Revestimentos, Elétrica, Hidráulica, Marmoraria, Banheira, Metais, Civil, Ar-condicionado, Vinílico, Outro).
 - A página do cliente (`ok.html`) virou um passo a passo: **capa** padrão Absoluta → texto "Leia com atenção" → **uma pergunta por página** (Está de acordo / Tenho uma ressalva, comentário e fotos; só avança quando respondida, ressalva exige comentário) → **revisão** com lista, observações gerais e assinaturas do cliente e do arquiteto. Termo assinado mostra a visão travada com o PDF.
+
+### Termos de Etapas — capa Essence e perguntas Sim/Não (atualização)
+- Capa: cartão de vidro fosco (cápsula) sobre foto do prédio escurecida, com foto redonda, "ESSENCE", nome do termo ("Termo de <Etapa>"), apto/cliente, botão **Iniciar** e logo da Absoluta. Imagens em `assets/`: `termo-fundo.jpg` (fundo), `termo-foto.jpg` (foto redonda; ambas provisórias, trocar pelas definitivas mantendo o nome) e `logo-absoluta.jpg`.
+- Paleta da página e do PDF: verde e dourado do Essence.
+- Perguntas com **Sim / Não**. "Não" exige foto e/ou observação (pelo menos uma). "Sim" permite acrescentar foto/comentário. Assinatura do cliente obrigatória; do arquiteto opcional. Botão **Enviar**; depois aparece "Termo enviado!" com PDF.
+- A Bárbara acessa pelo painel Termos de Etapas: card "✓ Assinado", respostas "Não" em vermelho, **Ver termo** e **PDF**.

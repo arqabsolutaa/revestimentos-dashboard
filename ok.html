@@ -6,19 +6,19 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Termo de Conferência · Absoluta</title>
 <link rel="icon" href="assets/favicon-32.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg:#f7f5f0; --surface:#ffffff; --text:#1c1a15; --text2:#5a5648; --text3:#8f8a78; --border:#e4dfd0;
-    --marrom:#43331e; --dourado:#8c8467; --ok:#2e7d3f; --ok-bg:#e8f5e9; --warn:#b26a00; --warn-bg:#fff3dc; --danger:#b5453d;
+    --marrom:#2b4636; --dourado:#b08a5a; --ok:#2e7d3f; --ok-bg:#e8f5e9; --warn:#b26a00; --warn-bg:#fff3dc; --danger:#b5453d;
   }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) { --bg:#15130e; --surface:#1f1c15; --text:#f1ede0; --text2:#c9c3ae; --text3:#9a9484; --border:#3a3527; --marrom:#d9c8a0; --dourado:#b8ad8a; --ok:#6fcf86; --ok-bg:#1d3324; --warn:#f0b24d; --warn-bg:#3a2e14; --danger:#e0847b; }
+    :root:not([data-theme="light"]) { --bg:#15130e; --surface:#1f1c15; --text:#f1ede0; --text2:#c9c3ae; --text3:#9a9484; --border:#3a3527; --marrom:#a9c4b0; --dourado:#c9a373; --ok:#6fcf86; --ok-bg:#1d3324; --warn:#f0b24d; --warn-bg:#3a2e14; --danger:#e0847b; }
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.45; }
   .wrap { max-width: 720px; margin: 0 auto; padding: 0 16px calc(40px + env(safe-area-inset-bottom)); }
-  header.topo { background: #43331e; color: #f1ead6; padding: 22px 16px 20px; }
+  header.topo { background: #223a2c; color: #eef0e4; padding: 22px 16px 20px; }
   header.topo .in { max-width: 720px; margin: 0 auto; }
   header.topo small { letter-spacing: 3px; text-transform: uppercase; font-size: 10px; opacity: .75; display: block; margin-bottom: 6px; }
   header.topo h1 { margin: 0; font-size: 20px; font-weight: 600; }
@@ -59,17 +59,24 @@
 
   /* ---- passo a passo ---- */
   body.wiz header.topo { display: none; }
-  .capa { min-height: 100vh; min-height: 100dvh; background: #43331e; color: #f1ead6; display: flex; align-items: center; justify-content: center; padding: 22px; animation: fade .5s ease; }
-  .capa .moldura { width: 100%; max-width: 520px; min-height: calc(100dvh - 44px); border: 1px solid #8c8467; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 34px 26px; }
-  .capa .marca { font-size: 34px; font-weight: 700; letter-spacing: 7px; margin-right: -7px; }
-  .capa .tag { font-size: 9px; letter-spacing: 4px; color: #b9ae8a; margin-top: 8px; }
-  .capa .traco { width: 44px; height: 1px; background: #8c8467; margin: 34px 0; }
-  .capa h1 { font-size: 24px; font-weight: 600; line-height: 1.25; margin: 0 0 18px; }
-  .capa .info { font-size: 14px; line-height: 1.8; color: #d8cfb4; }
-  .capa .info b { color: #f1ead6; font-weight: 600; }
-  .capa .comecar { margin-top: 42px; padding: 15px 38px; border-radius: 40px; border: 1px solid #b9ae8a; background: transparent; color: #f1ead6; font: inherit; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
-  .capa .comecar:active { background: rgba(185,174,138,.2); }
-  .capa .dica { margin-top: 14px; font-size: 11px; color: #9f946f; }
+  .capa2 { position: relative; min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 24px 0; overflow: hidden; background: #16231b; animation: fade .6s ease; }
+  .capa2 .fundo { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,22,15,.78), rgba(10,22,15,.9)), url(assets/termo-fundo.jpg) center/cover, linear-gradient(160deg, #24402f, #101a14); transform: scale(1.05); }
+  .pilula { position: relative; width: min(304px, 84vw); padding: 18px 18px 26px; border-radius: 152px; text-align: center; color: #f4efe3; display: flex; flex-direction: column; align-items: center;
+    background: linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,.07)); border: 1px solid rgba(255,255,255,.34);
+    -webkit-backdrop-filter: blur(22px) saturate(1.15); backdrop-filter: blur(22px) saturate(1.15);
+    box-shadow: 0 24px 70px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.45); }
+  .pilula .foto { width: 100%; aspect-ratio: 1; border-radius: 50%; background: url(assets/termo-foto.jpg) center/cover, linear-gradient(160deg, #3a5c47, #1d3226); box-shadow: 0 0 0 1px rgba(255,255,255,.4); }
+  .pilula .essence { font-family: 'Bodoni Moda', 'Didot', 'Playfair Display', Georgia, serif; font-weight: 400; font-size: 36px; letter-spacing: 7px; margin: 26px -7px 0 0; line-height: 1; }
+  .pilula .nome { font-size: 15px; letter-spacing: .5px; margin-top: 12px; padding: 0 6px; line-height: 1.3; opacity: .95; }
+  .pilula .det { font-size: 12px; margin-top: 12px; opacity: .78; line-height: 1.5; padding: 0 6px; }
+  .pilula .iniciar { margin-top: 24px; width: 100%; padding: 16px; border: none; border-radius: 40px; background: #121814; color: #fff; font: inherit; font-size: 14px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+  .pilula .iniciar:active { transform: scale(.98); }
+  .pilula .logo-abs { width: 88px; margin-top: 20px; mix-blend-mode: screen; opacity: .92; }
+  .pilula .peq { font-size: 10.5px; margin-top: 8px; opacity: .6; }
+  .extra-add { margin-top: 14px; background: none; border: none; color: var(--dourado); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 4px 0; }
+  .dica-nao { background: var(--warn-bg); color: var(--warn); border-radius: 10px; padding: 11px 13px; font-size: 13px; margin-bottom: 4px; }
+  .ok-final { text-align: center; padding: 70px 24px 40px; }
+  .ok-final .circ { width: 84px; height: 84px; border-radius: 50%; background: var(--ok-bg); color: var(--ok); font-size: 42px; display: flex; align-items: center; justify-content: center; margin: 0 auto 22px; animation: fade .5s ease; }
   @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   .topo-wiz { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 12px 16px 10px; border-bottom: 1px solid var(--border); }
   .topo-wiz .lin { max-width: 720px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); }
@@ -140,7 +147,7 @@ async function carregar() {
     document.getElementById('titulo').textContent = termo.titulo || 'Termo de Conferência';
     document.getElementById('sub').textContent = 'Apto ' + termo.apto + (termo.cliente ? ' · ' + termo.cliente : '');
     document.title = (termo.titulo || 'Termo de Conferência') + ' · Apto ' + termo.apto;
-    if (travado) render(); else renderWizard();
+    if (travado) { if (window._enviado) telaEnviado(); else render(); } else renderWizard();
     if (travado && params.get('pdf') === '1') baixarPdf();
   } catch (e) {
     document.getElementById('app').innerHTML = '<div class="center"><strong>Não foi possível abrir o termo</strong><br><br>' + esc(e.message) + '</div>';
@@ -156,7 +163,7 @@ function render() {
   const app = document.getElementById('app');
   let h = '';
   if (travado) {
-    h += `<div class="assinado-banner"><strong>✓ Termo assinado</strong> em ${esc(termo.assinado_em)}<br>Código de verificação: <strong>${esc(termo.hash)}</strong></div>`;
+    h += `<div class="assinado-banner"><strong>✓ Termo enviado e assinado</strong> em ${esc(termo.assinado_em)}<br>Código de verificação: <strong>${esc(termo.hash)}</strong></div>`;
   } else {
     h += termo.itens.length ? `<div class="card intro">Confira cada item no apartamento e marque <strong>OK</strong> ou <strong>Ressalva</strong>. Se quiser, anexe foto e escreva uma observação. No final, o cliente e o arquiteto assinam na tela. <span id="prog"></span></div>`
       : `<div class="card intro">Leia o termo abaixo e, se estiver de acordo, o cliente e o arquiteto assinam na tela.</div>`;
@@ -170,7 +177,7 @@ function render() {
   if (travado) {
     h += `<h2>Assinaturas</h2><div class="card" style="margin-top:8px">
       <div><strong>Cliente:</strong> ${esc(termo.nome_cliente)}<br><img class="sigimg" src="${esc(termo.assinatura_cliente)}" alt="Assinatura do cliente"></div>
-      <div style="margin-top:16px"><strong>Arquiteto:</strong> ${esc(termo.nome_arquiteto)}<br><img class="sigimg" src="${esc(termo.assinatura_arquiteto)}" alt="Assinatura do arquiteto"></div>
+      ${termo.assinatura_arquiteto ? `<div style="margin-top:16px"><strong>Arquiteto:</strong> ${esc(termo.nome_arquiteto)}<br><img class="sigimg" src="${esc(termo.assinatura_arquiteto)}" alt="Assinatura do arquiteto"></div>` : ''}
     </div>
     <button class="btn primary big" style="margin-top:16px" onclick="baixarPdf()" id="btn-pdf">Baixar PDF do termo</button>`;
   } else {
@@ -193,7 +200,7 @@ function itemHtml(it, i) {
   const fotos = (it.fotos || []).map(id => `<a href="${fotoLink(id)}" target="_blank" rel="noopener"><img src="${fotoUrl(id, 300)}" loading="lazy" alt="Foto"></a>`).join('');
   if (travado) {
     return `<div class="card item"><div class="txt"><span class="num">${i + 1}.</span> ${esc(it.texto)}</div>
-      <span class="badge ${it.status === 'ok' ? 'ok' : 'res'}">${it.status === 'ok' ? '✓ OK' : '⚠ Ressalva'}</span>
+      <span class="badge ${it.status === 'ok' ? 'ok' : 'res'}">${it.status === 'ok' ? '✓ Sim' : '✗ Não'}</span>
       ${it.obs ? `<div style="margin-top:8px;font-size:14px">${esc(it.obs)}</div>` : ''}
       ${fotos ? `<div class="fotos">${fotos}</div>` : ''}</div>`;
   }
@@ -214,10 +221,11 @@ function atualizarProg() {
 }
 function marcar(id, st) {
   const it = termo.itens.find(x => x.id === id); it.status = it.status === st ? '' : st;
-  const card = document.getElementById('item-' + id), b = card.querySelectorAll('.seg button');
+  const box = document.getElementById('item-' + id), b = box.querySelectorAll('.seg button');
   b[0].className = it.status === 'ok' ? 'on-ok' : ''; b[1].className = it.status === 'ressalva' ? 'on-res' : '';
-  document.getElementById('obs-' + id).placeholder = it.status === 'ressalva' ? 'Descreva a ressalva (obrigatório)' : 'Observação (opcional)';
-  atualizarProg(); agendarSalvar(); if (window.atualizarNav) atualizarNav();
+  if (it.status === 'ressalva') window._extraAberto = id;
+  document.getElementById('extra-' + id).innerHTML = extraHtml(it);
+  agendarSalvar(); atualizarNav();
 }
 function mudouObs(id, v) { termo.itens.find(x => x.id === id).obs = v; agendarSalvar(); if (window.atualizarNav) atualizarNav(); }
 
@@ -255,7 +263,7 @@ async function enviarFoto(id, input) {
     const box = document.getElementById('fotos-' + id), label = box.querySelector('label');
     const a = document.createElement('a'); a.href = fotoLink(r.fileId); a.target = '_blank'; a.rel = 'noopener';
     a.innerHTML = `<img src="${fotoUrl(r.fileId, 300)}" alt="Foto">`; box.insertBefore(a, label);
-    mostrarSalvo('Foto enviada ✓', true);
+    mostrarSalvo('Foto enviada ✓', true); if (window.atualizarNav) atualizarNav();
   } catch (e) { mostrarSalvo('Erro na foto: ' + e.message); }
   input.value = '';
 }
@@ -289,20 +297,22 @@ async function assinar() {
   termo.obs_geral = document.getElementById('obs-geral').value;
   const r = resumoStatus();
   if (r.falta) return falha('Falta marcar ' + r.falta + ' item(ns) como OK ou Ressalva.');
-  const semObs = termo.itens.find(i => i.status === 'ressalva' && !String(i.obs || '').trim());
-  if (semObs) { irParaItem(semObs.id); return falha('Descreva a ressalva do item "' + semObs.texto + '".'); }
+  const semObs = termo.itens.find(i => i.status === 'ressalva' && !String(i.obs || '').trim() && !(i.fotos || []).length);
+  if (semObs) { irParaItem(semObs.id); return falha('No item "' + semObs.texto + '", escreva o que aconteceu ou tire uma foto.'); }
   const nc = document.getElementById('nome-cliente').value.trim(), na = document.getElementById('nome-arquiteto').value.trim();
-  if (!nc || !na) return falha('Preencha o nome de quem assina (cliente e arquiteto).');
+  if (!nc) return falha('Escreva o nome completo do cliente.');
   if (!pads.cliente.desenhou) return falha('Falta a assinatura do cliente.');
-  if (!pads.arquiteto.desenhou) return falha('Falta a assinatura do arquiteto.');
-  if (!confirm('Confirmar a assinatura? Depois disso o termo não poderá mais ser alterado.')) return;
-  const btn = document.getElementById('btn-assinar'); btn.disabled = true; btn.textContent = 'Assinando…';
+  const arqAssinou = !!(pads.arquiteto && pads.arquiteto.desenhou);
+  if (na && !arqAssinou) return falha('Falta a assinatura do arquiteto (ou apague o nome dele).');
+  if (!na && arqAssinou) return falha('Escreva o nome do arquiteto.');
+  if (!confirm('Enviar o termo? Depois de enviado ele não poderá mais ser alterado.')) return;
+  const btn = document.getElementById('btn-assinar'); btn.disabled = true; btn.textContent = 'Enviando…';
   try {
     clearTimeout(_t);
     await post('assinarTermoVistoria', { token: TOKEN, itens: termo.itens.map(i => ({ id: i.id, status: i.status, obs: i.obs })), obs_geral: document.getElementById('obs-geral').value,
-      nome_cliente: nc, assinatura_cliente: exportarAssinatura('cliente'), nome_arquiteto: na, assinatura_arquiteto: exportarAssinatura('arquiteto') });
-    await carregar(); window.scrollTo({ top: 0, behavior: 'smooth' });
-  } catch (e) { btn.disabled = false; btn.textContent = 'Assinar e concluir'; falha(e.message); }
+      nome_cliente: nc, assinatura_cliente: exportarAssinatura('cliente'), nome_arquiteto: na, assinatura_arquiteto: na ? exportarAssinatura('arquiteto') : '' });
+    window._enviado = true; await carregar(); window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) { btn.disabled = false; btn.textContent = 'Enviar'; falha(e.message); }
 }
 
 // ---- PDF ----
@@ -318,24 +328,26 @@ async function baixarPdf() {
     const J = window.jspdf && window.jspdf.jsPDF; if (!J) throw new Error('Biblioteca de PDF não carregou');
     const doc = new J(); const W = 210; let y = 0;
     const centrarEsp = (t, y0, cs) => { const w = doc.getTextWidth(t) + cs * (t.length - 1); doc.text(t, W / 2 - w / 2, y0, { charSpace: cs }); };
-    const marrom = [67, 51, 30], dourado = [140, 132, 103];
-    // ---- CAPA padrão Absoluta ----
+    const marrom = [34, 58, 44], dourado = [176, 138, 90];
+    // ---- CAPA (mesma identidade da tela: Essence, foto redonda, logo Absoluta) ----
+    const img = url => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = url; });
     doc.setFillColor(...marrom); doc.rect(0, 0, W, 297, 'F');
     doc.setDrawColor(...dourado); doc.setLineWidth(0.4); doc.rect(10, 10, W - 20, 277);
-    doc.setTextColor(241, 234, 214); doc.setFont('helvetica', 'bold'); doc.setFontSize(34); centrarEsp('ABSOLUTA', 92, 3);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(...dourado); centrarEsp('CONSTRUTORA E INCORPORADORA', 101, 2);
-    doc.setLineWidth(0.6); doc.line(W / 2 - 18, 112, W / 2 + 18, 112);
-    doc.setTextColor(241, 234, 214); doc.setFont('helvetica', 'bold'); doc.setFontSize(22);
-    const tl = doc.splitTextToSize(termo.titulo || 'Termo', 150); doc.text(tl, W / 2, 140, { align: 'center' });
-    let cy = 140 + tl.length * 9 + 6;
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(12); doc.text('Essence Residence', W / 2, cy, { align: 'center' }); cy += 8;
-    doc.text('Apartamento ' + termo.apto, W / 2, cy, { align: 'center' }); cy += 7;
-    if (termo.cliente) { doc.setTextColor(...dourado); doc.text(termo.cliente, W / 2, cy, { align: 'center' }); }
-    doc.setFontSize(8); doc.setTextColor(...dourado); doc.text('Assinado em ' + termo.assinado_em, W / 2, 268, { align: 'center' });
+    const foto = await img('assets/termo-foto.jpg');
+    if (foto) { const c = document.createElement('canvas'); c.width = c.height = 700; const x = c.getContext('2d'); x.fillStyle = 'rgb(' + marrom.join(',') + ')'; x.fillRect(0, 0, 700, 700); x.beginPath(); x.arc(350, 350, 350, 0, 7); x.clip(); const m = Math.min(foto.naturalWidth, foto.naturalHeight); x.drawImage(foto, (foto.naturalWidth - m) / 2, (foto.naturalHeight - m) / 2, m, m, 0, 0, 700, 700);
+      doc.setFillColor(...marrom); try { doc.addImage(c.toDataURL('image/jpeg', 0.85), 'JPEG', W / 2 - 38, 44, 76, 76); } catch (e) {} }
+    doc.setDrawColor(...dourado); doc.setLineWidth(0.5); doc.circle(W / 2, 82, 38);
+    doc.setTextColor(238, 240, 228); doc.setFont('times', 'normal'); doc.setFontSize(32); centrarEsp('ESSENCE', 146, 4);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(15); const tl = doc.splitTextToSize(termo.titulo || 'Termo', 150); doc.text(tl, W / 2, 160, { align: 'center' });
+    let cy = 160 + tl.length * 7 + 5; doc.setFontSize(11); doc.setTextColor(200, 205, 190);
+    doc.text('Apartamento ' + termo.apto + (termo.cliente ? '  ·  ' + termo.cliente : ''), W / 2, cy, { align: 'center' });
+    const lg = await img('assets/logo-absoluta.jpg');
+    if (lg) { const c = document.createElement('canvas'); c.width = 600; c.height = 104; const x = c.getContext('2d'); x.fillStyle = 'rgb(' + marrom.join(',') + ')'; x.fillRect(0, 0, 600, 104); x.globalCompositeOperation = 'lighten'; x.drawImage(lg, 0, 0, 600, 104); try { doc.addImage(c.toDataURL('image/jpeg', 0.9), 'JPEG', W / 2 - 22, 262, 44, 7.6); } catch (e) {} }
+    doc.setFontSize(8); doc.setTextColor(...dourado); doc.text('Assinado em ' + termo.assinado_em, W / 2, 278, { align: 'center' });
     // ---- páginas de conteúdo ----
     doc.addPage(); y = 0;
     doc.setFillColor(...marrom); doc.rect(0, 0, W, 18, 'F');
-    doc.setTextColor(241, 234, 214); doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.text('ABSOLUTA', 12, 11.5, { charSpace: 1.5 });
+    doc.setTextColor(238, 240, 228); doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.text('ABSOLUTA', 12, 11.5, { charSpace: 1.5 });
     doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.text((termo.titulo || 'Termo') + '  ·  Apto ' + termo.apto, W - 12, 11.5, { align: 'right' });
     y = 30;
     if (termo.texto) {
@@ -352,7 +364,7 @@ async function baixarPdf() {
       novaPag(10 + linhas.length * 5 + obs.length * 4.5 + (fotos.length ? 32 : 0));
       doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(28, 26, 21); doc.text(linhas, 12, y);
       const ok = it.status === 'ok'; doc.setFontSize(9);
-      doc.setTextColor(ok ? 46 : 178, ok ? 125 : 106, ok ? 63 : 0); doc.text(ok ? 'OK' : 'RESSALVA', W - 12, y, { align: 'right' });
+      doc.setTextColor(ok ? 46 : 178, ok ? 125 : 106, ok ? 63 : 0); doc.text(ok ? 'SIM' : 'NÃO', W - 12, y, { align: 'right' });
       y += linhas.length * 5;
       if (obs.length) { doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(90, 86, 72); doc.text(obs, 12, y); y += obs.length * 4.5; }
       if (fotos.length) {
@@ -371,7 +383,7 @@ async function baixarPdf() {
     doc.setDrawColor(...dourado);
     const sig = (img, nome, papel, x) => { try { doc.addImage(img, 'PNG', x, y, 60, 20); } catch (e) {} doc.line(x, y + 22, x + 80, y + 22);
       doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(28, 26, 21); doc.text(nome, x, y + 27); doc.setFont('helvetica', 'normal'); doc.setTextColor(120, 114, 96); doc.text(papel, x, y + 31.5); };
-    sig(termo.assinatura_cliente, termo.nome_cliente, 'Cliente', 12); sig(termo.assinatura_arquiteto, termo.nome_arquiteto, 'Arquiteto', 112);
+    sig(termo.assinatura_cliente, termo.nome_cliente, 'Cliente', 12); if (termo.assinatura_arquiteto) sig(termo.assinatura_arquiteto, termo.nome_arquiteto, 'Arquiteto', 112);
     y += 40;
     doc.setFontSize(7.5); doc.setTextColor(140, 132, 103);
     doc.text('Termo assinado em ' + termo.assinado_em + '  ·  Código de verificação: ' + termo.hash, 12, y);
@@ -393,68 +405,92 @@ function renderWizard() {
   montarPassos();
   const algum = termo.itens.some(i => i.status);
   passo = 0;
-  if (algum) { const k = passos.findIndex(q => q.t === 'item' && !termo.itens[q.i].status); passo = k >= 0 ? k : passos.length - 1; }
+  if (algum) { const k = passos.findIndex(q => q.t === 'item' && !respondido(termo.itens[q.i])); passo = k >= 0 ? k : passos.length - 1; }
   desenhar();
 }
 function irParaItem(id) { const k = passos.findIndex(q => q.t === 'item' && termo.itens[q.i].id === id); if (k >= 0) { passo = k; desenhar(); } }
+function respondido(it) { return it.status === 'ok' || (it.status === 'ressalva' && (String(it.obs || '').trim() || (it.fotos || []).length > 0)); }
+function fotosHtml(it) { return (it.fotos || []).map(id => `<a href="${fotoLink(id)}" target="_blank" rel="noopener"><img src="${fotoUrl(id, 300)}" alt="Foto"></a>`).join(''); }
+// parte de baixo da pergunta: aparece quando a resposta é "Não" (ou se a pessoa quiser acrescentar algo ao "Sim")
+function extraHtml(it) {
+  const aberto = it.status === 'ressalva' || window._extraAberto === it.id || String(it.obs || '').trim() || (it.fotos || []).length;
+  if (it.status === 'ok' && !aberto) return `<button class="extra-add" onclick="window._extraAberto='${it.id}';document.getElementById('extra-${it.id}').innerHTML=extraHtml(termo.itens.find(x=>x.id==='${it.id}'))">＋ Adicionar foto ou comentário</button>`;
+  if (!it.status) return '';
+  return `${it.status === 'ressalva' ? '<div class="dica-nao">Conte o que está diferente do esperado: tire uma <strong>foto</strong> e/ou escreva uma <strong>observação</strong>. Assim a gente resolve.</div>' : ''}
+    <textarea id="obs-${it.id}" placeholder="${it.status === 'ressalva' ? 'O que aconteceu? (observação)' : 'Comentário (opcional)'}" oninput="mudouObs('${it.id}',this.value)">${esc(it.obs)}</textarea>
+    <div class="fotos" id="fotos-${it.id}">${fotosHtml(it)}<label class="btn">📷 ${(it.fotos || []).length ? 'Adicionar outra foto' : 'Tirar / adicionar foto'}<input type="file" accept="image/*" style="display:none" onchange="enviarFoto('${it.id}',this)"></label></div>`;
+}
 function desenhar() {
   const app = document.getElementById('app'), q = passos[passo], total = passos.length - 1;
   window.scrollTo(0, 0);
   if (q.t === 'capa') {
-    app.innerHTML = `<section class="capa"><div class="moldura">
-      <div class="marca">ABSOLUTA</div><div class="tag">CONSTRUTORA E INCORPORADORA</div><div class="traco"></div>
-      <h1>${esc(termo.titulo || 'Termo de Conferência')}</h1>
-      <div class="info">Essence Residence<br><b>Apartamento ${esc(termo.apto)}</b>${termo.cliente ? '<br>' + esc(termo.cliente) : ''}</div>
-      <button class="comecar" onclick="avancar()">Começar</button>
-      <div class="dica">${termo.itens.length ? termo.itens.length + (termo.itens.length === 1 ? ' pergunta' : ' perguntas') + ' · ' : ''}leva poucos minutos</div>
+    app.innerHTML = `<section class="capa2"><div class="fundo"></div><div class="pilula">
+      <div class="foto"></div>
+      <div class="essence">ESSENCE</div>
+      <div class="nome">${esc(termo.titulo || 'Termo')}</div>
+      <div class="det">Apartamento ${esc(termo.apto)}${termo.cliente ? '<br>' + esc(termo.cliente) : ''}</div>
+      <button class="iniciar" onclick="avancar()">Iniciar</button>
+      <img class="logo-abs" src="assets/logo-absoluta.jpg" alt="Absoluta">
+      ${termo.itens.length ? `<div class="peq">${termo.itens.length} ${termo.itens.length === 1 ? 'pergunta' : 'perguntas'} · leva poucos minutos</div>` : ''}
     </div></section>`;
     return;
   }
   let corpo = '', nav = '';
   if (q.t === 'texto') {
-    corpo = `<div class="q-num">Antes de começar</div><h2 class="q-txt" style="font-size:19px">Leia com atenção</h2><div class="card"><div class="capa-txt">${esc(termo.texto)}</div></div>`;
-    nav = `<button class="btn" onclick="voltar()">Voltar</button><button class="btn primary" onclick="avancar()">Próxima</button>`;
+    corpo = `<div class="q-num">${esc(termo.titulo || 'Termo')}</div><h2 class="q-txt" style="font-size:19px">Leia com atenção</h2><div class="card"><div class="capa-txt">${esc(termo.texto)}</div></div>`;
+    nav = `<button class="btn" onclick="voltar()">Voltar</button><button class="btn primary" onclick="avancar()">Próximo</button>`;
   } else if (q.t === 'item') {
-    const it = termo.itens[q.i], fotos = (it.fotos || []).map(id => `<a href="${fotoLink(id)}" target="_blank" rel="noopener"><img src="${fotoUrl(id, 300)}" alt="Foto"></a>`).join('');
+    const it = termo.itens[q.i];
     corpo = `<div class="q-num">Pergunta ${q.i + 1} de ${termo.itens.length}</div><h2 class="q-txt">${esc(it.texto)}</h2>
       <div id="item-${it.id}">
         <div class="seg">
-          <button class="${it.status === 'ok' ? 'on-ok' : ''}" onclick="marcar('${it.id}','ok')">✓ Está de acordo</button>
-          <button class="${it.status === 'ressalva' ? 'on-res' : ''}" onclick="marcar('${it.id}','ressalva')">⚠ Tenho uma ressalva</button>
+          <button class="${it.status === 'ok' ? 'on-ok' : ''}" onclick="marcar('${it.id}','ok')">Sim</button>
+          <button class="${it.status === 'ressalva' ? 'on-res' : ''}" onclick="marcar('${it.id}','ressalva')">Não</button>
         </div>
-        <textarea id="obs-${it.id}" placeholder="${it.status === 'ressalva' ? 'Descreva a ressalva (obrigatório)' : 'Comentário (opcional)'}" oninput="mudouObs('${it.id}',this.value)">${esc(it.obs)}</textarea>
-        <div class="fotos" id="fotos-${it.id}">${fotos}<label class="btn">📷 Adicionar foto<input type="file" accept="image/*" style="display:none" onchange="enviarFoto('${it.id}',this)"></label></div>
+        <div id="extra-${it.id}">${extraHtml(it)}</div>
       </div><div class="erro-passo" id="erro-passo"></div>`;
-    nav = `<button class="btn" onclick="voltar()">Voltar</button><button class="btn primary" id="btn-prox" onclick="avancar()">${passo === passos.length - 2 ? 'Revisar e assinar' : 'Próxima'}</button>`;
+    nav = `<button class="btn" onclick="voltar()">Voltar</button><button class="btn primary" id="btn-prox" onclick="avancar()">${passo === passos.length - 2 ? 'Finalizar' : 'Próximo'}</button>`;
   } else {
-    corpo = `<div class="q-num">Última etapa</div><h2 class="q-txt">Revisão e assinaturas</h2>
-      ${termo.itens.length ? `<div class="card" style="padding:4px 16px">${termo.itens.map((it, i) => `<div class="resumo-lin" onclick="irParaItem('${it.id}')"><span><span style="color:var(--text3)">${i + 1}.</span> ${esc(it.texto)}</span><span class="badge ${it.status === 'ok' ? 'ok' : 'res'}">${it.status === 'ok' ? '✓' : it.status === 'ressalva' ? '⚠' : '—'}</span></div>`).join('')}</div>` : ''}
+    corpo = `<div class="q-num">Última etapa</div><h2 class="q-txt">Revisão e assinatura</h2>
+      ${termo.itens.length ? `<div class="card" style="padding:4px 16px">${termo.itens.map((it, i) => `<div class="resumo-lin" onclick="irParaItem('${it.id}')"><span><span style="color:var(--text3)">${i + 1}.</span> ${esc(it.texto)}</span><span class="badge ${it.status === 'ok' ? 'ok' : 'res'}">${it.status === 'ok' ? 'Sim' : it.status === 'ressalva' ? 'Não' : '—'}</span></div>`).join('')}</div>` : ''}
       <h2>Observações gerais</h2><div class="card" style="margin-top:8px"><textarea id="obs-geral" placeholder="Algo mais que queira registrar (opcional)" style="margin-top:0">${esc(termo.obs_geral)}</textarea></div>
-      <h2>Assinaturas</h2>
+      <h2>Assinatura</h2>
       <div class="card" style="margin-top:8px">
         <div class="sig"><strong>Cliente</strong><input type="text" id="nome-cliente" placeholder="Nome completo do cliente" value="${esc(termo.nome_cliente)}">
           <canvas id="pad-cliente"></canvas><div class="hint" id="hint-cliente">Assine aqui com o dedo</div><button class="btn limpar" onclick="limpar('cliente')">Limpar</button></div>
-        <div class="sig" style="margin-top:22px"><strong>Arquiteto</strong><input type="text" id="nome-arquiteto" placeholder="Nome completo do arquiteto" value="${esc(termo.nome_arquiteto)}">
+        <details style="margin-top:20px"><summary style="cursor:pointer;font-size:13px;font-weight:600;color:var(--text2)">Arquiteto presente? Assinar também (opcional)</summary>
+          <div class="sig" style="margin-top:8px"><strong>Arquiteto</strong><input type="text" id="nome-arquiteto" placeholder="Nome completo do arquiteto" value="${esc(termo.nome_arquiteto)}">
           <canvas id="pad-arquiteto"></canvas><div class="hint" id="hint-arquiteto">Assine aqui com o dedo</div><button class="btn limpar" onclick="limpar('arquiteto')">Limpar</button></div>
-        <p class="intro" style="margin:18px 0 0">Ao assinar, declaro que conferi o que está descrito neste termo e que as respostas e observações registradas correspondem ao que foi verificado no apartamento. Depois de assinado, o termo não pode mais ser alterado.</p>
+        </details>
+        <p class="intro" style="margin:18px 0 0">Ao enviar, declaro que conferi o que está descrito neste termo e que as respostas e observações registradas correspondem ao que foi verificado no apartamento. Depois de enviado, o termo não pode mais ser alterado.</p>
         <div class="erro" id="erro" style="display:none"></div>
-        <button class="btn primary big" style="margin-top:14px" id="btn-assinar" onclick="assinar()">Assinar e concluir</button>
+        <button class="btn primary big" style="margin-top:14px" id="btn-assinar" onclick="assinar()">Enviar</button>
       </div>`;
     nav = `<button class="btn" style="flex:1" onclick="voltar()">Voltar</button>`;
   }
-  app.innerHTML = `<div class="topo-wiz"><div class="lin"><span>Absoluta</span><span>Apto ${esc(termo.apto)}</span></div><div class="barra"><i style="width:${Math.round(passo / total * 100)}%"></i></div></div>
+  app.innerHTML = `<div class="topo-wiz"><div class="lin"><span>Essence</span><span>Apto ${esc(termo.apto)}</span></div><div class="barra"><i style="width:${Math.round(passo / total * 100)}%"></i></div></div>
     <div class="pagina">${corpo}</div><div class="rodape-wiz"><div class="in">${nav}</div></div>`;
-  if (q.t === 'final') { iniciarPad('cliente'); iniciarPad('arquiteto'); document.getElementById('obs-geral').addEventListener('input', e => { termo.obs_geral = e.target.value; agendarSalvar(); }); }
+  if (q.t === 'final') {
+    iniciarPad('cliente'); document.getElementById('obs-geral').addEventListener('input', e => { termo.obs_geral = e.target.value; agendarSalvar(); });
+    const det = document.querySelector('details'); det.addEventListener('toggle', () => { if (det.open && !pads.arquiteto) iniciarPad('arquiteto'); });
+    if (termo.nome_arquiteto) { det.open = true; }
+  }
   atualizarNav();
 }
-function respondido(it) { return it.status === 'ok' || (it.status === 'ressalva' && String(it.obs || '').trim()); }
 function atualizarNav() {
   const q = passos[passo], b = document.getElementById('btn-prox'); if (!b || q.t !== 'item') return;
-  b.disabled = !respondido(termo.itens[q.i]);
-  const e = document.getElementById('erro-passo'); if (e) { const it = termo.itens[q.i]; e.textContent = it.status === 'ressalva' && !String(it.obs || '').trim() ? 'Descreva a ressalva para continuar.' : (!it.status ? 'Escolha uma opção para continuar.' : ''); }
+  const it = termo.itens[q.i]; b.disabled = !respondido(it);
+  const e = document.getElementById('erro-passo'); if (e) e.textContent = !it.status ? 'Escolha Sim ou Não para continuar.' : (it.status === 'ressalva' && !respondido(it) ? 'Escreva uma observação ou tire uma foto para continuar.' : '');
 }
 function avancar() { if (passo < passos.length - 1) { passo++; desenhar(); } }
 function voltar() { if (passo > 0) { passo--; desenhar(); } }
+function telaEnviado() {
+  document.body.classList.add('wiz');
+  document.getElementById('app').innerHTML = `<div class="ok-final"><div class="circ">✓</div><h2 class="q-txt" style="margin:0 0 10px">Termo enviado!</h2>
+    <p style="color:var(--text2);margin:0 0 28px">Obrigado. A Absoluta já recebeu as suas respostas e a sua assinatura.</p>
+    <button class="btn primary big" id="btn-pdf" onclick="baixarPdf()">Baixar uma cópia em PDF</button>
+    <button class="btn big" style="margin-top:10px" onclick="window._enviado=false;document.body.classList.remove('wiz');render();window.scrollTo(0,0)">Ver o termo</button></div>`;
+}
 
 carregar();
 </script>
