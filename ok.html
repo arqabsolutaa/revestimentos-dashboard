@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Termo de Conferência · Absoluta</title>
 <link rel="icon" href="assets/favicon-32.png">
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg:#f7f5f0; --surface:#ffffff; --text:#1c1a15; --text2:#5a5648; --text3:#8f8a78; --border:#e4dfd0;
@@ -62,26 +62,36 @@
   body.wiz .wrap { max-width: none; padding: 0; }
   .capa2 { position: relative; min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 24px 0; overflow: hidden; background: #16231b; animation: fade .6s ease; }
   .capa2 .fundo { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,22,15,.78), rgba(10,22,15,.9)), url(assets/termo-fundo.jpg) center/cover, linear-gradient(160deg, #24402f, #101a14); transform: scale(1.05); }
-  .pilula { position: relative; width: min(304px, 84vw); padding: 18px 18px 26px; border-radius: 152px; text-align: center; color: #f4efe3; display: flex; flex-direction: column; align-items: center;
+  .pilula { position: relative; width: min(284px, 78vw); min-height: min(680px, 88vh); min-height: min(680px, 88dvh); padding: 16px 16px 46px; border-radius: 142px; text-align: center; color: #f4efe3; display: flex; flex-direction: column; align-items: center;
     background: linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,.07)); border: 1px solid rgba(255,255,255,.34);
     -webkit-backdrop-filter: blur(22px) saturate(1.15); backdrop-filter: blur(22px) saturate(1.15);
     box-shadow: 0 24px 70px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.45); }
+  /* contorno de bolha: aro de luz que muda de tom + reflexo curvo no alto */
+  .pilula { background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.05) 55%, rgba(210,240,230,.09)); border: none;
+    box-shadow: 0 24px 70px rgba(0,0,0,.42), inset 0 0 38px rgba(255,255,255,.12), inset 0 -16px 38px rgba(170,225,205,.1); }
+  .pilula::before { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.6px; pointer-events: none;
+    background: linear-gradient(140deg, rgba(255,255,255,.95) 0%, rgba(175,230,255,.35) 22%, rgba(255,255,255,.08) 45%, rgba(255,190,225,.22) 70%, rgba(255,255,255,.75) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+  .pilula::after { content: ''; position: absolute; top: 3.5%; left: 9%; width: 34%; height: 9%; border-radius: 50%; transform: rotate(-24deg); pointer-events: none;
+    background: radial-gradient(ellipse at 35% 40%, rgba(255,255,255,.55), rgba(255,255,255,0) 70%); filter: blur(1px); }
   .pilula .foto { width: 100%; aspect-ratio: 1; border-radius: 50%; background: url(assets/termo-foto.jpg) center/cover, linear-gradient(160deg, #3a5c47, #1d3226); box-shadow: 0 0 0 1px rgba(255,255,255,.4); }
-  .pilula .essence { font-family: 'Bodoni Moda', 'Didot', 'Playfair Display', Georgia, serif; font-weight: 400; font-size: 36px; letter-spacing: 7px; margin: 26px -7px 0 0; line-height: 1; }
-  .pilula .nome { font-size: 15px; letter-spacing: .5px; margin-top: 12px; padding: 0 6px; line-height: 1.3; opacity: .95; }
-  .pilula .det { font-size: 12px; margin-top: 12px; opacity: .78; line-height: 1.5; padding: 0 6px; }
-  .pilula .iniciar { margin-top: 24px; width: 100%; padding: 16px; border: none; border-radius: 40px; background: #121814; color: #fff; font: inherit; font-size: 14px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+  .pilula .essence-logo { width: 84%; margin-top: 36px; display: block; }
+  .pilula .nome { font-size: 15px; letter-spacing: .5px; margin-top: 26px; padding: 0 6px; line-height: 1.3; opacity: .95; }
+  .pilula .det { font-size: 12px; margin-top: 14px; margin-bottom: 30px; opacity: .78; line-height: 1.5; padding: 0 6px; }
+  .pilula .iniciar { margin-top: auto; width: 100%; padding: 16px; border: none; border-radius: 40px; background: #121814; color: #fff; font: inherit; font-size: 14px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,.35); }
   .pilula .iniciar:active { transform: scale(.98); }
-  .pilula .logo-abs { width: 88px; margin-top: 20px; mix-blend-mode: screen; opacity: .92; }
-  .pilula .peq { font-size: 10.5px; margin-top: 8px; opacity: .6; }
+  .pilula .logo-abs { width: 84px; margin-top: 24px; opacity: .95; }
+  @media (min-width: 600px) { .pilula { width: 440px; min-height: min(980px, 88vh); border-radius: 220px; padding: 26px 26px 60px; } .pilula .essence-logo { margin-top: 56px; } .pilula .nome { font-size: 22px; margin-top: 34px; } .pilula .det { font-size: 15px; } .pilula .iniciar { padding: 20px; font-size: 16px; } .pilula .logo-abs { width: 110px; } }
   .extra-add { margin-top: 14px; background: none; border: none; color: var(--dourado); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 4px 0; }
   .dica-nao { background: var(--warn-bg); color: var(--warn); border-radius: 10px; padding: 11px 13px; font-size: 13px; margin-bottom: 4px; }
   .ok-final { text-align: center; padding: 70px 24px 40px; }
   .ok-final .circ { width: 84px; height: 84px; border-radius: 50%; background: var(--ok-bg); color: var(--ok); font-size: 42px; display: flex; align-items: center; justify-content: center; margin: 0 auto 22px; animation: fade .5s ease; }
   @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-  .topo-wiz { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 12px 16px 10px; border-bottom: 1px solid var(--border); }
-  .topo-wiz .lin { max-width: 720px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); }
-  .topo-wiz .barra { max-width: 720px; margin: 8px auto 0; height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .topo-wiz { position: sticky; top: 0; z-index: 5; background: #1d3226; padding: 12px 16px 10px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .topo-logo { height: 26px; width: auto; display: block; }
+  .leia { margin: 6px 0 14px; font-size: 15px; font-weight: 400; color: #b3261e; }
+  .topo-wiz .lin { max-width: 720px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(238,240,228,.7); }
+  .topo-wiz .barra { max-width: 720px; margin: 10px auto 0; height: 4px; background: rgba(255,255,255,.16); border-radius: 4px; overflow: hidden; }
   .topo-wiz .barra i { display: block; height: 100%; background: var(--dourado); border-radius: 4px; transition: width .35s ease; }
   .pagina { max-width: 720px; margin: 0 auto; padding: 22px 16px 130px; animation: fade .35s ease; }
   .q-num { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--dourado); font-weight: 700; }
@@ -338,12 +348,13 @@ async function baixarPdf() {
     if (foto) { const c = document.createElement('canvas'); c.width = c.height = 700; const x = c.getContext('2d'); x.fillStyle = 'rgb(' + marrom.join(',') + ')'; x.fillRect(0, 0, 700, 700); x.beginPath(); x.arc(350, 350, 350, 0, 7); x.clip(); const m = Math.min(foto.naturalWidth, foto.naturalHeight); x.drawImage(foto, (foto.naturalWidth - m) / 2, (foto.naturalHeight - m) / 2, m, m, 0, 0, 700, 700);
       doc.setFillColor(...marrom); try { doc.addImage(c.toDataURL('image/jpeg', 0.85), 'JPEG', W / 2 - 38, 44, 76, 76); } catch (e) {} }
     doc.setDrawColor(...dourado); doc.setLineWidth(0.5); doc.circle(W / 2, 82, 38);
-    doc.setTextColor(238, 240, 228); doc.setFont('times', 'normal'); doc.setFontSize(32); centrarEsp('ESSENCE', 146, 4);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(15); const tl = doc.splitTextToSize(termo.titulo || 'Termo', 150); doc.text(tl, W / 2, 160, { align: 'center' });
-    let cy = 160 + tl.length * 7 + 5; doc.setFontSize(11); doc.setTextColor(200, 205, 190);
+    const ess = await img('assets/logo-essence.png');
+    if (ess) { const c = document.createElement('canvas'); c.width = 860; c.height = Math.round(860 * ess.naturalHeight / ess.naturalWidth); const x = c.getContext('2d'); x.fillStyle = 'rgb(' + marrom.join(',') + ')'; x.fillRect(0, 0, c.width, c.height); x.drawImage(ess, 0, 0, c.width, c.height); const wmm = 92, hmm = wmm * c.height / c.width; try { doc.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', W / 2 - wmm / 2, 130, wmm, hmm); } catch (e) {} }
+    doc.setTextColor(238, 240, 228); doc.setFont('helvetica', 'normal'); doc.setFontSize(15); const tl = doc.splitTextToSize(termo.titulo || 'Termo', 150); doc.text(tl, W / 2, 186, { align: 'center' });
+    let cy = 186 + tl.length * 7 + 5; doc.setFontSize(11); doc.setTextColor(200, 205, 190);
     doc.text('Apartamento ' + termo.apto + (termo.cliente ? '  ·  ' + termo.cliente : ''), W / 2, cy, { align: 'center' });
-    const lg = await img('assets/logo-absoluta.jpg');
-    if (lg) { const c = document.createElement('canvas'); c.width = 600; c.height = 104; const x = c.getContext('2d'); x.fillStyle = 'rgb(' + marrom.join(',') + ')'; x.fillRect(0, 0, 600, 104); x.globalCompositeOperation = 'lighten'; x.drawImage(lg, 0, 0, 600, 104); try { doc.addImage(c.toDataURL('image/jpeg', 0.9), 'JPEG', W / 2 - 22, 262, 44, 7.6); } catch (e) {} }
+    const lg = await img('assets/logo-absoluta.png');
+    if (lg) { const c = document.createElement('canvas'); c.width = 600; c.height = 104; const x = c.getContext('2d'); x.fillStyle = 'rgb(' + marrom.join(',') + ')'; x.fillRect(0, 0, 600, 104); x.drawImage(lg, 0, 0, 600, 104); try { doc.addImage(c.toDataURL('image/jpeg', 0.9), 'JPEG', W / 2 - 22, 262, 44, 7.6); } catch (e) {} }
     doc.setFontSize(8); doc.setTextColor(...dourado); doc.text('Assinado em ' + termo.assinado_em, W / 2, 278, { align: 'center' });
     // ---- páginas de conteúdo ----
     doc.addPage(); y = 0;
@@ -351,9 +362,9 @@ async function baixarPdf() {
     doc.setTextColor(238, 240, 228); doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.text('ABSOLUTA', 12, 11.5, { charSpace: 1.5 });
     doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.text((termo.titulo || 'Termo') + '  ·  Apto ' + termo.apto, W - 12, 11.5, { align: 'right' });
     y = 30;
-    if (termo.texto) {
+    if (termo.intro) {
       doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5); doc.setTextColor(28, 26, 21);
-      const tx = doc.splitTextToSize(termo.texto, 186);
+      const tx = doc.splitTextToSize(termo.intro, 186);
       for (const ln of tx) { if (y > 275) { doc.addPage(); y = 20; } doc.text(ln, 12, y); y += 5.6; }
       y += 6;
     }
@@ -379,6 +390,11 @@ async function baixarPdf() {
       const l = doc.splitTextToSize('Observações gerais: ' + termo.obs_geral, 186); novaPag(l.length * 4.5 + 6);
       doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(60, 56, 44); doc.text(l, 12, y); y += l.length * 4.5 + 6;
     }
+    if (termo.texto) {
+      const l = doc.splitTextToSize(termo.texto, 186); novaPag(l.length * 4.8 + 12);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(...dourado); doc.text('DECLARAÇÃO', 12, y); y += 5;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(28, 26, 21); doc.text(l, 12, y); y += l.length * 4.8 + 8;
+    }
     novaPag(62);
     doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(...dourado); doc.text('ASSINATURAS', 12, y); y += 4;
     doc.setDrawColor(...dourado);
@@ -397,7 +413,7 @@ async function baixarPdf() {
 let passos = [], passo = 0;
 function montarPassos() {
   passos = [{ t: 'capa' }];
-  if (termo.texto) passos.push({ t: 'texto' });
+  if (termo.intro) passos.push({ t: 'texto' });
   termo.itens.forEach((it, i) => passos.push({ t: 'item', i }));
   passos.push({ t: 'final' });
 }
@@ -427,18 +443,17 @@ function desenhar() {
   if (q.t === 'capa') {
     app.innerHTML = `<section class="capa2"><div class="fundo"></div><div class="pilula">
       <div class="foto"></div>
-      <div class="essence">ESSENCE</div>
+      <img class="essence-logo" src="assets/logo-essence.png" alt="Essence Residence">
       <div class="nome">${esc(termo.titulo || 'Termo')}</div>
       <div class="det">Apartamento ${esc(termo.apto)}${termo.cliente ? '<br>' + esc(termo.cliente) : ''}</div>
       <button class="iniciar" onclick="avancar()">Iniciar</button>
-      <img class="logo-abs" src="assets/logo-absoluta.jpg" alt="Absoluta">
-      ${termo.itens.length ? `<div class="peq">${termo.itens.length} ${termo.itens.length === 1 ? 'pergunta' : 'perguntas'} · leva poucos minutos</div>` : ''}
+      <img class="logo-abs" src="assets/logo-absoluta.png" alt="Absoluta">
     </div></section>`;
     return;
   }
   let corpo = '', nav = '';
   if (q.t === 'texto') {
-    corpo = `<div class="q-num">${esc(termo.titulo || 'Termo')}</div><h2 class="q-txt" style="font-size:19px">Leia com atenção</h2><div class="card"><div class="capa-txt">${esc(termo.texto)}</div></div>`;
+    corpo = `<div class="q-num">${esc(termo.titulo || 'Termo')}</div><p class="leia">Leia com atenção</p><div class="card"><div class="capa-txt">${esc(termo.intro)}</div></div>`;
     nav = `<button class="btn" onclick="voltar()">Voltar</button><button class="btn primary" onclick="avancar()">Próximo</button>`;
   } else if (q.t === 'item') {
     const it = termo.itens[q.i];
@@ -455,6 +470,7 @@ function desenhar() {
     corpo = `<div class="q-num">Última etapa</div><h2 class="q-txt">Revisão e assinatura</h2>
       ${termo.itens.length ? `<div class="card" style="padding:4px 16px">${termo.itens.map((it, i) => `<div class="resumo-lin" onclick="irParaItem('${it.id}')"><span><span style="color:var(--text3)">${i + 1}.</span> ${esc(it.texto)}</span><span class="badge ${it.status === 'ok' ? 'ok' : 'res'}">${it.status === 'ok' ? 'Sim' : it.status === 'ressalva' ? 'Não' : '—'}</span></div>`).join('')}</div>` : ''}
       <h2>Observações gerais</h2><div class="card" style="margin-top:8px"><textarea id="obs-geral" placeholder="Algo mais que queira registrar (opcional)" style="margin-top:0">${esc(termo.obs_geral)}</textarea></div>
+      ${termo.texto ? `<h2>Declaração</h2><div class="card" style="margin-top:8px"><div class="capa-txt">${esc(termo.texto)}</div></div>` : ''}
       <h2>Assinatura</h2>
       <div class="card" style="margin-top:8px">
         <div class="sig"><strong>Cliente</strong><input type="text" id="nome-cliente" placeholder="Nome completo do cliente" value="${esc(termo.nome_cliente)}">
@@ -469,7 +485,7 @@ function desenhar() {
       </div>`;
     nav = `<button class="btn" style="flex:1" onclick="voltar()">Voltar</button>`;
   }
-  app.innerHTML = `<div class="topo-wiz"><div class="lin"><span>Essence</span><span>Apto ${esc(termo.apto)}</span></div><div class="barra"><i style="width:${Math.round(passo / total * 100)}%"></i></div></div>
+  app.innerHTML = `<div class="topo-wiz"><div class="lin"><img class="topo-logo" src="assets/logo-essence.png" alt="Essence Residence"><span>Apto ${esc(termo.apto)}</span></div><div class="barra"><i style="width:${Math.round(passo / total * 100)}%"></i></div></div>
     <div class="pagina">${corpo}</div><div class="rodape-wiz"><div class="in">${nav}</div></div>`;
   if (q.t === 'final') {
     iniciarPad('cliente'); document.getElementById('obs-geral').addEventListener('input', e => { termo.obs_geral = e.target.value; agendarSalvar(); });
@@ -481,7 +497,7 @@ function desenhar() {
 function atualizarNav() {
   const q = passos[passo], b = document.getElementById('btn-prox'); if (!b || q.t !== 'item') return;
   const it = termo.itens[q.i]; b.disabled = !respondido(it);
-  const e = document.getElementById('erro-passo'); if (e) e.textContent = !it.status ? 'Escolha Sim ou Não para continuar.' : (it.status === 'ressalva' && !respondido(it) ? 'Escreva uma observação ou tire uma foto para continuar.' : '');
+  const e = document.getElementById('erro-passo'); if (e) e.textContent = !it.status ? '' : (it.status === 'ressalva' && !respondido(it) ? 'Escreva uma observação ou tire uma foto para continuar.' : '');
 }
 function avancar() { if (passo < passos.length - 1) { passo++; desenhar(); } }
 function voltar() { if (passo > 0) { passo--; desenhar(); } }

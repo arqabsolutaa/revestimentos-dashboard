@@ -241,3 +241,11 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - Paleta da página e do PDF: verde e dourado do Essence.
 - Perguntas com **Sim / Não**. "Não" exige foto e/ou observação (pelo menos uma). "Sim" permite acrescentar foto/comentário. Assinatura do cliente obrigatória; do arquiteto opcional. Botão **Enviar**; depois aparece "Termo enviado!" com PDF.
 - A Bárbara acessa pelo painel Termos de Etapas: card "✓ Assinado", respostas "Não" em vermelho, **Ver termo** e **PDF**.
+
+
+### Termos de Etapas: capa, páginas e logos (atualização)
+- **Capa** (`ok.html`): cápsula de vidro com contorno de bolha sobre foto escura do prédio; no tablet a cápsula é maior. Logotipo Essence e logo Absoluta são PNG transparentes em `assets/` (`logo-essence.png`, `logo-absoluta.png`).
+- **Ordem das páginas:** capa → **explicação do termo** (campo `intro`, opcional) → uma pergunta por página (Sim/Não; "Não" exige foto e/ou observação) → revisão + **declaração** (campo `texto`) + assinatura com o dedo → Enviar.
+- **Novo termo:** o formulário tem "Explicação do termo" (1ª página) e "Declaração" (final e PDF), já preenchidos por modelo. Exige a coluna `intro` em `Vistorias_Termos` (criada automaticamente pelo Code.gs novo).
+- **PDF:** capa, explicação, itens, declaração e assinaturas.
+- **Home:** os 6 módulos aparecem em grade 3 + 3.
