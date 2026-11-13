@@ -2755,6 +2755,40 @@ tr:hover td{background:#fafafa}
 #mobile-menu .mobile-nav-btn{color:var(--text2) !important}
 .fv-lista .lin{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--border);font-size:14px}.fv-lista .lin:first-child{border-top:0}
 @media (max-width:700px){.est-grid{grid-template-columns:1fr 1fr;gap:10px}.est-cover{height:110px}}
+
+/* Pagamentos (cartões) */
+.pg-card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:18px 20px;margin-bottom:14px}
+.pg-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pg-ap{flex:none;width:54px;height:54px;border-radius:16px;background:#18181b;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:600;font-size:17px;line-height:1.1}
+.pg-ap small{font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.pg-id{flex:1;min-width:140px}.pg-id b{display:block;font-size:16px;font-weight:600}.pg-id small{font-size:12.5px;color:var(--text3)}
+.pg-seg{display:inline-flex;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:3px;gap:2px}
+.pg-seg button{background:transparent;border-radius:9px;padding:7px 14px;font-size:12.5px;font-weight:600;color:var(--text3)}
+.pg-seg .s-pend.on{background:#fff;color:#18181b;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pg-seg .s-parc.on{background:var(--warn-bg);color:var(--warn)}
+.pg-seg .s-pago.on{background:var(--ok-bg);color:var(--ok)}
+.pg-vals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 12px}
+.pg-vals>div{background:var(--surface2);border-radius:14px;padding:10px 14px}
+.pg-vals small{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)}
+.pg-vals b{font-size:16px;font-weight:600}.pg-vals b.ok{color:var(--ok)}.pg-vals em{display:block;font-style:normal;font-size:11.5px;color:var(--text3)}
+.pg-obs{display:flex;gap:8px;margin-bottom:12px}.pg-obs input{flex:1;font-size:13px}
+.pg-obs button{background:#fff;border:1px solid var(--border);border-radius:12px;padding:0 16px;font-size:12.5px;font-weight:600;color:var(--text)}.pg-obs button:hover{background:var(--surface2)}
+.pg-act{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pg-act .btn{font-size:12.5px;padding:8px 14px}
+.pg-comp{display:inline-flex;gap:6px;flex-wrap:wrap;align-items:center;margin-left:auto}
+.pg-comp .btn{font-size:12px !important;padding:7px 12px !important}
+.pg-mais{position:relative}.pg-mais summary{list-style:none;cursor:pointer;border:1px solid var(--border);border-radius:12px;padding:8px 14px;font-size:12.5px;font-weight:500;background:#fff}.pg-mais summary::-webkit-details-marker{display:none}
+.pg-menu{position:absolute;z-index:5;top:42px;left:0;min-width:210px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.12);padding:6px;display:flex;flex-direction:column}
+.pg-menu button{background:none;text-align:left;padding:9px 12px;border-radius:10px;font-size:13px;color:var(--text)}.pg-menu button:hover{background:var(--surface2)}
+.pgto-tab{font-family:'Inter',sans-serif !important;text-transform:none !important;letter-spacing:0 !important;font-size:13.5px !important;font-weight:600 !important;padding:9px 16px !important;border-radius:999px !important;border:none !important;margin:0 2px}
+.pgto-tab.pgto-tab-ativo{background:#18181b !important;color:#fff !important}
+.pgto-tab:hover:not(.pgto-tab-ativo){background:var(--surface2) !important}
+.status-pgto-badge{border-radius:999px;border-width:0;text-transform:none;letter-spacing:0;font-size:12px;padding:5px 12px}
+.status-pendente{background:var(--surface2);color:var(--text2)}.status-pago{background:var(--ok-bg);color:var(--ok)}.status-parcial{background:var(--warn-bg);color:var(--warn)}
+.voltar-inicio{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;margin-bottom:6px;text-decoration:none}.voltar-inicio:hover{color:var(--text)}
+@media (max-width:700px){.pg-vals{grid-template-columns:1fr 1fr}.pg-comp{margin-left:0}}
+.card[style*="background:var(--accent-bg)"]{background:#fff !important;border:1px dashed var(--border2) !important}
+.card[style*="background:var(--danger-bg)"]{background:#fff !important;border:1px solid #f0c9c4 !important;box-shadow:inset 5px 0 0 var(--danger)}
 </style>
 <script>
 // ===== TEMA DE CORES (cada pessoa escolhe a sua; fica salvo neste navegador) =====
@@ -3551,7 +3585,6 @@ try { aplicarTema(JSON.parse(localStorage.getItem(TEMA_KEY) || 'null')); } catch
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
             Atualizar
           </button>
-          <button class="btn btn-secondary" onclick="sairControlePgto()" style="margin-left:4px">Sair</button>
         </div>
       </div>
       <!-- Sub-abas -->
@@ -3987,7 +4020,6 @@ try { aplicarTema(JSON.parse(localStorage.getItem(TEMA_KEY) || 'null')); } catch
       </div>
       <div class="header-actions">
         <button class="btn btn-secondary" onclick="loadMargemLucro()">Atualizar</button>
-        <button class="btn btn-secondary" onclick="sairMargemLucro()" style="margin-left:4px">Sair</button>
       </div>
     </div>
     <div class="page-content">
@@ -4076,7 +4108,6 @@ try { aplicarTema(JSON.parse(localStorage.getItem(TEMA_KEY) || 'null')); } catch
       <div class="header-actions">
         <button class="btn btn-secondary" onclick="abrirModalNovaEntradaPers()" style="margin-right:4px">+ Nova Entrada</button>
         <button class="btn btn-secondary" onclick="abrirModalNovaSaidaObra()" style="margin-right:4px">+ Nova Saída</button>
-        <button class="btn btn-secondary" onclick="sairCustoPers()">Sair</button>
       </div>
     </div>
     <div class="page-content">
@@ -6635,6 +6666,7 @@ function detectarCapaMobile() {
 
 window.onload = async () => {
   lgIniciar();
+  document.querySelectorAll('.page-header-left').forEach(h => { const a = document.createElement('a'); a.className = 'voltar-inicio'; a.textContent = '‹ Início'; a.onclick = () => sairParaEscolha(); h.insertBefore(a, h.firstChild); });
   marcarUsuarioNaTela();
   // Restaura sessão (capa + área) apos F5/reload, sem pedir senha de novo
   const capaOk = sessionStorage.getItem('absoluta_login_ok') && getUsuarioAtual();
@@ -9093,7 +9125,7 @@ function renderCustoPersonalizacoes() {
           <div style="font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📅 ${sa.data||'sem data'} · ${_badgeSaldo(total, vinc)}</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          <strong style="font-size:14px;color:#8c6f3f">${_fmtR$(total)}</strong>
+          <strong style="font-size:14px;color:#3f3f46">${_fmtR$(total)}</strong>
           <span class="chevron" style="color:var(--text3);font-size:12px">▸</span>
         </div>
       </div>
@@ -9860,8 +9892,8 @@ function abrirModalDetalheMargem(apto) {
   const lucro = grupo.itens.reduce((s,i)=>s+(i.lucro||0),0);
 
   const corCategoria = {
-    'Revestimento': '#2C4034', 'Banheira': '#8c6f3f',
-    'Custo Personalizações (Entrada)': '#2C4034', 'Custo Personalizações (Saída)': '#8c6f3f'
+    'Revestimento': '#2C4034', 'Banheira': '#3f3f46',
+    'Custo Personalizações (Entrada)': '#2C4034', 'Custo Personalizações (Saída)': '#3f3f46'
   };
 
   const blocos = Object.keys(grupos).map(cat => {
@@ -10840,36 +10872,42 @@ function renderPagamentos(lista) {
       }
     }
     const status = p.status_pgto || 'pendente';
-    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
-      <div>
-        <p style="font-weight:600;font-size:14px">${p.cliente||'—'}</p>
-        <p style="font-size:12px;color:var(--text3)">Apto ${p.ap||'—'} · ${formatarDataDisplay(p.data)||'—'}</p>
-        <p style="font-size:13px;font-weight:500;color:var(--accent2);margin-top:4px">R$ ${totalValor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})} · ${totalM2.toFixed(2)} m²</p>
-        ${p.valor_pago && parseFloat(p.valor_pago) > 0 ? `<p style="font-size:12px;color:#2e7d3f;margin-top:2px">✓ Pago: R$ ${_valorBrutoPago(p, totalValor).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}${p.condicao_pagamento_confirmada ? ' · ' + _labelCondicaoPagamento(p.condicao_pagamento_confirmada) : ''}</p>` : ''}
-        ${p.obs_pgto ? `<p style="font-size:12px;color:var(--text2);margin-top:4px">Obs: ${p.obs_pgto}</p>` : ''}
+    const fm = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const pago = p.valor_pago && parseFloat(p.valor_pago) > 0;
+    const cond = p.condicao_pagamento_confirmada ? _labelCondicaoPagamento(p.condicao_pagamento_confirmada) : '';
+    const esc = t => String(t == null ? '' : t).replace(/"/g, '&quot;');
+    return `<div class="pg-card">
+      <div class="pg-top">
+        <div class="pg-ap"><small>Apto</small>${p.ap||'—'}</div>
+        <div class="pg-id"><b>${p.cliente||'—'}</b><small>${formatarDataDisplay(p.data)||'—'}</small></div>
+        <div class="pg-seg">
+          <button class="s-pend ${status === 'pendente' ? 'on' : ''}" onclick="alterarStatusPgto('${p.id}','pendente')">Pendente</button>
+          <button class="s-parc ${status === 'parcial' ? 'on' : ''}" onclick="alterarStatusPgto('${p.id}','parcial')">Parcial</button>
+          <button class="s-pago ${status === 'pago' ? 'on' : ''}" onclick="abrirModalConfirmarPagamento('${p.id}', ${totalValor})">Pago</button>
+        </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
-        <div style="display:flex;gap:6px">
-          <button class="status-pgto-badge ${status === 'pendente' ? 'status-pendente' : ''}" onclick="alterarStatusPgto('${p.id}','pendente')" style="${status === 'pendente' ? '' : 'opacity:0.4'}">Pendente</button>
-          <button class="status-pgto-badge ${status === 'parcial' ? 'status-parcial' : 'status-parcial'}" onclick="alterarStatusPgto('${p.id}','parcial')" style="${status === 'parcial' ? '' : 'opacity:0.4'}">Parcial</button>
-          <button class="status-pgto-badge ${status === 'pago' ? 'status-pago' : 'status-pago'}" onclick="abrirModalConfirmarPagamento('${p.id}', ${totalValor})" style="${status === 'pago' ? '' : 'opacity:0.4'}">Pago</button>
-        </div>
-        <div style="display:flex;gap:4px;align-items:center">
-          <input class="form-control" placeholder="Observação (parcelas, etc)" id="obs-${p.id}" style="font-size:11px;padding:4px 8px;flex:1" value="${p.obs_pgto||''}">
-          <button onclick="salvarObsPgtoBtn('${p.id}')" style="padding:4px 8px;border-radius:6px;border:1px solid var(--accent);background:none;color:var(--accent);font-size:11px;cursor:pointer;white-space:nowrap">✓ Salvar</button>
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-          <button class="btn btn-secondary" onclick="gerarPDFComValorPgto('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF</button>
-          <button class="btn btn-secondary" onclick="abrirModalOutraCondicao('${p.id}')" style="font-size:11px;padding:4px 10px">Gerar PDF outra condição</button>
-          <button class="btn btn-secondary" onclick="abrirModalPdfQuitado('${p.id}')" style="font-size:11px;padding:4px 10px;color:#2e7d3f;border-color:#2e7d3f">✓ Gerar PDF Quitado</button>
-          <button class="btn btn-secondary" onclick="editarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">✏️ Editar</button>
-          ${_botaoConverterAlt(p)}
-          <button class="btn btn-secondary" onclick="arquivarPersonalizacao('${p.id}')" style="font-size:11px;padding:4px 10px">🗄 Arquivar</button>
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:100%">
+      <div class="pg-vals">
+        <div><small>Valor</small><b>R$ ${fm(totalValor)}</b></div>
+        <div><small>Área</small><b>${totalM2.toFixed(2)} m²</b></div>
+        <div><small>Pago</small><b class="${pago ? 'ok' : ''}">${pago ? 'R$ ' + fm(_valorBrutoPago(p, totalValor)) : '—'}</b>${cond ? '<em>' + cond + '</em>' : ''}</div>
+      </div>
+      <div class="pg-obs">
+        <input class="form-control" placeholder="Observação (parcelas, etc)" id="obs-${p.id}" value="${esc(p.obs_pgto)}">
+        <button onclick="salvarObsPgtoBtn('${p.id}')">Salvar</button>
+      </div>
+      <div class="pg-act">
+        <button class="btn btn-primary" onclick="gerarPDFComValorPgto('${p.id}')">Gerar PDF</button>
+        <button class="btn btn-secondary" onclick="abrirModalPdfQuitado('${p.id}')">PDF quitado</button>
+        <button class="btn btn-secondary" onclick="editarPersonalizacao('${p.id}')">Editar</button>
+        <details class="pg-mais"><summary>Mais</summary><div class="pg-menu">
+          <button onclick="abrirModalOutraCondicao('${p.id}')">PDF em outra condição</button>
+          ${_botaoConverterAlt(p).replace(/class="btn btn-secondary"/, '').replace(/style="[^"]*"/, '').replace('🔁 ', '')}
+          <button onclick="arquivarPersonalizacao('${p.id}')">Arquivar</button>
+        </div></details>
+        <span class="pg-comp">
           ${renderComprovantesHTML(p.comprovante_url, p.id, null, `document.getElementById('file-comprovante-${p.id}').click()`)}
           <input type="file" id="file-comprovante-${p.id}" accept="image/*,.pdf" style="display:none" onchange="uploadComprovante('${p.id}', this)">
-        </div>
+        </span>
       </div>
       ${_altBlocoHTML(p)}
     </div>`;
