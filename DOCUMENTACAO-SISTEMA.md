@@ -249,3 +249,10 @@ Esse é o módulo mais reformulado recentemente — importante entender bem:
 - **Novo termo:** o formulário tem "Explicação do termo" (1ª página) e "Declaração" (final e PDF), já preenchidos por modelo. Exige a coluna `intro` em `Vistorias_Termos` (criada automaticamente pelo Code.gs novo).
 - **PDF:** capa, explicação, itens, declaração e assinaturas.
 - **Home:** os 6 módulos aparecem em grade 3 + 3.
+
+## Visual grafite, login e menu por área (nov/2026)
+- **Login:** tela dividida (foto Essence + formulário). Usuário (Bárbara, Gabriel, Jailton) + senha numérica de 5 dígitos, conferida no servidor (`verificarSenhaUsuario`, hashes em `Code.gs`). Uma senha por pessoa; histórico/auditoria só com a senha da Bárbara.
+- **Bom dia:** 6 cards (3x2) para as áreas + bloco "Precisa de atenção". Termos e Vistorias só aparece para a Bárbara.
+- **Menu lateral por área:** Início (volta ao Bom dia) → Visão geral → demais telas; rodapé com usuário e Sair. Financeiro ganhou Visão geral própria.
+- **Estoque:** cartões (capa = imagem do revestimento, quando cadastrada) com alternância Cartões | Lista.
+- **Estilo:** tema fixo grafite (variáveis em `:root` no bloco "GRAFITE"); o seletor de cores antigo foi desativado.
