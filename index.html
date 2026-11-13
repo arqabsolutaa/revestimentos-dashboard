@@ -2789,6 +2789,33 @@ tr:hover td{background:#fafafa}
 @media (max-width:700px){.pg-vals{grid-template-columns:1fr 1fr}.pg-comp{margin-left:0}}
 .card[style*="background:var(--accent-bg)"]{background:#fff !important;border:1px dashed var(--border2) !important}
 .card[style*="background:var(--danger-bg)"]{background:#fff !important;border:1px solid #f0c9c4 !important;box-shadow:inset 5px 0 0 var(--danger)}
+
+/* Custo / Previsão */
+.cp-ajuda{background:#fff;border:1px solid var(--border);border-radius:16px;padding:12px 18px;margin-bottom:18px}
+.cp-ajuda summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--text2);list-style:none}.cp-ajuda summary::-webkit-details-marker{display:none}.cp-ajuda summary::before{content:'ⓘ  ';color:var(--text3)}
+.cp-ajuda p{font-size:13px;color:var(--text2);line-height:1.7;margin-top:10px}
+.cp-col{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}.cp-col h3{font-size:17px;font-weight:600;margin:0}.cp-col span{font-size:12.5px;color:var(--text3)}
+.cp-item{border-radius:18px !important}
+.cp-head{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer}
+.cp-av{flex:none;min-width:44px;height:44px;padding:0 8px;border-radius:14px;background:#18181b;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px}.cp-av-s{background:#e4e4e7;color:#3f3f46}
+.cp-info{flex:1;min-width:0}.cp-info b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cp-info small{font-size:12px;color:var(--text3)}
+.cp-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:none}.cp-right strong{font-size:14.5px;font-weight:600;color:var(--text)}.cp-right .badge{font-size:10.5px;padding:2px 8px}
+.cp-head .chevron{color:var(--text3);font-size:12px}
+.pv-atraso{background:#fff;border:1px solid #f0c9c4;border-radius:20px;padding:18px 20px;margin-bottom:22px}
+.pv-atraso-top{display:flex;justify-content:space-between;align-items:center;gap:10px}.pv-atraso-top strong{font-size:20px;font-weight:600;color:var(--danger)}
+.pv-chip-red{background:var(--danger-bg);color:var(--danger);border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600}
+.pv-atraso-sub{font-size:12.5px;color:var(--text3);margin:8px 0 8px}
+.pv-lin{display:flex;align-items:center;gap:14px;padding:12px 0;border-top:1px solid var(--border)}
+.pv-data{flex:none;width:130px}.pv-data b{display:block;font-size:13.5px;color:var(--danger);font-weight:600}.pv-data small{font-size:11.5px;color:var(--text3)}
+.pv-quem{flex:1;min-width:0}.pv-quem b{display:block;font-size:14px;font-weight:600}.pv-quem small{font-size:12px;color:var(--text3)}
+.pv-val{flex:none;font-size:14.5px;font-weight:600}.pv-lin .btn{flex:none;font-size:12.5px;padding:7px 12px;white-space:nowrap}
+.pv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.pv-mes{background:#fff;border:1px solid var(--border);border-radius:20px;padding:18px;cursor:pointer;transition:box-shadow .15s,transform .15s}.pv-mes:hover{box-shadow:0 10px 28px rgba(0,0,0,.08);transform:translateY(-2px)}
+.pv-mes-top{display:flex;align-items:baseline;justify-content:space-between}.pv-mes-top b{font-size:18px;font-weight:600}.pv-mes-top span{font-size:13px;color:var(--text3)}
+.pv-bar{height:6px;background:var(--surface2);border-radius:99px;margin:12px 0 14px;overflow:hidden}.pv-bar i{display:block;height:100%;background:#18181b;border-radius:99px}
+.pv-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0}.pv-row span{color:var(--text2)}.pv-row.mut span,.pv-row.mut strong{color:var(--text3);font-weight:500}.pv-row.neg strong{color:var(--danger)}
+.pv-foot{font-size:12px;color:var(--text3);margin-top:10px}
+@media (max-width:700px){.pv-lin{flex-wrap:wrap}.pv-data{width:100%}#cp-stats,#prev-stats{grid-template-columns:1fr 1fr !important}}
 </style>
 <script>
 // ===== TEMA DE CORES (cada pessoa escolhe a sua; fica salvo neste navegador) =====
@@ -4111,28 +4138,23 @@ try { aplicarTema(JSON.parse(localStorage.getItem(TEMA_KEY) || 'null')); } catch
       </div>
     </div>
     <div class="page-content">
-      <div style="display:flex;gap:8px;margin-bottom:18px;border-bottom:1px solid var(--border)">
-        <button class="btn" id="custopers-tab-btn-entradas" onclick="setCustoPersTab('entradas')" style="border:none;border-radius:0;border-bottom:2px solid var(--accent);padding:10px 4px;margin-right:20px;background:none;font-weight:600">Entradas & Saídas</button>
-        <button class="btn" id="custopers-tab-btn-mapa" onclick="setCustoPersTab('mapa')" style="border:none;border-radius:0;border-bottom:2px solid transparent;padding:10px 4px;margin-right:20px;background:none;color:var(--text3)">Mapa de Vínculos</button>
-      </div>
+      <div style="margin-bottom:18px"><div class="vtoggle"><button id="custopers-tab-btn-entradas" class="on" onclick="setCustoPersTab('entradas')">Entradas e saídas</button><button id="custopers-tab-btn-mapa" onclick="setCustoPersTab('mapa')">Mapa de vínculos</button></div></div>
 
       <div id="custopers-tab-entradas">
-      <div class="card" style="background:var(--accent-bg);border-color:var(--accent);margin-bottom:20px;padding:14px 18px">
-        <p style="font-size:12px;font-weight:700;letter-spacing:0.5px;color:var(--accent2);margin:0 0 6px;text-transform:uppercase">Como funciona</p>
-        <p style="font-size:13px;color:var(--text);margin:0;line-height:1.6">
+      <div id="cp-stats" class="stats-row" style="grid-template-columns:repeat(4,1fr)"></div>
+      <details class="cp-ajuda"><summary>Como funciona</summary><p>
           <strong>1.</strong> Lance cada pagamento recebido em <strong>Entradas</strong> (quem pagou, quanto, de que jeito). &nbsp;·&nbsp;
           <strong>2.</strong> Lance cada gasto da obra em <strong>Saídas</strong> (o que foi comprado, pra qual projeto). &nbsp;·&nbsp;
           <strong>3.</strong> Clique em <strong>"Vincular"</strong> no card de uma Entrada ou Saída pra ligar "esse pagamento cobriu essa compra" — é esse vínculo que mostra pra onde o dinheiro de cada cliente foi.
           Depois, a tela <strong>Margem de Lucro</strong> soma tudo isso sozinha, sem você digitar de novo.
-        </p>
-      </div>
+        </p></details>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
         <div>
-          <h3 style="font-size:14px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Entradas — pagamentos recebidos</h3>
+          <div class="cp-col"><h3>Entradas</h3><span>pagamentos recebidos</span></div>
           <div id="custopers-entradas-lista" style="display:flex;flex-direction:column;gap:10px"></div>
         </div>
         <div>
-          <h3 style="font-size:14px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Saídas — gastos da obra</h3>
+          <div class="cp-col"><h3>Saídas</h3><span>gastos da obra</span></div>
           <div id="custopers-saidas-lista" style="display:flex;flex-direction:column;gap:10px"></div>
         </div>
       </div>
@@ -4213,11 +4235,8 @@ try { aplicarTema(JSON.parse(localStorage.getItem(TEMA_KEY) || 'null')); } catch
     </div>
   </div>
   <div class="page-content">
-    <div class="card" style="background:var(--accent-bg);border-color:var(--accent);margin-bottom:20px;padding:14px 18px">
-      <p style="font-size:13px;color:var(--text);margin:0;line-height:1.6">
-        Aqui aparece só o que realmente vai virar uma cobrança/depósito em data futura: <strong>Boleto</strong> e <strong>PIX Parcelado</strong>. <strong>Crédito</strong> não entra nessa lista — ele cai pra você de uma vez só (antecipado), mesmo quando o cliente parcela no cartão dele.
-      </p>
-    </div>
+    <div id="prev-stats" class="stats-row" style="grid-template-columns:repeat(3,1fr)"></div>
+    <details class="cp-ajuda"><summary>O que aparece aqui</summary><p>Aqui aparece só o que realmente vai virar uma cobrança/depósito em data futura: <strong>Boleto</strong> e <strong>PIX Parcelado</strong>. <strong>Crédito</strong> não entra nessa lista — ele cai pra você de uma vez só (antecipado), mesmo quando o cliente parcela no cartão dele.</p></details>
     <div id="previsaocobrancas-atrasadas"></div>
     <div id="previsaocobrancas-lista"></div>
   </div>
@@ -7972,10 +7991,8 @@ function sairCustoPers() {
 function setCustoPersTab(tab) {
   document.getElementById('custopers-tab-entradas').style.display = tab === 'entradas' ? 'block' : 'none';
   document.getElementById('custopers-tab-mapa').style.display = tab === 'mapa' ? 'block' : 'none';
-  document.getElementById('custopers-tab-btn-entradas').style.borderBottomColor = tab === 'entradas' ? 'var(--accent)' : 'transparent';
-  document.getElementById('custopers-tab-btn-entradas').style.color = tab === 'entradas' ? 'var(--text)' : 'var(--text3)';
-  document.getElementById('custopers-tab-btn-mapa').style.borderBottomColor = tab === 'mapa' ? 'var(--accent)' : 'transparent';
-  document.getElementById('custopers-tab-btn-mapa').style.color = tab === 'mapa' ? 'var(--text)' : 'var(--text3)';
+  document.getElementById('custopers-tab-btn-entradas').classList.toggle('on', tab === 'entradas');
+  document.getElementById('custopers-tab-btn-mapa').classList.toggle('on', tab === 'mapa');
   if (tab === 'mapa') renderMapaVinculosCards();
 }
 
@@ -8630,19 +8647,27 @@ async function loadPrevisaoCobrancas() {
   const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 
-  cont.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">` +
+  const totR = parcelas.filter(p => p.tipo === 'entrada').reduce((x, p) => x + p.valor, 0), totP = parcelas.filter(p => p.tipo === 'saida').reduce((x, p) => x + p.valor, 0);
+  const atr = _calcularParcelasAtrasadas(), totA = atr.reduce((x, p) => x + p.valor, 0);
+  const k = (l, v, sub, cor) => '<div class="stat-card"><div class="stat-label">' + l + '</div><div class="stat-value"' + (cor ? ' style="color:' + cor + '"' : '') + '>' + v + '</div><div class="stat-sub">' + sub + '</div></div>';
+  const ps = document.getElementById('prev-stats');
+  if (ps) ps.innerHTML = k('Vencidas sem baixa', fmt(totA), atr.length + ' parcelas', atr.length ? 'var(--danger)' : '') + k('A receber (futuro)', fmt(totR), parcelas.filter(p => p.tipo === 'entrada').length + ' parcelas') + k('A pagar (futuro)', fmt(totP), parcelas.filter(p => p.tipo === 'saida').length + ' parcelas');
+  const maxMes = Math.max(...Object.values(meses).map(l => l.reduce((x, p) => x + p.valor, 0)), 1);
+  cont.innerHTML = `<h3 class="cp-col" style="margin:6px 0 12px"><span style="font-size:15px;font-weight:600;color:var(--text)">Mês a mês</span></h3><div class="pv-grid">` +
     Object.keys(meses).sort().map(chave => {
       const [ano, mes] = chave.split('-');
       const lista = meses[chave];
       const totalReceberManual = lista.filter(p => p.tipo === 'entrada' && !p.automatico).reduce((s,p) => s + p.valor, 0);
       const totalReceberAuto = lista.filter(p => p.tipo === 'entrada' && p.automatico).reduce((s,p) => s + p.valor, 0);
       const totalPagar = lista.filter(p => p.tipo === 'saida').reduce((s,p) => s + p.valor, 0);
-      return `<div onclick="abrirModalMesPrevisao('${chave}')" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
-        <p style="font-size:15px;font-weight:600;margin:0 0 10px">${nomesMeses[parseInt(mes)-1]} de ${ano}</p>
-        ${totalReceberManual > 0 ? `<p style="font-size:13px;color:var(--accent2);margin:0 0 4px">↓ Gerar Boleto/PIX: <strong>${fmt(totalReceberManual)}</strong></p>` : ''}
-        ${totalReceberAuto > 0 ? `<p style="font-size:12px;color:var(--text3);margin:0 0 4px">⚙ Crédito automático: <strong>${fmt(totalReceberAuto)}</strong></p>` : ''}
-        ${totalPagar > 0 ? `<p style="font-size:13px;color:#B5453D;margin:0">↑ A pagar: <strong>${fmt(totalPagar)}</strong></p>` : ''}
-        <p style="font-size:11px;color:var(--text3);margin-top:10px">${lista.length} cobrança${lista.length>1?'s':''} · clique pra ver</p>
+      const pct = Math.round(lista.reduce((x, p) => x + p.valor, 0) / maxMes * 100);
+      return `<div class="pv-mes" onclick="abrirModalMesPrevisao('${chave}')">
+        <div class="pv-mes-top"><b>${nomesMeses[parseInt(mes)-1]}</b><span>${ano}</span></div>
+        <div class="pv-bar"><i style="width:${pct}%"></i></div>
+        ${totalReceberManual > 0 ? `<div class="pv-row"><span>Gerar boleto/PIX</span><strong>${fmt(totalReceberManual)}</strong></div>` : ''}
+        ${totalReceberAuto > 0 ? `<div class="pv-row mut"><span>Crédito automático</span><strong>${fmt(totalReceberAuto)}</strong></div>` : ''}
+        ${totalPagar > 0 ? `<div class="pv-row neg"><span>A pagar</span><strong>${fmt(totalPagar)}</strong></div>` : ''}
+        <div class="pv-foot">${lista.length} cobrança${lista.length>1?'s':''} · ver detalhes ›</div>
       </div>`;
     }).join('') + `</div>`;
 }
@@ -8670,21 +8695,16 @@ function renderAtrasadasPrevisao() {
   const totalAtrasado = atrasadas.reduce((s,p) => s + p.valor, 0);
   const diasAtraso = d => Math.floor((new Date().setHours(0,0,0,0) - d.getTime()) / 86400000);
 
-  cont.innerHTML = `<div class="card" style="background:var(--danger-bg);border-color:var(--danger);margin-bottom:20px;padding:16px 18px">
-    <p style="font-size:14px;font-weight:700;color:var(--danger);margin:0 0 4px">⚠ ${atrasadas.length} parcela${atrasadas.length>1?'s':''} vencida${atrasadas.length>1?'s':''} sem baixa — ${fmt(totalAtrasado)}</p>
-    <p style="font-size:12px;color:var(--text2);margin:0 0 12px">Passou da data e você ainda não marcou como recebida/paga. Confira e dê baixa assim que confirmar o pagamento, ou a parcela continua aparecendo aqui.</p>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Venceu em</th><th>Tipo</th><th>Apto/Fornecedor</th><th>Quem</th><th>Parcela</th><th style="text-align:right">Valor</th><th></th></tr></thead>
-      <tbody>${atrasadas.map(p => `<tr>
-        <td style="color:var(--danger);font-weight:600">${String(p.data.getDate()).padStart(2,'0')}/${String(p.data.getMonth()+1).padStart(2,'0')}/${p.data.getFullYear()} <span style="font-size:10px;color:var(--text3);font-weight:400">(${diasAtraso(p.data)}d)</span></td>
-        <td>${p.tipo === 'entrada' ? 'A receber' : 'A pagar'}</td>
-        <td>${p.tipo === 'entrada' ? ('Apto ' + (p.apartamento||'—')) : (p.fornecedor||'—')}</td>
-        <td>${p.tipo === 'entrada' ? (p.cliente||'—') : (p.descricao||'—')}</td>
-        <td style="color:var(--text2)">${p.numeroParcela}/${p.totalParcelas}</td>
-        <td style="text-align:right;font-weight:600;color:var(--danger)">${fmt(p.valor)}</td>
-        <td><button class="btn btn-secondary" style="font-size:11px;padding:5px 10px;white-space:nowrap" onclick="darBaixaParcela('${p.chave}','${p.tipo}','${p.tipo==='entrada'?p.entradaId:p.saidaId}',${p.numeroParcela},${p.valor},this)">✓ Dar baixa</button></td>
-      </tr>`).join('')}</tbody>
-    </table></div>
+  const dd = d => String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
+  cont.innerHTML = `<div class="pv-atraso">
+    <div class="pv-atraso-top"><span class="pv-chip-red">${atrasadas.length} vencida${atrasadas.length>1?'s':''} sem baixa</span><strong>${fmt(totalAtrasado)}</strong></div>
+    <p class="pv-atraso-sub">Passou da data e ainda não foi marcada como recebida/paga. Dê baixa assim que confirmar.</p>
+    ${atrasadas.map(p => `<div class="pv-lin">
+      <div class="pv-data"><b>${dd(p.data)}</b><small>${diasAtraso(p.data)} dias de atraso</small></div>
+      <div class="pv-quem"><b>${p.tipo === 'entrada' ? (p.cliente||'—') : (p.descricao||'—')}</b><small>${p.tipo === 'entrada' ? 'A receber · Apto ' + (p.apartamento||'—') : 'A pagar · ' + (p.fornecedor||'—')} · parcela ${p.numeroParcela}/${p.totalParcelas}</small></div>
+      <strong class="pv-val">${fmt(p.valor)}</strong>
+      <button class="btn btn-secondary" onclick="darBaixaParcela('${p.chave}','${p.tipo}','${p.tipo==='entrada'?p.entradaId:p.saidaId}',${p.numeroParcela},${p.valor},this)">✓ Dar baixa</button>
+    </div>`).join('')}
   </div>`;
 }
 
@@ -9081,16 +9101,12 @@ function renderCustoPersonalizacoes() {
     const jurosVal = parseFloat(en.valor_juros)||0;
     const temJuros = jurosVal > 0.005;
     const detalheId = 'entrada-detalhe-' + en.id;
-    return `<div class="card" style="padding:0;overflow:hidden">
-      <div style="padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px" onclick="_toggleDetalheCustoPers('${detalheId}', this.querySelector('.chevron'))">
-        <div style="min-width:0">
-          <strong style="font-size:13px">Apto ${en.apartamento||'—'} — ${_nomeClienteLimpo(en.cliente)||'—'}</strong>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${en.data||''} · ${_badgeSaldo(totalLiquido, vinc)}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          <strong style="font-size:14px;color:var(--accent2)">${_fmtR$(totalLiquido)}</strong>
-          <span class="chevron" style="color:var(--text3);font-size:12px">▸</span>
-        </div>
+    return `<div class="card cp-item" style="padding:0;overflow:hidden">
+      <div class="cp-head" onclick="_toggleDetalheCustoPers('${detalheId}', this.querySelector('.chevron'))">
+        <div class="cp-av">${en.apartamento||'—'}</div>
+        <div class="cp-info"><b>${_nomeClienteLimpo(en.cliente)||'—'}</b><small>${en.data||''}</small></div>
+        <div class="cp-right"><strong>${_fmtR$(totalLiquido)}</strong>${_badgeSaldo(totalLiquido, vinc)}</div>
+        <span class="chevron">▸</span>
       </div>
       <div id="${detalheId}" style="display:none;padding:0 16px 14px">
         <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${en.categoria||''} · ${en.data||''}${en.condicao_pagamento && en.condicao_pagamento !== 'avista' ? ' · ' + en.condicao_pagamento.replace('credito','Crédito ').replace('boleto1','Boleto à Vista').replace('boleto','Boleto ').replace('pix','PIX ') : ''}</div>
@@ -9118,16 +9134,12 @@ function renderCustoPersonalizacoes() {
     const vinc = _valorVinculadoSaida(sa.id);
     const total = parseFloat(sa.valor)||0;
     const detalheId = 'saida-detalhe-' + sa.id;
-    return `<div class="card" style="padding:0;overflow:hidden${sa.automatica ? ';background:var(--surface2)' : ''}">
-      <div style="padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px" onclick="_toggleDetalheCustoPers('${detalheId}', this.querySelector('.chevron'))">
-        <div style="min-width:0">
-          <strong style="font-size:13px">${sa.descricao||'—'}</strong>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📅 ${sa.data||'sem data'} · ${_badgeSaldo(total, vinc)}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          <strong style="font-size:14px;color:#3f3f46">${_fmtR$(total)}</strong>
-          <span class="chevron" style="color:var(--text3);font-size:12px">▸</span>
-        </div>
+    return `<div class="card cp-item" style="padding:0;overflow:hidden${sa.automatica ? ';background:var(--surface2)' : ''}">
+      <div class="cp-head" onclick="_toggleDetalheCustoPers('${detalheId}', this.querySelector('.chevron'))">
+        <div class="cp-av cp-av-s">${sa.apartamento ? sa.apartamento : '↗'}</div>
+        <div class="cp-info"><b>${sa.descricao||'—'}</b><small>${sa.data||'sem data'}${sa.categoria ? ' · ' + sa.categoria : ''}</small></div>
+        <div class="cp-right"><strong>${_fmtR$(total)}</strong>${_badgeSaldo(total, vinc)}</div>
+        <span class="chevron">▸</span>
       </div>
       <div id="${detalheId}" style="display:none;padding:0 16px 14px">
         <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${sa.categoria||''}${sa.categoria?' · ':''}<strong style="color:var(--text)">📅 ${sa.data||'sem data'}</strong> ${sa.apartamento ? '<span class="badge badge-info" style="margin-left:4px">Apto '+sa.apartamento+'</span>' : ''} ${sa.projeto==='Vista Park' ? '<span class="badge" style="background:#FDF3E7;color:#B5651D;margin-left:4px">VISTA PARK</span>' : ''} ${sa.automatica ? '<span class="badge" style="background:#E8E4DE;color:#555;margin-left:4px">⚙ Automático (revestimento)</span>' : ''}${sa.condicao_pagamento && sa.condicao_pagamento !== 'avista' ? ' · ' + _labelCondicaoPagamento(sa.condicao_pagamento) : ''}</div>
@@ -9151,6 +9163,12 @@ function renderCustoPersonalizacoes() {
 
   contS.innerHTML = !saidasParaExibir.length ? '<div class="empty-state"><strong>Nenhuma saída lançada</strong></div>' :
     _agruparPorMesHTML(saidasParaExibir, sa => sa.data, cardSaidaHTML);
+  try {
+    const totE = entradasComTotal.reduce((a, e) => a + (e._totalParaSoma || 0), 0), totS = saidasParaExibir.reduce((a, e) => a + (e._totalParaSoma || 0), 0);
+    const semV = entradasComTotal.filter(e => _valorLiquidoEntrada(e) - _valorVinculadoEntrada(e.id) > 0.005).length + saidasParaExibir.filter(x => !x.automatica && (parseFloat(x.valor) || 0) - _valorVinculadoSaida(x.id) > 0.005).length;
+    const k = (l, v, sub, cor) => '<div class="stat-card"><div class="stat-label">' + l + '</div><div class="stat-value"' + (cor ? ' style="color:' + cor + '"' : '') + '>' + v + '</div><div class="stat-sub">' + sub + '</div></div>';
+    document.getElementById('cp-stats').innerHTML = k('Recebido', _fmtR$(totE), entradasComTotal.length + ' entradas') + k('Gasto na obra', _fmtR$(totS), saidasParaExibir.length + ' saídas') + k('Diferença', _fmtR$(totE - totS), 'recebido − gasto', totE - totS < 0 ? 'var(--danger)' : '') + k('Sem vínculo completo', semV, 'lançamentos para vincular', semV ? 'var(--warn)' : '');
+  } catch (e) {}
 }
 
 function _apartamentosConhecidos() {
